@@ -35,7 +35,7 @@ public class ProjectListFragment extends RoboListFragment {
     private static final String TAG = "ProjectListFragment";
     
     /** Argument name(s) */
-    private static final String BUNDLE_LIST_STATE = "ContextListFragment.state.listState";
+    private static final String BUNDLE_LIST_STATE = "ProjectListFragment.state.listState";
     private static final String SELECTED_ITEM = "SELECTED_ITEM";
 
     // result codes
