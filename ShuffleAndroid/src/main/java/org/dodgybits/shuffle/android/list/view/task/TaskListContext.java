@@ -142,14 +142,14 @@ public class TaskListContext implements Parcelable {
             // it's possible the context no longer exists at this point
             org.dodgybits.shuffle.android.core.model.Context context = contextCache.findById(mSelector.getContextId());
             name = context == null ? "?" : context.getName();
-            androidContext.setTitle(mTitleId);
-            actionBar.setSubtitle(name);
+            androidContext.setTitle(name);
+            actionBar.setSubtitle(mTitleId);
         } else if (mSelector.getProjectId().isInitialised()) {
             // it's possible the project no longer exists at this point
             Project project = projectCache.findById(mSelector.getProjectId());
             name = project == null ? "?" : project.getName();
-            androidContext.setTitle(mTitleId);
-            actionBar.setSubtitle(name);
+            androidContext.setTitle(name);
+            actionBar.setSubtitle(mTitleId);
         } else {
             androidContext.setTitle(mTitleId);
             actionBar.setSubtitle(null);
