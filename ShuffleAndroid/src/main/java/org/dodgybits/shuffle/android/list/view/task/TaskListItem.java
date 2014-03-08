@@ -199,8 +199,11 @@ public class TaskListItem extends View {
 
     private int mOrder;
 
-    public void setTask(Task task) {
+    private boolean mProjectNameVisible = true;
+
+    public void setTask(Task task, boolean projectNameVisible) {
         mTaskId = task.getLocalId().getId();
+        mProjectNameVisible = projectNameVisible;
         mIsCompleted = task.isComplete();
         mProject = mProjectCache.findById(task.getProjectId());
         mOrder = task.getOrder();
@@ -377,7 +380,7 @@ public class TaskListItem extends View {
 
         // And the project...
         TextPaint projectPaint = sAllCapsPaint;
-        String projectName = mProject == null ? "" : mProject.getName();
+        String projectName = (mProject == null || !mProjectNameVisible) ? "" : mProject.getName();
         projectPaint.setTextSize(mCoordinates.projectFontSize);
         projectPaint.setColor(getFontColor(isDone() ? PROJECT_TEXT_COLOR_COMPLETE
                 : PROJECT_TEXT_COLOR_INCOMPLETE));

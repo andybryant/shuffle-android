@@ -24,6 +24,7 @@ public class TaskListContext implements Parcelable {
 
     protected TaskSelector mSelector;
     protected int mTitleId;
+    private boolean mProjectNameVisible = true;
 
     public static final Parcelable.Creator<TaskListContext> CREATOR
             = new Parcelable.Creator<TaskListContext>() {
@@ -78,6 +79,7 @@ public class TaskListContext implements Parcelable {
     }
 
     protected TaskListContext(TaskSelector selector, int titleId) {
+        mProjectNameVisible = !selector.getProjectId().isInitialised();
         mSelector = selector;
         mTitleId = titleId;
     }
@@ -94,6 +96,10 @@ public class TaskListContext implements Parcelable {
 
     public ListQuery getListQuery() {
         return mSelector.getListQuery();
+    }
+
+    public boolean isProjectNameVisible() {
+        return mProjectNameVisible;
     }
 
     public Id getEntityId() {

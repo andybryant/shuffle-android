@@ -23,9 +23,11 @@ import java.util.Set;
 
 public class TaskListAdaptor extends CursorAdapter {
     private static final String TAG = "TaskListAdaptor";
-    
+
     private static final String STATE_CHECKED_ITEMS =
             "org.dodgybits.shuffle.android.list.view.task.TaskListAdaptor.checkedItems";
+    private static final String SHOW_PROJECT_NAMES =
+            "org.dodgybits.shuffle.android.list.view.task.TaskListAdaptor.showProjectNames";
 
     /**
      * Set of selected task IDs.
@@ -35,6 +37,9 @@ public class TaskListAdaptor extends CursorAdapter {
     private final TaskPersister mPersister;
 
     private final ContextScopedProvider<TaskListItem> mTaskListItemProvider;
+
+    private boolean mProjectNameVisible = true;
+
 
     /**
      * Callback from MessageListAdapter.  All methods are called on the UI thread.
@@ -62,8 +67,13 @@ public class TaskListAdaptor extends CursorAdapter {
         mCallback = callback;
     }
 
+    public void setProjectNameVisible(boolean projectNameVisible) {
+        this.mProjectNameVisible = projectNameVisible;
+    }
+
     public void onSaveInstanceState(Bundle outState) {
         outState.putLongArray(STATE_CHECKED_ITEMS, CollectionUtils.toPrimitiveLongArray(getSelectedSet()));
+        outState.putBoolean(SHOW_PROJECT_NAMES, mProjectNameVisible);
     }
 
     @Override
@@ -84,6 +94,7 @@ public class TaskListAdaptor extends CursorAdapter {
         for (long l: savedInstanceState.getLongArray(STATE_CHECKED_ITEMS)) {
             checkedSet.add(l);
         }
+        mProjectNameVisible = savedInstanceState.getBoolean(SHOW_PROJECT_NAMES);
         notifyDataSetChanged();
     }
 
@@ -162,7 +173,7 @@ public class TaskListAdaptor extends CursorAdapter {
         itemView.bindViewInit(this);
 
         Task task = mPersister.read(cursor);
-        itemView.setTask(task);
+        itemView.setTask(task, mProjectNameVisible);
     }
 
     @Override

@@ -123,7 +123,9 @@ public class TaskListFragment extends RoboListFragment
 
         setHasOptionsMenu(true);
 
+        mListAdapter.setProjectNameVisible(mListContext.isProjectNameVisible());
         mListAdapter.setCallback(this);
+
         mIsFirstLoad = true;
     }
 
