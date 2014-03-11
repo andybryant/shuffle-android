@@ -33,7 +33,8 @@ public class ProjectProvider extends AbstractCollectionProvider {
                 ShuffleTable.MODIFIED_DATE,
                 ShuffleTable.DELETED,
                 ShuffleTable.ACTIVE,
-                ShuffleTable.GAE_ID
+                ShuffleTable.GAE_ID,
+                ShuffleTable.CHANGE_SET
                 );
 	    
 		makeSearchable(Projects._ID, Projects.NAME, Projects.NAME, Projects.NAME);
@@ -84,7 +85,8 @@ public class ProjectProvider extends AbstractCollectionProvider {
                 ARCHIVED,
                 DELETED,
                 ACTIVE,
-                GAE_ID
+                GAE_ID,
+                CHANGE_SET
         };
         /**
          * Projection for fetching the task count for each project.

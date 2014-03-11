@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Project.Builder;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
+import org.dodgybits.shuffle.sync.model.ProjectChangeSet;
 import roboguice.inject.ContentResolverProvider;
 import roboguice.inject.ContextSingleton;
 
@@ -27,6 +28,7 @@ public class ProjectPersister extends AbstractEntityPersister<Project> {
     private static final int DELETED_INDEX = 6;
     private static final int ACTIVE_INDEX = 7;
     private static final int GAE_ID_INDEX = 8;
+    private static final int CHANGE_SET_INDEX = 9;
 
     @Inject
     public ProjectPersister(ContentResolverProvider provider) {
@@ -45,7 +47,8 @@ public class ProjectPersister extends AbstractEntityPersister<Project> {
             .setArchived(readBoolean(cursor, ARCHIVED_INDEX))
             .setDeleted(readBoolean(cursor, DELETED_INDEX))
             .setActive(readBoolean(cursor, ACTIVE_INDEX))
-            .setGaeId(readId(cursor, GAE_ID_INDEX));
+            .setGaeId(readId(cursor, GAE_ID_INDEX))
+            .setChangeSet(ProjectChangeSet.fromChangeSet(cursor.getLong(CHANGE_SET_INDEX)));
 
         return builder.build();
     }
@@ -61,6 +64,7 @@ public class ProjectPersister extends AbstractEntityPersister<Project> {
         writeBoolean(values, DELETED, project.isDeleted());
         writeBoolean(values, ACTIVE, project.isActive());
         writeId(values, GAE_ID, project.getGaeId());
+        values.put(CHANGE_SET, project.getChangeSet().getChangeSet());
     }
     
     @Override

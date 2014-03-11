@@ -49,4 +49,6 @@ dependencies {
     compile("org.roboguice:roboguice:2.0") {
         exclude group: 'android.support'
     }
+    instrumentTestCompile 'junit:junit:4.11'
+
 }

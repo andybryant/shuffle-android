@@ -17,6 +17,7 @@
 package org.dodgybits.shuffle.android.core.model;
 
 import android.text.TextUtils;
+import org.dodgybits.shuffle.sync.model.ProjectChangeSet;
 
 public class Project implements Entity {
 	private Id mLocalId = Id.NONE;
@@ -28,6 +29,7 @@ public class Project implements Entity {
 	private boolean mDeleted;
 	private boolean mActive = true;
 	private Id mGaeId = Id.NONE;
+    private ProjectChangeSet mChangeSet = ProjectChangeSet.newChangeSet();
 
     private Project() {
     };
@@ -38,10 +40,6 @@ public class Project implements Entity {
     }
 
     public final String getName() {
-        return mName;
-    }
-
-    public final String getLocalName() {
         return mName;
     }
 
@@ -83,14 +81,19 @@ public class Project implements Entity {
         return mGaeId;
     }
 
+    public ProjectChangeSet getChangeSet() {
+        return mChangeSet;
+    }
+
     @Override
     public final String toString() {
         return String.format(
                 "[Project id=%1$s name='%2$s' defaultContextId='%3$s' " +
-                "parallel=%4$s archived=%5$s deleted=%6$s active=%7$s gaeId=%8$s]",
+                "parallel=%4$s archived=%5$s deleted=%6$s active=%7$s " +
+                        "gaeId=%8$s changeSet=%9$s]",
                 mLocalId, mName, mDefaultContextId,
                 mParallel, mArchived, mDeleted, mActive,
-                mGaeId);
+                mGaeId, mChangeSet);
     }
     
     public static Builder newBuilder() {
@@ -197,6 +200,14 @@ public class Project implements Entity {
             return result.mGaeId;
         }
 
+        public Builder setChangeSet(ProjectChangeSet changeSet) {
+            result.mChangeSet = changeSet;
+            return this;
+        }
+
+        public ProjectChangeSet getChangeSet() {
+            return result.mChangeSet;
+        }
 
         public final boolean isInitialized() {
             return result.isValid();
@@ -222,6 +233,7 @@ public class Project implements Entity {
             setDeleted(project.mDeleted);
             setActive(project.mActive);
             setGaeId(project.mGaeId);
+            setChangeSet(project.mChangeSet);
             return this;
         }
 

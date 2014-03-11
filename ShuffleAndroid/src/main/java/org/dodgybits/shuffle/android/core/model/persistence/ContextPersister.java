@@ -6,14 +6,15 @@ import android.net.Uri;
 import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Context.Builder;
-import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
+import org.dodgybits.shuffle.sync.model.ContextChangeSet;
 import roboguice.inject.ContentResolverProvider;
 import roboguice.inject.ContextSingleton;
 
 import static org.dodgybits.shuffle.android.persistence.provider.AbstractCollectionProvider.ShuffleTable.ACTIVE;
 import static org.dodgybits.shuffle.android.persistence.provider.AbstractCollectionProvider.ShuffleTable.DELETED;
 import static org.dodgybits.shuffle.android.persistence.provider.AbstractCollectionProvider.ShuffleTable.MODIFIED_DATE;
+import static org.dodgybits.shuffle.android.persistence.provider.ContextProvider.Contexts.CHANGE_SET;
 import static org.dodgybits.shuffle.android.persistence.provider.ContextProvider.Contexts.*;
 import static org.dodgybits.shuffle.android.persistence.provider.ContextProvider.Contexts.GAE_ID;
 
@@ -28,14 +29,11 @@ public class ContextPersister extends AbstractEntityPersister<Context> {
     private static final int DELETED_INDEX = 5;
     private static final int ACTIVE_INDEX = 6;
     private static final int GAE_ID_INDEX = 7;
+    private static final int CHANGE_SET_INDEX = 8;
 
-    private final TaskPersister mTaskPersister;
-            
-    
     @Inject
-    public ContextPersister(ContentResolverProvider provider, TaskPersister taskPersister) {
+    public ContextPersister(ContentResolverProvider provider) {
         super(provider.get());
-        mTaskPersister = taskPersister;
     }
 
     @Override
@@ -49,7 +47,8 @@ public class ContextPersister extends AbstractEntityPersister<Context> {
             .setIconName(readString(cursor, ICON_INDEX))
             .setDeleted(readBoolean(cursor, DELETED_INDEX))
             .setActive(readBoolean(cursor, ACTIVE_INDEX))
-            .setGaeId(readId(cursor, GAE_ID_INDEX));
+            .setGaeId(readId(cursor, GAE_ID_INDEX))
+            .setChangeSet(ContextChangeSet.fromChangeSet(cursor.getLong(CHANGE_SET_INDEX)));
 
         return builder.build();
     }
@@ -64,26 +63,7 @@ public class ContextPersister extends AbstractEntityPersister<Context> {
         writeBoolean(values, DELETED, context.isDeleted());
         writeBoolean(values, ACTIVE, context.isActive());
         writeId(values, GAE_ID, context.getGaeId());
-    }
-
-    @Override
-    public boolean updateDeletedFlag(Id id, boolean isDeleted) {
-        boolean result = super.updateDeletedFlag(id, isDeleted);
-        
-        if (isDeleted) {
-            mTaskPersister.removeTasksForContext(id);
-        }
-
-        return result;
-    }
-
-    @Override
-    protected void update(Uri uri, Context context) {
-        super.update(uri, context);
-
-        if (context.isDeleted()) {
-            mTaskPersister.removeTasksForContext(context.getLocalId());
-        }
+        values.put(CHANGE_SET, context.getChangeSet().getChangeSet());
     }
 
     @Override

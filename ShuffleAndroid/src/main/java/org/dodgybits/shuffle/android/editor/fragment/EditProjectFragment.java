@@ -8,8 +8,10 @@ import android.widget.*;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
+import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
+import org.dodgybits.shuffle.sync.model.ProjectChangeSet;
 
 public class EditProjectFragment extends AbstractEditFragment<Project> {
     private static final String TAG = "EditProjectFragment";
@@ -127,19 +129,41 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
             builder.mergeFrom(mOriginalItem);
         }
 
-        builder.setName(mNameWidget.getText().toString());
-        builder.setModifiedDate(System.currentTimeMillis());
-        builder.setParallel(isParallel);
+        String name = mNameWidget.getText().toString();
+        boolean active = mActiveCheckBox.isChecked();
+        boolean deleted = mDeletedCheckBox.isChecked();
+
+        ProjectChangeSet changeSet = builder.getChangeSet();
+
+        if (!ObjectUtils.equals(name, builder.getName())) {
+            builder.setName(name);
+            changeSet.nameChanged();
+        }
 
         Id defaultContextId = Id.NONE;
         int selectedItemPosition = mDefaultContextSpinner.getSelectedItemPosition();
         if (selectedItemPosition > 0) {
             defaultContextId = Id.create(mContextIds[selectedItemPosition]);
         }
-        builder.setDefaultContextId(defaultContextId);
-        builder.setDeleted(mDeletedCheckBox.isChecked());
-        builder.setActive(mActiveCheckBox.isChecked());
+        if (!ObjectUtils.equals(defaultContextId, builder.getDefaultContextId())) {
+            builder.setDefaultContextId(defaultContextId);
+            changeSet.defaultContextChanged();
+        }
+        if (isParallel != builder.isParallel()) {
+            builder.setParallel(isParallel);
+            changeSet.parallelChanged();
+        }
+        if (active != builder.isActive()) {
+            builder.setActive(active);
+            changeSet.activeChanged();
+        }
+        if (deleted != builder.isDeleted()) {
+            builder.setDeleted(deleted);
+            changeSet.deleteChanged();
+        }
 
+        builder.setModifiedDate(System.currentTimeMillis());
+        builder.setChangeSet(changeSet);
         return builder.build();
     }
 

@@ -17,6 +17,7 @@
 package org.dodgybits.shuffle.android.core.model;
 
 import android.text.TextUtils;
+import org.dodgybits.shuffle.sync.model.ContextChangeSet;
 
 
 public class Context implements Entity, Comparable<Context> {
@@ -28,6 +29,7 @@ public class Context implements Entity, Comparable<Context> {
     private boolean mDeleted;
     private boolean mActive = true;
     private Id mGaeId = Id.NONE;
+    private ContextChangeSet mChangeSet = ContextChangeSet.newChangeSet();
 
     private Context() {
     };
@@ -52,10 +54,6 @@ public class Context implements Entity, Comparable<Context> {
         return mModifiedDate;
     }
 
-    public final String getLocalName() {
-        return mName;
-    }
-
     @Override
     public boolean isDeleted() {
         return mDeleted;
@@ -78,13 +76,17 @@ public class Context implements Entity, Comparable<Context> {
         return mGaeId;
     }
 
+    public ContextChangeSet getChangeSet() {
+        return mChangeSet;
+    }
+
     @Override
     public final String toString() {
         return String.format(
                 "[Context id=%1$s name='%2$s' colourIndex='%3$s' " +
-                "iconName=%4$s active=%5$s deleted=%6$s gaeId=%7$s]",
+                "iconName=%4$s active=%5$s deleted=%6$s gaeId=%7$s changeSet=%8$s]",
                 mLocalId, mName, mColourIndex,
-                mIconName, mActive, mDeleted, mGaeId);
+                mIconName, mActive, mDeleted, mGaeId, mChangeSet);
     }
 
     @Override
@@ -185,7 +187,16 @@ public class Context implements Entity, Comparable<Context> {
         public Id getGaeId() {
             return result.mGaeId;
         }
-        
+
+        public Builder setChangeSet(ContextChangeSet changeSet) {
+            result.mChangeSet = changeSet;
+            return this;
+        }
+
+        public ContextChangeSet getChangeSet() {
+            return result.mChangeSet;
+        }
+
         public final boolean isInitialized() {
             return result.isValid();
         }
@@ -209,6 +220,7 @@ public class Context implements Entity, Comparable<Context> {
             setDeleted(context.mDeleted);
             setActive(context.mActive);
             setGaeId(context.mGaeId);
+            setChangeSet(context.mChangeSet);
             return this;
         }
 

@@ -33,6 +33,7 @@ import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
+import org.dodgybits.shuffle.sync.model.TaskChangeSet;
 import roboguice.inject.ContentResolverProvider;
 import roboguice.inject.ResourcesProvider;
 

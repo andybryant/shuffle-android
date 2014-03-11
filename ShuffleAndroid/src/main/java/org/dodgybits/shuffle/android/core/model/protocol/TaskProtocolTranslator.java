@@ -6,6 +6,7 @@ import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.dto.ShuffleProtos.Task.Builder;
+import org.dodgybits.shuffle.sync.model.TaskChangeSet;
 
 import java.util.List;
 
@@ -35,7 +36,8 @@ public class TaskProtocolTranslator implements EntityProtocolTranslator<Task, or
             .setOrder(task.getOrder())
             .setComplete(task.isComplete())
             .setActive(task.isActive())
-            .setDeleted(task.isDeleted());
+            .setDeleted(task.isDeleted())
+            .setChangeSet(task.getChangeSet().getChangeSet());
 
         final String details = task.getDetails();
         if (details != null) {
@@ -90,6 +92,9 @@ public class TaskProtocolTranslator implements EntityProtocolTranslator<Task, or
 
         if (dto.hasGaeEntityId()) {
             builder.setGaeId(Id.create(dto.getGaeEntityId()));
+        }
+        if (dto.hasChangeSet()) {
+            builder.setChangeSet(TaskChangeSet.fromChangeSet(dto.getChangeSet()));
         }
 
         if (dto.hasActive()) {

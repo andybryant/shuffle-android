@@ -1,6 +1,7 @@
 package org.dodgybits.android.shuffle.util;
 
 
+import org.dodgybits.shuffle.android.core.util.DateUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

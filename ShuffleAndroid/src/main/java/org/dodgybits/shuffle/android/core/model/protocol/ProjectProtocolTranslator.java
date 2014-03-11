@@ -4,6 +4,7 @@ import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.dto.ShuffleProtos.Project.Builder;
+import org.dodgybits.shuffle.sync.model.ProjectChangeSet;
 
 public class ProjectProtocolTranslator implements EntityProtocolTranslator<Project, org.dodgybits.shuffle.dto.ShuffleProtos.Project> {
 
@@ -22,7 +23,8 @@ public class ProjectProtocolTranslator implements EntityProtocolTranslator<Proje
             .setModified(ProtocolUtil.toDate(project.getModifiedDate()))
             .setParallel(project.isParallel())
             .setActive(project.isActive())
-            .setDeleted(project.isDeleted());
+            .setDeleted(project.isDeleted())
+            .setChangeSet(project.getChangeSet().getChangeSet());
 
         final Id defaultContextId = project.getDefaultContextId();
         if (defaultContextId.isInitialised()) {
@@ -43,6 +45,9 @@ public class ProjectProtocolTranslator implements EntityProtocolTranslator<Proje
 
         if (dto.hasGaeEntityId()) {
             builder.setGaeId(Id.create(dto.getGaeEntityId()));
+        }
+        if (dto.hasChangeSet()) {
+            builder.setChangeSet(ProjectChangeSet.fromChangeSet(dto.getChangeSet()));
         }
 
         if (dto.hasActive()) {

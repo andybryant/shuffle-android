@@ -37,6 +37,7 @@ public class ProjectSyncProcessor {
         updateModifiedProjects(response, translator, projectLocator);
         updateLocallyNewProjects(response, projectLocator);
         deleteMissingProjects(response);
+        clearChangeSets();
 
         return projectLocator;
     }
@@ -111,6 +112,10 @@ public class ProjectSyncProcessor {
             mProjectPersister.deletePermanentlyByGaeId(Id.create(gaeId));
         }
         Log.w(TAG, "Permanently deleted " + idsList.size() + " missing projects");
+    }
+
+    private void clearChangeSets() {
+        mProjectPersister.clearAllChangeSets();
     }
 
     /**

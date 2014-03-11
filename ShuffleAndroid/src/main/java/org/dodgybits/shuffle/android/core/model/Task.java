@@ -18,6 +18,9 @@ package org.dodgybits.shuffle.android.core.model;
 
 import android.text.TextUtils;
 import com.google.common.collect.Lists;
+import org.dodgybits.shuffle.sync.model.ContextChangeSet;
+import org.dodgybits.shuffle.sync.model.ProjectChangeSet;
+import org.dodgybits.shuffle.sync.model.TaskChangeSet;
 
 import java.util.List;
 
@@ -41,6 +44,7 @@ public final class Task implements Entity {
     private int mOrder;
     private boolean mComplete;
     private Id mGaeId = Id.NONE;
+    private TaskChangeSet mChangeSet = TaskChangeSet.newChangeSet();
 
     private Task() {
     };
@@ -131,6 +135,10 @@ public final class Task implements Entity {
         return mGaeId;
     }
 
+    public TaskChangeSet getChangeSet() {
+        return mChangeSet;
+    }
+
     @Override
     public final boolean isValid() {
         if (TextUtils.isEmpty(mDescription)) {
@@ -143,9 +151,10 @@ public final class Task implements Entity {
     public final String toString() {
         return String.format(
                 "[Task id=%7$s description='%1$s' detail='%2$s' contextId=%3$s projectId=%4$s " +
-                "order=%5$s complete=%6$s deleted=%8$s active=%9$s gaeId=%10$s]",
+                "order=%5$s complete=%6$s deleted=%8$s active=%9$s gaeId=%10$s changeSet=%11$s]",
                 mDescription, mDetails, mContextIds, mProjectId,
-                mOrder, mComplete, mLocalId, mDeleted, mActive, mGaeId);
+                mOrder, mComplete, mLocalId, mDeleted, mActive,
+                mGaeId, mChangeSet);
     }
     
     public static Builder newBuilder() {
@@ -334,6 +343,15 @@ public final class Task implements Entity {
             return result.mGaeId;
         }
 
+        public Builder setChangeSet(TaskChangeSet changeSet) {
+            result.mChangeSet = changeSet;
+            return this;
+        }
+
+        public TaskChangeSet getChangeSet() {
+            return result.mChangeSet;
+        }
+
         public final boolean isInitialized() {
             return result.isValid();
         }
@@ -368,6 +386,7 @@ public final class Task implements Entity {
             setDeleted(task.mDeleted);
             setActive(task.mActive);
             setGaeId(task.mGaeId);
+            setChangeSet(task.mChangeSet);
             return this;
         }
 

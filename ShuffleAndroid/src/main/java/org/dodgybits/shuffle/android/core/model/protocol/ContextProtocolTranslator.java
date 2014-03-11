@@ -3,6 +3,7 @@ package org.dodgybits.shuffle.android.core.model.protocol;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.dto.ShuffleProtos.Context.Builder;
+import org.dodgybits.shuffle.sync.model.ContextChangeSet;
 
 public class ContextProtocolTranslator  implements EntityProtocolTranslator<Context , org.dodgybits.shuffle.dto.ShuffleProtos.Context>{
 
@@ -15,7 +16,8 @@ public class ContextProtocolTranslator  implements EntityProtocolTranslator<Cont
             .setModified(ProtocolUtil.toDate(context.getModifiedDate()))
             .setColourIndex(context.getColourIndex())
             .setActive(context.isActive())
-            .setDeleted(context.isDeleted());
+            .setDeleted(context.isDeleted())
+            .setChangeSet(context.getChangeSet().getChangeSet());
         
         final String iconName = context.getIconName();
         if (iconName != null) {
@@ -36,6 +38,9 @@ public class ContextProtocolTranslator  implements EntityProtocolTranslator<Cont
 
         if (dto.hasGaeEntityId()) {
             builder.setGaeId(Id.create(dto.getGaeEntityId()));
+        }
+        if (dto.hasChangeSet()) {
+            builder.setChangeSet(ContextChangeSet.fromChangeSet(dto.getChangeSet()));
         }
 
         if (dto.hasActive()) {

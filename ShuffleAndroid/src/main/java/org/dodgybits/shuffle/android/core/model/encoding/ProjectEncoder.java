@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Project.Builder;
 import org.dodgybits.shuffle.android.core.util.BundleUtils;
+import org.dodgybits.shuffle.sync.model.ProjectChangeSet;
 
 import static android.provider.BaseColumns._ID;
 import static org.dodgybits.shuffle.android.persistence.provider.ProjectProvider.Projects.*;
@@ -23,6 +24,8 @@ public class ProjectEncoder implements EntityEncoder<Project> {
         BundleUtils.putId(icicle, DEFAULT_CONTEXT_ID, project.getDefaultContextId());
         icicle.putBoolean(ARCHIVED, project.isArchived());
         icicle.putBoolean(PARALLEL, project.isParallel());
+        BundleUtils.putId(icicle, GAE_ID, project.getGaeId());
+        icicle.putLong(CHANGE_SET, project.getChangeSet().getChangeSet());
     }
     
     @Override
@@ -39,6 +42,9 @@ public class ProjectEncoder implements EntityEncoder<Project> {
         builder.setDefaultContextId(BundleUtils.getId(icicle, DEFAULT_CONTEXT_ID));
         builder.setArchived(icicle.getBoolean(ARCHIVED));
         builder.setParallel(icicle.getBoolean(PARALLEL));
+        builder.setGaeId(BundleUtils.getId(icicle, GAE_ID));
+        builder.setChangeSet(ProjectChangeSet.fromChangeSet(icicle.getLong(CHANGE_SET)));
+
         return builder.build();
     }
     

@@ -6,13 +6,17 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import com.google.common.collect.Maps;
 import org.dodgybits.shuffle.android.core.model.Entity;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.persistence.provider.AbstractCollectionProvider;
 import org.dodgybits.shuffle.android.persistence.provider.AbstractCollectionProvider.ShuffleTable;
+import org.dodgybits.shuffle.sync.model.EntityChangeSet;
 
 import java.util.Collection;
+import java.util.Map;
 
+import static org.dodgybits.shuffle.android.persistence.provider.AbstractCollectionProvider.ShuffleTable.CHANGE_SET;
 import static org.dodgybits.shuffle.android.persistence.provider.AbstractCollectionProvider.ShuffleTable.GAE_ID;
 
 public abstract class AbstractEntityPersister<E extends Entity> implements EntityPersister<E> {
@@ -99,10 +103,52 @@ public abstract class AbstractEntityPersister<E extends Entity> implements Entit
 
     @Override
     public boolean updateDeletedFlag(Id id, boolean isDeleted) {
-        ContentValues values = new ContentValues();
-        writeBoolean(values, ShuffleTable.DELETED, isDeleted);
-        values.put(ShuffleTable.MODIFIED_DATE, System.currentTimeMillis());
-        return (mResolver.update(getUri(id), values, null, null) == 1);
+        boolean success = false;
+        Long changeSetValue = getChangeSet(id);
+        if (changeSetValue != null) {
+            EntityChangeSet changeSet = EntityChangeSet.fromChangeSet(changeSetValue);
+            changeSet.deleteChanged();
+            ContentValues values = new ContentValues();
+            writeBoolean(values, ShuffleTable.DELETED, isDeleted);
+            values.put(ShuffleTable.MODIFIED_DATE, System.currentTimeMillis());
+            values.put(ShuffleTable.CHANGE_SET, changeSet.getChangeSet());
+            success = mResolver.update(getUri(id), values, null, null) == 1;
+        }
+        return success;
+    }
+
+    protected Long getChangeSet(Id id) {
+        Long changeSet = null;
+        Cursor cursor = mResolver.query(
+                getContentUri(),
+                new String[] {BaseColumns._ID, ShuffleTable.CHANGE_SET},
+                BaseColumns._ID + " = ?",
+                new String[] {id.toString()},
+                null);
+        if (cursor.moveToFirst()) {
+            changeSet = cursor.getLong(1);
+        }
+        cursor.close();
+        return changeSet;
+    }
+
+    protected Map<Id, Long> getChangeSets(String selection, String[] selectionArgs) {
+        Map setMap = Maps.newHashMap();
+        Cursor cursor = mResolver.query(
+                getContentUri(),
+                new String[]{BaseColumns._ID, ShuffleTable.CHANGE_SET},
+                selection,
+                selectionArgs,
+                null);
+        if (cursor.moveToFirst()) {
+            do {
+                Id id = Id.create(cursor.getLong(0));
+                Long changeSetValue = cursor.getLong(1);
+                setMap.put(id, changeSetValue);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return setMap;
     }
 
     public boolean updateGaeId(Id localId, Id gaeId) {
@@ -115,6 +161,12 @@ public abstract class AbstractEntityPersister<E extends Entity> implements Entit
     public void clearAllGaeIds() {
         ContentValues values = new ContentValues();
         writeId(values, GAE_ID, Id.NONE);
+        mResolver.update(getContentUri(), values, null, null);
+    }
+
+    public void clearAllChangeSets() {
+        ContentValues values = new ContentValues();
+        values.put(CHANGE_SET, EntityChangeSet.NO_CHANGES);
         mResolver.update(getContentUri(), values, null, null);
     }
 

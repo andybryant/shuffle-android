@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.*;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Context;
+import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.view.TextColours;
 import org.dodgybits.shuffle.android.core.view.ContextIcon;
 import org.dodgybits.shuffle.android.core.view.DrawableUtils;
@@ -19,6 +20,7 @@ import org.dodgybits.shuffle.android.editor.activity.ColourPickerActivity;
 import org.dodgybits.shuffle.android.editor.activity.IconPickerActivity;
 import org.dodgybits.shuffle.android.list.view.context.ContextListItem;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
+import org.dodgybits.shuffle.sync.model.ContextChangeSet;
 
 public class EditContextFragment extends AbstractEditFragment<Context>
         implements TextWatcher {
@@ -197,13 +199,35 @@ public class EditContextFragment extends AbstractEditFragment<Context>
             builder.mergeFrom(mOriginalItem);
         }
 
-        builder.setName(mNameWidget.getText().toString());
-        builder.setModifiedDate(System.currentTimeMillis());
-        builder.setColourIndex(mColourIndex);
-        builder.setIconName(mIcon.iconName);
-        builder.setDeleted(mDeletedCheckBox.isChecked());
-        builder.setActive(mActiveCheckBox.isChecked());
+        String name = mNameWidget.getText().toString();
+        String iconName = mIcon.iconName;
+        boolean active = mActiveCheckBox.isChecked();
+        boolean deleted = mDeletedCheckBox.isChecked();
 
+        ContextChangeSet changeSet = builder.getChangeSet();
+
+        if (!ObjectUtils.equals(name, builder.getName())) {
+            builder.setName(name);
+            changeSet.nameChanged();
+        }
+        if (mColourIndex != builder.getColourIndex()) {
+            builder.setColourIndex(mColourIndex);
+            changeSet.colourChanged();
+        }
+        if (!ObjectUtils.equals(iconName, builder.getIconName())) {
+            builder.setIconName(iconName);
+            changeSet.iconChanged();
+        }
+        if (active != builder.isActive()) {
+            builder.setActive(active);
+            changeSet.activeChanged();
+        }
+        if (deleted != builder.isDeleted()) {
+            builder.setDeleted(deleted);
+            changeSet.deleteChanged();
+        }
+        builder.setModifiedDate(System.currentTimeMillis());
+        builder.setChangeSet(changeSet);
         return builder.build();
     }
 

@@ -20,6 +20,7 @@ import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelecto
 import org.dodgybits.shuffle.android.core.util.StringUtils;
 import org.dodgybits.shuffle.android.persistence.provider.AbstractCollectionProvider;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
+import org.dodgybits.shuffle.sync.model.TaskChangeSet;
 import roboguice.inject.ContentResolverProvider;
 import roboguice.inject.ContextSingleton;
 
@@ -54,6 +55,7 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
     private static final int DELETED_INDEX = HAS_ALARM_INDEX + 1;
     private static final int ACTIVE_INDEX = DELETED_INDEX + 1;
     private static final int GAE_ID_INDEX = ACTIVE_INDEX + 1;
+    private static final int CHANGE_SET_INDEX = GAE_ID_INDEX + 1;
 
     private static final int TASK_CONTEXTS_TASK_ID_INDEX = 0;
     private static final int TASK_CONTEXTS_CONTEXT_ID_INDEX = 1;
@@ -87,7 +89,8 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
                 .setHasAlarm(readBoolean(cursor, HAS_ALARM_INDEX))
                 .setDeleted(readBoolean(cursor, DELETED_INDEX))
                 .setActive(readBoolean(cursor, ACTIVE_INDEX))
-                .setGaeId(readId(cursor, GAE_ID_INDEX));
+                .setGaeId(readId(cursor, GAE_ID_INDEX))
+                .setChangeSet(TaskChangeSet.fromChangeSet(cursor.getLong(CHANGE_SET_INDEX)));
 
         if (includeContextIds) {
             Cursor contextCursor = mResolver.query(TaskProvider.TaskContexts.CONTENT_URI,
@@ -117,6 +120,14 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
 
     public boolean readComplete(Cursor cursor) {
         return readBoolean(cursor, COMPLETE_INDEX);
+    }
+
+    public TaskChangeSet readChangeSet(Cursor cursor) {
+        return readChangeSet(cursor, CHANGE_SET_INDEX);
+    }
+
+    public TaskChangeSet readChangeSet(Cursor cursor, int index) {
+        return TaskChangeSet.fromChangeSet(readLong(cursor, index));
     }
 
 
@@ -149,6 +160,7 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
         writeBoolean(values, ALL_DAY, task.isAllDay());
         writeBoolean(values, HAS_ALARM, task.hasAlarms());
         writeId(values, GAE_ID, task.getGaeId());
+        values.put(CHANGE_SET, task.getChangeSet().getChangeSet());
     }
 
     @Override
@@ -245,10 +257,16 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
 
 
     public void updateCompleteFlag(Id id, boolean isComplete) {
-        ContentValues values = new ContentValues();
-        writeBoolean(values, COMPLETE, isComplete);
-        values.put(MODIFIED_DATE, System.currentTimeMillis());
-        mResolver.update(getUri(id), values, null, null);
+        Long changeSetValue = getChangeSet(id);
+        if (changeSetValue != null) {
+            TaskChangeSet changeSet = TaskChangeSet.fromChangeSet(changeSetValue);
+            changeSet.completeChanged();
+            ContentValues values = new ContentValues();
+            writeBoolean(values, COMPLETE, isComplete);
+            values.put(MODIFIED_DATE, System.currentTimeMillis());
+            values.put(CHANGE_SET, changeSet.getChangeSet());
+            mResolver.update(getUri(id), values, null, null);
+        }
     }
 
     /**
@@ -260,10 +278,22 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
      * @return number of entities updates
      */
     public int updateDeletedFlag(String selection, String[] selectionArgs, boolean isDeleted) {
-        ContentValues values = new ContentValues();
-        writeBoolean(values, AbstractCollectionProvider.ShuffleTable.DELETED, isDeleted);
-        values.put(MODIFIED_DATE, System.currentTimeMillis());
-        return mResolver.update(getContentUri(), values, selection, selectionArgs);
+        Map<Id, Long> changeSets = getChangeSets(selection, selectionArgs);
+        int count = 0;
+        if (!changeSets.isEmpty()) {
+            long now = System.currentTimeMillis();
+            for (Map.Entry<Id, Long> entry : changeSets.entrySet()) {
+                ContentValues values = new ContentValues();
+                Id id = entry.getKey();
+                TaskChangeSet changeSet = TaskChangeSet.fromChangeSet(entry.getValue());
+                changeSet.deleteChanged();
+                values.put(CHANGE_SET, changeSet.getChangeSet());
+                writeBoolean(values, AbstractCollectionProvider.ShuffleTable.DELETED, isDeleted);
+                values.put(MODIFIED_DATE, now);
+                count += mResolver.update(getUri(id), values, null, null);
+            }
+        }
+        return count;
     }
 
     /**
@@ -296,7 +326,7 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
             if (cursor.moveToFirst()) {
                 if (dueMillis > 0L) {
                     Log.d(TAG, "Due date defined - finding best place to insert in project task list");
-                    Map<Long, Integer> updateValues = new HashMap<Long, Integer>();
+                    Map<Long, Integer> updateValues = new HashMap<>();
                     do {
                         long previousId = cursor.getLong(0);
                         int previousOrder = cursor.getInt(1);
@@ -341,9 +371,6 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
     }
 
     public void moveTasksWithinProject(Set<Long> taskIds, Cursor cursor, boolean moveUp) {
-        Task firstTask = findById(Id.create(taskIds.iterator().next()));
-        Id projectId = firstTask.getProjectId();
-
         Map<Integer, Integer> positions = Maps.newHashMap();
 
         cursor.moveToPosition(-1);
@@ -391,14 +418,19 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
 
         Cursor cursor = mResolver.query(
                 TaskProvider.Tasks.CONTENT_URI,
-                new String[]{BaseColumns._ID, TaskProvider.Tasks.PROJECT_ID, TaskProvider.Tasks.DISPLAY_ORDER},
+                new String[]{
+                        BaseColumns._ID,
+                        TaskProvider.Tasks.PROJECT_ID,
+                        TaskProvider.Tasks.DISPLAY_ORDER,
+                        TaskProvider.Tasks.CHANGE_SET
+                },
                 whereBuilder.toString(),
                 whereArgs,
                 TaskProvider.Tasks.PROJECT_ID + " ASC, " + TaskProvider.Tasks.DISPLAY_ORDER + " ASC");
 
         cursor.moveToPosition(-1);
         Id currentProjectId = Id.NONE;
-        int newOrder = 0;
+        int previousOrder = Integer.MIN_VALUE;
         ContentValues values = new ContentValues();
         while (cursor.moveToNext()) {
             long id = cursor.getLong(0);
@@ -407,13 +439,15 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
 
             if (!projectId.equals(currentProjectId)) {
                 currentProjectId = projectId;
-                newOrder = 0;
+                previousOrder = Integer.MIN_VALUE;
             }
 
-            if (newOrder != order) {
-                updateOrder(id, newOrder, values);
+            if (order == previousOrder) {
+                TaskChangeSet changeSet = readChangeSet(cursor, 3);
+                order++;
+                updateOrder(id, order, changeSet, values);
             }
-            newOrder++;
+            previousOrder = order;
         }
 
     }
@@ -431,15 +465,6 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
         return countMap;
     }
 
-    /* package */ int removeTasksForContext(Id contextId) {
-        int deletedRows = mResolver.delete(TaskProvider.TaskContexts.CONTENT_URI,
-                CONTEXT_ID + "=?",
-                new String[]{String.valueOf(contextId.getId())});
-        Log.d(TAG, "Deleted " + deletedRows + " existing task links for context " + contextId);
-
-        return deletedRows;
-    }
-
     /**
      * Moves a range of tasks up or down within a project
      *
@@ -453,13 +478,15 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
         cursor.moveToPosition(moveUp ? pos1 - 1 : pos2 + 1);
         Id initialId = readId(cursor, ID_INDEX);
         int newOrder = cursor.getInt(DISPLAY_ORDER_INDEX);
+        TaskChangeSet originalChangeSet = readChangeSet(cursor);
 
         if (moveUp) {
             for (int position = pos1; position <= pos2; position++) {
                 cursor.moveToPosition(position);
                 Id id = readId(cursor, ID_INDEX);
                 int order = cursor.getInt(DISPLAY_ORDER_INDEX);
-                updateOrder(id.getId(), newOrder, values);
+                TaskChangeSet changeSet = readChangeSet(cursor);
+                updateOrder(id.getId(), newOrder, changeSet, values);
                 newOrder = order;
             }
         } else {
@@ -467,19 +494,22 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
                 cursor.moveToPosition(position);
                 Id id = readId(cursor, ID_INDEX);
                 int order = cursor.getInt(DISPLAY_ORDER_INDEX);
-                updateOrder(id.getId(), newOrder, values);
+                TaskChangeSet changeSet = readChangeSet(cursor);
+                updateOrder(id.getId(), newOrder, changeSet, values);
                 newOrder = order;
             }
 
         }
-        updateOrder(initialId.getId(), newOrder, values);
+        updateOrder(initialId.getId(), newOrder, originalChangeSet, values);
     }
 
-    private void updateOrder(long id, int order, ContentValues values) {
+    private void updateOrder(long id, int order, TaskChangeSet changeSet, ContentValues values) {
         Uri uri = ContentUris.withAppendedId(getContentUri(), id);
         values.clear();
         values.put(DISPLAY_ORDER, order);
         values.put(MODIFIED_DATE, System.currentTimeMillis());
+        changeSet.orderChanged();
+        values.put(CHANGE_SET, changeSet.getChangeSet());
         mResolver.update(uri, values, null, null);
     }
 

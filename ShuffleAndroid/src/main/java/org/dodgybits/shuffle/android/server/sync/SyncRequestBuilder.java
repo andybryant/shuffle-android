@@ -71,8 +71,10 @@ public class SyncRequestBuilder {
             org.dodgybits.shuffle.android.core.model.Context context = mContextPersister.read(cursor);
             directory.addItem(context.getLocalId(), context.getName(), context);
             if (!context.getGaeId().isInitialised()) {
+                // update everything for new items
+                context.getChangeSet().markAll();
                 builder.addNewContexts(translator.toMessage(context));
-            } else if (context.getModifiedDate() > lastSyncDate) {
+            } else if (context.getChangeSet().hasChanges()) {
                 builder.addModifiedContexts(translator.toMessage(context));
             } else {
                 ShuffleProtos.SyncIdPair.Builder pairBuilder = ShuffleProtos.SyncIdPair.newBuilder();
@@ -97,8 +99,10 @@ public class SyncRequestBuilder {
             Project project = mProjectPersister.read(cursor);
             directory.addItem(project.getLocalId(), project.getName(), project);
             if (!project.getGaeId().isInitialised()) {
+                // update everything for new items
+                project.getChangeSet().markAll();
                 builder.addNewProjects(translator.toMessage(project));
-            } else if (project.getModifiedDate() > lastSyncDate) {
+            } else if (project.getChangeSet().hasChanges()) {
                 builder.addModifiedProjects(translator.toMessage(project));
             } else {
                 ShuffleProtos.SyncIdPair.Builder pairBuilder = ShuffleProtos.SyncIdPair.newBuilder();
@@ -121,8 +125,10 @@ public class SyncRequestBuilder {
         while (cursor.moveToNext()) {
             org.dodgybits.shuffle.android.core.model.Task task = mTaskPersister.read(cursor);
             if (!task.getGaeId().isInitialised()) {
+                // update everything for new items
+                task.getChangeSet().markAll();
                 builder.addNewTasks(translator.toMessage(task));
-            } else if (task.getModifiedDate() > lastSyncDate) {
+            } else if (task.getChangeSet().hasChanges()) {
                 builder.addModifiedTasks(translator.toMessage(task));
             } else {
                 ShuffleProtos.SyncIdPair.Builder pairBuilder = ShuffleProtos.SyncIdPair.newBuilder();

@@ -32,12 +32,13 @@ public class TaskSyncProcessor {
         updateModifiedTasks(response, translator);
         updateLocallyNewTasks(response);
         deleteMissingTasks(response);
+        clearChangeSets();
     }
 
     private void addNewTasks(ShuffleProtos.SyncResponse response,
                                 TaskProtocolTranslator translator) {
         List<ShuffleProtos.Task> protoTasks = response.getNewTasksList();
-        List<Task> newTasks = new ArrayList<Task>();
+        List<Task> newTasks = new ArrayList<>();
         for (ShuffleProtos.Task protoTask : protoTasks) {
             Task task = translator.fromMessage(protoTask);
             newTasks.add(task);
@@ -72,6 +73,10 @@ public class TaskSyncProcessor {
             mTaskPersister.deletePermanentlyByGaeId(Id.create(gaeId));
         }
         Log.w(TAG, "Permanently deleted " + idsList.size() + " missing tasks");
+    }
+
+    private void clearChangeSets() {
+        mTaskPersister.clearAllChangeSets();
     }
 
 }

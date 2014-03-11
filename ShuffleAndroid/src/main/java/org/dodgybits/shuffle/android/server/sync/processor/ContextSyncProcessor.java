@@ -29,7 +29,7 @@ public class ContextSyncProcessor {
         Log.d(TAG, "Parsing context updates");
         ContextProtocolTranslator translator = new ContextProtocolTranslator();
         // build up the locator and list of new contacts
-        MutableEntityDirectory<Context> contextLocator = new HashEntityDirectory<Context>();
+        MutableEntityDirectory<Context> contextLocator = new HashEntityDirectory<>();
 
 
         addExistingContexts(contextLocator);
@@ -37,6 +37,7 @@ public class ContextSyncProcessor {
         updateModifiedContexts(response, translator, contextLocator);
         updateLocallyNewContexts(response, contextLocator);
         deleteMissingContexts(response);
+        clearChangeSets();
 
         return contextLocator;
     }
@@ -110,6 +111,10 @@ public class ContextSyncProcessor {
             mContextPersister.deletePermanentlyByGaeId(Id.create(gaeId));
         }
         Log.w(TAG, "Permanently deleted " + idsList.size() + " missing contexts");
+    }
+
+    private void clearChangeSets() {
+        mContextPersister.clearAllChangeSets();
     }
 
     /**

@@ -30,7 +30,9 @@ import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.CalendarUtils;
+import org.dodgybits.shuffle.android.core.util.EntityUtils;
 import org.dodgybits.shuffle.android.core.util.OSUtils;
+import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.view.ContextIcon;
 import org.dodgybits.shuffle.android.editor.activity.EditTaskActivity;
 import org.dodgybits.shuffle.android.list.view.LabelView;
@@ -38,8 +40,10 @@ import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
+import org.dodgybits.shuffle.sync.model.TaskChangeSet;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class EditTaskFragment extends AbstractEditFragment<Task>
@@ -263,18 +267,42 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         final boolean deleted = mDeletedCheckBox.isChecked();
         final boolean active = true;
 
+        TaskChangeSet changeSet = builder.getChangeSet();
 
-        builder
-                .setDescription(description)
-                .setModifiedDate(modified)
-                .setDetails(details)
-                .setProjectId(projectId)
-                .setContextIds(mSelectedContextIds)
-                .setAllDay(allDay)
-                .setComplete(complete)
-                .setDeleted(deleted)
-                .setActive(active);
-        
+        if (!ObjectUtils.equals(description, builder.getDescription())) {
+            builder.setDescription(description);
+            changeSet.descriptionChanged();
+        }
+        if (!ObjectUtils.equals(details, builder.getDetails())) {
+            builder.setDetails(details);
+            changeSet.detailsChanged();
+        }
+        if (!ObjectUtils.equals(projectId, builder.getProjectId())) {
+            builder.setProjectId(projectId);
+            changeSet.projectChanged();
+        }
+        if (allDay != builder.isAllDay()) {
+            builder.setAllDay(allDay);
+            changeSet.allDayChanged();
+        }
+        if (complete != builder.isComplete()) {
+            builder.setComplete(complete);
+            changeSet.completeChanged();
+        }
+        if (deleted != builder.isDeleted()) {
+            builder.setDeleted(deleted);
+            changeSet.deleteChanged();
+        }
+        if (active != builder.isActive()) {
+            builder.setActive(active);
+            changeSet.activeChanged();
+        }
+        if (EntityUtils.idsMatch(builder.getContextIds(), mSelectedContextIds)) {
+            builder.setContextIds(mSelectedContextIds);
+            changeSet.contextsChanged();
+        }
+
+        builder.setModifiedDate(modified);
         // If we are creating a new task, set the creation date
         if (mIsNewEntity) {
             builder.setCreatedDate(modified);
@@ -299,7 +327,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 timezone = TimeZone.getDefault().getID();
             }
         }
-        
+
         if (allDay) {
             // Reset start and end time, increment the monthDay by 1, and set
             // the timezone to UTC, as required for all-day events.
@@ -341,12 +369,20 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             order = mOriginalItem.getOrder();
         }
 
-        builder
-                .setTimezone(timezone)
-                .setStartDate(showFromMillis)
-                .setDueDate(dueMillis)
-                .setOrder(order);
+        builder.setTimezone(timezone);
 
+        if (showFromMillis != builder.getStartDate()) {
+            builder.setStartDate(showFromMillis);
+            changeSet.showFromChanged();
+        }
+        if (dueMillis != builder.getDueDate()) {
+            builder.setDueDate(dueMillis);
+            changeSet.dueChanged();
+        }
+        if (order != builder.getOrder()) {
+            builder.setOrder(order);
+            changeSet.orderChanged();
+        }
 
         Id eventId = mOriginalItem == null ? Id.NONE : mOriginalItem.getCalendarEventId();
         final boolean updateCalendar = mUpdateCalendarCheckBox.isChecked();
@@ -380,6 +416,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         }
         builder.setCalendarEventId(eventId);
 
+        builder.setChangeSet(changeSet);
         return builder.build();
     }
 

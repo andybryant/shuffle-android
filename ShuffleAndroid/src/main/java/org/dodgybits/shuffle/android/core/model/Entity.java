@@ -1,6 +1,8 @@
 
 package org.dodgybits.shuffle.android.core.model;
 
+import org.dodgybits.shuffle.sync.model.ContextChangeSet;
+
 public interface Entity {
 
     /**
@@ -24,6 +26,4 @@ public interface Entity {
     
     boolean isValid();
 
-    String getLocalName();
-    
 }

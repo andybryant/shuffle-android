@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Context.Builder;
 import org.dodgybits.shuffle.android.core.util.BundleUtils;
+import org.dodgybits.shuffle.sync.model.ContextChangeSet;
 
 import static android.provider.BaseColumns._ID;
 import static org.dodgybits.shuffle.android.persistence.provider.AbstractCollectionProvider.ShuffleTable.ACTIVE;
@@ -24,6 +25,8 @@ public class ContextEncoder implements EntityEncoder<Context> {
         icicle.putString(NAME, context.getName());
         icicle.putInt(COLOUR, context.getColourIndex());
         icicle.putString(ICON, context.getIconName());
+        BundleUtils.putId(icicle, GAE_ID, context.getGaeId());
+        icicle.putLong(CHANGE_SET, context.getChangeSet().getChangeSet());
     }
     
     @Override
@@ -39,6 +42,8 @@ public class ContextEncoder implements EntityEncoder<Context> {
         builder.setName(icicle.getString(NAME));
         builder.setColourIndex(icicle.getInt(COLOUR));
         builder.setIconName(icicle.getString(ICON));
+        builder.setGaeId(BundleUtils.getId(icicle, GAE_ID));
+        builder.setChangeSet(ContextChangeSet.fromChangeSet(icicle.getLong(CHANGE_SET)));
 
         return builder.build();
     }
