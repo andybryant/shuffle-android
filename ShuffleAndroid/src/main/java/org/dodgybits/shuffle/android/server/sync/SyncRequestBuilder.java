@@ -33,6 +33,7 @@ public class SyncRequestBuilder {
     public ShuffleProtos.SyncRequest createRequest() {
         ShuffleProtos.SyncRequest.Builder builder = ShuffleProtos.SyncRequest.newBuilder();
         builder.setDeviceIdentity(Preferences.getSyncDeviceIdentity(mContext));
+        builder.setClientVersion(2L);
         String lastSyncId = Preferences.getLastSyncId(mContext);
         if (lastSyncId != null) {
             builder.setLastSyncId(lastSyncId);
@@ -75,6 +76,7 @@ public class SyncRequestBuilder {
                 context.getChangeSet().markAll();
                 builder.addNewContexts(translator.toMessage(context));
             } else if (context.getChangeSet().hasChanges()) {
+                Log.d(TAG, "Context " + context.getName() + " has changes " + context.getChangeSet());
                 builder.addModifiedContexts(translator.toMessage(context));
             } else {
                 ShuffleProtos.SyncIdPair.Builder pairBuilder = ShuffleProtos.SyncIdPair.newBuilder();
@@ -103,6 +105,7 @@ public class SyncRequestBuilder {
                 project.getChangeSet().markAll();
                 builder.addNewProjects(translator.toMessage(project));
             } else if (project.getChangeSet().hasChanges()) {
+                Log.d(TAG, "Project " + project.getName() + " has changes " + project.getChangeSet());
                 builder.addModifiedProjects(translator.toMessage(project));
             } else {
                 ShuffleProtos.SyncIdPair.Builder pairBuilder = ShuffleProtos.SyncIdPair.newBuilder();
@@ -129,6 +132,7 @@ public class SyncRequestBuilder {
                 task.getChangeSet().markAll();
                 builder.addNewTasks(translator.toMessage(task));
             } else if (task.getChangeSet().hasChanges()) {
+                Log.d(TAG, "Task " + task.getDescription() + " has changes " + task.getChangeSet());
                 builder.addModifiedTasks(translator.toMessage(task));
             } else {
                 ShuffleProtos.SyncIdPair.Builder pairBuilder = ShuffleProtos.SyncIdPair.newBuilder();
