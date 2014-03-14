@@ -17,24 +17,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.google.inject.Inject;
-
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.preference.activity.PreferencesAppEngineSynchronizationActivity;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
 import org.dodgybits.shuffle.android.server.IntegrationSettings;
 import org.dodgybits.shuffle.android.server.sync.AuthTokenRetriever;
-import org.dodgybits.shuffle.android.server.sync.SyncSchedulingService;
+import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import org.dodgybits.shuffle.android.server.sync.event.ResetSyncSettingsEvent;
 import org.dodgybits.shuffle.android.server.sync.listener.SyncListener;
-
 import roboguice.event.EventManager;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
 import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.MANUAL_SOURCE;
-import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.SOURCE_EXTRA;
 
 public class PreferencesAppEngineSynchronizationFragment extends RoboFragment {
     private static final String TAG = "PrefAppEngSyncAct";
@@ -99,9 +95,7 @@ public class PreferencesAppEngineSynchronizationFragment extends RoboFragment {
     }
 
     public void onSyncNowClicked(View view) {
-        Intent intent = new Intent(getActivity(), SyncSchedulingService.class);
-        intent.putExtra(SOURCE_EXTRA, MANUAL_SOURCE);
-        getActivity().startService(intent);
+        SyncUtils.scheduleSync(getActivity(), MANUAL_SOURCE);
     }
 
     public Dialog createAccountsDialog() {

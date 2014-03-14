@@ -1,6 +1,5 @@
 package org.dodgybits.shuffle.android.server.sync;
 
-import android.content.Intent;
 import android.util.Log;
 import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.core.model.Context;
@@ -15,7 +14,9 @@ import org.dodgybits.shuffle.dto.ShuffleProtos;
 import roboguice.event.EventManager;
 import roboguice.inject.ContextSingleton;
 
-import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.*;
+import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.FAILED_STATUS_CAUSE;
+import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.INVALID_SYNC_ID_CAUSE;
+import static org.dodgybits.shuffle.android.server.sync.SyncUtils.scheduleSyncAfterError;
 
 @ContextSingleton
 public class SyncResponseProcessor {
@@ -68,7 +69,7 @@ public class SyncResponseProcessor {
             case INVALID_SYNC_ID:
                 // device out of sync with server - clear all sync data and request new sync
                 mEventManager.fire(new ResetSyncSettingsEvent());
-                scheduleSync(INVALID_SYNC_ID_CAUSE);
+                scheduleSyncAfterError(mContext, INVALID_SYNC_ID_CAUSE);
                 break;
 
             case INVALID_CLIENT_VERSION:
@@ -77,16 +78,10 @@ public class SyncResponseProcessor {
                 break;
 
             default:
-                scheduleSync(FAILED_STATUS_CAUSE);
+                scheduleSyncAfterError(mContext, FAILED_STATUS_CAUSE);
                 break;
         }
     }
 
-    private void scheduleSync(int cause) {
-        Intent intent = new Intent(mContext, SyncSchedulingService.class);
-        intent.putExtra(SOURCE_EXTRA, SYNC_FAILED_SOURCE);
-        intent.putExtra(CAUSE_EXTRA, cause);
-        mContext.startService(intent);
-    }
 
 }

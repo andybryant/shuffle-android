@@ -16,18 +16,13 @@ package org.dodgybits.shuffle.android.server.gcm;
  */
 
 import android.app.IntentService;
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
-
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-
-import org.dodgybits.shuffle.android.server.sync.SyncSchedulingService;
+import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 
 import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.GCM_SOURCE;
-import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.SOURCE_EXTRA;
 
 /**
  * This {@code IntentService} does the actual handling of the GCM message.
@@ -64,9 +59,7 @@ public class GcmIntentService extends IntentService {
                 // If it's a regular GCM message, do some work.
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Log.i(TAG, "Received message" + extras.toString());
-                Intent syncIntent = new Intent(this, SyncSchedulingService.class);
-                syncIntent.putExtra(SOURCE_EXTRA, GCM_SOURCE);
-                WakefulBroadcastReceiver.startWakefulService(this, syncIntent);
+                SyncUtils.scheduleSync(this, GCM_SOURCE);
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
