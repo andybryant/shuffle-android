@@ -1,5 +1,6 @@
 package org.dodgybits.shuffle.android.server.sync;
 
+import android.content.Intent;
 import android.util.Log;
 import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.core.model.Context;
@@ -14,11 +15,14 @@ import org.dodgybits.shuffle.dto.ShuffleProtos;
 import roboguice.event.EventManager;
 import roboguice.inject.ContextSingleton;
 
+import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.*;
+
 @ContextSingleton
 public class SyncResponseProcessor {
     private static final String TAG = "SyncResponseProcessor";
 
     public static final String INVALID_SYNC_ID = "INVALID_SYNC_ID";
+    public static final String INVALID_CLIENT_VERSION = "INVALID_CLIENT_VERSION";
 
     @Inject
     private android.content.Context mContext;
@@ -55,17 +59,34 @@ public class SyncResponseProcessor {
     }
 
     private void handleError(ShuffleProtos.SyncResponse response) {
-        // give up for now...
         String errorCode = response.getErrorCode();
         String errorMessage = response.getErrorMessage();
-        Log.e(TAG, "Sync failed with error code " + errorCode + " message: " + errorMessage );
+        Log.e(TAG, "Sync failed with error code " +
+                errorCode + " message: " + errorMessage );
 
-        if (INVALID_SYNC_ID.equals(errorCode)) {
-            // device out of sync with server - clear all sync data and request new sync
-            mEventManager.fire(new ResetSyncSettingsEvent());
+        switch (errorCode) {
+            case INVALID_SYNC_ID:
+                // device out of sync with server - clear all sync data and request new sync
+                mEventManager.fire(new ResetSyncSettingsEvent());
+                scheduleSync(INVALID_SYNC_ID_CAUSE);
+                break;
 
-            // TODO request new sync
+            case INVALID_CLIENT_VERSION:
+                // TODO tell user to upgrade to latest client
+                // include link to Google Play page
+                break;
+
+            default:
+                scheduleSync(FAILED_STATUS_CAUSE);
+                break;
         }
+    }
+
+    private void scheduleSync(int cause) {
+        Intent intent = new Intent(mContext, SyncSchedulingService.class);
+        intent.putExtra(SOURCE_EXTRA, SYNC_FAILED_SOURCE);
+        intent.putExtra(CAUSE_EXTRA, cause);
+        mContext.startService(intent);
     }
 
 }

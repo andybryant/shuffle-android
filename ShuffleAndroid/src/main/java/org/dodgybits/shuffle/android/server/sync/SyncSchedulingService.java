@@ -23,13 +23,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.WakefulBroadcastReceiver;
-import static android.text.format.DateUtils.*;
 import android.util.Log;
-
 import org.dodgybits.shuffle.android.preference.model.Preferences;
 
 import java.util.Date;
-import java.util.Objects;
+
+import static android.text.format.DateUtils.MINUTE_IN_MILLIS;
+import static android.text.format.DateUtils.SECOND_IN_MILLIS;
 
 /**
  * Gets notified when events happen that would require a sync and triggers
@@ -47,6 +47,7 @@ public class SyncSchedulingService extends IntentService {
     public static final int NO_RESPONSE_CAUSE = 1;
     public static final int FAILED_STATUS_CAUSE = 2;
     public static final int INVALID_AUTH_TOKEN_CAUSE = 3;
+    public static final int INVALID_SYNC_ID_CAUSE = 4;
 
 
     public SyncSchedulingService() {
