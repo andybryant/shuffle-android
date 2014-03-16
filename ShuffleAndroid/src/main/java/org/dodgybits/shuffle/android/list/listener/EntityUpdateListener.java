@@ -107,7 +107,7 @@ public class EntityUpdateListener {
 
         Task.Builder builder = Task.newBuilder();
         builder.setDescription(event.getDescription()).
-                setOrder(mTaskPersister.calculateTaskOrder(null, event.getProjectId(), 0L)).
+                setOrder(mTaskPersister.calculateTaskOrder(null, event.getProjectId())).
                 setProjectId(projectId).
                 setCreatedDate(System.currentTimeMillis()).
                 setModifiedDate(System.currentTimeMillis());

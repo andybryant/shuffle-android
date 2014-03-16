@@ -32,6 +32,7 @@ import static org.dodgybits.shuffle.android.persistence.provider.AbstractCollect
 import static org.dodgybits.shuffle.android.persistence.provider.TaskProvider.TaskContexts.CONTEXT_ID;
 import static org.dodgybits.shuffle.android.persistence.provider.TaskProvider.TaskContexts.TASK_ID;
 import static org.dodgybits.shuffle.android.persistence.provider.TaskProvider.Tasks.*;
+import static org.dodgybits.shuffle.android.persistence.provider.TaskProvider.Tasks.CHANGE_SET;
 import static org.dodgybits.shuffle.android.persistence.provider.TaskProvider.Tasks.GAE_ID;
 
 @ContextSingleton
@@ -298,60 +299,38 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
 
     /**
      * Calculate where this task should appear on the list for the given project.
-     * If no project is defined, order is meaningless, so return -1.
+     * If no project is defined, order is meaningless, so less as is.
      * <p/>
-     * New tasks go on the end of the list if no due date is defined.
-     * If due date is defined, add either to the start, or after the task
-     * closest to the end of the list with an earlier due date.
+     * New tasks go to the top of the list.
      * <p/>
      * For existing tasks, check if the project changed, and if so
      * treat like a new task, otherwise leave the order as is.
      *
      * @param originalTask the task before any changes or null if this is a new task
      * @param newProjectId the project selected for this task
-     * @param dueMillis    due date of this task (or 0L if not defined)
-     * @return 0-indexed order of task when displayed in the project view
+     * @return order of task when displayed in the project view
      */
-    public int calculateTaskOrder(Task originalTask, Id newProjectId, long dueMillis) {
+    public int calculateTaskOrder(Task originalTask, Id newProjectId) {
         if (!newProjectId.isInitialised()) return -1;
         int order;
         if (originalTask == null || !originalTask.getProjectId().equals(newProjectId)) {
             // get current highest order value
             Cursor cursor = mResolver.query(
                     TaskProvider.Tasks.CONTENT_URI,
-                    new String[]{BaseColumns._ID, TaskProvider.Tasks.DISPLAY_ORDER, TaskProvider.Tasks.DUE_DATE},
+                    new String[]{BaseColumns._ID, TaskProvider.Tasks.DISPLAY_ORDER},
                     TaskProvider.Tasks.PROJECT_ID + " = ?",
                     new String[]{String.valueOf(newProjectId.getId())},
-                    TaskProvider.Tasks.DISPLAY_ORDER + " desc");
+                    TaskProvider.Tasks.DISPLAY_ORDER + " asc");
             if (cursor.moveToFirst()) {
-                if (dueMillis > 0L) {
-                    Log.d(TAG, "Due date defined - finding best place to insert in project task list");
-                    Map<Long, Integer> updateValues = new HashMap<>();
-                    do {
-                        long previousId = cursor.getLong(0);
-                        int previousOrder = cursor.getInt(1);
-                        long previousDueDate = cursor.getLong(2);
-                        if (previousDueDate > 0L && previousDueDate < dueMillis) {
-                            order = previousOrder + 1;
-                            Log.d(TAG, "Placing after task with earlier due date " + previousId);
-                            break;
-                        }
-                        updateValues.put(previousId, previousOrder + 1);
-                        order = previousOrder;
-                    } while (cursor.moveToNext());
-                    moveFollowingTasks(updateValues);
-                } else {
-                    // no due date so put at end of list
-                    int highestOrder = cursor.getInt(1);
-                    order = highestOrder + 1;
-                }
-
+                int lowestOrder = cursor.getInt(1);
+                order = lowestOrder - 1;
             } else {
                 // no tasks in the project yet.
                 order = 0;
             }
             cursor.close();
         } else {
+            // leave as is for old tasks where project hasn't changed
             order = originalTask.getOrder();
         }
         return order;

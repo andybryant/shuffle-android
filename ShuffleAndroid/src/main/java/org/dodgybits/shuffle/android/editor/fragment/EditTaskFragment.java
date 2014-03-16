@@ -43,7 +43,6 @@ import org.dodgybits.shuffle.android.preference.model.Preferences;
 import org.dodgybits.shuffle.sync.model.TaskChangeSet;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.TimeZone;
 
 public class EditTaskFragment extends AbstractEditFragment<Task>
@@ -362,7 +361,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
         final int order;
         if (commitValues) {
-            order = ((TaskPersister)mPersister).calculateTaskOrder(mOriginalItem, projectId, dueMillis);
+            order = ((TaskPersister)mPersister).calculateTaskOrder(mOriginalItem, projectId);
         } else if (mOriginalItem == null) {
             order = 0;
         } else {
