@@ -296,7 +296,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             builder.setActive(active);
             changeSet.activeChanged();
         }
-        if (EntityUtils.idsMatch(builder.getContextIds(), mSelectedContextIds)) {
+        if (!EntityUtils.idsMatch(builder.getContextIds(), mSelectedContextIds)) {
             builder.setContextIds(mSelectedContextIds);
             changeSet.contextsChanged();
         }
