@@ -58,7 +58,9 @@ public class GaeSyncService extends RoboIntentService {
         AppEngineClient client = new AppEngineClient(integrationSettings.getAppURL(), authToken, this);
         ShuffleProtos.SyncRequest syncRequest = requestBuilder.createRequest();
         byte[] body = syncRequest.toByteArray();
+        long now = System.currentTimeMillis();
         transmit(body, client, integrationSettings.getSyncURL());
+        Log.i(TAG, "Took " + (System.currentTimeMillis() - now) + "ms to sync");
     }
 
     private void transmit(byte[] body, AppEngineClient client, URL target) {

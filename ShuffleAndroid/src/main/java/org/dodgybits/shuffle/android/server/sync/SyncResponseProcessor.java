@@ -7,6 +7,7 @@ import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.protocol.EntityDirectory;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
 import org.dodgybits.shuffle.android.server.sync.event.ResetSyncSettingsEvent;
+import org.dodgybits.shuffle.android.server.sync.listener.SyncListener;
 import org.dodgybits.shuffle.android.server.sync.processor.ContextSyncProcessor;
 import org.dodgybits.shuffle.android.server.sync.processor.ProjectSyncProcessor;
 import org.dodgybits.shuffle.android.server.sync.processor.TaskSyncProcessor;
@@ -35,6 +36,8 @@ public class SyncResponseProcessor {
     private TaskSyncProcessor mTaskSyncProcessor;
     @Inject
     private EventManager mEventManager;
+    @Inject
+    private SyncListener mSyncListener;
 
     public void process(ShuffleProtos.SyncResponse response) {
         if (response.hasErrorCode()) {
@@ -46,9 +49,13 @@ public class SyncResponseProcessor {
         long currentGaeDate = response.getCurrentGaeDate();
         int count = Preferences.getSyncCount(mContext);
 
+        long now = System.currentTimeMillis();
         EntityDirectory<Context> contextLocator = mContextSyncProcessor.processContexts(response);
+        now = logTime(now, "process contexts");
         EntityDirectory<Project> projectLocator = mProjectSyncProcessor.processProjects(response, contextLocator);
+        now = logTime(now, "process projects");
         mTaskSyncProcessor.processTasks(response, contextLocator, projectLocator);
+        now = logTime(now, "process tasks");
 
         Preferences.getEditor(mContext)
                 .putString(Preferences.SYNC_LAST_SYNC_ID, syncId)
@@ -57,6 +64,12 @@ public class SyncResponseProcessor {
                 .putInt(Preferences.SYNC_COUNT, count + 1)
                 .remove(Preferences.SYNC_LAST_SYNC_FAILURE_DATE)
                 .commit();
+    }
+
+    private long logTime(long lastStop, String message) {
+        long now = System.currentTimeMillis();
+        Log.d(TAG, "Took " + (now - lastStop) + "ms to " + message);
+        return now;
     }
 
     private void handleError(ShuffleProtos.SyncResponse response) {
