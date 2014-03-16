@@ -11,14 +11,18 @@ public class ContextProtocolTranslator  implements EntityProtocolTranslator<Cont
         Builder builder = org.dodgybits.shuffle.dto.ShuffleProtos.Context.newBuilder();
         builder
             .setId(context.getLocalId().getId())
-            .setGaeEntityId(context.getGaeId().getId())
             .setName((context.getName()))
             .setModified(ProtocolUtil.toDate(context.getModifiedDate()))
             .setColourIndex(context.getColourIndex())
             .setActive(context.isActive())
             .setDeleted(context.isDeleted())
             .setChangeSet(context.getChangeSet().getChangeSet());
-        
+
+        Id gaeId = context.getGaeId();
+        if (gaeId.isInitialised()) {
+            builder.setGaeEntityId(gaeId.getId());
+        }
+
         final String iconName = context.getIconName();
         if (iconName != null) {
             builder.setIcon(iconName);

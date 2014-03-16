@@ -18,13 +18,17 @@ public class ProjectProtocolTranslator implements EntityProtocolTranslator<Proje
         Builder builder = org.dodgybits.shuffle.dto.ShuffleProtos.Project.newBuilder();
         builder
             .setId(project.getLocalId().getId())
-            .setGaeEntityId(project.getGaeId().getId())
             .setName((project.getName()))
             .setModified(ProtocolUtil.toDate(project.getModifiedDate()))
             .setParallel(project.isParallel())
             .setActive(project.isActive())
             .setDeleted(project.isDeleted())
             .setChangeSet(project.getChangeSet().getChangeSet());
+
+        Id gaeId = project.getGaeId();
+        if (gaeId.isInitialised()) {
+            builder.setGaeEntityId(gaeId.getId());
+        }
 
         final Id defaultContextId = project.getDefaultContextId();
         if (defaultContextId.isInitialised()) {
