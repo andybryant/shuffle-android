@@ -326,7 +326,7 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
                 order = lowestOrder - 1;
             } else {
                 // no tasks in the project yet.
-                order = 0;
+                order = 100;
             }
             cursor.close();
         } else {
