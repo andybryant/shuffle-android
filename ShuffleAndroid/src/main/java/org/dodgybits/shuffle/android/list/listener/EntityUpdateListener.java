@@ -15,10 +15,13 @@ import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.list.event.*;
+import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import roboguice.event.Observes;
 
 import java.util.List;
 import java.util.Set;
+
+import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.LOCAL_CHANGE_SOURCE;
 
 public class EntityUpdateListener {
     private static final String TAG = "EntityUpdateListener";
@@ -49,6 +52,7 @@ public class EntityUpdateListener {
         mProjectPersister.updateDeletedFlag(event.getProjectId(), isDeleted);
         String entityName = mActivity.getString(R.string.project_name);
         showDeletedToast(entityName, isDeleted);
+        SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
     public void onToggleContextDeleted(@Observes UpdateContextDeletedEvent event) {
@@ -63,6 +67,7 @@ public class EntityUpdateListener {
         mContextPersister.updateDeletedFlag(event.getContextId(), event.isDeleted());
         String entityName = mActivity.getString(R.string.context_name);
         showDeletedToast(entityName, isDeleted);
+        SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
     public void onMoveTasks(@Observes MoveTasksEvent event) {
@@ -78,6 +83,7 @@ public class EntityUpdateListener {
 
         String entityName = mActivity.getString(R.string.task_name);
         showDeletedToast(entityName, event.isDeleted());
+        SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
     public void onToggleTaskCompleted(@Observes UpdateTasksCompletedEvent event) {
@@ -89,6 +95,7 @@ public class EntityUpdateListener {
 
         String entityName = mActivity.getString(R.string.task_name);
         showSavedToast(entityName);
+        SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
     
     public void onNewTask(@Observes NewTaskEvent event) {
@@ -120,6 +127,7 @@ public class EntityUpdateListener {
         mTaskPersister.insert(builder.build());
         String entityName = mActivity.getString(R.string.task_name);
         showSavedToast(entityName);
+        SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
     public void onNewProject(@Observes NewProjectEvent event) {
@@ -135,6 +143,7 @@ public class EntityUpdateListener {
         mProjectPersister.insert(builder.build());
         String entityName = mActivity.getString(R.string.project_name);
         showSavedToast(entityName);
+        SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
     public void onNewContext(@Observes NewContextEvent event) {
@@ -150,6 +159,7 @@ public class EntityUpdateListener {
         mContextPersister.insert(builder.build());
         String entityName = mActivity.getString(R.string.context_name);
         showSavedToast(entityName);
+        SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
     private void showDeletedToast(String entityName, boolean isDeleted) {

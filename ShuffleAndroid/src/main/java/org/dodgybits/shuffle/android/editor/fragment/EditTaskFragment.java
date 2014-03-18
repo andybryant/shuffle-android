@@ -40,10 +40,13 @@ import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
+import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import org.dodgybits.shuffle.sync.model.TaskChangeSet;
 
 import java.util.List;
 import java.util.TimeZone;
+
+import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.LOCAL_CHANGE_SOURCE;
 
 public class EditTaskFragment extends AbstractEditFragment<Task>
         implements CompoundButton.OnCheckedChangeListener {
@@ -252,6 +255,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
     @Override
     protected Task createItemFromUI(boolean commitValues) {
+        boolean changed = false;
         Task.Builder builder = Task.newBuilder();
         if (mOriginalItem != null) {
             builder.mergeFrom(mOriginalItem);
@@ -275,30 +279,37 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         if (!ObjectUtils.equals(details, builder.getDetails())) {
             builder.setDetails(details);
             changeSet.detailsChanged();
+            changed = true;
         }
         if (!ObjectUtils.equals(projectId, builder.getProjectId())) {
             builder.setProjectId(projectId);
             changeSet.projectChanged();
+            changed = true;
         }
         if (allDay != builder.isAllDay()) {
             builder.setAllDay(allDay);
             changeSet.allDayChanged();
+            changed = true;
         }
         if (complete != builder.isComplete()) {
             builder.setComplete(complete);
             changeSet.completeChanged();
+            changed = true;
         }
         if (deleted != builder.isDeleted()) {
             builder.setDeleted(deleted);
             changeSet.deleteChanged();
+            changed = true;
         }
         if (active != builder.isActive()) {
             builder.setActive(active);
             changeSet.activeChanged();
+            changed = true;
         }
         if (!EntityUtils.idsMatch(builder.getContextIds(), mSelectedContextIds)) {
             builder.setContextIds(mSelectedContextIds);
             changeSet.contextsChanged();
+            changed = true;
         }
 
         builder.setModifiedDate(modified);
@@ -373,14 +384,17 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         if (showFromMillis != builder.getStartDate()) {
             builder.setStartDate(showFromMillis);
             changeSet.showFromChanged();
+            changed = true;
         }
         if (dueMillis != builder.getDueDate()) {
             builder.setDueDate(dueMillis);
             changeSet.dueChanged();
+            changed = true;
         }
         if (order != builder.getOrder()) {
             builder.setOrder(order);
             changeSet.orderChanged();
+            changed = true;
         }
 
         Id eventId = mOriginalItem == null ? Id.NONE : mOriginalItem.getCalendarEventId();
@@ -414,8 +428,12 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             Log.i(TAG, "Updated calendar event " + eventId);
         }
         builder.setCalendarEventId(eventId);
-
         builder.setChangeSet(changeSet);
+
+        if (commitValues && changed) {
+            Log.d(TAG, "Task updated - schedule sync");
+            SyncUtils.scheduleSync(getActivity(), LOCAL_CHANGE_SOURCE);
+        }
         return builder.build();
     }
 

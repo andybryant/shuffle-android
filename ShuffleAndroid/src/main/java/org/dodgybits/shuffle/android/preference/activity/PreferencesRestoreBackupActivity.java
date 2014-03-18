@@ -23,6 +23,7 @@ import org.dodgybits.shuffle.android.core.view.AlertUtils;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.android.preference.view.Progress;
+import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import org.dodgybits.shuffle.dto.ShuffleProtos.Catalogue;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
@@ -31,6 +32,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.util.*;
+
+import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.LOCAL_CHANGE_SOURCE;
 
 public class PreferencesRestoreBackupActivity extends RoboActivity
 	implements View.OnClickListener {
@@ -483,6 +486,9 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
         @SuppressWarnings("unused")
         public void onPostExecute() {
             mTask = null;
+            if (mState == State.COMPLETE) {
+                SyncUtils.scheduleSync(PreferencesRestoreBackupActivity.this, LOCAL_CHANGE_SOURCE);
+            }
         }
     	
     }    

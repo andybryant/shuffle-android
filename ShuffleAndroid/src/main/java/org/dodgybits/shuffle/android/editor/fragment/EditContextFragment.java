@@ -13,14 +13,17 @@ import android.widget.*;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
-import org.dodgybits.shuffle.android.core.view.TextColours;
 import org.dodgybits.shuffle.android.core.view.ContextIcon;
 import org.dodgybits.shuffle.android.core.view.DrawableUtils;
+import org.dodgybits.shuffle.android.core.view.TextColours;
 import org.dodgybits.shuffle.android.editor.activity.ColourPickerActivity;
 import org.dodgybits.shuffle.android.editor.activity.IconPickerActivity;
 import org.dodgybits.shuffle.android.list.view.context.ContextListItem;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
+import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import org.dodgybits.shuffle.sync.model.ContextChangeSet;
+
+import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.LOCAL_CHANGE_SOURCE;
 
 public class EditContextFragment extends AbstractEditFragment<Context>
         implements TextWatcher {
@@ -194,6 +197,7 @@ public class EditContextFragment extends AbstractEditFragment<Context>
 
     @Override
     protected Context createItemFromUI(boolean commitValues) {
+        boolean changed = false;
         Context.Builder builder = Context.newBuilder();
         if (mOriginalItem != null) {
             builder.mergeFrom(mOriginalItem);
@@ -209,25 +213,36 @@ public class EditContextFragment extends AbstractEditFragment<Context>
         if (!ObjectUtils.equals(name, builder.getName())) {
             builder.setName(name);
             changeSet.nameChanged();
+            changed = true;
         }
         if (mColourIndex != builder.getColourIndex()) {
             builder.setColourIndex(mColourIndex);
             changeSet.colourChanged();
+            changed = true;
         }
         if (!ObjectUtils.equals(iconName, builder.getIconName())) {
             builder.setIconName(iconName);
             changeSet.iconChanged();
+            changed = true;
         }
         if (active != builder.isActive()) {
             builder.setActive(active);
             changeSet.activeChanged();
+            changed = true;
         }
         if (deleted != builder.isDeleted()) {
             builder.setDeleted(deleted);
             changeSet.deleteChanged();
+            changed = true;
         }
         builder.setModifiedDate(System.currentTimeMillis());
         builder.setChangeSet(changeSet);
+
+        if (commitValues && changed) {
+            Log.d(TAG, "Context updated - schedule sync");
+            SyncUtils.scheduleSync(getActivity(), LOCAL_CHANGE_SOURCE);
+        }
+
         return builder.build();
     }
 

@@ -3,6 +3,7 @@ package org.dodgybits.shuffle.android.editor.fragment;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import org.dodgybits.android.shuffle.R;
@@ -11,7 +12,10 @@ import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
+import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import org.dodgybits.shuffle.sync.model.ProjectChangeSet;
+
+import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.LOCAL_CHANGE_SOURCE;
 
 public class EditProjectFragment extends AbstractEditFragment<Project> {
     private static final String TAG = "EditProjectFragment";
@@ -124,6 +128,7 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
 
     @Override
     protected Project createItemFromUI(boolean commitValues) {
+        boolean changed = false;
         Project.Builder builder = Project.newBuilder();
         if (mOriginalItem != null) {
             builder.mergeFrom(mOriginalItem);
@@ -138,6 +143,7 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
         if (!ObjectUtils.equals(name, builder.getName())) {
             builder.setName(name);
             changeSet.nameChanged();
+            changed = true;
         }
 
         Id defaultContextId = Id.NONE;
@@ -148,22 +154,32 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
         if (!ObjectUtils.equals(defaultContextId, builder.getDefaultContextId())) {
             builder.setDefaultContextId(defaultContextId);
             changeSet.defaultContextChanged();
+            changed = true;
         }
         if (isParallel != builder.isParallel()) {
             builder.setParallel(isParallel);
             changeSet.parallelChanged();
+            changed = true;
         }
         if (active != builder.isActive()) {
             builder.setActive(active);
             changeSet.activeChanged();
+            changed = true;
         }
         if (deleted != builder.isDeleted()) {
             builder.setDeleted(deleted);
             changeSet.deleteChanged();
+            changed = true;
         }
 
         builder.setModifiedDate(System.currentTimeMillis());
         builder.setChangeSet(changeSet);
+
+        if (commitValues && changed) {
+            Log.d(TAG, "Project updated - schedule sync");
+            SyncUtils.scheduleSync(getActivity(), LOCAL_CHANGE_SOURCE);
+        }
+
         return builder.build();
     }
 

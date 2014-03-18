@@ -4,13 +4,12 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
-
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.editor.fragment.AbstractEditFragment;
 import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
 
 public abstract class AbstractEditActivity extends RoboActionBarActivity {
-    private static final String TAG = "EditProjectActivity";
+    private static final String TAG = "AbstractEditActivity";
 
     @Override
     protected void onCreate(Bundle icicle) {
