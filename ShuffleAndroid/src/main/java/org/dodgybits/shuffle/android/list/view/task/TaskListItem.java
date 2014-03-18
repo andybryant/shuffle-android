@@ -12,6 +12,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -27,7 +30,10 @@ import org.dodgybits.shuffle.android.core.util.TaskLifecycleState;
 import org.dodgybits.shuffle.android.core.view.ContextIcon;
 import org.dodgybits.shuffle.android.core.view.TextColours;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This custom View is the list item for the TaskListFragment, and serves two purposes:
@@ -223,6 +229,14 @@ public class TaskListItem extends View {
 
     private boolean setContexts(List<Context> contexts) {
         boolean changed = true;
+
+        // don't show deleted contexts
+        contexts = Lists.newArrayList(Iterables.filter(contexts, new Predicate<Context>() {
+            @Override
+            public boolean apply(Context context) {
+                return !context.isDeleted();
+            }
+        }));
 
         if (contexts.size() == mContexts.size()) {
             Set<Id> currentIds = Sets.newHashSet();

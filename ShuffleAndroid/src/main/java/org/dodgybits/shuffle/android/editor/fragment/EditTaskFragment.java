@@ -20,6 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
@@ -740,8 +742,25 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     }
 
     private void updateContextPanel() {
+        List<Context> contexts = Lists.transform(mSelectedContextIds, new Function<Id, Context>() {
+            @Override
+            public Context apply(Id id) {
+                return mContextCache.findById(id);
+            }
+        });
+
+        // don't show deleted contexts
+        contexts = Lists.newArrayList(Iterables.filter(contexts, new Predicate<Context>() {
+            @Override
+            public boolean apply(Context context) {
+                return !context.isDeleted();
+            }
+        }));
+
+
+
         int viewCount = mContextContainer.getChildCount();
-        if (mSelectedContextIds.isEmpty()) {
+        if (contexts.isEmpty()) {
             mNoContexts.setVisibility(View.VISIBLE);
             if (viewCount > 1) {
                 mContextContainer.removeViews(1, viewCount - 1);
@@ -751,7 +770,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             mNoContexts.setVisibility(View.GONE);
             viewCount--; // ignore no contexts view
             // reuse existing views if present
-            int contextCount = mSelectedContextIds.size();
+            int contextCount = contexts.size();
             while (viewCount < contextCount) {
                 LabelView contextView = new LabelView(getActivity());
                 contextView.setDuplicateParentStateEnabled(true);
@@ -764,8 +783,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
             for (int i = 0; i < contextCount; i++) {
                 LabelView contextView = (LabelView) mContextContainer.getChildAt(i + 1); // skip no contexts view
-                Id contextId = mSelectedContextIds.get(i);
-                Context context = mContextCache.findById(contextId);
+                Context context = contexts.get(i);
                 contextView.setText(context.getName());
                 contextView.setColourIndex(context.getColourIndex());
                 ContextIcon contextIcon = ContextIcon.createIcon(context.getIconName(), getResources(), true);
