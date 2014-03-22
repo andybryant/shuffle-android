@@ -320,6 +320,9 @@ you need to select the Google account you use to login to www.shuffle.co</string
     <string name="no_previous_sync">No sync yet on this account</string>
     <string name="sync_selected_account">Logged in as %1$s</string>
     <string name="no_sync_accounts">No Google accounts setup. Add one?</string>
+    <string name="sync_client_old_title">Shuffle out of date</string>
+    <string name="sync_client_old_text">Cannot synchronize until updated.</string>
+
 
     <!-- list filter preferences -->
     <string name="list_settings_title">Settings</string>

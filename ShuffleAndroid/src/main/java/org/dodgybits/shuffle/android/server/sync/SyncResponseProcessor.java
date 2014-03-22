@@ -1,10 +1,18 @@
 package org.dodgybits.shuffle.android.server.sync;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import com.google.inject.Inject;
+import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.protocol.EntityDirectory;
+import org.dodgybits.shuffle.android.core.util.PackageUtils;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
 import org.dodgybits.shuffle.android.server.sync.event.ResetSyncSettingsEvent;
 import org.dodgybits.shuffle.android.server.sync.listener.SyncListener;
@@ -25,6 +33,8 @@ public class SyncResponseProcessor {
 
     public static final String INVALID_SYNC_ID = "INVALID_SYNC_ID";
     public static final String INVALID_CLIENT_VERSION = "INVALID_CLIENT_VERSION";
+
+    public static final int NOTIFICATION_ID = 10001;
 
     @Inject
     private android.content.Context mContext;
@@ -86,8 +96,10 @@ public class SyncResponseProcessor {
                 break;
 
             case INVALID_CLIENT_VERSION:
-                // TODO tell user to upgrade to latest client
-                // include link to Google Play page
+                Preferences.getEditor(mContext)
+                        .putBoolean(Preferences.SYNC_ENABLED, false)
+                        .commit();
+                showOutOfDateNotification();
                 break;
 
             default:
@@ -96,5 +108,22 @@ public class SyncResponseProcessor {
         }
     }
 
+    private void showOutOfDateNotification() {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        String packageName = PackageUtils.getPackageName(mContext);
+        intent.setData(Uri.parse("market://details?id=" + packageName));
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
+        builder.setSmallIcon(R.drawable.shuffle_icon);
+        builder.setContentIntent(pendingIntent);
+        builder.setAutoCancel(true);
+        builder.setLargeIcon(BitmapFactory.decodeResource(
+                mContext.getResources(), R.drawable.shuffle_icon));
+        builder.setContentTitle(mContext.getString(R.string.sync_client_old_title));
+        builder.setContentText(mContext.getString(R.string.sync_client_old_text));
+        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(
+                mContext.NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
+    }
 
 }
