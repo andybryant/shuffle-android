@@ -196,27 +196,27 @@
     </string-array>
 
     <string-array name="list_preferences_active_labels">
-        <item>Show All</item>
-        <item>Show Active Only</item>
-        <item>Hide Active</item>
+        <item>Show all</item>
+        <item>Show active</item>
+        <item>Show inactive</item>
     </string-array>
 
     <string-array name="list_preferences_deleted_labels">
-        <item>Show All</item>
-        <item>Show Deleted Only</item>
-        <item>Hide Deleted</item>
+        <item>Show all</item>
+        <item>Show deleted</item>
+        <item>Hide deleted</item>
     </string-array>
 
     <string-array name="list_preferences_pending_labels">
-        <item>Show All</item>
-        <item>Show Pending Only</item>
-        <item>Hide Pending</item>
+        <item>Show all</item>
+        <item>Show pending</item>
+        <item>Show current</item>
     </string-array>
 
     <string-array name="list_preferences_completed_labels">
-        <item>Show All</item>
-        <item>Show Completed Only</item>
-        <item>Hide Completed</item>
+        <item>Show all</item>
+        <item>Show complete</item>
+        <item>Show incomplete</item>
     </string-array>
 
 </resources>

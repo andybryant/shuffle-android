@@ -240,7 +240,7 @@ allow that, you can turn it off under Settings.</string>
 	
 	<!--  preferences screen -->    
     <string name="quick_add_title">Quick Add Bar</string>
-    <string name="show_all">Show All</string>
+    <string name="show_all">Show all</string>
     <string name="general_preferences">Google settings</string>
     
     <string name="title_calendar_preference">Calendar selection</string>
