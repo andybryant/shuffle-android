@@ -12,6 +12,7 @@ import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
+import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import org.dodgybits.shuffle.android.core.util.IntentUtils;
 import org.dodgybits.shuffle.android.core.view.EntityPickerDialogHelper;
 import roboguice.activity.RoboFragmentActivity;
@@ -53,6 +54,17 @@ public class LauncherShortcutActivity extends RoboFragmentActivity {
         setTitle(R.string.title_shortcut_picker);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AnalyticsUtils.activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AnalyticsUtils.activityStop(this);
+    }
 
     @Override
     protected Dialog onCreateDialog(int id) {

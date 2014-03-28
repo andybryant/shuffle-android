@@ -49,6 +49,8 @@ dependencies {
     compile("org.roboguice:roboguice:2.0") {
         exclude group: 'android.support'
     }
+    compile files('libs/google-analytics-services-3.02.jar')
+
     androidTestCompile 'junit:junit:4.11'
 
 }

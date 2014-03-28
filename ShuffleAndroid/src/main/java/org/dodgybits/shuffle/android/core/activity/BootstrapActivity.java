@@ -20,9 +20,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
+import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
-
 import roboguice.activity.RoboActivity;
 
 public class BootstrapActivity extends RoboActivity {
@@ -45,5 +44,16 @@ public class BootstrapActivity extends RoboActivity {
 
         finish();
 	}
-	
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AnalyticsUtils.activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AnalyticsUtils.activityStop(this);
+    }
 }

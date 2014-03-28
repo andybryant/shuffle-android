@@ -18,6 +18,7 @@ import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.model.protocol.*;
+import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import org.dodgybits.shuffle.android.core.util.StringUtils;
 import org.dodgybits.shuffle.android.core.view.AlertUtils;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
@@ -72,8 +73,20 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
     protected void onResume() {
     	super.onResume();
         setupFileSpinner();
-    }    	
-    
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AnalyticsUtils.activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AnalyticsUtils.activityStop(this);
+    }
+
     private void findViewsAndAddListeners() {
         mRestoreButton.setText(R.string.restore_button_title);
         

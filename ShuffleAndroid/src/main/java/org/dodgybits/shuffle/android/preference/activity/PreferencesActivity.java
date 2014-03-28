@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.util.Log;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import org.dodgybits.shuffle.android.core.util.CalendarUtils;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
 import roboguice.activity.RoboPreferenceActivity;
@@ -42,8 +43,18 @@ public class PreferencesActivity extends RoboPreferenceActivity {
         setCalendarPreferenceEntries();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AnalyticsUtils.activityStart(this);
+    }
 
-    
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AnalyticsUtils.activityStop(this);
+    }
+
     private void setCalendarPreferenceEntries() {
         mPreference = (ListPreference)findPreference(Preferences.CALENDAR_ID_KEY);
         // disable the pref until we load the values (if at all)

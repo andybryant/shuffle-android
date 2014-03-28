@@ -20,29 +20,18 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-
 import com.google.inject.Inject;
 import com.google.inject.Key;
-
-import java.util.HashMap;
-import java.util.Map;
-
+import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import roboguice.RoboGuice;
-import roboguice.activity.event.OnActivityResultEvent;
-import roboguice.activity.event.OnConfigurationChangedEvent;
-import roboguice.activity.event.OnContentChangedEvent;
-import roboguice.activity.event.OnCreateEvent;
-import roboguice.activity.event.OnDestroyEvent;
-import roboguice.activity.event.OnNewIntentEvent;
-import roboguice.activity.event.OnPauseEvent;
-import roboguice.activity.event.OnRestartEvent;
-import roboguice.activity.event.OnResumeEvent;
-import roboguice.activity.event.OnStartEvent;
-import roboguice.activity.event.OnStopEvent;
+import roboguice.activity.event.*;
 import roboguice.event.EventManager;
 import roboguice.inject.ContentViewListener;
 import roboguice.inject.RoboInjector;
 import roboguice.util.RoboContext;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class RoboActionBarActivity extends ActionBarActivity implements RoboContext {
@@ -70,6 +59,7 @@ public class RoboActionBarActivity extends ActionBarActivity implements RoboCont
     protected void onStart() {
         super.onStart();
         eventManager.fire(new OnStartEvent());
+        AnalyticsUtils.activityStart(this);
     }
 
     @Override
@@ -96,6 +86,7 @@ public class RoboActionBarActivity extends ActionBarActivity implements RoboCont
             eventManager.fire(new OnStopEvent());
         } finally {
             super.onStop();
+            AnalyticsUtils.activityStop(this);
         }
     }
 

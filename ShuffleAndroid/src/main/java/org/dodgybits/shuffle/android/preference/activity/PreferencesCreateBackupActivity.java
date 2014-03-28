@@ -23,6 +23,7 @@ import org.dodgybits.shuffle.android.core.model.persistence.EntityPersister;
 import org.dodgybits.shuffle.android.core.model.protocol.ContextProtocolTranslator;
 import org.dodgybits.shuffle.android.core.model.protocol.ProjectProtocolTranslator;
 import org.dodgybits.shuffle.android.core.model.protocol.TaskProtocolTranslator;
+import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import org.dodgybits.shuffle.android.core.view.AlertUtils;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
@@ -68,6 +69,18 @@ public class PreferencesCreateBackupActivity extends RoboActivity
         setContentView(R.layout.backup_create);
         findViewsAndAddListeners();
 		onUpdateState();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AnalyticsUtils.activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AnalyticsUtils.activityStop(this);
     }
 
     private void findViewsAndAddListeners() {

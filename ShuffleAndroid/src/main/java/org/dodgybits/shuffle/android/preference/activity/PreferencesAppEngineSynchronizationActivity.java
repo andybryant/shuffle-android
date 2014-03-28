@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import org.dodgybits.shuffle.android.preference.fragment.PreferencesAppEngineSynchronizationFragment;
 import roboguice.activity.RoboFragmentActivity;
 
@@ -35,6 +36,18 @@ public class PreferencesAppEngineSynchronizationActivity extends RoboFragmentAct
         } else {
             mFragment = currentFragment;
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AnalyticsUtils.activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AnalyticsUtils.activityStop(this);
     }
 
     @Override

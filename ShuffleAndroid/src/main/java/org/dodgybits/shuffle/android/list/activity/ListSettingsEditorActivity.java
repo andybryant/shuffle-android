@@ -4,20 +4,15 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceScreen;
-import android.preference.SwitchPreference;
+import android.preference.*;
 import android.util.Log;
-
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import org.dodgybits.shuffle.android.core.util.OSUtils;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.android.preference.model.ListSettings;
-
 import roboguice.activity.RoboPreferenceActivity;
 
 public class ListSettingsEditorActivity extends RoboPreferenceActivity {
@@ -67,6 +62,18 @@ public class ListSettingsEditorActivity extends RoboPreferenceActivity {
             intent.putExtra(LIST_QUERY_EXTRA, mListQuery.name());
             sendBroadcast(intent);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AnalyticsUtils.activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AnalyticsUtils.activityStop(this);
     }
 
     private void setupScreen() {

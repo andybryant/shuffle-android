@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
@@ -54,7 +55,19 @@ public abstract class PreferencesDeleteActivity extends RoboActivity {
             }
         });        
     }
-    
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AnalyticsUtils.activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AnalyticsUtils.activityStop(this);
+    }
+
     abstract protected void onDelete();
         
 }

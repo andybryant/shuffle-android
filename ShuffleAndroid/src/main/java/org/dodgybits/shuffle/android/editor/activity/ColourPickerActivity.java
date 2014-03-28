@@ -27,6 +27,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import org.dodgybits.shuffle.android.core.view.TextColours;
 import org.dodgybits.shuffle.android.list.view.LabelView;
 import roboguice.activity.RoboActivity;
@@ -57,7 +58,19 @@ public class ColourPickerActivity extends RoboActivity implements
 		finish();
 	}
 
-	public class ColourAdaptor extends BaseAdapter {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AnalyticsUtils.activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AnalyticsUtils.activityStop(this);
+    }
+
+    public class ColourAdaptor extends BaseAdapter {
 		private TextColours textColours;
 		
 		public ColourAdaptor(Context context) {

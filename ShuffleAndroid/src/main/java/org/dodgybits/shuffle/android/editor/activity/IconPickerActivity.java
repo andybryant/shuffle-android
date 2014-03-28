@@ -26,7 +26,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import com.google.analytics.tracking.android.EasyTracker;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
@@ -48,7 +50,19 @@ public class IconPickerActivity extends RoboActivity implements OnItemClickListe
         mGrid.setOnItemClickListener(this);
     }
 
-	public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AnalyticsUtils.activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AnalyticsUtils.activityStop(this);
+    }
+
+    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 		Bundle bundle = new Bundle();
 		int iconId = (Integer)mGrid.getAdapter().getItem(position);
 		String iconName = getResources().getResourceEntryName(iconId);

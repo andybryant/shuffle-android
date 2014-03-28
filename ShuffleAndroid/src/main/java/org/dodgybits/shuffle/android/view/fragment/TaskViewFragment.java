@@ -1,4 +1,4 @@
-package org.dodgybits.shuffle.android.view.activity;
+package org.dodgybits.shuffle.android.view.fragment;
 
 import android.content.ContentUris;
 import android.content.Intent;
