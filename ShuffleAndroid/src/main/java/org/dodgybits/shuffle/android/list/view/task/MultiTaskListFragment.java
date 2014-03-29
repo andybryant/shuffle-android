@@ -6,10 +6,8 @@ import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
 import org.dodgybits.shuffle.android.core.util.OSUtils;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
@@ -27,31 +25,12 @@ public class MultiTaskListFragment extends TaskListFragment {
     private MultiTaskListContext mListContext;
     private SpinnerAdapter mAdapter;
     private ActionBar.OnNavigationListener mListener;
-    private int mOldOptions = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        List<ListQuery> queries = getMultiTaskListContext().getListQueries();
-        List<String> names = Lists.transform(queries, new Function<ListQuery, String>() {
-            @Override
-            public String apply(ListQuery input) {
-                return getString(ListTitles.getTitleId(input));
-            }
-        });
-        int spinnerResId = OSUtils.atLeastHoneycomb() ? android.R.layout.simple_spinner_dropdown_item : android.R.layout.simple_list_item_1;
-        mAdapter = new ArrayAdapter(getActivity(), spinnerResId, names);
-        mListener = new ActionBar.OnNavigationListener() {
-            @Override
-            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-                Log.d(TAG, "Navigated to item " + itemPosition);
-                mListContext.setListIndex(itemPosition);
-                restartLoading();
-                onVisibilityChange();
-                return true;
-            }
-        };
+        createAdapter();
+        setupActionBar();
     }
 
     @Override
@@ -76,32 +55,6 @@ public class MultiTaskListFragment extends TaskListFragment {
     }
 
     @Override
-    protected void onVisibilityChange() {
-        Log.d(TAG, "Visibility change to " + getUserVisibleHint());
-        if (getUserVisibleHint()) {
-            ActionBar actionBar = getRoboActionBarActivity().getSupportActionBar();
-            if (mOldOptions == -1) {
-                mOldOptions = actionBar.getDisplayOptions();
-                actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_HOME);
-                actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-                actionBar.setListNavigationCallbacks(mAdapter, mListener);
-            }
-            if (actionBar.getSelectedNavigationIndex() != getSelectedIndex()) {
-                actionBar.setSelectedNavigationItem(getSelectedIndex());
-            }
-        } else {
-            if (getActivity() != null && mOldOptions != -1) {
-                ActionBar actionBar = getRoboActionBarActivity().getSupportActionBar();
-                actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-                actionBar.setDisplayOptions(mOldOptions);
-                mOldOptions = -1;
-            }
-        }
-
-        super.onVisibilityChange();
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(SELECTED_INDEX, mListContext.getListIndex());
@@ -113,6 +66,38 @@ public class MultiTaskListFragment extends TaskListFragment {
         
         int savedIndex = savedInstanceState.getInt(SELECTED_INDEX, 0);
         mListContext.setListIndex(savedIndex);
+    }
+
+    private void createAdapter() {
+        List<ListQuery> queries = getMultiTaskListContext().getListQueries();
+        List<String> names = Lists.transform(queries, new Function<ListQuery, String>() {
+            @Override
+            public String apply(ListQuery input) {
+                return getString(ListTitles.getTitleId(input));
+            }
+        });
+        int spinnerResId = OSUtils.atLeastHoneycomb() ? android.R.layout.simple_spinner_dropdown_item : android.R.layout.simple_list_item_1;
+        mAdapter = new ArrayAdapter(getActivity(), spinnerResId, names);
+        mListener = new ActionBar.OnNavigationListener() {
+            @Override
+            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+                Log.d(TAG, "Navigated to item " + itemPosition);
+                mListContext.setListIndex(itemPosition);
+                restartLoading();
+                onVisibilityChange();
+                return true;
+            }
+        };
+    }
+
+    private void setupActionBar() {
+        ActionBar actionBar = getRoboActionBarActivity().getSupportActionBar();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_HOME);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        actionBar.setListNavigationCallbacks(mAdapter, mListener);
+        if (actionBar.getSelectedNavigationIndex() != getSelectedIndex()) {
+            actionBar.setSelectedNavigationItem(getSelectedIndex());
+        }
     }
 
     private MultiTaskListContext getMultiTaskListContext() {
@@ -131,5 +116,4 @@ public class MultiTaskListFragment extends TaskListFragment {
         mListContext.setListIndex(getArguments().getInt(SELECTED_INDEX, 0));
     }
 
-    
 }

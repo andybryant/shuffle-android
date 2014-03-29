@@ -1,7 +1,6 @@
 package org.dodgybits.shuffle.android.core.view;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
@@ -17,15 +16,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.AndroidException;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.ContextSelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.EntitySelector;
@@ -84,7 +77,7 @@ public class NavigationDrawerFragment extends Fragment {
             int i = 0;
             sListItems = new IconNameCountListAdaptor.ListItem[] {
                     createTaskListItem(ListIcons.INBOX, perspectives[i], getInitialCount(cachedCounts, i++), ListQuery.inbox),
-                    createTaskListItem(ListIcons.DUE_TODAY, perspectives[i], getInitialCount(cachedCounts, i++), ListQuery.dueToday),
+                    createTaskListItem(ListIcons.DUE_NEXT_MONTH, perspectives[i], getInitialCount(cachedCounts, i++), ListQuery.dueNextMonth),
                     createTaskListItem(ListIcons.NEXT_TASKS, perspectives[i], getInitialCount(cachedCounts, i++), ListQuery.nextTasks),
                     createListItem(ListIcons.PROJECTS, perspectives[i], getInitialCount(cachedCounts, i++), ListQuery.project, ProjectSelector.newBuilder().build()),
                     createListItem(ListIcons.CONTEXTS, perspectives[i], getInitialCount(cachedCounts, i++), ListQuery.context, ContextSelector.newBuilder().build()),

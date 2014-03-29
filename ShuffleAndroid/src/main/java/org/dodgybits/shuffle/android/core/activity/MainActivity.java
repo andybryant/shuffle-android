@@ -13,11 +13,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
-
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.util.PackageUtils;
 import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
@@ -37,12 +35,11 @@ import org.dodgybits.shuffle.android.server.gcm.GcmRegister;
 import org.dodgybits.shuffle.android.server.gcm.event.RegisterGcmEvent;
 import org.dodgybits.shuffle.android.server.sync.AuthTokenRetriever;
 import org.dodgybits.shuffle.android.server.sync.SyncAlarmService;
+import roboguice.event.EventManager;
+import roboguice.inject.ContextScopedProvider;
 
 import java.util.List;
 import java.util.Map;
-
-import roboguice.event.EventManager;
-import roboguice.inject.ContextScopedProvider;
 
 public class MainActivity extends RoboActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -97,19 +94,9 @@ public class MainActivity extends RoboActionBarActivity
 
         // don't show soft keyboard unless user clicks on quick add box
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
         initFragments();
-
         checkLastVersion();
-
-        // Set up the drawer.
-        setContentView(R.layout.main);
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
-
+        setupNavigationDrawer();
         setupSync();
     }
 
@@ -202,15 +189,21 @@ public class MainActivity extends RoboActionBarActivity
         mQueryIndex = Maps.newHashMap();
 
         addTaskList(ListQuery.inbox);
-        addMultiTaskList(Lists.newArrayList(ListQuery.dueToday, ListQuery.dueNextWeek, ListQuery.dueNextMonth));
+        addTaskList(ListQuery.dueNextMonth);
         addTaskList(ListQuery.nextTasks);
-
         addFragment(ListQuery.project, mProjectListFragmentProvider.get(this));
-
         addFragment(ListQuery.context, mContextListFragmentProvider.get(this));
-
         addTaskList(ListQuery.custom);
         addTaskList(ListQuery.tickler);
+    }
+
+    private void setupNavigationDrawer() {
+        setContentView(R.layout.main);
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
+                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
     private void addMultiTaskList(List<ListQuery> queries) {
