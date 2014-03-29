@@ -16,6 +16,6 @@
   -->
 <resources>
     <!-- Boolean value indicating whether the tablet UI should be used. -->
-    <boolean name="use_tablet_ui">false</boolean>
+    <bool name="use_tablet_ui">false</bool>
 
 </resources>
