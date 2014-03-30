@@ -16,11 +16,15 @@
 
 package org.dodgybits.shuffle.android.view.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -32,8 +36,10 @@ import org.dodgybits.shuffle.android.core.activity.MainActivity;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.encoding.TaskEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
+import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.list.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.list.listener.NavigationListener;
+import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
 import org.dodgybits.shuffle.android.view.fragment.TaskViewFragment;
@@ -43,6 +49,8 @@ import org.dodgybits.shuffle.android.view.fragment.TaskViewFragment;
  */
 public class TaskViewActivity extends RoboActionBarActivity {
     private static final String TAG = "TaskViewActivity";
+
+    private static final int LOADER_ID_TASK_LOADER = 1;
 
     @Inject private TaskPersister mPersister;
     @Inject private TaskEncoder mEncoder;
@@ -54,7 +62,6 @@ public class TaskViewActivity extends RoboActionBarActivity {
     private EntityUpdateListener mEntityUpdateListener;
 
     private Uri mUri;
-    private Cursor mCursor;
     private Task mTask;
 
     @Override
@@ -74,24 +81,6 @@ public class TaskViewActivity extends RoboActionBarActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        mCursor.moveToFirst();
-        mTask = mPersister.read(mCursor);
-
-        Bundle args = new Bundle();
-        mEncoder.save(args, mTask);
-
-        Log.d(TAG, "Adding task view fragment to activity");
-
-        TaskViewFragment viewFragment = TaskViewFragment.newInstance(args);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, viewFragment);
-        ft.commit();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -107,11 +96,54 @@ public class TaskViewActivity extends RoboActionBarActivity {
     }
 
     private void loadCursor() {
-        mCursor = managedQuery(mUri, TaskProvider.Tasks.FULL_PROJECTION, null, null, null);
-        if (mCursor == null || mCursor.getCount() == 0) {
-            // The cursor is empty. This can happen if the event was deleted.
-            finish();
+        Log.d(TAG, "Creating list cursor");
+        final LoaderManager lm = getSupportLoaderManager();
+        lm.initLoader(LOADER_ID_TASK_LOADER, getIntent().getExtras(), LOADER_CALLBACKS);
+    }
+
+    /**
+     * Loader callbacks for task list.
+     */
+    private final LoaderManager.LoaderCallbacks<Cursor> LOADER_CALLBACKS =
+            new LoaderManager.LoaderCallbacks<Cursor>() {
+
+                @Override
+                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                    return new TaskCursorLoader(TaskViewActivity.this, mUri);
+                }
+
+                @Override
+                public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
+                    c.moveToFirst();
+                    mTask = mPersister.read(c);
+
+                    Bundle args = new Bundle();
+                    mEncoder.save(args, mTask);
+
+                    Log.d(TAG, "Adding task view fragment to activity");
+
+                    TaskViewFragment viewFragment = TaskViewFragment.newInstance(args);
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.fragment_container, viewFragment);
+                    ft.commit();
+                }
+
+                @Override
+                public void onLoaderReset(Loader<Cursor> loader) {
+                }
+            };
+
+    private static class TaskCursorLoader extends CursorLoader {
+        protected final Context mContext;
+
+        public TaskCursorLoader(Context context, Uri uri) {
+            // Initialize with no where clause.  We'll set it later.
+            super(context, uri,
+                    TaskProvider.Tasks.FULL_PROJECTION, null, null,
+                    null);
+            mContext = context;
         }
+
     }
 
 }

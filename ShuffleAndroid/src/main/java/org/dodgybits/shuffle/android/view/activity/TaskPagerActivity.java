@@ -121,7 +121,7 @@ public class TaskPagerActivity extends RoboActionBarActivity {
 
 
     /**
-     * Loader callbacks for message list.
+     * Loader callbacks for task list.
      */
     private final LoaderManager.LoaderCallbacks<Cursor> LOADER_CALLBACKS =
             new LoaderManager.LoaderCallbacks<Cursor>() {
