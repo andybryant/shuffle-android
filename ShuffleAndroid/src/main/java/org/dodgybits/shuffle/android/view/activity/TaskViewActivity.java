@@ -21,6 +21,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -28,18 +30,14 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.MenuItem;
-
 import com.google.inject.Inject;
-
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.encoding.TaskEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
-import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.list.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.list.listener.NavigationListener;
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
 import org.dodgybits.shuffle.android.view.fragment.TaskViewFragment;
@@ -52,6 +50,8 @@ public class TaskViewActivity extends RoboActionBarActivity {
 
     private static final int LOADER_ID_TASK_LOADER = 1;
 
+    private static int TASK_UPDATED = 123;
+
     @Inject private TaskPersister mPersister;
     @Inject private TaskEncoder mEncoder;
 
@@ -63,6 +63,17 @@ public class TaskViewActivity extends RoboActionBarActivity {
 
     private Uri mUri;
     private Task mTask;
+    private Handler mTaskUpdateHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == TASK_UPDATED) {
+                TaskViewFragment viewFragment = TaskViewFragment.newInstance(msg.getData());
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.fragment_container, viewFragment);
+                ft.commit();
+            }
+        }
+    };;
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -117,15 +128,15 @@ public class TaskViewActivity extends RoboActionBarActivity {
                     c.moveToFirst();
                     mTask = mPersister.read(c);
 
-                    Bundle args = new Bundle();
+                    final Bundle args = new Bundle();
                     mEncoder.save(args, mTask);
 
-                    Log.d(TAG, "Adding task view fragment to activity");
-
-                    TaskViewFragment viewFragment = TaskViewFragment.newInstance(args);
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.fragment_container, viewFragment);
-                    ft.commit();
+                    Log.d(TAG, "Trigger loading of task view fragment");
+                    Message msg = new Message();
+                    msg.what = TASK_UPDATED;
+                    msg.setData(args);
+                    mTaskUpdateHandler.
+                            sendMessage(msg);
                 }
 
                 @Override
