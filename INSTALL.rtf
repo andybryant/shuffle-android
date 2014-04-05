@@ -1,10 +1,13 @@
 {\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf190
-\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Monaco;}
 {\colortbl;\red255\green255\blue255;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid1\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}}
 \paperw11900\paperh16840\margl1440\margr1440\vieww24480\viewh14600\viewkind0
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
-\f0\b\fs48 \cf0 Shuffle Developer Setup Guide\
+\f0\b\fs48 \cf0 shuffle-android Developer Setup Guide\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
 \b0\fs24 \cf0 \
@@ -16,7 +19,8 @@
 The latest source code is located in the following two public Git repositories\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 {\field{\*\fldinst{HYPERLINK "https://bitbucket.org/andybryant/shuffle-android"}}{\fldrslt \cf0 https://bitbucket.org/andybryant/shuffle-android}}\
-{\field{\*\fldinst{HYPERLINK "https://bitbucket.org/andybryant/shuffle-dto"}}{\fldrslt https://bitbucket.org/andybryant/shuffle-dto}}\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+{\field{\*\fldinst{HYPERLINK "https://bitbucket.org/andybryant/shuffle-dto"}}{\fldrslt \cf0 https://bitbucket.org/andybryant/shuffle-dto}}\
 \
 The first is the Android application, the second the model used for backups and sync calls to Shuffle website.\
 \
@@ -27,15 +31,35 @@ The Android application now uses Gradle as its build and dependency management t
 \fs36 \cf0 Prerequisites
 \fs24 \
 \
-Gradle 1.10 or Android Studio or IntelliJ 12+\
-\
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural
+\ls1\ilvl0\cf0 {\listtext	1.	}Gradle 1.10 or Android Studio or IntelliJ 12+\
+{\listtext	2.	}Android SDK \
+{\listtext	3.	}Java 7.0.x\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
-\fs36 Missing files\
+\fs36 \cf0 Missing files\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
 \fs24 \cf0 \
 There are several \'91missing\'92 files for copyright and primary reasons.\
 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\b \cf0 SDK Location
+\b0 \
+\
+In the top level directory of the repository, create a file called local.properties. In it define a single property 
+\f1 sdk.dir
+\f0  pointing at your Android SDK location.\
+For instance\'85\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\f1 \cf0 sdk.dir=\CocoaLigature0 /Users/andy/android/android-sdk-macosx\CocoaLigature1 \
+
+\f0 \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
 \b \cf0 Fonts\
@@ -44,12 +68,66 @@ There are several \'91missing\'92 files for copyright and primary reasons.\
 \b0 \cf0 \
 The latest version of Shuffle uses several fonts from the Concourse family. This font is not free, so cannot be included in the open source project. You can either pay for it yourself, or not include it. The application should still run (let me know if it doesn\'92t) but the layout may not be perfect.\
 \
+To include, put files under 
+\f1 ShuffleAndroid/src/main/assets
+\f0  and edit 
+\f1 FontUtils.java
+\f0  if necessary.\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\b \cf0 Website integration\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\b0 \cf0 \
+Under ShuffleAndroid/src/main/assets web sync requires a file called integration.properties.\
+\
+This file has three properties\
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural
+\ls2\ilvl0\cf0 {\listtext	\'95	}
+\f1 gcm.sender.id
+\f0 \
+{\listtext	\'95	}
+\f1 sync.add
+\f0  - URL of sync service. Generally 
+\f1 app.addr
+\f0  + \'93
+\f1 /device/sync
+\f0 \'94\
+{\listtext	\'95	}
+\f1 app.addr
+\f0  - top level URL of website (http or https)\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
 \b \cf0 Google Analytics
 \b0 \
 \
 The application uses Google Analytics to gather anonymous usage information about the app. If you want this for yourself, add your own analytics.xml file in the res/values directory. See {\field{\*\fldinst{HYPERLINK "https://developers.google.com/analytics/devguides/collection/android/v3/"}}{\fldrslt https://developers.google.com/analytics/devguides/collection/android/v3/}} for details.\
+\
+
+\b Android SDK files
+\b0 \
+\
+You\'92ll need to download the tools and Android version that match up with the build.gradle file. Currently that\'92s SDK 19 (4.4.2) and Android SDK Build-tools 19.0.3.\
+Get everything in the SDK folder, as they\'92re mostly all useful. At a minimum you need SDK Platform and Google APIs.\
+From Extras, get most everything as well. \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\fs36 \cf0 IntelliJ or Android Studio\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\fs24 \cf0 Select Import Project and select the top level 
+\f1 build.gradle
+\f0  file. Select \'91Use default gradle wrapper\'92. It will likely take a couple of minutes to import.\
+Add SDK > Select Android 4.4.2 Google APIs\
+Change Project Default SDK to be this SDK\
+\
+\
+\
 \
 \
 \
