@@ -65,9 +65,6 @@ public class MainActivity extends RoboActionBarActivity
     private ContextScopedProvider<TaskListFragment> mTaskListFragmentProvider;
 
     @Inject
-    private ContextScopedProvider<MultiTaskListFragment> mMultiTaskListFragmentProvider;
-
-    @Inject
     private ContextScopedProvider<ContextListFragment> mContextListFragmentProvider;
 
     @Inject
@@ -204,19 +201,6 @@ public class MainActivity extends RoboActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-    }
-
-    private void addMultiTaskList(List<ListQuery> queries) {
-        MultiTaskListContext listContext = MultiTaskListContext.create(queries);
-        addFragment(queries, createMultiTaskFragment(listContext));
-    }
-
-    private MultiTaskListFragment createMultiTaskFragment(MultiTaskListContext listContext) {
-        MultiTaskListFragment fragment = mMultiTaskListFragmentProvider.get(this);
-        Bundle args = new Bundle();
-        args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, listContext);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     private void addTaskList(ListQuery query) {
