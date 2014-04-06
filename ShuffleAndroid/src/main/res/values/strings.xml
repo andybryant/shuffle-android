@@ -108,13 +108,13 @@
     
     <!--  search -->
     <string name="search_label_action">Shuffle actions</string>
-    <string name="search_hint_action">Search actions by description or details</string>
-    <string name="search_settings_description_action">Descriptions and details of actions</string>
+    <string name="search_hint_action">Search actions</string>
+    <string name="search_settings_description_action">Text of actions</string>
     <string name="search_label_context">Shuffle tags</string>
-    <string name="search_hint_context">Search tag by name</string>
+    <string name="search_hint_context">Search tags</string>
     <string name="search_settings_description_context">Names of tags</string>
     <string name="search_label_project">Shuffle projects</string>
-    <string name="search_hint_project">Search project by name</string>
+    <string name="search_hint_project">Search projects</string>
     <string name="search_settings_description_project">Names of projects</string>
 
 

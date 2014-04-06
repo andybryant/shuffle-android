@@ -55,7 +55,6 @@
         android:theme="@style/ShuffleTheme"
 		android:icon="@drawable/shuffle_icon"
         android:label="@string/app_name"
-        android:debuggable="true"
         android:hardwareAccelerated="false"
             >
 
@@ -90,6 +89,25 @@
             </intent-filter>
         </activity>
 
+        <meta-data android:name="android.app.default_searchable"
+                   android:value="org.dodgybits.shuffle.android.view.activity.TaskViewActivity" />
+
+        <activity
+                android:name="org.dodgybits.shuffle.android.list.activity.TaskSearchResultsActivity"
+                android:label="@string/app_name"
+                android:uiOptions="splitActionBarWhenNarrow"
+                >
+            <meta-data android:name="android.support.UI_OPTIONS"
+                       android:value="splitActionBarWhenNarrow" />
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data android:name="android.app.searchable"
+                       android:resource="@xml/search_tasks" />
+
+        </activity>
+
         <activity
                 android:name="org.dodgybits.shuffle.android.list.activity.ContextTaskListsActivity"
                 android:label="@string/app_name"
@@ -109,7 +127,6 @@
 
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <meta-data android:name="android.app.searchable"
@@ -136,7 +153,6 @@
 
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <meta-data android:name="android.app.searchable"
@@ -182,9 +198,6 @@
 
         <!-- view -->
 
-        <meta-data android:name="android.app.default_searchable"
-            android:value="org.dodgybits.shuffle.android.view.activity.TaskViewActivity" />
-
         <activity
             android:name="org.dodgybits.shuffle.android.view.activity.TaskViewActivity"
             android:label="@string/app_name"
@@ -197,14 +210,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="vnd.android.cursor.item/vnd.dodgybits.task" />
             </intent-filter>
-
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
-            <meta-data android:name="android.app.searchable"
-                android:resource="@xml/search_tasks" />
 
         </activity>
 
