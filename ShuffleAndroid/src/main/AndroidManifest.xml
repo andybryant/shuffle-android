@@ -90,7 +90,7 @@
         </activity>
 
         <meta-data android:name="android.app.default_searchable"
-                   android:value="org.dodgybits.shuffle.android.view.activity.TaskViewActivity" />
+                   android:value="org.dodgybits.shuffle.android.list.activity.TaskSearchResultsActivity" />
 
         <activity
                 android:name="org.dodgybits.shuffle.android.list.activity.TaskSearchResultsActivity"

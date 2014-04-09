@@ -73,7 +73,7 @@ public class TaskViewActivity extends RoboActionBarActivity {
                 ft.commit();
             }
         }
-    };;
+    };
 
     @Override
     protected void onCreate(Bundle icicle) {

@@ -11,7 +11,7 @@ import android.util.Log;
 
 import java.util.Map;
 
-public class TaskProvider extends AbstractCollectionProvider {
+public class  TaskProvider extends AbstractCollectionProvider {
 	
 	public static final String TASK_TABLE_NAME = "task";
 	public static final String TASK_CONTEXT_JUNCTION_TABLE_NAME = "taskContext";

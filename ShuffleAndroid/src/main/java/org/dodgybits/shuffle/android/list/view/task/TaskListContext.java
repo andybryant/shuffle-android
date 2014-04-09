@@ -18,10 +18,6 @@ import org.dodgybits.shuffle.android.list.model.ListTitles;
 import org.dodgybits.shuffle.android.preference.model.ListSettings;
 
 public class TaskListContext implements Parcelable {
-    public static final String LIST_NAME = "listName";
-    public static final String CONTEXT_IDS = "contextIds";
-    public static final String PROJECT_IDS = "projectIds";
-
     protected TaskSelector mSelector;
     protected int mTitleId;
     private boolean mProjectNameVisible = true;
