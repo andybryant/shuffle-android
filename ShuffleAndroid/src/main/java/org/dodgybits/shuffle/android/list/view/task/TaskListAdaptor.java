@@ -223,12 +223,17 @@ public class TaskListAdaptor extends CursorAdapter {
         private TaskSelector mSelector;
         
         public TaskCursorLoader(Context context, TaskListContext listContext) {
+            this(context, listContext.createSelectorWithPreferences(context));
+        }
+
+        private TaskCursorLoader(Context context, TaskSelector selector) {
             // Initialize with no where clause.  We'll set it later.
-            super(context, TaskProvider.Tasks.CONTENT_URI,
+            super(context, selector.getContentUri(),
                     TaskProvider.Tasks.FULL_PROJECTION, null, null,
                     null);
-            mSelector = listContext.createSelectorWithPreferences(context);
-            mContext = context; 
+            mSelector = selector;
+            mContext = context;
+
         }
 
         @Override

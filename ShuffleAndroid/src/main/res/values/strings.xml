@@ -27,6 +27,7 @@
     <string name="title_due_next_month">Due Next Month</string>
     <string name="title_tickler">Tickler</string>
     <string name="title_custom">Custom</string>
+    <string name="title_search">Search results</string>
     <string name="title_trash">Trash</string>
     <string name="title_all">All</string>
     <string name="title_new_task">New action</string>

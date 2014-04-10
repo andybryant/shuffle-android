@@ -50,6 +50,12 @@ public class TaskListContext implements Parcelable {
         return create(selector);
     }
 
+    public static final TaskListContext createForSearch(String query) {
+        TaskSelector selector = TaskSelector.newBuilder().setListQuery(ListQuery.search).
+                setSearchQuery(query).build();
+        return create(selector);
+    }
+
     public static final TaskListContext create(ListQuery query) {
         TaskSelector selector = TaskSelector.newBuilder().setListQuery(query).build();
         return create(selector);

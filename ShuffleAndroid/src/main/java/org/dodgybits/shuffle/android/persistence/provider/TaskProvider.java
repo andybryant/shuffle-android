@@ -1,5 +1,6 @@
 package org.dodgybits.shuffle.android.persistence.provider;
 
+import android.app.SearchManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.SQLException;
@@ -11,7 +12,7 @@ import android.util.Log;
 
 import java.util.Map;
 
-public class  TaskProvider extends AbstractCollectionProvider {
+public class TaskProvider extends AbstractCollectionProvider {
 	
 	public static final String TASK_TABLE_NAME = "task";
 	public static final String TASK_CONTEXT_JUNCTION_TABLE_NAME = "taskContext";
@@ -135,8 +136,9 @@ public class  TaskProvider extends AbstractCollectionProvider {
 		/**
 		 * The content:// style URL for this table
 		 */
-		public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY+"/tasks");
-        public static final Uri LIST_CONTENT_URI = Uri.parse("content://" + AUTHORITY+"/taskLists");
+		public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/tasks");
+        public static final Uri LIST_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/taskLists");
+        public static final Uri SEARCH_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + SearchManager.SUGGEST_URI_PATH_QUERY);
 
 		/**
 		 * The default sort order for this table

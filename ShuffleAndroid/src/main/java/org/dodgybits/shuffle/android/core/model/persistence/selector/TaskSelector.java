@@ -1,5 +1,6 @@
 package org.dodgybits.shuffle.android.core.model.persistence.selector;
 
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -18,8 +19,8 @@ import java.util.List;
 import static org.dodgybits.shuffle.android.core.model.persistence.selector.Flag.*;
 
 public class TaskSelector extends AbstractEntitySelector<TaskSelector> implements Parcelable {
-    private static final String cTag = "TaskSelector";
-    private static final String[] cUndefinedArgs = new String[] {};
+    private static final String TAG = "TaskSelector";
+    private static final String[] UNDEFINED_ARGS = new String[] {};
 
     private ListQuery mListQuery;
     private Id mProjectId = Id.NONE;
@@ -28,7 +29,8 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
     private Flag mPending = ignored;
 
     private String mSelection = null;
-    private String[] mSelectionArgs = cUndefinedArgs;
+    private String[] mSelectionArgs = UNDEFINED_ARGS;
+    private String mSearchQuery = null;
 
     private TaskSelector() {
     }
@@ -63,7 +65,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
         if (mSelection == null) {
             List<String> expressions = getSelectionExpressions(context);
             mSelection = StringUtils.join(expressions, " AND ");
-            Log.d(cTag, mSelection);
+            Log.d(TAG, mSelection);
         }
         return mSelection;
     }
@@ -207,7 +209,14 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
             case inbox:
                 result = "(projectId is null AND (select count(*) from taskContext tc where tc.taskId = task._id) = 0)";
                 break;
-                
+            case search:
+                StringBuilder builder = new StringBuilder();
+                builder.append("description LIKE ");
+                DatabaseUtils.appendEscapedSQLString(builder, '%' + mSearchQuery + '%');
+                builder.append(" OR details LIKE ");
+                DatabaseUtils.appendEscapedSQLString(builder, '%' + mSearchQuery + '%');
+                result = builder.toString();
+                break;
             case tickler:
             case all:
             case custom:
@@ -256,15 +265,15 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
             endMS = cal.getTimeInMillis();
             break;
         }
-        if (Log.isLoggable(cTag, Log.INFO)) {
-            Log.i(cTag, "Due date ends " + endMS);
+        if (Log.isLoggable(TAG, Log.INFO)) {
+            Log.i(TAG, "Due date ends " + endMS);
         }
         return endMS;
     }
 
     @Override
     public final String[] getSelectionArgs() {
-        if (mSelectionArgs == cUndefinedArgs) {
+        if (mSelectionArgs == UNDEFINED_ARGS) {
             List<String> args = new ArrayList<String>();
             addIdArg(args, mProjectId);
             addIdArg(args, mContextId);
@@ -294,9 +303,9 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
     public final String toString() {
         return String.format(
                 "[TaskSelector query=%1$s project=%2$s contexts=%3$s " +
-                "complete=%4$s sortOrder=%5$s active=%6$s deleted=%7$s pending=%8$s]",
+                "complete=%4$s sortOrder=%5$s active=%6$s deleted=%7$s pending=%8$s searchQuery=%9$s]",
                 mListQuery, mProjectId, mContextId, mComplete,
-                mSortOrder, mActive, mDeleted, mPending);
+                mSortOrder, mActive, mDeleted, mPending, mSearchQuery);
     }
     
     public static Builder newBuilder() {
@@ -359,15 +368,24 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
             mResult.mPending = value;
             return this;
         }
-        
-        public Builder mergeFrom(TaskSelector query) {
-            super.mergeFrom(query);
 
-            setListQuery(query.mListQuery);
-            setProjectId(query.mProjectId);
-            setContextId(query.mContextId);
-            setComplete(query.mComplete);
-            setPending(query.mPending);
+        public String getSearchQuery() {
+            return mResult.mSearchQuery;
+        }
+
+        public Builder setSearchQuery(String query) {
+            mResult.mSearchQuery = query;
+            return this;
+        }
+        
+        public Builder mergeFrom(TaskSelector selector) {
+            super.mergeFrom(selector);
+            setSearchQuery(selector.mSearchQuery);
+            setListQuery(selector.mListQuery);
+            setProjectId(selector.mProjectId);
+            setContextId(selector.mContextId);
+            setComplete(selector.mComplete);
+            setPending(selector.mPending);
 
             return this;
         }
