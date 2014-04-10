@@ -55,6 +55,10 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
         return mPending;
     }
 
+    public final String getSearchQuery() {
+        return mSearchQuery;
+    }
+
     @Override
     public Uri getContentUri() {
         return TaskProvider.Tasks.CONTENT_URI;
@@ -100,6 +104,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
         dest.writeString(getListQuery().name());
         dest.writeLong(getContextId().getId());
         dest.writeLong(getProjectId().getId());
+        dest.writeString(getSearchQuery());
     }
 
     public static final Parcelable.Creator<TaskSelector> CREATOR
@@ -110,6 +115,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
             String queryName = source.readString();
             long contextId = source.readLong();
             long projectId = source.readLong();
+            String searchQuery = source.readString();
             ListQuery query = ListQuery.valueOf(queryName);
             TaskSelector.Builder builder = TaskSelector.newBuilder().setListQuery(query);
             if (contextId != 0L) {
@@ -118,6 +124,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
             if (projectId != 0L) {
                 builder.setProjectId(Id.create(projectId));
             }
+            builder.setSearchQuery(searchQuery);
 
             return builder.build();
         }

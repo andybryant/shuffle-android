@@ -33,6 +33,12 @@ public class ListSettingsCache {
                     disableCompleted().
                     disableDeleted().
                     disableActive();
+    private static ListSettings searchSettings =
+            new ListSettings(ListQuery.search.name()).
+                    setDefaultActive(Flag.ignored).
+                    setDefaultCompleted(Flag.ignored).
+                    setDefaultPending(Flag.ignored);
+
 
     private static final HashMap<ListQuery,ListSettings> SPARSE_SETTINGS_MAP =
             new HashMap<ListQuery,ListSettings>();
@@ -46,6 +52,7 @@ public class ListSettingsCache {
         SPARSE_SETTINGS_MAP.put(ListQuery.context, contextSettings);
         SPARSE_SETTINGS_MAP.put(ListQuery.project, projectSettings);
         SPARSE_SETTINGS_MAP.put(ListQuery.tickler, ticklerSettings);
+        SPARSE_SETTINGS_MAP.put(ListQuery.search, searchSettings);
     }
 
     public static final ListSettings findSettings(ListQuery query) {

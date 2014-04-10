@@ -128,13 +128,13 @@ public class MainActivity extends RoboActionBarActivity
         if (mQueryIndex == null) {
             initFragments();
         }
-        int position = 0;
+        Integer position = 0;
         String queryName = getIntent().getStringExtra(QUERY_NAME);
         if (queryName != null) {
             ListQuery query = ListQuery.valueOf(queryName);
             position = mQueryIndex.get(query);
-            if (position == -1) {
-                Log.e(TAG, "Couldn't find page of list " + queryName);
+            if (position == null) {
+                Log.e(TAG, "Couldn't find page " + queryName);
                 position = 0;
             }
         }
