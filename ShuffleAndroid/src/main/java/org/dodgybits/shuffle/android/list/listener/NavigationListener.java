@@ -1,6 +1,7 @@
 package org.dodgybits.shuffle.android.list.listener;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import org.dodgybits.shuffle.android.core.activity.HelpActivity;
 import org.dodgybits.shuffle.android.core.util.IntentUtils;
 import org.dodgybits.shuffle.android.list.activity.ContextTaskListsActivity;
 import org.dodgybits.shuffle.android.list.activity.ProjectTaskListsActivity;
+import org.dodgybits.shuffle.android.list.activity.TaskSearchResultsActivity;
 import org.dodgybits.shuffle.android.list.event.*;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
@@ -63,6 +65,13 @@ public class NavigationListener {
     public void onViewProject(@Observes ViewProjectEvent event) {
         Intent intent = IntentUtils.createProjectViewIntent(event.getProjectId());
         intent.putExtra(ProjectTaskListsActivity.INITIAL_POSITION, event.getPosition());
+        mActivity.startActivity(intent);
+    }
+
+    public void onViewTaskSearchList(@Observes ViewTaskSearchResultsEvent event) {
+        Intent intent = new Intent(mActivity, TaskSearchResultsActivity.class);
+        intent.setAction(Intent.ACTION_SEARCH);
+        intent.getExtras().putString(SearchManager.QUERY, event.getSearchQuery());
         mActivity.startActivity(intent);
     }
 

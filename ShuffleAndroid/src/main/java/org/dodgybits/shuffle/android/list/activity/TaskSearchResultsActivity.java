@@ -20,19 +20,35 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.WindowManager;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.activity.MainActivity;
+import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
+import org.dodgybits.shuffle.android.list.listener.EntityUpdateListener;
+import org.dodgybits.shuffle.android.list.listener.NavigationListener;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
 import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
 import org.dodgybits.shuffle.android.view.activity.TaskViewActivity;
-import org.dodgybits.shuffle.android.view.fragment.TaskViewFragment;
-import roboguice.inject.ContextScopedProvider;
+import roboguice.event.EventManager;
 
 public class TaskSearchResultsActivity extends RoboActionBarActivity {
+    public static final String TAG = "TaskSearchResultsActivity";
 
     @Inject
     private TaskListFragment mTaskListFragment;
+
+    @Inject
+    private EventManager mEventManager;
+
+    @Inject
+    private NavigationListener mNavigationListener;
+
+    @Inject
+    private EntityUpdateListener mEntityUpdateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +60,31 @@ public class TaskSearchResultsActivity extends RoboActionBarActivity {
                 ActionBar.DISPLAY_SHOW_TITLE);
 
         handleIntent();
+
+        // don't show soft keyboard unless user clicks on quick add box
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                return true;
+            case R.id.action_preferences:
+                Log.d(TAG, "Bringing up preferences");
+                mEventManager.fire(new ViewPreferencesEvent());
+                return true;
+            case R.id.action_search:
+                Log.d(TAG, "Bringing up search");
+                onSearchRequested();
+                return true;
+        }
+
+        return false;
     }
 
     private void handleIntent() {

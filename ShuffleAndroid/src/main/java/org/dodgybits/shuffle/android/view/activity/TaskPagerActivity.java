@@ -23,6 +23,7 @@ import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.list.event.ViewContextEvent;
 import org.dodgybits.shuffle.android.list.event.ViewProjectEvent;
+import org.dodgybits.shuffle.android.list.event.ViewTaskSearchResultsEvent;
 import org.dodgybits.shuffle.android.list.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.list.listener.NavigationListener;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
@@ -91,6 +92,9 @@ public class TaskPagerActivity extends RoboActionBarActivity {
                         break;
                     case context:
                         mEventManager.fire(new ViewContextEvent(getListContext().getEntityId()));
+                        break;
+                    case search:
+                        mEventManager.fire(new ViewTaskSearchResultsEvent(getListContext().getSearchQuery()));
                         break;
                     default:
                         Intent intent = new Intent(this, MainActivity.class);

@@ -140,6 +140,7 @@ public class TaskListFragment extends RoboListFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "+onActivityCreated");
 
         final ListView lv = getListView();
         lv.setOnItemLongClickListener(this);

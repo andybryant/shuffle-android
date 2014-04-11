@@ -189,6 +189,10 @@ public class TaskListContext implements Parcelable {
     public boolean showEditActions() {
         return getListQuery() == ListQuery.project || getListQuery() == ListQuery.context;
     }
+
+    public String getSearchQuery() {
+        return getListQuery() == ListQuery.search ? mSelector.getSearchQuery() : null;
+    }
     
     public String getEditEntityName(Context context) {
         String name;
