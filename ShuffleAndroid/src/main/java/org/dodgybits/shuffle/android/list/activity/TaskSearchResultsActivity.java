@@ -18,6 +18,7 @@ package org.dodgybits.shuffle.android.list.activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
@@ -34,12 +35,13 @@ import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
 import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
 import org.dodgybits.shuffle.android.view.activity.TaskViewActivity;
 import roboguice.event.EventManager;
+import roboguice.inject.ContextScopedProvider;
 
 public class TaskSearchResultsActivity extends RoboActionBarActivity {
     public static final String TAG = "TaskSearchResultsActivity";
 
     @Inject
-    private TaskListFragment mTaskListFragment;
+    ContextScopedProvider<TaskListFragment> mTaskListFragmentProvider;
 
     @Inject
     private EventManager mEventManager;
@@ -103,13 +105,17 @@ public class TaskSearchResultsActivity extends RoboActionBarActivity {
     }
 
     private void showResults(String query) {
-        TaskListContext taskListContext = TaskListContext.createForSearch(query);
-        Bundle args = new Bundle();
-        args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, taskListContext);
-        mTaskListFragment.setArguments(args);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.container);
+        if (fragment == null) {
+            TaskListContext taskListContext = TaskListContext.createForSearch(query);
+            Bundle args = new Bundle();
+            args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, taskListContext);
+            fragment = mTaskListFragmentProvider.get(this);
+            fragment.setArguments(args);
 
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.container, mTaskListFragment);
-        ft.commit();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.container, fragment);
+            ft.commit();
+        }
     }
 }
