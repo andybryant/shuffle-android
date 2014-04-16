@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
@@ -25,8 +27,6 @@ import org.dodgybits.shuffle.android.list.listener.NavigationListener;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.context.ContextListFragment;
 import org.dodgybits.shuffle.android.list.view.project.ProjectListFragment;
-import org.dodgybits.shuffle.android.list.view.task.MultiTaskListContext;
-import org.dodgybits.shuffle.android.list.view.task.MultiTaskListFragment;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
@@ -58,6 +58,10 @@ public class MainActivity extends RoboActionBarActivity
      */
     private CharSequence mTitle;
 
+    private MyAdapter mAdapter;
+
+    private ViewPager mPager;
+
     private List<Fragment> mFragments;
     private Map<ListQuery,Integer> mQueryIndex;
 
@@ -88,23 +92,23 @@ public class MainActivity extends RoboActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
 
         // don't show soft keyboard unless user clicks on quick add box
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         initFragments();
         checkLastVersion();
         setupNavigationDrawer();
+        setupPager();
         setupSync();
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         Log.d(TAG, "Switching to item " + position);
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, mFragments.get(position))
-                .commit();
+        if (mPager != null) {
+            mPager.setCurrentItem(position);
+        }
     }
 
     @Override
@@ -195,12 +199,20 @@ public class MainActivity extends RoboActionBarActivity
     }
 
     private void setupNavigationDrawer() {
-        setContentView(R.layout.main);
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+    }
+
+    private void setupPager() {
+        mAdapter = new MyAdapter(getSupportFragmentManager());
+        mPager = (ViewPager)findViewById(R.id.pager);
+        mPager.setAdapter(mAdapter);
+
+        int position = getRequestedPosition();
+        mPager.setCurrentItem(position);
     }
 
     private void addTaskList(ListQuery query) {
@@ -258,4 +270,19 @@ public class MainActivity extends RoboActionBarActivity
         return super.onCreateOptionsMenu(menu);
     }
 
+    public class MyAdapter extends FragmentPagerAdapter {
+        public MyAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragments.size();
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragments.get(position);
+        }
+    }
 }
