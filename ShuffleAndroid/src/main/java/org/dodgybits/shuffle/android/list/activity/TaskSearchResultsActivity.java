@@ -59,7 +59,7 @@ public class TaskSearchResultsActivity extends RoboActionBarActivity {
                 ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_SHOW_TITLE);
 
-        handleIntent();
+        handleIntent(savedInstanceState);
 
         // don't show soft keyboard unless user clicks on quick add box
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -87,7 +87,7 @@ public class TaskSearchResultsActivity extends RoboActionBarActivity {
         return false;
     }
 
-    private void handleIntent() {
+    private void handleIntent(Bundle savedInstanceState) {
         Intent intent = getIntent();
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             // handles a click on a search suggestion; launches activity to show task
@@ -98,15 +98,18 @@ public class TaskSearchResultsActivity extends RoboActionBarActivity {
         } else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             // handles a search query
             String query = intent.getStringExtra(SearchManager.QUERY);
-            showResults(query);
+            showResults(query, savedInstanceState);
         }
     }
 
-    private void showResults(String query) {
+    private void showResults(String query, Bundle savedInstanceState) {
         TaskListContext taskListContext = TaskListContext.createForSearch(query);
         Bundle args = new Bundle();
         args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, taskListContext);
         mTaskListFragment.setArguments(args);
+        if (savedInstanceState != null) {
+            mTaskListFragment.restoreInstanceState(savedInstanceState);
+        }
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.container, mTaskListFragment);
