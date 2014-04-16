@@ -61,7 +61,7 @@ public class MultiTaskListFragment extends TaskListFragment {
     }
 
     @Override
-    void restoreInstanceState(Bundle savedInstanceState) {
+    public void restoreInstanceState(Bundle savedInstanceState) {
         super.restoreInstanceState(savedInstanceState);
         
         int savedIndex = savedInstanceState.getInt(SELECTED_INDEX, 0);
