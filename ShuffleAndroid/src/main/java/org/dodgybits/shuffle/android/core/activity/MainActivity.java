@@ -21,6 +21,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.controller.ActivityController;
+import org.dodgybits.shuffle.android.core.controller.OnePaneController;
 import org.dodgybits.shuffle.android.core.controller.TwoPaneController;
 import org.dodgybits.shuffle.android.core.util.PackageUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
@@ -49,13 +50,6 @@ import java.util.Map;
 public class MainActivity extends RoboActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
     private static final String TAG = "MainActivity";
-
-
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-     */
-    private NavigationDrawerFragment mNavigationDrawerFragment;
-
 
     private MyAdapter mAdapter;
 
@@ -86,22 +80,8 @@ public class MainActivity extends RoboActionBarActivity
         super.onCreate(savedState);
 
         final boolean tabletUi = UiUtilities.useTabletUI(this.getResources());
-        mController = tabletUi ? new TwoPaneController();
+        mController = tabletUi ? new TwoPaneController(this, mViewMode) : new OnePaneController(this, mViewMode);
         mController.onCreate(savedState);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-
-        // don't show soft keyboard unless user clicks on quick add box
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        initFragments();
-        checkLastVersion();
-        setupNavigationDrawer();
-        setupPager();
-        setupSync();
     }
 
     @Override
@@ -154,22 +134,7 @@ public class MainActivity extends RoboActionBarActivity
         super.setTitle(title);
     }
 
-    private void checkLastVersion() {
-        final int lastVersion = Preferences.getLastVersion(this);
-        final int currentVersion = PackageUtils.getAppVersion(this);
-        if (Math.abs(lastVersion) < Math.abs(currentVersion)) {
-            // This is a new install or an upgrade.
 
-            // show what's new message
-            SharedPreferences.Editor editor = Preferences.getEditor(this);
-            editor.putInt(Preferences.LAST_VERSION, currentVersion);
-            // clear out GCM Registration ID after an upgrade
-            editor.putString(Preferences.GCM_REGISTRATION_ID, "");
-            editor.commit();
-
-            showDialog(WHATS_NEW_DIALOG);
-        }
-    }
 
     @Override
     protected Dialog onCreateDialog(int id) {
@@ -197,14 +162,6 @@ public class MainActivity extends RoboActionBarActivity
         addFragment(ListQuery.context, mContextListFragmentProvider.get(this));
         addTaskList(ListQuery.custom);
         addTaskList(ListQuery.tickler);
-    }
-
-    private void setupNavigationDrawer() {
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
     private void setupPager() {
@@ -239,12 +196,6 @@ public class MainActivity extends RoboActionBarActivity
         for (ListQuery query : queries) {
             mQueryIndex.put(query, index);
         }
-    }
-
-    private void setupSync() {
-        mEventManager.fire(new RegisterGcmEvent(this));
-        startService(new Intent(this, SyncAlarmService.class));
-        authTokenRetriever.retrieveToken();
     }
 
     public void restoreActionBar() {

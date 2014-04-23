@@ -18,16 +18,27 @@ package org.dodgybits.shuffle.android.core.controller;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import com.google.inject.Inject;
+import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.activity.MainActivity;
+import org.dodgybits.shuffle.android.core.util.PackageUtils;
+import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
+import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.list.listener.NavigationListener;
+import org.dodgybits.shuffle.android.preference.model.Preferences;
 import org.dodgybits.shuffle.android.server.gcm.GcmRegister;
+import org.dodgybits.shuffle.android.server.gcm.event.RegisterGcmEvent;
 import org.dodgybits.shuffle.android.server.sync.AuthTokenRetriever;
+import org.dodgybits.shuffle.android.server.sync.SyncAlarmService;
 import roboguice.event.EventManager;
 
 public abstract class AbstractActivityController implements ActivityController {
@@ -38,13 +49,20 @@ public abstract class AbstractActivityController implements ActivityController {
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
-    private CharSequence mTitle;
+    protected CharSequence mTitle;
+    protected MainActivity mActivity;
+    protected ViewMode mViewMode;
+
+    /**
+     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
+     */
+    private NavigationDrawerFragment mNavigationDrawerFragment;
 
     @Inject
-    private GcmRegister gcmRegister;
+    private GcmRegister mGcmRegister;
 
     @Inject
-    private EventManager mEventManager;
+    protected EventManager mEventManager;
 
     @Inject
     private NavigationListener mNavigationListener;
@@ -53,8 +71,12 @@ public abstract class AbstractActivityController implements ActivityController {
     private EntityUpdateListener mEntityUpdateListener;
 
     @Inject
-    private AuthTokenRetriever authTokenRetriever;
+    private AuthTokenRetriever mAuthTokenRetriever;
 
+    protected AbstractActivityController(MainActivity activity, ViewMode viewMode) {
+        mActivity = activity;
+        mViewMode = viewMode;
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -98,8 +120,47 @@ public abstract class AbstractActivityController implements ActivityController {
      */
     @Override
     public boolean onCreate(Bundle savedState) {
-        return false;
+        // don't show soft keyboard unless user clicks on quick add box
+        mActivity.getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        checkLastVersion();
+        setupNavigationDrawer();
+        setupSync();
+
+        return true;
     }
+
+    private void checkLastVersion() {
+        final int lastVersion = Preferences.getLastVersion(mActivity);
+        final int currentVersion = PackageUtils.getAppVersion(mActivity);
+        if (Math.abs(lastVersion) < Math.abs(currentVersion)) {
+            // This is a new install or an upgrade.
+
+            // show what's new message
+            SharedPreferences.Editor editor = Preferences.getEditor(mActivity);
+            editor.putInt(Preferences.LAST_VERSION, currentVersion);
+            // clear out GCM Registration ID after an upgrade
+            editor.putString(Preferences.GCM_REGISTRATION_ID, "");
+            editor.commit();
+
+            mActivity.showDialog(WHATS_NEW_DIALOG);
+        }
+    }
+
+    private void setupNavigationDrawer() {
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
+                mActivity.getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) mActivity.findViewById(R.id.drawer_layout));
+    }
+
+    private void setupSync() {
+        mEventManager.fire(new RegisterGcmEvent(mActivity));
+        mActivity.startService(new Intent(mActivity, SyncAlarmService.class));
+        mAuthTokenRetriever.retrieveToken();
+    }
+
 
     @Override
     public void onPostCreate(Bundle savedState) {
@@ -128,6 +189,17 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+            // Only show items in the action bar relevant to this screen
+            // if the drawer is not showing. Otherwise, let the drawer
+            // decide what to show in the action bar.
+
+            // TODO define menu when drawer open
+//            getMenuInflater().inflate(R.menu.main, menu);
+            restoreActionBar();
+            return true;
+        }
+
         return false;
     }
 

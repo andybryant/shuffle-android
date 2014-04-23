@@ -15,5 +15,21 @@
  */
 package org.dodgybits.shuffle.android.core.controller;
 
+import android.os.Bundle;
+import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.activity.MainActivity;
+import org.dodgybits.shuffle.android.core.view.ViewMode;
+
 public class OnePaneController extends AbstractActivityController {
+
+    public OnePaneController(MainActivity activity, ViewMode viewMode) {
+        super(activity, viewMode);
+    }
+
+    @Override
+    public boolean onCreate(Bundle savedState) {
+        mActivity.setContentView(R.layout.main);
+
+        return super.onCreate(savedState);
+    }
 }

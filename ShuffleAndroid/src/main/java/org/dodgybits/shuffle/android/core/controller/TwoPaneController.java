@@ -15,5 +15,14 @@
  */
 package org.dodgybits.shuffle.android.core.controller;
 
+import org.dodgybits.shuffle.android.core.activity.MainActivity;
+import org.dodgybits.shuffle.android.core.view.ViewMode;
+
 public class TwoPaneController extends AbstractActivityController {
+
+    public TwoPaneController(MainActivity activity, ViewMode viewMode) {
+        super(activity, viewMode);
+    }
+
+
 }
