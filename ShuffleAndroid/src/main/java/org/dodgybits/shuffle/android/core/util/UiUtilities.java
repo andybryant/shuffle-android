@@ -2,6 +2,7 @@ package org.dodgybits.shuffle.android.core.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewParent;
@@ -10,6 +11,13 @@ import org.dodgybits.android.shuffle.R;
 
 public class UiUtilities {
     private UiUtilities() {
+    }
+
+    /**
+     * Returns a boolean indicating whether the table UI should be shown.
+     */
+    public static boolean useTabletUI(Resources res) {
+        return res.getBoolean(R.bool.use_tablet_ui);
     }
 
     /** Generics version of {@link android.app.Activity#findViewById} */
