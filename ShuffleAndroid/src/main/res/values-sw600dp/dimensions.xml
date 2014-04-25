@@ -1,0 +1,5 @@
+<resources>
+    <dimen name="project_font_size">20sp</dimen>
+    <dimen name="contents_font_size">18sp</dimen>
+
+</resources>

@@ -171,5 +171,14 @@ public interface ActivityController {
      */
     void onWindowFocusChanged(boolean hasFocus);
 
+    /**
+     * Start search mode if the account being view supports the search capability.
+     */
+    void startSearch();
+
+    /**
+     * Exit the search mode, popping off one activity so that the back stack is fine.
+     */
+    void exitSearchMode();
 
 }

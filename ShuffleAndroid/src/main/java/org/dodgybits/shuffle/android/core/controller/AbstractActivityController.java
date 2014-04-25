@@ -27,6 +27,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.Toast;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
@@ -35,22 +36,25 @@ import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.list.listener.NavigationListener;
+import org.dodgybits.shuffle.android.list.model.ListQuery;
+import org.dodgybits.shuffle.android.list.view.context.ContextListFragment;
+import org.dodgybits.shuffle.android.list.view.project.ProjectListFragment;
+import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
 import org.dodgybits.shuffle.android.server.gcm.GcmRegister;
 import org.dodgybits.shuffle.android.server.gcm.event.RegisterGcmEvent;
 import org.dodgybits.shuffle.android.server.sync.AuthTokenRetriever;
 import org.dodgybits.shuffle.android.server.sync.SyncAlarmService;
 import roboguice.event.EventManager;
+import roboguice.inject.ContextScopedProvider;
+
+import java.util.Map;
 
 public abstract class AbstractActivityController implements ActivityController {
 
     public static final String QUERY_NAME = "queryName";
     private static final int WHATS_NEW_DIALOG = 0;
 
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
-    protected CharSequence mTitle;
     protected MainActivity mActivity;
     protected ViewMode mViewMode;
 
@@ -73,6 +77,18 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Inject
     private AuthTokenRetriever mAuthTokenRetriever;
+
+    private Map<ListQuery,Integer> mQueryIndex;
+
+    @Inject
+    private ContextScopedProvider<TaskListFragment> mTaskListFragmentProvider;
+
+    @Inject
+    private ContextScopedProvider<ContextListFragment> mContextListFragmentProvider;
+
+    @Inject
+    private ContextScopedProvider<ProjectListFragment> mProjectListFragmentProvider;
+
 
     protected AbstractActivityController(MainActivity activity, ViewMode viewMode) {
         mActivity = activity;
@@ -268,6 +284,18 @@ public abstract class AbstractActivityController implements ActivityController {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
 
+    }
+
+    @Override
+    public void startSearch() {
+        mActionBarView.expandSearch();
+    }
+
+    @Override
+    public void exitSearchMode() {
+        if (mViewMode.getMode() == ViewMode.SEARCH_RESULTS_LIST) {
+            mActivity.finish();
+        }
     }
 }
 

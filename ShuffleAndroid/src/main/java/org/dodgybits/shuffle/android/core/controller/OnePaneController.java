@@ -28,7 +28,7 @@ public class OnePaneController extends AbstractActivityController {
 
     @Override
     public boolean onCreate(Bundle savedState) {
-        mActivity.setContentView(R.layout.main);
+        mActivity.setContentView(R.layout.one_pane_activity);
 
         return super.onCreate(savedState);
     }

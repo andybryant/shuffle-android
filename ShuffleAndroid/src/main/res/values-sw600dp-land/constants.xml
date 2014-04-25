@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   Copyright 2014 The Android Open Source Project
 
@@ -15,10 +14,8 @@
   limitations under the License.
   -->
 <resources>
-    <!-- Boolean value indicating whether the tablet UI should be used. -->
-    <bool name="use_tablet_ui">true</bool>
-
+    <!-- Whether the list is collapsible in task view mode -->
+    <bool name="list_collapsible">false</bool>
     <!-- Whether to show single or 2 pane search results -->
-    <bool name="show_two_pane_search_results">false</bool>
-
+    <bool name="show_two_pane_search_results">true</bool>
 </resources>
