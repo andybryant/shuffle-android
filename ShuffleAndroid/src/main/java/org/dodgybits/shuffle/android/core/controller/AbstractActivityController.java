@@ -22,6 +22,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -202,6 +203,17 @@ public abstract class AbstractActivityController implements ActivityController {
 
         return false;
     }
+
+    public void restoreActionBar() {
+        ActionBar actionBar = mActivity.getSupportActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setDisplayShowTitleEnabled(true);
+        if (mTitle != null) {
+            actionBar.setTitle(mTitle);
+        }
+    }
+
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
