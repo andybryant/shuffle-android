@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Android Shuffle Open Source Project
+<!--
+     Copyright (C) 2014 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,16 +15,6 @@
      limitations under the License.
 -->
 <resources>
-    <!-- Boolean value indicating whether the tablet UI should be used. -->
-    <bool name="use_tablet_ui">false</bool>
-
-    <!-- Whether the list is collapsible in conversation view mode -->
-    <bool name="list_collapsible">true</bool>
-
-    <!-- Whether to show single or 2 pane search results -->
-    <bool name="show_two_pane_search_results">false</bool>
-
-    <integer name="task_list_weight">1</integer>
-    <integer name="task_view_weight">1</integer>
-
+    <integer name="task_list_weight">15</integer>
+    <integer name="task_view_weight">25</integer>
 </resources>

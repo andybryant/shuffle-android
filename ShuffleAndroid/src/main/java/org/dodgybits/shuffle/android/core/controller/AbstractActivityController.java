@@ -297,5 +297,10 @@ public abstract class AbstractActivityController implements ActivityController {
             mActivity.finish();
         }
     }
+
+    public void disablePagerUpdates() {
+        mPagerController.stopListening();
+    }
+
 }
 

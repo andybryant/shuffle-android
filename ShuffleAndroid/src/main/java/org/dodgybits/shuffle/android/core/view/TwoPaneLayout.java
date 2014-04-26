@@ -15,31 +15,51 @@
  */
 package org.dodgybits.shuffle.android.core.view;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.TimeInterpolator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.v4.widget.DrawerLayout;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.controller.AbstractActivityController;
+import org.dodgybits.shuffle.android.core.event.EntityListVisibiltyChangeEvent;
+import org.dodgybits.shuffle.android.core.event.ModeChangeEvent;
+import org.dodgybits.shuffle.android.core.event.TaskVisibilityChangeEvent;
+import roboguice.RoboGuice;
+import roboguice.event.EventManager;
+import roboguice.event.Observes;
 
+/**
+ * This is a custom layout that manages the possible views of Shuffle's large screen (read: tablet)
+ * activity, and the transitions between them.
+ *
+ * This is not intended to be a generic layout; it is specific to the {@code Fragment}s
+ * available in {@link org.dodgybits.shuffle.android.core.activity.MainActivity}
+ * and assumes their existence. It merely configures them
+ * according to the specific <i>modes</i> the {@link android.app.Activity} can be in.
+ *
+ * Currently, the layout differs in three dimensions: orientation, two aspects of view modes.
+ * This results in essentially three states: One where an entity list (context, project or task)
+ * takes up the whole screen, another where the task list is on the left and task on the right
+ * and one where just the task shows.
+ *
+ * In task, context or project list view, tasks are hidden.
+ * This is the case in both portrait and landscape
+ */
 public class TwoPaneLayout extends FrameLayout {
     private static final String TAG = "TwoPaneLayout";
-    private static final long SLIDE_DURATION_MS = 300;
 
     private final double mTaskListWeight;
-    private final TimeInterpolator mSlideInterpolator;
     /**
      * True if and only if the task list is collapsible in the current device configuration.
-     * See {@link #isTaskListCollapsed()} to see whether it is currently collapsed
+     * See {@link #isEntityListCollapsed()} to see whether it is currently collapsed
      * (based on the current view mode).
      */
     private final boolean mListCollapsible;
@@ -56,16 +76,14 @@ public class TwoPaneLayout extends FrameLayout {
     private int mPositionedMode = ViewMode.UNKNOWN;
 
     private AbstractActivityController mController;
-    private LayoutListener mListener;
     private boolean mIsSearchResult;
 
     private DrawerLayout mDrawerLayout;
 
-    private View mMiscellaneousView;
+    private View mQuickAddView;
     private View mTaskView;
     private View mListView;
-
-    public static final int MISCELLANEOUS_VIEW_ID = R.id.miscellaneous_pane;
+    private boolean mDrawerInitialSetupComplete;
 
     private final Runnable mTransitionCompleteRunnable = new Runnable() {
         @Override
@@ -74,14 +92,8 @@ public class TwoPaneLayout extends FrameLayout {
         }
     };
 
-    private boolean mDrawerInitialSetupComplete;    
-    
-    /**
-     * True if and only if the task list is collapsible in the current device configuration.
-     * See {@link #isTaskListCollapsed()} to see whether it is currently collapsed
-     * (based on the current view mode).
-     */
-    private final boolean mListCollapsible;
+    @Inject
+    protected EventManager mEventManager;
 
     public TwoPaneLayout(Context context) {
         this(context, null);
@@ -109,21 +121,23 @@ public class TwoPaneLayout extends FrameLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        mListView = findViewById(R.id.task_list_pane);
+        mQuickAddView = findViewById(R.id.quick_add);
+        mListView = findViewById(R.id.entity_list_pane);
         mTaskView = findViewById(R.id.task_pane);
-        mMiscellaneousView = findViewById(MISCELLANEOUS_VIEW_ID);
 
         // all panes start GONE in initial UNKNOWN mode to avoid drawing misplaced panes
         mCurrentMode = ViewMode.UNKNOWN;
+        mQuickAddView.setVisibility(GONE);
         mListView.setVisibility(GONE);
         mTaskView.setVisibility(GONE);
-        mMiscellaneousView.setVisibility(GONE);
+
+        Log.d(TAG, "Injecting dependencies");
+        RoboGuice.getInjector(getContext()).injectMembersWithoutViews(this);
     }
 
     @VisibleForTesting
     public void setController(AbstractActivityController controller, boolean isSearchResult) {
         mController = controller;
-        mListener = controller;
         mIsSearchResult = isSearchResult;
     }
 
@@ -146,64 +160,45 @@ public class TwoPaneLayout extends FrameLayout {
     }
 
     /**
-     * Sizes up the three sliding panes. This method will ensure that the LayoutParams of the panes
+     * Sizes up the two panes. This method will ensure that the LayoutParams of the panes
      * have the correct widths set for the current overall size and view mode.
      *
      * @param parentWidth this view's new width
      */
     private void setupPaneWidths(int parentWidth) {
-        final int foldersWidth = computeFolderListWidth(parentWidth);
-        final int foldersFragmentWidth;
-        if (isDrawerView(mFoldersView)) {
-            foldersFragmentWidth = getResources().getDimensionPixelSize(R.dimen.drawer_width);
-        } else {
-            foldersFragmentWidth = foldersWidth;
-        }
-        final int convWidth = computeTaskWidth(parentWidth);
-
-        setPaneWidth(mFoldersView, foldersFragmentWidth);
+        final int taskWidth = computeTaskWidth(parentWidth);
 
         // only adjust the fixed task view width when my width changes
         if (parentWidth != getMeasuredWidth()) {
-            LogUtils.i(LOG_TAG, "setting up new TPL, w=%d fw=%d cv=%d", parentWidth,
-                    foldersWidth, convWidth);
-
-            setPaneWidth(mMiscellaneousView, convWidth);
-            setPaneWidth(mTaskView, convWidth);
+            Log.i(TAG, "setting up new TPL, w=" + parentWidth + "tv=" + taskWidth);
+            setPaneWidth(mTaskView, taskWidth);
         }
 
         final int currListWidth = getPaneWidth(mListView);
         int listWidth = currListWidth;
         switch (mCurrentMode) {
-            case ViewMode.AD:
             case ViewMode.TASK:
             case ViewMode.SEARCH_RESULTS_TASK:
                 if (!mListCollapsible) {
-                    listWidth = parentWidth - convWidth;
+                    listWidth = parentWidth - taskWidth;
                 }
                 break;
             case ViewMode.TASK_LIST:
-            case ViewMode.WAITING_FOR_ACCOUNT_INITIALIZATION:
+            case ViewMode.PROJECT_LIST:
+            case ViewMode.CONTEXT_LIST:
             case ViewMode.SEARCH_RESULTS_LIST:
-                listWidth = parentWidth - foldersWidth;
+                listWidth = parentWidth;
                 break;
             default:
                 break;
         }
-        LogUtils.d(LOG_TAG, "task list width change, w=%d", listWidth);
+        Log.d(TAG, "task list width change, w=" + listWidth);
         setPaneWidth(mListView, listWidth);
-
-        if ((mCurrentMode != mPositionedMode && mPositionedMode != ViewMode.UNKNOWN)
-                || mListCopyWidthOnComplete != null) {
-            mListCopyWidthOnComplete = listWidth;
-        } else {
-            setPaneWidth(mListCopyView, listWidth);
-        }
+        setPaneWidth(mQuickAddView, listWidth);
     }
 
     /**
-     * Positions the three sliding panes at the correct X offset (using {@link View#setX(float)}).
-     * When switching from list->task mode or vice versa, animate the change in X.
+     * Positions the two panes at the correct X offset (using {@link View#setX(float)}).
      *
      * @param width
      */
@@ -213,38 +208,32 @@ public class TwoPaneLayout extends FrameLayout {
         }
 
         boolean hasPositions = false;
-        int convX = 0, listX = 0, foldersX = 0;
+        int taskX = 0, listX = 0;
 
         switch (mCurrentMode) {
-            case ViewMode.AD:
             case ViewMode.TASK:
             case ViewMode.SEARCH_RESULTS_TASK: {
-                final int foldersW = getPaneWidth(mFoldersView);
-                final int listW;
-                listW = getPaneWidth(mListView);
+                final int listW = getPaneWidth(mListView);
 
                 if (mListCollapsible) {
-                    convX = 0;
+                    taskX = 0;
                     listX = -listW;
-                    foldersX = listX - foldersW;
                 } else {
-                    convX = listW;
+                    taskX = listW;
                     listX = 0;
-                    foldersX = -foldersW;
                 }
                 hasPositions = true;
-                LogUtils.i(LOG_TAG, "task mode layout, x=%d/%d/%d", foldersX, listX, convX);
+                Log.i(TAG, "task mode layout, x=" + listX + "/" + taskX);
                 break;
             }
             case ViewMode.TASK_LIST:
-            case ViewMode.WAITING_FOR_ACCOUNT_INITIALIZATION:
+            case ViewMode.PROJECT_LIST:
+            case ViewMode.CONTEXT_LIST:
             case ViewMode.SEARCH_RESULTS_LIST: {
-                convX = width;
-                listX = getPaneWidth(mFoldersView);
-                foldersX = 0;
-
+                taskX = width;
+                listX = 0;
                 hasPositions = true;
-                LogUtils.i(LOG_TAG, "conv-list mode layout, x=%d/%d/%d", foldersX, listX, convX);
+                Log.i(TAG, "conv-list mode layout, x=" + listX + "/" + taskX);
                 break;
             }
             default:
@@ -252,40 +241,31 @@ public class TwoPaneLayout extends FrameLayout {
         }
 
         if (hasPositions) {
-            animatePanes(foldersX, listX, convX);
+            mListView.setX(listX);
+            mTaskView.setX(taskX);
+            mQuickAddView.setX(listX);
+
+            // listeners need to know that the "transition" is complete, even if one is not run.
+            // defer notifying listeners because we're in a layout pass, and they might do layout.
+            post(mTransitionCompleteRunnable);
         }
 
         mPositionedMode = mCurrentMode;
     }
 
-
-
-
-
     private void onTransitionComplete() {
-        if (mController.isDestroyed()) {
-            // quit early if the hosting activity was destroyed before the animation finished
-            LogUtils.i(LOG_TAG, "IN TPL.onTransitionComplete, activity destroyed->quitting early");
-            return;
-        }
-
         switch (mCurrentMode) {
             case ViewMode.TASK:
             case ViewMode.SEARCH_RESULTS_TASK:
-                dispatchTaskVisibilityChanged(true);
-                dispatchTaskListVisibilityChange(!isTaskListCollapsed());
-
+                mEventManager.fire(new TaskVisibilityChangeEvent(true));
+                mEventManager.fire(new EntityListVisibiltyChangeEvent(!isEntityListCollapsed()));
                 break;
             case ViewMode.TASK_LIST:
+            case ViewMode.PROJECT_LIST:
+            case ViewMode.CONTEXT_LIST:
             case ViewMode.SEARCH_RESULTS_LIST:
-                dispatchTaskVisibilityChanged(false);
-                dispatchTaskListVisibilityChange(true);
-
-                break;
-            case ViewMode.AD:
-                dispatchTaskVisibilityChanged(false);
-                dispatchTaskListVisibilityChange(!isTaskListCollapsed());
-
+                mEventManager.fire(new TaskVisibilityChangeEvent(false));
+                mEventManager.fire(new EntityListVisibiltyChangeEvent(true));
                 break;
             default:
                 break;
@@ -305,10 +285,10 @@ public class TwoPaneLayout extends FrameLayout {
     private int computeTaskListWidth(int totalWidth) {
         switch (mCurrentMode) {
             case ViewMode.TASK_LIST:
-            case ViewMode.WAITING_FOR_ACCOUNT_INITIALIZATION:
+            case ViewMode.PROJECT_LIST:
+            case ViewMode.CONTEXT_LIST:
             case ViewMode.SEARCH_RESULTS_LIST:
-                return totalWidth - computeFolderListWidth(totalWidth);
-            case ViewMode.AD:
+                return totalWidth;
             case ViewMode.TASK:
             case ViewMode.SEARCH_RESULTS_TASK:
                 return (int) (totalWidth * mTaskListWeight);
@@ -332,18 +312,6 @@ public class TwoPaneLayout extends FrameLayout {
         }
     }
 
-    private void dispatchTaskListVisibilityChange(boolean visible) {
-        if (mListener != null) {
-            mListener.onTaskListVisibilityChanged(visible);
-        }
-    }
-
-    private void dispatchTaskVisibilityChanged(boolean visible) {
-        if (mListener != null) {
-            mListener.onTaskVisibilityChanged(visible);
-        }
-    }
-
     // does not apply to drawer children. will return zero for those.
     private int getPaneWidth(View pane) {
         return isDrawerView(pane) ? 0 : pane.getLayoutParams().width;
@@ -356,45 +324,17 @@ public class TwoPaneLayout extends FrameLayout {
     /**
      * @return Whether or not the task list is visible on screen.
      */
-    public boolean isTaskListCollapsed() {
+    public boolean isEntityListCollapsed() {
         return !ViewMode.isListMode(mCurrentMode) && mListCollapsible;
     }
 
-    @Override
-    public void onViewModeChanged(int newMode) {
+    public void onViewModeChanged(@Observes ModeChangeEvent modeChangeEvent) {
+        int newMode = modeChangeEvent.getNewMode();
         // make all initially GONE panes visible only when the view mode is first determined
         if (mCurrentMode == ViewMode.UNKNOWN) {
+            mQuickAddView.setVisibility(VISIBLE);
             mListView.setVisibility(VISIBLE);
-        }
-
-        if (ViewMode.isAdMode(newMode)) {
-            mMiscellaneousView.setVisibility(VISIBLE);
-            mTaskView.setVisibility(GONE);
-        } else {
             mTaskView.setVisibility(VISIBLE);
-            mMiscellaneousView.setVisibility(GONE);
-        }
-
-        // set up the drawer as appropriate for the configuration
-        final ViewParent foldersParent = mFoldersView.getParent();
-        if (mIsExpansiveLayout && foldersParent != this) {
-            if (foldersParent != mDrawerLayout) {
-                throw new IllegalStateException("invalid Folders fragment parent: " +
-                        foldersParent);
-            }
-            mDrawerLayout.removeView(mFoldersView);
-            addView(mFoldersView, 0);
-            mFoldersView.findViewById(R.id.folders_pane_edge).setVisibility(VISIBLE);
-            mFoldersView.setBackgroundDrawable(null);
-        } else if (!mIsExpansiveLayout && foldersParent == this) {
-            removeView(mFoldersView);
-            mDrawerLayout.addView(mFoldersView);
-            final DrawerLayout.LayoutParams lp =
-                    (DrawerLayout.LayoutParams) mFoldersView.getLayoutParams();
-            lp.gravity = Gravity.START;
-            mFoldersView.setLayoutParams(lp);
-            mFoldersView.findViewById(R.id.folders_pane_edge).setVisibility(GONE);
-            mFoldersView.setBackgroundResource(R.color.list_background_color);
         }
 
         // detach the pager immediately from its data source (to prevent processing updates)
@@ -404,7 +344,7 @@ public class TwoPaneLayout extends FrameLayout {
 
         mDrawerInitialSetupComplete = true;
         mCurrentMode = newMode;
-        LogUtils.i(LOG_TAG, "onViewModeChanged(%d)", newMode);
+        Log.i(TAG, "onViewModeChanged " + newMode);
 
         // do all the real work in onMeasure/onLayout, when panes are sized and positioned for the
         // current width/height anyway
@@ -422,28 +362,14 @@ public class TwoPaneLayout extends FrameLayout {
         }
         lp.width = w;
         pane.setLayoutParams(lp);
-        if (LogUtils.isLoggable(LOG_TAG, LogUtils.DEBUG)) {
-            final String s;
-            if (pane == mFoldersView) {
-                s = "folders";
-            } else if (pane == mListView) {
-                s = "conv-list";
-            } else if (pane == mTaskView) {
-                s = "conv-view";
-            } else if (pane == mMiscellaneousView) {
-                s = "misc-view";
-            } else {
-                s = "???:" + pane;
-            }
-            LogUtils.d(LOG_TAG, "TPL: setPaneWidth, w=%spx pane=%s", w, s);
+        final String s;
+        if (pane == mListView) {
+            s = "conv-list";
+        } else if (pane == mTaskView) {
+            s = "conv-view";
+        } else {
+            s = "???:" + pane;
         }
-    }
-
-    public boolean isDrawerEnabled() {
-        return !mIsExpansiveLayout && mDrawerInitialSetupComplete;
-    }
-
-    public boolean isExpansiveLayout() {
-        return mIsExpansiveLayout;
+        Log.d(TAG, "TPL: setPaneWidth, w=" + w + " pane=" + s);
     }
 }

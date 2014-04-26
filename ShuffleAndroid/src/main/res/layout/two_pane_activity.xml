@@ -25,37 +25,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/content_pane"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
-
-            <fragment android:id="@+id/navigation_drawer"
-                      android:layout_width="@dimen/navigation_drawer_width"
-                      android:layout_height="match_parent"
-                      android:layout_gravity="start"
-                      android:choiceMode="singleChoice"
-                      android:background="#fff"
-                      android:name="org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment"
-                    />
-
-            <FrameLayout android:id="@+id/folders_pane_edge"
-                android:layout_width="8dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="right"
-                android:background="@drawable/shadow_right">
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="right"
-                    android:background="@color/light_gray" />
-
-            </FrameLayout>
-        </FrameLayout>
+        <include
+                android:id="@+id/quick_add"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/quick_add"
+                />
 
         <FrameLayout
-            android:id="@+id/task_list_pane"
+            android:id="@+id/entity_list_pane"
             android:layout_width="0dp"
             android:layout_height="match_parent" />
 
@@ -64,11 +42,16 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent" />
 
-        <FrameLayout
-            android:id="@+id/miscellaneous_pane"
-            android:layout_width="0dp"
-            android:layout_height="match_parent" />
-
     </org.dodgybits.shuffle.android.core.view.TwoPaneLayout>
+
+    <fragment android:id="@+id/navigation_drawer"
+              android:layout_width="@dimen/navigation_drawer_width"
+              android:layout_height="match_parent"
+              android:layout_gravity="start"
+              android:choiceMode="singleChoice"
+              android:background="#fff"
+              android:name="org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment"
+            />
+
 
 </android.support.v4.widget.DrawerLayout>
