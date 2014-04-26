@@ -1,13 +1,3 @@
-package org.dodgybits.shuffle.android.core.controller;
-
-import android.app.Dialog;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-
 /**
  * Copyright (C) 2014 Android Shuffle Open Source Project
  * <p/>
@@ -23,6 +13,16 @@ import android.view.MenuItem;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.dodgybits.shuffle.android.core.controller;
+
+import android.app.Dialog;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+
 public interface ActivityController {
 
     /**

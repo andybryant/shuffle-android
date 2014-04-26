@@ -15,8 +15,10 @@
  */
 package org.dodgybits.shuffle.android.core.view;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Build;
 import android.support.v4.widget.DrawerLayout;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -32,6 +34,7 @@ import org.dodgybits.shuffle.android.core.controller.AbstractActivityController;
 import org.dodgybits.shuffle.android.core.event.EntityListVisibiltyChangeEvent;
 import org.dodgybits.shuffle.android.core.event.ModeChangeEvent;
 import org.dodgybits.shuffle.android.core.event.TaskVisibilityChangeEvent;
+import org.dodgybits.shuffle.android.core.util.OSUtils;
 import roboguice.RoboGuice;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -202,6 +205,7 @@ public class TwoPaneLayout extends FrameLayout {
      *
      * @param width
      */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void positionPanes(int width) {
         if (mPositionedMode == mCurrentMode) {
             return;
@@ -240,7 +244,7 @@ public class TwoPaneLayout extends FrameLayout {
                 break;
         }
 
-        if (hasPositions) {
+        if (hasPositions && OSUtils.atLeastHoneycomb()) {
             mListView.setX(listX);
             mTaskView.setX(taskX);
             mQuickAddView.setX(listX);

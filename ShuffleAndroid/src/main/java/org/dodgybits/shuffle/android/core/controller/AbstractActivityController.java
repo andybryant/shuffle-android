@@ -16,6 +16,7 @@
 package org.dodgybits.shuffle.android.core.controller;
 
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,6 +24,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,11 +36,13 @@ import org.dodgybits.shuffle.android.core.activity.MainActivity;
 import org.dodgybits.shuffle.android.core.util.PackageUtils;
 import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
+import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
 import org.dodgybits.shuffle.android.list.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.list.listener.NavigationListener;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.context.ContextListFragment;
 import org.dodgybits.shuffle.android.list.view.project.ProjectListFragment;
+import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
 import org.dodgybits.shuffle.android.server.gcm.GcmRegister;
@@ -50,7 +54,21 @@ import roboguice.inject.ContextScopedProvider;
 
 import java.util.Map;
 
+/**
+ * This is an abstract implementation of the Activity Controller. This class
+ * knows how to respond to menu items, state changes, layout changes, etc. It
+ * weaves together the views and listeners, dispatching actions to the
+ * respective underlying classes.
+ * <p>
+ * Even though this class is abstract, it should provide default implementations
+ * for most, if not all the methods in the ActivityController interface. This
+ * makes the task of the subclasses easier: OnePaneController and
+ * TwoPaneController can be concise when the common functionality is in
+ * AbstractActivityController.
+ * </p>
+ */
 public abstract class AbstractActivityController implements ActivityController {
+    private static final String TAG = "AbsActController";
 
     public static final String QUERY_NAME = "queryName";
     private static final int WHATS_NEW_DIALOG = 0;
@@ -201,7 +219,16 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Override
     public Dialog onCreateDialog(int id, Bundle bundle) {
-        return null;
+        Dialog dialog = null;
+        if (id == WHATS_NEW_DIALOG) {
+            dialog = new AlertDialog.Builder(mActivity)
+                    .setTitle(R.string.whats_new_dialog_title)
+                    .setPositiveButton(R.string.ok_button_title, null)
+                    .setMessage(R.string.whats_new_dialog_message)
+                    .create();
+        }
+
+        return dialog;
     }
 
     @Override
@@ -238,6 +265,17 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_preferences:
+                Log.d(TAG, "Bringing up preferences");
+                mEventManager.fire(new ViewPreferencesEvent());
+                return true;
+            case R.id.action_search:
+                Log.d(TAG, "Bringing up search");
+                startSearch();
+                return true;
+        }
+
         return false;
     }
 
@@ -300,6 +338,40 @@ public abstract class AbstractActivityController implements ActivityController {
 
     public void disablePagerUpdates() {
         mPagerController.stopListening();
+    }
+
+
+    ////////
+    /// From activity
+    ////////
+
+    public int getRequestedPosition() {
+        Integer position = 0;
+        String queryName = getIntent().getStringExtra(QUERY_NAME);
+        if (queryName != null) {
+            ListQuery query = ListQuery.valueOf(queryName);
+            position = mQueryIndex.get(query);
+            if (position == null) {
+                Log.e(TAG, "Couldn't find page " + queryName);
+                position = 0;
+            }
+        }
+
+        return position;
+    }
+
+
+    private void addTaskList(ListQuery query) {
+        TaskListContext listContext = TaskListContext.create(query);
+        addFragment(query, createTaskFragment(listContext));
+    }
+
+    private TaskListFragment createTaskFragment(TaskListContext listContext) {
+        TaskListFragment fragment = mTaskListFragmentProvider.get(this);
+        Bundle args = new Bundle();
+        args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, listContext);
+        fragment.setArguments(args);
+        return fragment;
     }
 
 }
