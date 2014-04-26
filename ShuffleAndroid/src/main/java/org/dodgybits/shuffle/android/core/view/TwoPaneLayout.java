@@ -258,121 +258,9 @@ public class TwoPaneLayout extends FrameLayout {
         mPositionedMode = mCurrentMode;
     }
 
-    private final AnimatorListenerAdapter mPaneAnimationListener = new AnimatorListenerAdapter() {
-        @Override
-        public void onAnimationEnd(Animator animation) {
-            mListCopyView.unbind();
-            useHardwareLayer(false);
-            fixupListCopyWidth();
-            onTransitionComplete();
-        }
-        @Override
-        public void onAnimationCancel(Animator animation) {
-            mListCopyView.unbind();
-            useHardwareLayer(false);
-        }
-    };
 
-    /**
-     * @param foldersX
-     * @param listX
-     * @param convX
-     */
-    private void animatePanes(int foldersX, int listX, int convX) {
-        // If positioning has not yet happened, we don't need to animate panes into place.
-        // This happens on first layout, rotate, and when jumping straight to a task from
-        // a view intent.
-        if (mPositionedMode == ViewMode.UNKNOWN) {
-            mTaskView.setX(convX);
-            mMiscellaneousView.setX(convX);
-            mListView.setX(listX);
-            if (!isDrawerView(mFoldersView)) {
-                mFoldersView.setX(foldersX);
-            }
 
-            // listeners need to know that the "transition" is complete, even if one is not run.
-            // defer notifying listeners because we're in a layout pass, and they might do layout.
-            post(mTransitionCompleteRunnable);
-            return;
-        }
 
-        final boolean useListCopy = getPaneWidth(mListView) != getPaneWidth(mListCopyView);
-
-        if (useListCopy) {
-            // freeze the current list view before it gets redrawn
-            mListCopyView.bind(mListView);
-            mListCopyView.setX(mListView.getX());
-
-            mListCopyView.setAlpha(1.0f);
-            mListView.setAlpha(0.0f);
-        }
-
-        useHardwareLayer(true);
-
-        if (ViewMode.isAdMode(mCurrentMode)) {
-            mMiscellaneousView.animate().x(convX);
-        } else {
-            mTaskView.animate().x(convX);
-        }
-
-        if (!isDrawerView(mFoldersView)) {
-            mFoldersView.animate().x(foldersX);
-        }
-        if (useListCopy) {
-            mListCopyView.animate().x(listX).alpha(0.0f);
-        }
-        mListView.animate()
-                .x(listX)
-                .alpha(1.0f)
-                .setListener(mPaneAnimationListener);
-        configureAnimations(mTaskView, mFoldersView, mListView, mListCopyView,
-                mMiscellaneousView);
-    }
-
-    private void configureAnimations(View... views) {
-        for (View v : views) {
-            if (isDrawerView(v)) {
-                continue;
-            }
-            v.animate()
-                    .setInterpolator(mSlideInterpolator)
-                    .setDuration(SLIDE_DURATION_MS);
-        }
-    }
-
-    private void useHardwareLayer(boolean useHardware) {
-        final int layerType = useHardware ? LAYER_TYPE_HARDWARE : LAYER_TYPE_NONE;
-        if (!isDrawerView(mFoldersView)) {
-            mFoldersView.setLayerType(layerType, null);
-        }
-        mListView.setLayerType(layerType, null);
-        mListCopyView.setLayerType(layerType, null);
-        mTaskView.setLayerType(layerType, null);
-        mMiscellaneousView.setLayerType(layerType, null);
-        if (useHardware) {
-            // these buildLayer calls are safe because layout is the only way we get here
-            // (i.e. these views must already be attached)
-            if (!isDrawerView(mFoldersView)) {
-                mFoldersView.buildLayer();
-            }
-            mListView.buildLayer();
-            mListCopyView.buildLayer();
-            mTaskView.buildLayer();
-            mMiscellaneousView.buildLayer();
-        }
-    }
-
-    private void fixupListCopyWidth() {
-        if (mListCopyWidthOnComplete == null ||
-                getPaneWidth(mListCopyView) == mListCopyWidthOnComplete) {
-            mListCopyWidthOnComplete = null;
-            return;
-        }
-        LogUtils.i(LOG_TAG, "onAnimationEnd of list view, setting copy width to %d",
-                mListCopyWidthOnComplete);
-        setPaneWidth(mListCopyView, mListCopyWidthOnComplete);
-        mListCopyWidthOnComplete = null;
-    }
 
     private void onTransitionComplete() {
         if (mController.isDestroyed()) {
@@ -444,19 +332,6 @@ public class TwoPaneLayout extends FrameLayout {
         }
     }
 
-    /**
-     * Computes the width of the folder list in stable state of the current mode.
-     */
-    private int computeFolderListWidth(int parentWidth) {
-        if (mIsSearchResult) {
-            return 0;
-        } else if (isDrawerView(mFoldersView)) {
-            return 0;
-        } else {
-            return (int) (parentWidth * mFolderListWeight);
-        }
-    }
-
     private void dispatchTaskListVisibilityChange(boolean visible) {
         if (mListener != null) {
             mListener.onTaskListVisibilityChanged(visible);
@@ -489,9 +364,7 @@ public class TwoPaneLayout extends FrameLayout {
     public void onViewModeChanged(int newMode) {
         // make all initially GONE panes visible only when the view mode is first determined
         if (mCurrentMode == ViewMode.UNKNOWN) {
-            mFoldersView.setVisibility(VISIBLE);
             mListView.setVisibility(VISIBLE);
-            mListCopyView.setVisibility(VISIBLE);
         }
 
         if (ViewMode.isAdMode(newMode)) {
