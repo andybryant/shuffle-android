@@ -16,25 +16,26 @@
 package org.dodgybits.shuffle.android.core.controller;
 
 
-import android.app.AlertDialog;
-import android.app.Dialog;
+import android.app.*;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.Toast;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
 import org.dodgybits.shuffle.android.core.util.PackageUtils;
 import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
+import org.dodgybits.shuffle.android.core.view.TaskSelectionSet;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
 import org.dodgybits.shuffle.android.list.listener.EntityUpdateListener;
@@ -100,18 +101,38 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Inject
     private ContextScopedProvider<TaskListFragment> mTaskListFragmentProvider;
-
     @Inject
     private ContextScopedProvider<ContextListFragment> mContextListFragmentProvider;
-
     @Inject
     private ContextScopedProvider<ProjectListFragment> mProjectListFragmentProvider;
 
+    /**
+     * Selected conversations, if any.
+     */
+    private final TaskSelectionSet mSelectedSet = new TaskSelectionSet();
 
+    final private FragmentManager mFragmentManager;
+
+    @Inject
     protected AbstractActivityController(MainActivity activity, ViewMode viewMode) {
         mActivity = activity;
         mViewMode = viewMode;
+        mFragmentManager = activity.getSupportFragmentManager();
+        // Allow the fragment to observe changes to its own selection set. No other object is
+        // aware of the selected set.
+        mSelectedSet.addObserver(this);
+
     }
+
+    /**
+     * Check if the fragment is attached to an activity and has a root view.
+     * @param in fragment to be checked
+     * @return true if the fragment is valid, false otherwise
+     */
+    private static boolean isValidFragment(Fragment in) {
+        return !(in == null || in.getActivity() == null || in.getView() == null);
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -119,12 +140,20 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Override
     public boolean onBackPressed() {
-        return false;
+        if (isDrawerEnabled() && mNavigationDrawerFragment.isDrawerVisible()) {
+            mNavigationDrawerFragment.closeDrawers();
+            return true;
+        }
+
+        return handleBackPress();
     }
+
+    protected abstract boolean handleBackPress();
+    protected abstract boolean handleUpPress();
 
     @Override
     public boolean onUpPressed() {
-        return false;
+        return handleUpPress();
     }
 
     /**
@@ -162,6 +191,11 @@ public abstract class AbstractActivityController implements ActivityController {
         setupNavigationDrawer();
         setupSync();
 
+        final Intent intent = mActivity.getIntent();
+        if (intent != null) {
+            handleIntent(intent);
+        }
+
         return true;
     }
 
@@ -196,15 +230,79 @@ public abstract class AbstractActivityController implements ActivityController {
         mAuthTokenRetriever.retrieveToken();
     }
 
+    /**
+     * Handle an intent to open the app. This method is called only when there is no saved state,
+     * so we need to set state that wasn't set before. It is correct to change the viewmode here
+     * since it has not been previously set.
+     *
+     * This method is called for a subset of the reasons mentioned in
+     * {@link #onCreate(android.os.Bundle)}. Notably, this is called when launching the app from
+     * notifications, widgets, and shortcuts.
+     * @param intent intent passed to the activity.
+     */
+    private void handleIntent(Intent intent) {
+        Log.d(TAG, "IN AAC.handleIntent. action=" + intent.getAction());
+        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            final boolean isConversationMode = intent.hasExtra(Utils.EXTRA_CONVERSATION);
+
+            if (isConversationMode && mViewMode.getMode() == ViewMode.UNKNOWN) {
+                mViewMode.enterConversationMode();
+            } else {
+                mViewMode.enterConversationListMode();
+            }
+            // Put the folder and conversation, and ask the loader to create this folder.
+            final Bundle args = new Bundle();
+
+            final Uri folderUri;
+            if (intent.hasExtra(Utils.EXTRA_FOLDER_URI)) {
+                folderUri = (Uri) intent.getParcelableExtra(Utils.EXTRA_FOLDER_URI);
+            } else if (intent.hasExtra(Utils.EXTRA_FOLDER)) {
+                final Folder folder =
+                        Folder.fromString(intent.getStringExtra(Utils.EXTRA_FOLDER));
+                folderUri = folder.folderUri.fullUri;
+            } else {
+                final Bundle extras = intent.getExtras();
+                LogUtils.d(LOG_TAG, "Couldn't find a folder URI in the extras: %s",
+                        extras == null ? "null" : extras.toString());
+                folderUri = mAccount.settings.defaultInbox;
+            }
+
+            args.putParcelable(Utils.EXTRA_FOLDER_URI, folderUri);
+            args.putParcelable(Utils.EXTRA_CONVERSATION,
+                    intent.getParcelableExtra(Utils.EXTRA_CONVERSATION));
+            restartOptionalLoader(LOADER_FIRST_FOLDER, mFolderCallbacks, args);
+        } else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            if (intent.hasExtra(Utils.EXTRA_ACCOUNT)) {
+                mHaveSearchResults = false;
+                // Save this search query for future suggestions.
+                final String query = intent.getStringExtra(SearchManager.QUERY);
+                final String authority = mContext.getString(R.string.suggestions_authority);
+                final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
+                        mContext, authority, SuggestionsProvider.MODE);
+                suggestions.saveRecentQuery(query, null);
+                setAccount((Account) intent.getParcelableExtra(Utils.EXTRA_ACCOUNT));
+                fetchSearchFolder(intent);
+                if (shouldEnterSearchConvMode()) {
+                    mViewMode.enterSearchResultsConversationMode();
+                } else {
+                    mViewMode.enterSearchResultsListMode();
+                }
+            } else {
+                LogUtils.e(LOG_TAG, "Missing account extra from search intent.  Finishing");
+                mActivity.finish();
+            }
+        }
+        if (mAccount != null) {
+            restartOptionalLoader(LOADER_ACCOUNT_UPDATE_CURSOR, mAccountCallbacks, Bundle.EMPTY);
+        }
+    }
 
     @Override
     public void onPostCreate(Bundle savedState) {
-
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-
     }
 
     @Override
@@ -251,9 +349,9 @@ public abstract class AbstractActivityController implements ActivityController {
         ActionBar actionBar = mActivity.getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
-        if (mTitle != null) {
-            actionBar.setTitle(mTitle);
-        }
+//        if (mTitle != null) {
+//            actionBar.setTitle(mTitle);
+//        }
     }
 
 
@@ -301,7 +399,7 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Override
     public void onResume() {
-
+        mActivity.invalidateOptionsMenu();
     }
 
     @Override

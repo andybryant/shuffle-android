@@ -22,8 +22,9 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import org.dodgybits.shuffle.android.core.view.TaskSetObserver;
 
-public interface ActivityController {
+public interface ActivityController extends TaskSetObserver {
 
     /**
      * @see android.app.Activity#onActivityResult
@@ -180,5 +181,12 @@ public interface ActivityController {
      * Exit the search mode, popping off one activity so that the back stack is fine.
      */
     void exitSearchMode();
+
+    /**
+     * Called to determine if the drawer is enabled for this controller/activity instance.
+     * Note: the value returned should not change for this controller instance.
+     */
+    boolean isDrawerEnabled();
+
 
 }

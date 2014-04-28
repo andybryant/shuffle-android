@@ -251,6 +251,14 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
+    public boolean isDrawerVisible() {
+        return mDrawerLayout != null && mDrawerLayout.isDrawerVisible(mFragmentContainerView);
+    }
+
+    public void closeDrawers() {
+        mDrawerLayout.closeDrawers();
+    }
+
     private int fetchSelectedPosition(Bundle savedInstanceState) {
         int position = -1;
         if (savedInstanceState != null) {
