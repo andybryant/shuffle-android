@@ -16,7 +16,9 @@
 package org.dodgybits.shuffle.android.core.controller;
 
 
-import android.app.*;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -24,6 +26,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -120,7 +123,8 @@ public abstract class AbstractActivityController implements ActivityController {
         mFragmentManager = activity.getSupportFragmentManager();
         // Allow the fragment to observe changes to its own selection set. No other object is
         // aware of the selected set.
-        mSelectedSet.addObserver(this);
+
+//        mSelectedSet.addObserver(this);
 
     }
 
@@ -242,58 +246,24 @@ public abstract class AbstractActivityController implements ActivityController {
      */
     private void handleIntent(Intent intent) {
         Log.d(TAG, "IN AAC.handleIntent. action=" + intent.getAction());
+
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            final boolean isConversationMode = intent.hasExtra(Utils.EXTRA_CONVERSATION);
-
-            if (isConversationMode && mViewMode.getMode() == ViewMode.UNKNOWN) {
-                mViewMode.enterConversationMode();
-            } else {
-                mViewMode.enterConversationListMode();
+            ListQuery query = ListQuery.inbox;
+            String queryName = intent.getStringExtra(QUERY_NAME);
+            if (queryName != null) {
+                query = ListQuery.valueOf(queryName);
             }
-            // Put the folder and conversation, and ask the loader to create this folder.
-            final Bundle args = new Bundle();
+            mViewMode.enterTaskListMode();
 
-            final Uri folderUri;
-            if (intent.hasExtra(Utils.EXTRA_FOLDER_URI)) {
-                folderUri = (Uri) intent.getParcelableExtra(Utils.EXTRA_FOLDER_URI);
-            } else if (intent.hasExtra(Utils.EXTRA_FOLDER)) {
-                final Folder folder =
-                        Folder.fromString(intent.getStringExtra(Utils.EXTRA_FOLDER));
-                folderUri = folder.folderUri.fullUri;
-            } else {
-                final Bundle extras = intent.getExtras();
-                LogUtils.d(LOG_TAG, "Couldn't find a folder URI in the extras: %s",
-                        extras == null ? "null" : extras.toString());
-                folderUri = mAccount.settings.defaultInbox;
-            }
-
-            args.putParcelable(Utils.EXTRA_FOLDER_URI, folderUri);
-            args.putParcelable(Utils.EXTRA_CONVERSATION,
-                    intent.getParcelableExtra(Utils.EXTRA_CONVERSATION));
-            restartOptionalLoader(LOADER_FIRST_FOLDER, mFolderCallbacks, args);
+            // TODO start loading task list cursor
+//            restartOptionalLoader(LOADER_FIRST_FOLDER, mFolderCallbacks, args);
         } else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            if (intent.hasExtra(Utils.EXTRA_ACCOUNT)) {
-                mHaveSearchResults = false;
-                // Save this search query for future suggestions.
-                final String query = intent.getStringExtra(SearchManager.QUERY);
-                final String authority = mContext.getString(R.string.suggestions_authority);
-                final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
-                        mContext, authority, SuggestionsProvider.MODE);
-                suggestions.saveRecentQuery(query, null);
-                setAccount((Account) intent.getParcelableExtra(Utils.EXTRA_ACCOUNT));
-                fetchSearchFolder(intent);
-                if (shouldEnterSearchConvMode()) {
-                    mViewMode.enterSearchResultsConversationMode();
-                } else {
-                    mViewMode.enterSearchResultsListMode();
-                }
-            } else {
-                LogUtils.e(LOG_TAG, "Missing account extra from search intent.  Finishing");
-                mActivity.finish();
-            }
-        }
-        if (mAccount != null) {
-            restartOptionalLoader(LOADER_ACCOUNT_UPDATE_CURSOR, mAccountCallbacks, Bundle.EMPTY);
+            final String query = intent.getStringExtra(SearchManager.QUERY);
+//            if (shouldEnterSearchTaskMode()) {
+//                mViewMode.enterSearchResultsTaskMode();
+//            } else {
+                mViewMode.enterSearchResultsListMode();
+//            }
         }
     }
 
@@ -399,7 +369,7 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Override
     public void onResume() {
-        mActivity.invalidateOptionsMenu();
+        mActivity.supportInvalidateOptionsMenu();
     }
 
     @Override
@@ -424,7 +394,7 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Override
     public void startSearch() {
-        mActionBarView.expandSearch();
+//        mActionBarView.expandSearch();
     }
 
     @Override
@@ -435,7 +405,7 @@ public abstract class AbstractActivityController implements ActivityController {
     }
 
     public void disablePagerUpdates() {
-        mPagerController.stopListening();
+//        mPagerController.stopListening();
     }
 
 
@@ -443,29 +413,13 @@ public abstract class AbstractActivityController implements ActivityController {
     /// From activity
     ////////
 
-    public int getRequestedPosition() {
-        Integer position = 0;
-        String queryName = getIntent().getStringExtra(QUERY_NAME);
-        if (queryName != null) {
-            ListQuery query = ListQuery.valueOf(queryName);
-            position = mQueryIndex.get(query);
-            if (position == null) {
-                Log.e(TAG, "Couldn't find page " + queryName);
-                position = 0;
-            }
-        }
-
-        return position;
-    }
-
-
     private void addTaskList(ListQuery query) {
         TaskListContext listContext = TaskListContext.create(query);
-        addFragment(query, createTaskFragment(listContext));
+        createTaskFragment(listContext);
     }
 
     private TaskListFragment createTaskFragment(TaskListContext listContext) {
-        TaskListFragment fragment = mTaskListFragmentProvider.get(this);
+        TaskListFragment fragment = mTaskListFragmentProvider.get(mActivity);
         Bundle args = new Bundle();
         args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, listContext);
         fragment.setArguments(args);

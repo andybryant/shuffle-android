@@ -18,6 +18,7 @@ package org.dodgybits.shuffle.android.core.controller;
 import android.os.Bundle;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
+import org.dodgybits.shuffle.android.core.view.TaskSelectionSet;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 
 public class OnePaneController extends AbstractActivityController {
@@ -31,5 +32,35 @@ public class OnePaneController extends AbstractActivityController {
         mActivity.setContentView(R.layout.one_pane_activity);
 
         return super.onCreate(savedState);
+    }
+
+    @Override
+    protected boolean handleUpPress() {
+        return false;
+    }
+
+    @Override
+    protected boolean handleBackPress() {
+        return false;
+    }
+
+    @Override
+    public boolean isDrawerEnabled() {
+        return false;
+    }
+
+    @Override
+    public void onSetEmpty() {
+
+    }
+
+    @Override
+    public void onSetPopulated(TaskSelectionSet set) {
+
+    }
+
+    @Override
+    public void onSetChanged(TaskSelectionSet set) {
+
     }
 }

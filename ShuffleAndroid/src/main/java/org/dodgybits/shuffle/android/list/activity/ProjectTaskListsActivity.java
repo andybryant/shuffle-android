@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
+import org.dodgybits.shuffle.android.core.controller.AbstractActivityController;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.list.content.ProjectCursorLoader;
@@ -84,7 +85,7 @@ public class ProjectTaskListsActivity extends RoboActionBarActivity {
             case android.R.id.home:
                 Intent intent = new Intent(this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(MainActivity.QUERY_NAME, ListQuery.project.name());
+                intent.putExtra(AbstractActivityController.QUERY_NAME, ListQuery.project.name());
                 startActivity(intent);
                 finish();
                 return true;

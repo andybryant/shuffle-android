@@ -9,6 +9,7 @@ import android.widget.SpinnerAdapter;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
+import org.dodgybits.shuffle.android.core.controller.AbstractActivityController;
 import org.dodgybits.shuffle.android.core.util.OSUtils;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListTitles;
@@ -41,7 +42,7 @@ public class MultiTaskListFragment extends TaskListFragment {
         } else {
             // first time here - check if a list was specified on the intent
             Intent intent = getActivity().getIntent();
-            String queryName = intent.getStringExtra(MainActivity.QUERY_NAME);
+            String queryName = intent.getStringExtra(AbstractActivityController.QUERY_NAME);
             if (queryName != null) {
                 ListQuery query = ListQuery.valueOf(queryName);
                 int index = getMultiTaskListContext().getListQueries().indexOf(query);

@@ -16,6 +16,7 @@
 package org.dodgybits.shuffle.android.core.controller;
 
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
+import org.dodgybits.shuffle.android.core.view.TaskSelectionSet;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 
 public class TwoPaneController extends AbstractActivityController {
@@ -24,5 +25,33 @@ public class TwoPaneController extends AbstractActivityController {
         super(activity, viewMode);
     }
 
+    @Override
+    protected boolean handleBackPress() {
+        return false;
+    }
 
+    @Override
+    protected boolean handleUpPress() {
+        return false;
+    }
+
+    @Override
+    public boolean isDrawerEnabled() {
+        return false;
+    }
+
+    @Override
+    public void onSetEmpty() {
+
+    }
+
+    @Override
+    public void onSetPopulated(TaskSelectionSet set) {
+
+    }
+
+    @Override
+    public void onSetChanged(TaskSelectionSet set) {
+
+    }
 }
