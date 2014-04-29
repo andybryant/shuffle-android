@@ -26,4 +26,10 @@ public class ModeChangeEvent {
         return mNewMode;
     }
 
+    @Override
+    public String toString() {
+        return "ModeChangeEvent{" +
+                "mNewMode=" + mNewMode +
+                '}';
+    }
 }

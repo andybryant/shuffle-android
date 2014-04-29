@@ -15,14 +15,45 @@
  */
 package org.dodgybits.shuffle.android.core.controller;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
+import org.dodgybits.shuffle.android.core.event.ModeChangeEvent;
 import org.dodgybits.shuffle.android.core.view.TaskSelectionSet;
+import org.dodgybits.shuffle.android.core.view.TwoPaneLayout;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
+import roboguice.RoboGuice;
+import roboguice.event.Observes;
 
 public class TwoPaneController extends AbstractActivityController {
+    private static final String TAG = "TwoPaneController";
+
+    private TwoPaneLayout mLayout;
+
 
     public TwoPaneController(MainActivity activity, ViewMode viewMode) {
         super(activity, viewMode);
+    }
+
+    @Override
+    public boolean onCreate(Bundle savedState) {
+        mActivity.setContentView(R.layout.two_pane_activity);
+        mLayout = (TwoPaneLayout) mActivity.findViewById(R.id.two_pane_activity);
+        if (mLayout == null) {
+            // We need the layout for everything. Crash/Return early if it is null.
+            Log.wtf(TAG, "mLayout is null!");
+            return false;
+        }
+        mLayout.setController(this, Intent.ACTION_SEARCH.equals(mActivity.getIntent().getAction()));
+
+        return super.onCreate(savedState);
+    }
+
+
+    public void onViewModeChanged(@Observes ModeChangeEvent modeChangeEvent) {
+        Log.d(TAG, "Received modeChange" + modeChangeEvent);
     }
 
     @Override

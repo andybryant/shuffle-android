@@ -22,9 +22,10 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
 import org.dodgybits.shuffle.android.core.view.TaskSetObserver;
 
-public interface ActivityController extends TaskSetObserver {
+public interface ActivityController extends TaskSetObserver, NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
      * @see android.app.Activity#onActivityResult

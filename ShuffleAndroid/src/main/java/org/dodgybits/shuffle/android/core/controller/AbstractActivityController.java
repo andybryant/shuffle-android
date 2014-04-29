@@ -53,6 +53,7 @@ import org.dodgybits.shuffle.android.server.gcm.GcmRegister;
 import org.dodgybits.shuffle.android.server.gcm.event.RegisterGcmEvent;
 import org.dodgybits.shuffle.android.server.sync.AuthTokenRetriever;
 import org.dodgybits.shuffle.android.server.sync.SyncAlarmService;
+import roboguice.RoboGuice;
 import roboguice.event.EventManager;
 import roboguice.inject.ContextScopedProvider;
 
@@ -191,6 +192,7 @@ public abstract class AbstractActivityController implements ActivityController {
         // don't show soft keyboard unless user clicks on quick add box
         mActivity.getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        RoboGuice.getInjector(mActivity).injectMembersWithoutViews(this);
         checkLastVersion();
         setupNavigationDrawer();
         setupSync();
@@ -223,9 +225,10 @@ public abstract class AbstractActivityController implements ActivityController {
     private void setupNavigationDrawer() {
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 mActivity.getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        DrawerLayout drawerLayout = (DrawerLayout) mActivity.findViewById(R.id.drawer_layout);
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
-                (DrawerLayout) mActivity.findViewById(R.id.drawer_layout));
+                drawerLayout);
     }
 
     private void setupSync() {
@@ -264,6 +267,9 @@ public abstract class AbstractActivityController implements ActivityController {
 //            } else {
                 mViewMode.enterSearchResultsListMode();
 //            }
+        } else {
+            // default to inbox
+            mViewMode.enterTaskListMode();
         }
     }
 
@@ -408,6 +414,15 @@ public abstract class AbstractActivityController implements ActivityController {
 //        mPagerController.stopListening();
     }
 
+    @Override
+    public void onNavigationDrawerItemSelected(int position) {
+
+    }
+
+    @Override
+    public int getRequestedPosition() {
+        return 0;
+    }
 
     ////////
     /// From activity

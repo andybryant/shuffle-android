@@ -12,10 +12,11 @@ import org.dodgybits.shuffle.android.core.controller.ActivityController;
 import org.dodgybits.shuffle.android.core.controller.OnePaneController;
 import org.dodgybits.shuffle.android.core.controller.TwoPaneController;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
+import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
 
-public class MainActivity extends RoboActionBarActivity {
+public class MainActivity extends RoboActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
     private static final String TAG = "MainActivity";
 
     private ActivityController mController;
@@ -139,4 +140,14 @@ public class MainActivity extends RoboActionBarActivity {
         mController.onWindowFocusChanged(hasFocus);
     }
 
+
+    @Override
+    public int getRequestedPosition() {
+        return mController.getRequestedPosition();
+    }
+
+    @Override
+    public void onNavigationDrawerItemSelected(int position) {
+        mController.onNavigationDrawerItemSelected(position);
+    }
 }
