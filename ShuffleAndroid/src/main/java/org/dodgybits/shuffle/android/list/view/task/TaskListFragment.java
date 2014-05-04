@@ -17,11 +17,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.activity.MainActivity;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.IntentUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
+import org.dodgybits.shuffle.android.core.view.TaskListCallbacks;
 import org.dodgybits.shuffle.android.list.event.*;
 import org.dodgybits.shuffle.android.list.view.QuickAddController;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
@@ -48,11 +50,7 @@ public class TaskListFragment extends RoboListFragment
     // result codes
     private static final int FILTER_CONFIG = 600;
     
-    private static final int LOADER_ID_TASK_LIST_LOADER = 1;
-
     private boolean mShowMoveActions = false;
-
-    private boolean mIsFirstLoad;
 
     /** ID of the message to highlight. */
     private long mSelectedTaskId = -1;
@@ -62,6 +60,8 @@ public class TaskListFragment extends RoboListFragment
 
     @Inject
     private EventManager mEventManager;
+
+    private boolean mIsFirstLoad;
 
     /**
      * {@link ActionMode} shown when 1 or more message is selected.
@@ -91,6 +91,9 @@ public class TaskListFragment extends RoboListFragment
 
     private TaskListContext mListContext;
 
+    private MainActivity mActivity;
+    private TaskListCallbacks mListHandler;
+
     private void initializeArgCache() {
         if (mListContext != null) return;
         mListContext = getArguments().getParcelable(ARG_LIST_CONTEXT);
@@ -111,7 +114,6 @@ public class TaskListFragment extends RoboListFragment
 
         mListAdapter.setProjectNameVisible(mListContext.isProjectNameVisible());
         mListAdapter.setCallback(this);
-
         mIsFirstLoad = true;
     }
 
@@ -140,7 +142,26 @@ public class TaskListFragment extends RoboListFragment
             restoreInstanceState(savedInstanceState);
         }
 
-        startLoading();
+        mActivity = (MainActivity) getActivity();
+        mListHandler = mActivity.getListHandler();
+
+        // Update the list
+        mListAdapter.swapCursor(mListHandler.getTaskListCursor());
+        setListAdapter(mListAdapter);
+        updateSelectionMode();
+
+        // We want to make visible the selection only for the first load.
+        // Re-load caused by content changed events shouldn't scroll the list.
+        highlightSelectedMessage(mIsFirstLoad);
+
+        // Restore the state -- this step has to be the last, because Some of the
+        // "post processing" seems to reset the scroll position.
+        if (mSavedListState != null) {
+            getListView().onRestoreInstanceState(mSavedListState);
+            mSavedListState = null;
+        }
+
+        mIsFirstLoad = false;
     }
 
     @Override
@@ -338,29 +359,10 @@ public class TaskListFragment extends RoboListFragment
         }
     }
 
-    public void onListSettingsUpdated(@Observes ListSettingsUpdatedEvent event) {
-        if (event.getListQuery().equals(getListContext().getListQuery())) {
-            // our list settings changed - reload list (even if this list isn't currently visible)
-            restartLoading();
-        }
-    }
-
     private void updateQuickAdd() {
         mQuickAddController.init(getActivity());
         mQuickAddController.setEnabled(getListContext().isQuickAddEnabled(getActivity()));
         mQuickAddController.setEntityName(getString(R.string.task_name));
-    }
-
-    private void startLoading() {
-        Log.d(TAG, "Creating list cursor");
-        final LoaderManager lm = getLoaderManager();
-        lm.initLoader(LOADER_ID_TASK_LIST_LOADER, null, LOADER_CALLBACKS);
-    }
-
-    protected void restartLoading() {
-        Log.d(TAG, "Refreshing list cursor");
-        final LoaderManager lm = getLoaderManager();
-        lm.restartLoader(LOADER_ID_TASK_LIST_LOADER, null, LOADER_CALLBACKS);
     }
 
 
@@ -423,48 +425,6 @@ public class TaskListFragment extends RoboListFragment
     }
 
 
-    /**
-     * Loader callbacks for message list.
-     */
-    private final LoaderManager.LoaderCallbacks<Cursor> LOADER_CALLBACKS =
-            new LoaderManager.LoaderCallbacks<Cursor>() {
-
-                @Override
-                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                    final TaskListContext listContext = getListContext();
-
-                    mIsFirstLoad = true;
-                    return TaskListAdaptor.createLoader(getActivity(), listContext);
-                }
-
-                @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
-                    // Update the list
-                    mListAdapter.swapCursor(c);
-                    setListAdapter(mListAdapter);
-
-                    updateSelectionMode();
-
-                    // We want to make visible the selection only for the first load.
-                    // Re-load caused by content changed events shouldn't scroll the list.
-                    highlightSelectedMessage(mIsFirstLoad);
-
-                    // Restore the state -- this step has to be the last, because Some of the
-                    // "post processing" seems to reset the scroll position.
-                    if (mSavedListState != null) {
-                        getListView().onRestoreInstanceState(mSavedListState);
-                        mSavedListState = null;
-                    }
-
-                    mIsFirstLoad = false;
-                }
-
-
-                @Override
-                public void onLoaderReset(Loader<Cursor> loader) {
-                    mListAdapter.changeCursor(null);
-                }
-            };
 
     /**
      * @return true if the content view is created and not destroyed yet. (i.e. between

@@ -23,9 +23,12 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
+import org.dodgybits.shuffle.android.core.view.TaskListCallbacks;
 import org.dodgybits.shuffle.android.core.view.TaskSetObserver;
+import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 
-public interface ActivityController extends TaskSetObserver, NavigationDrawerFragment.NavigationDrawerCallbacks {
+public interface ActivityController extends TaskSetObserver,
+        NavigationDrawerFragment.NavigationDrawerCallbacks, TaskListCallbacks {
 
     /**
      * @see android.app.Activity#onActivityResult
@@ -189,5 +192,6 @@ public interface ActivityController extends TaskSetObserver, NavigationDrawerFra
      */
     boolean isDrawerEnabled();
 
+    TaskListContext getListContext();
 
 }

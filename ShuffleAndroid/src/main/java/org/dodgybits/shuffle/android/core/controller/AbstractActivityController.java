@@ -22,17 +22,20 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.net.Uri;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.SearchRecentSuggestions;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
-import android.view.*;
-import android.widget.Toast;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.WindowManager;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
@@ -40,12 +43,14 @@ import org.dodgybits.shuffle.android.core.util.PackageUtils;
 import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
 import org.dodgybits.shuffle.android.core.view.TaskSelectionSet;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
+import org.dodgybits.shuffle.android.list.event.ListSettingsUpdatedEvent;
 import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
 import org.dodgybits.shuffle.android.list.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.list.listener.NavigationListener;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.context.ContextListFragment;
 import org.dodgybits.shuffle.android.list.view.project.ProjectListFragment;
+import org.dodgybits.shuffle.android.list.view.task.TaskListAdaptor;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
@@ -55,6 +60,7 @@ import org.dodgybits.shuffle.android.server.sync.AuthTokenRetriever;
 import org.dodgybits.shuffle.android.server.sync.SyncAlarmService;
 import roboguice.RoboGuice;
 import roboguice.event.EventManager;
+import roboguice.event.Observes;
 import roboguice.inject.ContextScopedProvider;
 
 import java.util.Map;
@@ -78,8 +84,16 @@ public abstract class AbstractActivityController implements ActivityController {
     public static final String QUERY_NAME = "queryName";
     private static final int WHATS_NEW_DIALOG = 0;
 
+    private static final int LOADER_ID_TASK_LIST_LOADER = 1;
+
+    /** Tag used when loading a task list fragment. */
+    public static final String TAG_TASK_LIST = "tag-task-list";
+
     protected MainActivity mActivity;
     protected ViewMode mViewMode;
+
+    private Cursor mTaskListCursor;
+    private TaskListContext mListContext;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -153,6 +167,11 @@ public abstract class AbstractActivityController implements ActivityController {
         return handleBackPress();
     }
 
+    @Override
+    public TaskListContext getListContext() {
+        return mListContext;
+    }
+
     protected abstract boolean handleBackPress();
     protected abstract boolean handleUpPress();
 
@@ -198,12 +217,22 @@ public abstract class AbstractActivityController implements ActivityController {
         setupSync();
 
         final Intent intent = mActivity.getIntent();
-        if (intent != null) {
+        if (savedState != null) {
+            mViewMode.handleRestore(savedState);
+        } else if (intent != null) {
             handleIntent(intent);
         }
 
         return true;
     }
+
+    @Override
+    public Cursor getTaskListCursor() {
+        return mTaskListCursor;
+    }
+
+
+
 
     private void checkLastVersion() {
         final int lastVersion = Preferences.getLastVersion(mActivity);
@@ -250,17 +279,7 @@ public abstract class AbstractActivityController implements ActivityController {
     private void handleIntent(Intent intent) {
         Log.d(TAG, "IN AAC.handleIntent. action=" + intent.getAction());
 
-        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            ListQuery query = ListQuery.inbox;
-            String queryName = intent.getStringExtra(QUERY_NAME);
-            if (queryName != null) {
-                query = ListQuery.valueOf(queryName);
-            }
-            mViewMode.enterTaskListMode();
-
-            // TODO start loading task list cursor
-//            restartOptionalLoader(LOADER_FIRST_FOLDER, mFolderCallbacks, args);
-        } else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             final String query = intent.getStringExtra(SearchManager.QUERY);
 //            if (shouldEnterSearchTaskMode()) {
 //                mViewMode.enterSearchResultsTaskMode();
@@ -269,7 +288,15 @@ public abstract class AbstractActivityController implements ActivityController {
 //            }
         } else {
             // default to inbox
+            ListQuery query = ListQuery.inbox;
+            String queryName = intent.getStringExtra(QUERY_NAME);
+            if (queryName != null) {
+                query = ListQuery.valueOf(queryName);
+            }
+            mListContext = TaskListContext.create(query);
             mViewMode.enterTaskListMode();
+
+            startLoading();
         }
     }
 
@@ -428,9 +455,16 @@ public abstract class AbstractActivityController implements ActivityController {
     /// From activity
     ////////
 
-    private void addTaskList(ListQuery query) {
-        TaskListContext listContext = TaskListContext.create(query);
-        createTaskFragment(listContext);
+    private void addTaskList() {
+        TaskListFragment fragment = createTaskFragment(mListContext);
+
+        FragmentTransaction fragmentTransaction =
+                mActivity.getSupportFragmentManager().beginTransaction();
+        // Use cross fading animation.
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragmentTransaction.replace(R.id.entity_list_pane, fragment,
+                TAG_TASK_LIST);
+        fragmentTransaction.commitAllowingStateLoss();
     }
 
     private TaskListFragment createTaskFragment(TaskListContext listContext) {
@@ -440,6 +474,74 @@ public abstract class AbstractActivityController implements ActivityController {
         fragment.setArguments(args);
         return fragment;
     }
+
+    /**
+     * Get the task list fragment for this activity. If the task list fragment is
+     * not attached, this method returns null.
+     *
+     * Caution! This method returns the {@link TaskListFragment} after the fragment has been
+     * added, <b>and</b> after the {@link android.app.FragmentManager} has run through its queue to add the
+     * fragment. There is a non-trivial amount of time after the fragment is instantiated and before
+     * this call returns a non-null value, depending on the {@link android.app.FragmentManager}. If you
+     * need the fragment immediately after adding it, consider making the fragment an observer of
+     * the controller and perform the task immediately on {@link android.app.Fragment#onActivityCreated(Bundle)}
+     */
+    protected TaskListFragment getTaskListFragment() {
+        final Fragment fragment = mFragmentManager.findFragmentByTag(TAG_TASK_LIST);
+        if (isValidFragment(fragment)) {
+            return (TaskListFragment) fragment;
+        }
+        return null;
+    }
+
+
+    public void onListSettingsUpdated(@Observes ListSettingsUpdatedEvent event) {
+        if (event.getListQuery().equals(getListContext().getListQuery())) {
+            // our list settings changed - reload list (even if this list isn't currently visible)
+            restartLoading();
+        }
+    }
+
+    private void startLoading() {
+        Log.d(TAG, "Creating list cursor");
+        final LoaderManager lm = mActivity.getSupportLoaderManager();
+        lm.initLoader(LOADER_ID_TASK_LIST_LOADER, null, LOADER_CALLBACKS);
+    }
+
+    protected void restartLoading() {
+        Log.d(TAG, "Refreshing list cursor");
+        final LoaderManager lm = mActivity.getSupportLoaderManager();
+        lm.restartLoader(LOADER_ID_TASK_LIST_LOADER, null, LOADER_CALLBACKS);
+    }
+
+
+    /**
+     * Loader callbacks for tasks list.
+     */
+    private final LoaderManager.LoaderCallbacks<Cursor> LOADER_CALLBACKS =
+            new LoaderManager.LoaderCallbacks<Cursor>() {
+
+                @Override
+                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                    final TaskListContext listContext = getListContext();
+                    return TaskListAdaptor.createLoader(mActivity, listContext);
+                }
+
+                @Override
+                public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
+                    Log.d(TAG, "IN AAC.TaskCursor.onLoadFinished");
+
+                    mTaskListCursor = c;
+                    addTaskList();
+                }
+
+                @Override
+                public void onLoaderReset(Loader<Cursor> loader) {
+                    mTaskListCursor = null;
+                }
+            };
+
+
 
 }
 

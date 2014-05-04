@@ -13,6 +13,7 @@ import org.dodgybits.shuffle.android.core.controller.OnePaneController;
 import org.dodgybits.shuffle.android.core.controller.TwoPaneController;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
+import org.dodgybits.shuffle.android.core.view.TaskListCallbacks;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
 
@@ -150,4 +151,10 @@ public class MainActivity extends RoboActionBarActivity implements NavigationDra
     public void onNavigationDrawerItemSelected(int position) {
         mController.onNavigationDrawerItemSelected(position);
     }
+
+    public TaskListCallbacks getListHandler() {
+        return mController;
+    }
+
 }
+

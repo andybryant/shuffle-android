@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import org.dodgybits.shuffle.android.core.content.TaskCursorLoader;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
@@ -206,8 +207,6 @@ public class TaskListAdaptor extends CursorAdapter {
         }
     }
 
-
-
     /**
      * Creates the loader for {@link TaskListFragment}.
      *
@@ -217,34 +216,5 @@ public class TaskListAdaptor extends CursorAdapter {
         return new TaskCursorLoader(context, listContext);
     }
 
-    private static class TaskCursorLoader extends CursorLoader {
-        protected final Context mContext;
 
-        private TaskSelector mSelector;
-        
-        public TaskCursorLoader(Context context, TaskListContext listContext) {
-            this(context, listContext.createSelectorWithPreferences(context));
-        }
-
-        private TaskCursorLoader(Context context, TaskSelector selector) {
-            // Initialize with no where clause.  We'll set it later.
-            super(context, selector.getContentUri(),
-                    TaskProvider.Tasks.FULL_PROJECTION, null, null,
-                    null);
-            mSelector = selector;
-            mContext = context;
-
-        }
-
-        @Override
-        public Cursor loadInBackground() {
-            // Build the where cause (which can't be done on the UI thread.)
-            setSelection(mSelector.getSelection(mContext));
-            setSelectionArgs(mSelector.getSelectionArgs());
-            setSortOrder(mSelector.getSortOrder());
-            // Then do a query to get the cursor
-            return super.loadInBackground();
-        }
-
-    }    
 }
