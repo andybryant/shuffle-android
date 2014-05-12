@@ -456,7 +456,7 @@ public abstract class AbstractActivityController implements ActivityController {
     ////////
 
     private void addTaskList() {
-        TaskListFragment fragment = createTaskFragment(mListContext);
+        TaskListFragment fragment = findOrCreateTaskFragment(mListContext);
 
         FragmentTransaction fragmentTransaction =
                 mActivity.getSupportFragmentManager().beginTransaction();
@@ -467,11 +467,14 @@ public abstract class AbstractActivityController implements ActivityController {
         fragmentTransaction.commitAllowingStateLoss();
     }
 
-    private TaskListFragment createTaskFragment(TaskListContext listContext) {
-        TaskListFragment fragment = mTaskListFragmentProvider.get(mActivity);
-        Bundle args = new Bundle();
-        args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, listContext);
-        fragment.setArguments(args);
+    private TaskListFragment findOrCreateTaskFragment(TaskListContext listContext) {
+        TaskListFragment fragment = getTaskListFragment();
+        if (fragment == null) {
+            fragment = mTaskListFragmentProvider.get(mActivity);
+            Bundle args = new Bundle();
+            args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, listContext);
+            fragment.setArguments(args);
+        }
         return fragment;
     }
 
