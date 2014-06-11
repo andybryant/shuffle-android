@@ -43,7 +43,7 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:+'
     compile 'com.android.support:appcompat-v7:+'
-    compile 'com.google.android.gms:play-services:4.2.42'
+    compile 'com.google.android.gms:play-services:4.4.52'
     compile 'org.dodgybits.shuffle:shuffle-dto:2.0.3-SNAPSHOT'
     compile 'com.google.guava:guava:16.0'
     compile("org.roboguice:roboguice:2.0") {
