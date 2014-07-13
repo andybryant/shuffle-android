@@ -16,20 +16,22 @@
 package org.dodgybits.shuffle.android.core.util;
 
 import android.app.Activity;
-import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.analytics.Tracker;
+import org.dodgybits.shuffle.android.core.ShuffleApplication;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
 
 public class AnalyticsUtils {
 
     public static void activityStart(Activity activity) {
         if (Preferences.isAnalyticsEnabled(activity)) {
-            EasyTracker.getInstance(activity).activityStart(activity);
+            Tracker tracker = ((ShuffleApplication) activity.getApplication()).getTracker(ShuffleApplication.TrackerName.APP_TRACKER);
+            com.google.android.gms.analytics.GoogleAnalytics.getInstance(activity).reportActivityStart(activity);
         }
     }
 
     public static void activityStop(Activity activity) {
         if (Preferences.isAnalyticsEnabled(activity)) {
-            EasyTracker.getInstance(activity).activityStop(activity);
+            com.google.android.gms.analytics.GoogleAnalytics.getInstance(activity).reportActivityStop(activity);
         }
     }
 }
