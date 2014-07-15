@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2009 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,255 +13,238 @@
      limitations under the License.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-        >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <ScrollView
-            android:id="@+id/main"
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_weight="1"
-            android:fillViewport="true"
-            android:background="@color/list_background_color"
-            android:fadingEdge="none"
-            android:animateLayoutChanges="true"
-            >
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:background="@color/list_background_color"
+        android:fadingEdge="none"
+        android:animateLayoutChanges="true">
 
         <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="vertical">
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical">
 
             <RelativeLayout
-                    android:id="@+id/title_entry"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="8dip"
-                    android:paddingBottom="8dip"
-                    android:paddingRight="?android:attr/scrollbarSize"
-                    android:minHeight="50dip"
-                    android:background="@color/view_highlight_color"
-                    >
+                android:id="@+id/title_entry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dip"
+                android:paddingBottom="8dip"
+                android:paddingRight="?android:attr/scrollbarSize"
+                android:minHeight="50dip"
+                android:background="@color/view_highlight_color">
 
                 <TextView
-                        android:id="@+id/completed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentTop="true"
-                        android:paddingRight="8dip"
-                        android:paddingTop="4dip"
-                        android:textColor="@color/view_status_color"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        style="?android:attr/textAppearanceSmall"
-                        />
+                    android:id="@+id/completed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:paddingRight="8dip"
+                    android:paddingTop="4dip"
+                    android:textColor="@color/view_status_color"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    style="?android:attr/textAppearanceSmall" />
 
                 <org.dodgybits.shuffle.android.list.view.StatusView
-                        android:id="@+id/status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentTop="true"
-                        android:paddingRight="8dip"
-                        android:paddingTop="4dip"
-                        android:singleLine="true"
-                        android:textColor="@color/view_status_color"
-                        android:textSize="12sp"
-                        style="?android:attr/textAppearanceSmall"
-                        />
+                    android:id="@+id/status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:paddingRight="8dip"
+                    android:paddingTop="4dip"
+                    android:singleLine="true"
+                    android:textColor="@color/view_status_color"
+                    android:textSize="12sp"
+                    style="?android:attr/textAppearanceSmall" />
 
 
                 <TextView
-                        android:id="@+id/project"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_toLeftOf="@+id/status"
-                        android:paddingTop="2dip"
-                        android:maxLines="2"
-                        android:textStyle="bold"
-                        android:textColor="@color/view_project_color"
-                        android:textSize="24sp"
-                        android:ellipsize="end"
-                        style="?android:attr/textAppearanceLarge"
-                        />
+                    android:id="@+id/project"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@+id/status"
+                    android:paddingTop="2dip"
+                    android:maxLines="2"
+                    android:textStyle="bold"
+                    android:textColor="@color/view_project_color"
+                    android:textSize="24sp"
+                    android:ellipsize="end"
+                    style="?android:attr/textAppearanceLarge" />
 
                 <TextView
-                        android:id="@+id/description"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/project"
-                        android:layout_alignParentLeft="true"
-                        android:autoLink="all"
-                        android:paddingLeft="5dip"
-                        android:paddingRight="5dip"
-                        android:paddingTop="2dip"
-                        android:paddingBottom="3dip"
-                        android:textStyle="bold"
-                        android:textColor="@color/view_description_color"
-                        android:textSize="14sp"
-                        style="?android:attr/textAppearanceLarge"
-                        />
+                    android:id="@+id/description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/project"
+                    android:layout_alignParentLeft="true"
+                    android:autoLink="all"
+                    android:paddingLeft="5dip"
+                    android:paddingRight="5dip"
+                    android:paddingTop="2dip"
+                    android:paddingBottom="3dip"
+                    android:textStyle="bold"
+                    android:textColor="@color/view_description_color"
+                    android:textSize="14sp"
+                    style="?android:attr/textAppearanceLarge" />
 
             </RelativeLayout>
 
             <org.dodgybits.shuffle.android.core.view.RowLayout
-                    android:id="@+id/context_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:layout_alignParentLeft="true"
-                    android:layout_toLeftOf="@+id/context_add"
-                    android:paddingTop="8dip"
-                    android:paddingBottom="8dip"
-                    android:paddingLeft="8dip"
-                    android:paddingRight="?android:attr/scrollbarSize"
-                    android:horizontalSpacing="@dimen/context_small_horizontal_spacing"
-                    android:verticalSpacing="@dimen/context_small_vertical_spacing"
-                    />
+                android:id="@+id/context_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/context_add"
+                android:paddingTop="8dip"
+                android:paddingBottom="8dip"
+                android:paddingLeft="8dip"
+                android:paddingRight="?android:attr/scrollbarSize"
+                android:horizontalSpacing="@dimen/context_small_horizontal_spacing"
+                android:verticalSpacing="@dimen/context_small_vertical_spacing" />
 
             <TextView
-                    android:id="@+id/details"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:autoLink="all"
-                    android:paddingTop="8dip"
-                    android:paddingLeft="8dip"
-                    android:paddingRight="?android:attr/scrollbarSize"
-                    android:textSize="14sp"
-                    style="?android:attr/textAppearanceSmall"
-                    />
+                android:id="@+id/details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="all"
+                android:paddingTop="8dip"
+                android:paddingLeft="8dip"
+                android:paddingRight="?android:attr/scrollbarSize"
+                android:textSize="14sp"
+                style="?android:attr/textAppearanceSmall" />
 
 
             <RelativeLayout
-                    android:id="@+id/scheduling_entry"
+                android:id="@+id/scheduling_entry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dip"
+                android:paddingRight="?android:attr/scrollbarSize"
+                android:minHeight="50dip">
+
+                <TextView
+                    android:id="@+id/scheduling_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="8dip"
-                    android:paddingRight="?android:attr/scrollbarSize"
-                    android:minHeight="50dip"
-                    >
-
-                <TextView android:id="@+id/scheduling_label"
-                          android:layout_width="match_parent"
-                          android:layout_height="wrap_content"
-                          android:paddingLeft="8dip"
-                          android:paddingRight="8dip"
-                          android:layout_marginLeft="8dip"
-                          android:layout_marginRight="8dip"
-                          android:text="@string/scheduling_title"
-                          style="@style/ListSeparatorTextViewStyle"
-                        />
+                    android:paddingLeft="8dip"
+                    android:paddingRight="8dip"
+                    android:layout_marginLeft="8dip"
+                    android:layout_marginRight="8dip"
+                    android:text="@string/scheduling_title"
+                    style="@style/ListSeparatorTextViewStyle" />
 
                 <TextView
-                        android:id="@+id/show_from_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/scheduling_label"
-                        android:layout_alignParentLeft="true"
-                        android:paddingLeft="8dip"
-                        android:paddingTop="4dip"
-                        android:text="@string/show_from_title"
-                        style="?android:attr/textAppearanceMedium"
-                        android:textSize="14sp"/>
+                    android:id="@+id/show_from_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/scheduling_label"
+                    android:layout_alignParentLeft="true"
+                    android:paddingLeft="8dip"
+                    android:paddingTop="4dip"
+                    android:text="@string/show_from_title"
+                    style="?android:attr/textAppearanceMedium"
+                    android:textSize="14sp" />
 
                 <TextView
-                        android:id="@+id/due_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_below="@+id/show_from_label"
-                        android:paddingLeft="8dip"
-                        android:paddingTop="2dip"
-                        android:paddingBottom="4dip"
-                        android:text="@string/due_title"
-                        style="?android:attr/textAppearanceMedium"
-                        android:textSize="14sp"/>
+                    android:id="@+id/due_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/show_from_label"
+                    android:paddingLeft="8dip"
+                    android:paddingTop="2dip"
+                    android:paddingBottom="4dip"
+                    android:text="@string/due_title"
+                    style="?android:attr/textAppearanceMedium"
+                    android:textSize="14sp" />
                 />
 
                 <TextView
-                        android:id="@+id/show_from"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingRight="5dip"
-                        android:paddingTop="4dip"
-                        android:layout_alignTop="@+id/show_from_label"
-                        android:layout_alignParentRight="true"
-                        android:hint="@string/none_empty"
-                        android:textSize="14sp"
-                        style="?android:attr/textAppearanceSmall"
-                        />
+                    android:id="@+id/show_from"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="5dip"
+                    android:paddingTop="4dip"
+                    android:layout_alignTop="@+id/show_from_label"
+                    android:layout_alignParentRight="true"
+                    android:hint="@string/none_empty"
+                    android:textSize="14sp"
+                    style="?android:attr/textAppearanceSmall" />
 
                 <TextView
-                        android:id="@+id/due"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="2dip"
-                        android:paddingRight="5dip"
-                        android:layout_alignTop="@+id/due_label"
-                        android:layout_alignParentRight="true"
-                        android:hint="@string/none_empty"
-                        android:textSize="14sp"
-                        style="?android:attr/textAppearanceSmall"
-                        />
+                    android:id="@+id/due"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="2dip"
+                    android:paddingRight="5dip"
+                    android:layout_alignTop="@+id/due_label"
+                    android:layout_alignParentRight="true"
+                    android:hint="@string/none_empty"
+                    android:textSize="14sp"
+                    style="?android:attr/textAppearanceSmall" />
 
             </RelativeLayout>
 
 
             <LinearLayout
-                    android:id="@+id/calendar_entry"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="8dip"
-                    android:paddingBottom="8dip"
-                    android:paddingRight="?android:attr/scrollbarSize"
-                    android:gravity="center"
-                    >
+                android:id="@+id/calendar_entry"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dip"
+                android:paddingBottom="8dip"
+                android:paddingRight="?android:attr/scrollbarSize"
+                android:gravity="center">
 
                 <Button
-                        android:id="@+id/view_calendar_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/ic_launcher_calendar"
-                        android:text="@string/view_calendar_entry"
-                        />
+                    android:id="@+id/view_calendar_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_launcher_calendar"
+                    android:text="@string/view_calendar_entry" />
 
             </LinearLayout>
 
             <LinearLayout
-                    android:id="@+id/extras_entry"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="bottom|right"
-                    >
+                android:id="@+id/extras_entry"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="bottom|right">
 
                 <TextView
-                        android:id="@+id/created"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingRight="8dip"
-                        android:paddingTop="2dip"
-                        android:textColor="@color/view_minimal_text_color"
-                        style="?android:attr/textAppearanceSmall"
-                        />
+                    android:id="@+id/created"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="8dip"
+                    android:paddingTop="2dip"
+                    android:textColor="@color/view_minimal_text_color"
+                    style="?android:attr/textAppearanceSmall" />
 
                 <TextView
-                        android:id="@+id/modified"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_above="@+id/created"
-                        android:paddingRight="8dip"
-                        android:paddingTop="2dip"
-                        android:paddingBottom="8dip"
-                        android:textSize="14sp"
-                        android:textColor="@color/view_minimal_text_color"
-                        style="?android:attr/textAppearanceSmall"
-                        />
+                    android:id="@+id/modified"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/created"
+                    android:paddingRight="8dip"
+                    android:paddingTop="2dip"
+                    android:paddingBottom="8dip"
+                    android:textSize="14sp"
+                    android:textColor="@color/view_minimal_text_color"
+                    style="?android:attr/textAppearanceSmall" />
 
             </LinearLayout>
 
@@ -273,18 +255,18 @@
 
 
     <LinearLayout
-            android:id="@+id/page_display_entry"
-            android:layout_width="match_parent"
-            android:layout_height="20dip"
-            android:background="@color/pager_background_color"
-            android:gravity="center">
+        android:id="@+id/page_display_entry"
+        android:layout_width="match_parent"
+        android:layout_height="20dip"
+        android:background="@color/pager_background_color"
+        android:gravity="center">
+
         <TextView
-                android:id="@+id/page_display"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                style="?android:attr/textAppearanceSmall"
-                />
+            android:id="@+id/page_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            style="?android:attr/textAppearanceSmall" />
     </LinearLayout>
 
 </LinearLayout>

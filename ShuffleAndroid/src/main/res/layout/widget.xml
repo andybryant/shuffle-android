@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2010 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2010 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,13 +13,13 @@
      limitations under the License.
 -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="6dip"
     android:layout_marginBottom="6dip"
     android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dip"
@@ -29,20 +28,21 @@
         android:paddingRight="8dip"
         android:orientation="horizontal"
         android:background="@drawable/header_bg_task_widget_holo">
+
         <ImageView
             android:id="@+id/widget_logo"
             android:layout_width="32dip"
             android:layout_height="32dip"
             android:layout_marginRight="8dip"
             android:src="@drawable/shuffle_icon" />
+
         <TextView
             android:id="@+id/widget_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/widget_title_color"
-            />
+            android:textColor="@color/widget_title_color" />
         <!-- Note: We can't set "freezesText" on the widget_unread_count view, as the launcher can
             restore stale data over updated data. -->
         <TextView
@@ -53,12 +53,14 @@
             android:textSize="36sp"
             android:textStyle="bold"
             android:textColor="@color/widget_unread_color" />
+
         <ImageView
             android:id="@+id/widget_compose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_menu_add_field_holo_light" />
     </LinearLayout>
+
     <ListView
         android:id="@+id/task_list"
         android:layout_width="match_parent"

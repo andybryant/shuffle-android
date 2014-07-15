@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2010 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2010 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,20 +13,18 @@
      limitations under the License.
 -->
 
-<PreferenceScreen
-        xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-            android:title="@string/general_preferences">
+    <PreferenceCategory android:title="@string/general_preferences">
 
         <PreferenceScreen
-                android:title="@string/title_gae_sync_preferences"
-                android:summary="@string/summary_gae_sync_preferences"
-                >
+            android:title="@string/title_gae_sync_preferences"
+            android:summary="@string/summary_gae_sync_preferences">
 
-            <intent android:action="android.intent.action.MAIN"
-                    android:targetPackage="org.dodgybits.android.shuffle"
-                    android:targetClass="org.dodgybits.shuffle.android.preference.activity.PreferencesAppEngineSynchronizationActivity" />
+            <intent
+                android:action="android.intent.action.MAIN"
+                android:targetPackage="org.dodgybits.android.shuffle"
+                android:targetClass="org.dodgybits.shuffle.android.preference.activity.PreferencesAppEngineSynchronizationActivity" />
         </PreferenceScreen>
 
         <ListPreference
@@ -37,70 +34,69 @@
             android:dialogTitle="@string/title_calendar_preference" />
 
         <CheckBoxPreference
-                android:key="send_analytics"
-                android:title="@string/title_send_analytics_preference"
-                android:summary="@string/summary_send_analytics_preference" 
-                android:defaultValue="true"                
-                />
+            android:key="send_analytics"
+            android:title="@string/title_send_analytics_preference"
+            android:summary="@string/summary_send_analytics_preference"
+            android:defaultValue="true" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-            android:title="@string/backup_preferences">
+    <PreferenceCategory android:title="@string/backup_preferences">
 
         <PreferenceScreen
-                android:title="@string/title_create_backup_preference"
-                android:summary="@string/summary_create_backup_preference">
+            android:title="@string/title_create_backup_preference"
+            android:summary="@string/summary_create_backup_preference">
 
-            <intent android:action="android.intent.action.MAIN" 
-                android:targetPackage="org.dodgybits.android.shuffle" 
-            	android:targetClass="org.dodgybits.shuffle.android.preference.activity.PreferencesCreateBackupActivity" />
-        </PreferenceScreen>
-
-        <PreferenceScreen
-                android:title="@string/title_restore_backup_preference"
-                android:summary="@string/summary_restore_backup_preference">
-
-            <intent android:action="android.intent.action.MAIN" 
-                android:targetPackage="org.dodgybits.android.shuffle" 
-            	android:targetClass="org.dodgybits.shuffle.android.preference.activity.PreferencesRestoreBackupActivity" />
-        </PreferenceScreen>
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-            android:title="@string/cleanup_preferences">
-
-        <PreferenceScreen
-                android:title="@string/title_delete_completed_preference">
-
-            <intent android:action="android.intent.action.MAIN" 
-                android:targetPackage="org.dodgybits.android.shuffle" 
-            	android:targetClass="org.dodgybits.shuffle.android.preference.activity.PreferencesDeleteCompletedActivity" />
-        </PreferenceScreen>
-
-        <PreferenceScreen
-                android:title="@string/title_permanently_delete_preference"
-                android:summary="@string/summary_permanently_delete_preference"
-                >
-
-            <intent android:action="android.intent.action.MAIN"
+            <intent
+                android:action="android.intent.action.MAIN"
                 android:targetPackage="org.dodgybits.android.shuffle"
-            	android:targetClass="org.dodgybits.shuffle.android.preference.activity.PreferencesPermanentlyDeleteActivity" />
+                android:targetClass="org.dodgybits.shuffle.android.preference.activity.PreferencesCreateBackupActivity" />
+        </PreferenceScreen>
+
+        <PreferenceScreen
+            android:title="@string/title_restore_backup_preference"
+            android:summary="@string/summary_restore_backup_preference">
+
+            <intent
+                android:action="android.intent.action.MAIN"
+                android:targetPackage="org.dodgybits.android.shuffle"
+                android:targetClass="org.dodgybits.shuffle.android.preference.activity.PreferencesRestoreBackupActivity" />
+        </PreferenceScreen>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/cleanup_preferences">
+
+        <PreferenceScreen android:title="@string/title_delete_completed_preference">
+
+            <intent
+                android:action="android.intent.action.MAIN"
+                android:targetPackage="org.dodgybits.android.shuffle"
+                android:targetClass="org.dodgybits.shuffle.android.preference.activity.PreferencesDeleteCompletedActivity" />
+        </PreferenceScreen>
+
+        <PreferenceScreen
+            android:title="@string/title_permanently_delete_preference"
+            android:summary="@string/summary_permanently_delete_preference">
+
+            <intent
+                android:action="android.intent.action.MAIN"
+                android:targetPackage="org.dodgybits.android.shuffle"
+                android:targetClass="org.dodgybits.shuffle.android.preference.activity.PreferencesPermanentlyDeleteActivity" />
         </PreferenceScreen>
 
 
         <PreferenceScreen
-                android:title="@string/title_delete_all_preference"
-                android:summary="@string/summary_delete_all_preference">
+            android:title="@string/title_delete_all_preference"
+            android:summary="@string/summary_delete_all_preference">
 
-            <intent android:action="android.intent.action.MAIN" 
-                android:targetPackage="org.dodgybits.android.shuffle" 
-            	android:targetClass="org.dodgybits.shuffle.android.preference.activity.PreferencesDeleteAllActivity" />
+            <intent
+                android:action="android.intent.action.MAIN"
+                android:targetPackage="org.dodgybits.android.shuffle"
+                android:targetClass="org.dodgybits.shuffle.android.preference.activity.PreferencesDeleteAllActivity" />
         </PreferenceScreen>
 
     </PreferenceCategory>
 
 
-    
 </PreferenceScreen>

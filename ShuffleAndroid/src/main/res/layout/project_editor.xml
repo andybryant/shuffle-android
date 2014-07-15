@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2009 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,97 +13,96 @@
      limitations under the License.
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-        >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
-            android:padding="4dip"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
+        android:padding="4dip"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <EditText android:id="@+id/name"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_marginTop="16dip"
-                  android:hint="@string/project_name_title"
-                  android:autoText="true"
-                  android:singleLine="true"
-                  android:maxLength="50"
-                  android:inputType="textAutoCorrect|textCapSentences"
-                >
-            <requestFocus/>
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dip"
+            android:hint="@string/project_name_title"
+            android:autoText="true"
+            android:singleLine="true"
+            android:maxLength="50"
+            android:inputType="textAutoCorrect|textCapSentences">
+
+            <requestFocus />
         </EditText>
 
-        <RelativeLayout android:id="@+id/parallel_entry"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="?android:attr/listPreferredItemHeight"
-                        android:paddingRight="?android:attr/scrollbarSize"
-                        android:background="@drawable/list_selector_background"
-                        android:focusable="true"
-                        android:clickable="true"
-                >
+        <RelativeLayout
+            android:id="@+id/parallel_entry"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?android:attr/listPreferredItemHeight"
+            android:paddingRight="?android:attr/scrollbarSize"
+            android:background="@drawable/list_selector_background"
+            android:focusable="true"
+            android:clickable="true">
 
-            <ImageView android:id="@+id/parallel_icon"
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:layout_alignParentRight="true"
-                       android:layout_centerVertical="true"
-                       android:duplicateParentState="true"
-                    />
+            <ImageView
+                android:id="@+id/parallel_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:duplicateParentState="true" />
 
 
-            <TextView android:id="@+id/parallel_label"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_alignParentLeft="true"
-                      android:layout_toLeftOf="@+id/parallel_icon"
-                      android:layout_centerVertical="true"
-                      android:text="@string/sequence_title"
-                      android:textAppearance="?android:attr/textAppearanceMedium"
-                      android:textColor="@color/label_color"
-                      android:maxLines="2"
-                      android:duplicateParentState="true"
-                      android:paddingLeft="8dip"
-                    />
+            <TextView
+                android:id="@+id/parallel_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/parallel_icon"
+                android:layout_centerVertical="true"
+                android:text="@string/sequence_title"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/label_color"
+                android:maxLines="2"
+                android:duplicateParentState="true"
+                android:paddingLeft="8dip" />
 
         </RelativeLayout>
 
 
-        <TextView android:id="@+id/default_context_label"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:paddingLeft="8dip"
-                  android:paddingRight="4dip"
-                  android:text="@string/default_context_title"
-                  style="@style/LabelTextViewStyle"
-                />
+        <TextView
+            android:id="@+id/default_context_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="8dip"
+            android:paddingRight="4dip"
+            android:text="@string/default_context_title"
+            style="@style/LabelTextViewStyle" />
 
 
-        <Spinner android:id="@+id/default_context"
-                 android:layout_width="fill_parent"
-                 android:layout_height="48dip"
-                />
+        <Spinner
+            android:id="@+id/default_context"
+            android:layout_width="fill_parent"
+            android:layout_height="48dip" />
 
 
-        <include layout="@layout/editor_active_entry"
-                 android:id="@+id/active_entry"
-                />
+        <include
+            layout="@layout/editor_active_entry"
+            android:id="@+id/active_entry" />
 
 
-        <View android:id="@+id/deleted_divider"
-              android:layout_width="fill_parent"
-              android:layout_height="1dip"
-              android:background="@android:drawable/divider_horizontal_bright"
-                />
+        <View
+            android:id="@+id/deleted_divider"
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@android:drawable/divider_horizontal_bright" />
 
 
-        <include layout="@layout/editor_delete_entry"
-                 android:id="@+id/deleted_entry"
-                />
+        <include
+            layout="@layout/editor_delete_entry"
+            android:id="@+id/deleted_entry" />
 
     </LinearLayout>
 

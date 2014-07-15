@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2009 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -58,7 +57,7 @@
         <item>2 Tage</item>
         <item>1 Woche</item>
     </string-array>
-    
+
     <string-array name="preferences_default_reminder_labels">
         <item>Keine</item>
         <item>5 Minuten</item>
@@ -82,19 +81,19 @@
         <item>Zeige nur aktive</item>
         <item>Verstecke aktive</item>
     </string-array>
-   
+
     <string-array name="list_preferences_deleted_labels">
         <item>Zeige Alle</item>
         <item>Zeige nur gelöschte</item>
         <item>Verstecke gelöschte</item>
     </string-array>
-    
+
     <string-array name="list_preferences_pending_labels">
         <item>Zeige Alle</item>
         <item>Zeige nur zukünftige</item>
         <item>Verstecke zukünftige</item>
     </string-array>
-    
+
     <string-array name="list_preferences_completed_labels">
         <item>Zeige Alle</item>
         <item>Zeige nur abgeschlossene</item>

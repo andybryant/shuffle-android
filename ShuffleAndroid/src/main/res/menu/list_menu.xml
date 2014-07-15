@@ -3,41 +3,47 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:shuffle="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/action_add"
-          android:icon="@drawable/ic_menu_add_field_holo_light"
-          android:title="@string/menu_insert"
-        shuffle:showAsAction="ifRoom"
-            />
-    <item android:id="@+id/action_search"
-          android:icon="@drawable/ic_menu_search_holo_light"
-          android:title="@string/menu_search"
-        shuffle:showAsAction="ifRoom"
-            />
-    <item android:id="@+id/action_view_settings"
-          android:icon="@drawable/ic_menu_view"
-          android:title="@string/menu_view_settings"
+    <item
+        android:id="@+id/action_add"
+        android:icon="@drawable/ic_menu_add_field_holo_light"
+        android:title="@string/menu_insert"
         shuffle:showAsAction="ifRoom" />
-    <item android:id="@+id/action_edit"
-          android:icon="@drawable/ic_menu_compose_holo_light"
-          android:title="@string/menu_edit"
-          android:visible="false"
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_menu_search_holo_light"
+        android:title="@string/menu_search"
+        shuffle:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_view_settings"
+        android:icon="@drawable/ic_menu_view"
+        android:title="@string/menu_view_settings"
+        shuffle:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_edit"
+        android:icon="@drawable/ic_menu_compose_holo_light"
+        android:title="@string/menu_edit"
+        android:visible="false"
         shuffle:showAsAction="never" />
-    <item android:id="@+id/action_delete"
-          android:icon="@drawable/ic_menu_trash_holo_light"
-          android:title="@string/menu_delete"
-          android:visible="false"
+    <item
+        android:id="@+id/action_delete"
+        android:icon="@drawable/ic_menu_trash_holo_light"
+        android:title="@string/menu_delete"
+        android:visible="false"
         shuffle:showAsAction="never" />
-    <item android:id="@+id/action_undelete"
-          android:icon="@drawable/ic_menu_trash_holo_light"
-          android:title="@string/menu_undelete"
-          android:visible="false"
+    <item
+        android:id="@+id/action_undelete"
+        android:icon="@drawable/ic_menu_trash_holo_light"
+        android:title="@string/menu_undelete"
+        android:visible="false"
         shuffle:showAsAction="never" />
-    <item android:id="@+id/action_preferences"
-          android:icon="@drawable/ic_menu_settings_holo_light"
-          android:title="@string/menu_preferences"
+    <item
+        android:id="@+id/action_preferences"
+        android:icon="@drawable/ic_menu_settings_holo_light"
+        android:title="@string/menu_preferences"
         shuffle:showAsAction="never" />
-    <item android:id="@+id/action_help"
-          android:icon="@drawable/ic_menu_help_holo_light"
-          android:title="@string/menu_help"
+    <item
+        android:id="@+id/action_help"
+        android:icon="@drawable/ic_menu_help_holo_light"
+        android:title="@string/menu_help"
         shuffle:showAsAction="never" />
 </menu>

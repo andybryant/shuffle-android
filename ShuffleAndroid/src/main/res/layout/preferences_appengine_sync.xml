@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 Android Shuffle Open Source Project Licensed under 
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2009 Android Shuffle Open Source Project Licensed under
 	the Apache License, Version 2.0 (the "License"); you may not use this file 
 	except in compliance with the License. You may obtain a copy of the License 
 	at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable 
@@ -9,82 +8,77 @@
 	and limitations under the License. -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <TextView
-            android:id="@+id/intro_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/sync_introduction"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingTop="12dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            />
+        android:id="@+id/intro_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sync_introduction"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="12dp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 
     <Button
-            android:id="@+id/select_account"
-            android:layout_below="@+id/intro_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp"
-            android:text="@string/select_account_button_title"
-            android:visibility="invisible"
-            android:onClick="onSelectAccountClicked"
-            />
+        android:id="@+id/select_account"
+        android:layout_below="@+id/intro_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:text="@string/select_account_button_title"
+        android:visibility="invisible"
+        android:onClick="onSelectAccountClicked" />
 
     <Button
-            android:id="@+id/logout"
-                android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="12dp"
-            android:onClick="onLogoutClicked"
-            android:text="@string/logout_button_title"
-            />
+        android:id="@+id/logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="12dp"
+        android:onClick="onLogoutClicked"
+        android:text="@string/logout_button_title" />
 
     <TextView
-            android:id="@+id/logged_in_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignBaseline="@+id/logout"
-            android:text="@string/sync_selected_account"
-            android:paddingLeft="12dp"
-            android:paddingTop="12dp"
-            android:layout_toLeftOf="@+id/logout"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/label_color"
-            />
+        android:id="@+id/logged_in_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignBaseline="@+id/logout"
+        android:text="@string/sync_selected_account"
+        android:paddingLeft="12dp"
+        android:paddingTop="12dp"
+        android:layout_toLeftOf="@+id/logout"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/label_color" />
 
     <Button
-            android:id="@+id/sync_now"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/logout"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="24dp"
-            android:drawableLeft="@drawable/ic_menu_refresh_holo_light"
-            android:drawablePadding="8dp"
-            android:onClick="onSyncNowClicked"
-            android:text="@string/sync_now_button_title"
-            />
+        android:id="@+id/sync_now"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:drawableLeft="@drawable/ic_menu_refresh_holo_light"
+        android:drawablePadding="8dp"
+        android:onClick="onSyncNowClicked"
+        android:text="@string/sync_now_button_title" />
 
     <TextView
-            android:id="@+id/last_sync_message"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/sync_now"
-            android:text="@string/last_sync_title"
-            android:paddingLeft="12dp"
-            android:paddingTop="12dp"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            />
+        android:id="@+id/last_sync_message"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sync_now"
+        android:text="@string/last_sync_title"
+        android:paddingLeft="12dp"
+        android:paddingTop="12dp"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 
 </RelativeLayout>

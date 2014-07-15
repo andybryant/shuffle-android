@@ -8,29 +8,28 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingRight="?android:attr/scrollbarSize"
-        android:gravity="center_vertical"
-            >
+        android:gravity="center_vertical">
 
-        <Button android:id="@+id/show_from_date"
+        <Button
+            android:id="@+id/show_from_date"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="7"
-            android:hint="@string/show_from_title"
-                />
+            android:hint="@string/show_from_title" />
 
-        <Button android:id="@+id/show_from_time"
+        <Button
+            android:id="@+id/show_from_time"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:layout_weight="4"
-                />
+            android:layout_weight="4" />
 
-        <ImageButton android:id="@+id/clear_from_date"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:layout_marginLeft="4dip"
-                     android:src="@drawable/ic_menu_remove_field_holo_light"
-                     android:background="@drawable/blank"
-                />
+        <ImageButton
+            android:id="@+id/clear_from_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dip"
+            android:src="@drawable/ic_menu_remove_field_holo_light"
+            android:background="@drawable/blank" />
 
     </LinearLayout>
 
@@ -39,33 +38,33 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingRight="?android:attr/scrollbarSize"
-        android:gravity="center_vertical"
-            >
+        android:gravity="center_vertical">
 
-        <Button android:id="@+id/due_date"
+        <Button
+            android:id="@+id/due_date"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="7"
-            android:hint="@string/due_date_title"
-                />
+            android:hint="@string/due_date_title" />
 
-        <Button android:id="@+id/due_time"
+        <Button
+            android:id="@+id/due_time"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:layout_weight="4"
-                />
+            android:layout_weight="4" />
 
-        <ImageButton android:id="@+id/clear_due_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dip"
-                android:src="@drawable/ic_menu_remove_field_holo_light"
-                android:background="@drawable/blank"
-                />
+        <ImageButton
+            android:id="@+id/clear_due_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dip"
+            android:src="@drawable/ic_menu_remove_field_holo_light"
+            android:background="@drawable/blank" />
 
     </LinearLayout>
 
-    <CheckBox android:id="@+id/is_all_day"
+    <CheckBox
+        android:id="@+id/is_all_day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="15dip"
@@ -73,71 +72,68 @@
         android:paddingRight="10dip"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/label_color"
-        android:text="@string/all_day_title"
-        />
+        android:text="@string/all_day_title" />
 
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dip"
-        android:background="@android:drawable/divider_horizontal_bright"
-    />
+        android:background="@android:drawable/divider_horizontal_bright" />
 
-	<LinearLayout android:id="@+id/gcal_entry"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:paddingRight="?android:attr/scrollbarSize"
-	    android:minHeight="?android:attr/listPreferredItemHeight"
-	    android:background="@drawable/list_selector_background"
-	    android:orientation="horizontal"
-	    android:gravity="center_vertical"
-	    android:focusable="true"
-	    android:clickable="true"
-	    >
-	
-	    <RelativeLayout
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_marginLeft="8dip"
-	        android:layout_marginTop="6dip"
-	        android:layout_marginBottom="6dip"
-	        android:layout_weight="1"
-	        android:duplicateParentState="true"
-	        >
-	
-	        <TextView android:id="@+id/gcal_label"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:singleLine="true"
-	            android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/label_color"
-	            android:ellipsize="marquee"
-	            android:fadingEdge="horizontal"
-	            android:duplicateParentState="true"
-	            android:text="@string/add_to_gcal_title"
-	            />
+    <LinearLayout
+        android:id="@+id/gcal_entry"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingRight="?android:attr/scrollbarSize"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:background="@drawable/list_selector_background"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:focusable="true"
+        android:clickable="true">
 
-	        <TextView android:id="@+id/gcal_detail"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_below="@+id/gcal_label"
-	            android:layout_alignLeft="@+id/gcal_label"
-	            android:textAppearance="?android:attr/textAppearanceSmall"
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:layout_marginTop="6dip"
+            android:layout_marginBottom="6dip"
+            android:layout_weight="1"
+            android:duplicateParentState="true">
+
+            <TextView
+                android:id="@+id/gcal_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/label_color"
-	            android:maxLines="2"
-	            android:duplicateParentState="true"
-	            android:text="@string/add_to_gcal_detail"
-	            />
-			
-	    </RelativeLayout>
-	
-	    <CheckBox android:id="@+id/update_calendar_checkbox"
-	        android:layout_width="wrap_content"
-	        android:layout_height="fill_parent"
-	        android:focusable="false"
-	        android:clickable="false"
-	        />
-	
-	</LinearLayout>    
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:duplicateParentState="true"
+                android:text="@string/add_to_gcal_title" />
+
+            <TextView
+                android:id="@+id/gcal_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/gcal_label"
+                android:layout_alignLeft="@+id/gcal_label"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/label_color"
+                android:maxLines="2"
+                android:duplicateParentState="true"
+                android:text="@string/add_to_gcal_detail" />
+
+        </RelativeLayout>
+
+        <CheckBox
+            android:id="@+id/update_calendar_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:focusable="false"
+            android:clickable="false" />
+
+    </LinearLayout>
 
 </LinearLayout>

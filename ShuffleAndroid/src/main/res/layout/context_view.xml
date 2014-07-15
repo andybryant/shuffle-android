@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2009 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,73 +13,70 @@
      limitations under the License.
 -->
 
-<RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/list_item_height"
+    android:background="@color/list_background_color"
+    android:paddingLeft="5dip"
+    android:paddingRight="10dip"
+    android:paddingTop="5dip"
+    android:paddingBottom="5dip">
+
+    <ImageView
+        android:id="@+id/context_view_icon"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/list_item_height"
-        android:background="@color/list_background_color"
-        android:paddingLeft="5dip"
-        android:paddingRight="10dip"
-        android:paddingTop="5dip"
-        android:paddingBottom="5dip"
-        >
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dip"
+        android:padding="8dip" />
 
-    <ImageView android:id="@+id/context_view_icon"
-               android:layout_alignParentLeft="true"
-               android:layout_centerVertical="true"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_marginLeft="8dip"
-               android:padding="8dip"
-            />
-
-    <TextView android:id="@+id/context_view_count"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_alignParentRight="true"
-              android:layout_centerVertical="true"
-              android:textSize="24sp"
-              android:tag="regular"
-              android:textColor="@color/view_minimal_text_color"
-              android:shadowColor="@color/white"
-              android:shadowDx="1"
-              android:shadowDy="1"
-              android:shadowRadius="1"
-            />
+    <TextView
+        android:id="@+id/context_view_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:textSize="24sp"
+        android:tag="regular"
+        android:textColor="@color/view_minimal_text_color"
+        android:shadowColor="@color/white"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1" />
 
 
     <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/context_view_icon"
+        android:layout_toLeftOf="@+id/context_view_count"
+        android:layout_marginLeft="16dip"
+        android:paddingRight="8dip"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/context_view_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/context_view_icon"
-            android:layout_toLeftOf="@+id/context_view_count"
-            android:layout_marginLeft="16dip"
-            android:paddingRight="8dip"
-            android:orientation="vertical"
-        >
-        <TextView android:id="@+id/context_view_name"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:maxLines="2"
-                  android:ellipsize="end"
-                  android:textSize="24sp"
-                  android:tag="bold"
-                  android:textColor="@color/list_main_text_color"
-                  android:shadowColor="@color/white"
-                  android:shadowDx="1"
-                  android:shadowDy="1"
-                  android:shadowRadius="1"
-                />
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textSize="24sp"
+            android:tag="bold"
+            android:textColor="@color/list_main_text_color"
+            android:shadowColor="@color/white"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="1" />
 
         <org.dodgybits.shuffle.android.list.view.StatusView
-                android:id="@+id/context_view_status_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:tag="regular"
-                android:textSize="16sp"
-                />
+            android:id="@+id/context_view_status_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:tag="regular"
+            android:textSize="16sp" />
     </LinearLayout>
 
 

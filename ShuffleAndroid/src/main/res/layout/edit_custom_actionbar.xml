@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2011 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2011 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,30 +14,27 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="horizontal"
-        >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
     <!-- id must match corresponding menu item id -->
     <Button
-            android:id="@+id/action_cancel"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_menu_cancel_holo_light"
-            android:text="@string/cancel_button_title"
-            />
+        android:id="@+id/action_cancel"
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:drawableLeft="@drawable/ic_menu_cancel_holo_light"
+        android:text="@string/cancel_button_title" />
 
     <!-- id must match corresponding menu item id -->
     <Button
-            android:id="@+id/action_done"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_menu_done_holo_light"
-            android:text="@string/save_button_title"
-            />
+        android:id="@+id/action_done"
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:drawableLeft="@drawable/ic_menu_done_holo_light"
+        android:text="@string/save_button_title" />
 
 
 </LinearLayout>

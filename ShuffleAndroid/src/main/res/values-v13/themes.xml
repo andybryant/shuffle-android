@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2012 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2012 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -16,14 +15,12 @@
 
 <resources>
 
-    <style name="ShuffleTheme" parent="Theme.AppCompat.Light" >
-    </style>
+    <style name="ShuffleTheme" parent="Theme.AppCompat.Light"></style>
 
     <style name="ActionBarTitle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
         <item name="android:textColor">@color/actionbar_title_color</item>
     </style>
 
-    <style name="ShuffleDialogTheme" parent="@android:style/Theme.Holo.Light.Dialog" >
-    </style>
+    <style name="ShuffleDialogTheme" parent="@android:style/Theme.Holo.Light.Dialog"></style>
 
 </resources>

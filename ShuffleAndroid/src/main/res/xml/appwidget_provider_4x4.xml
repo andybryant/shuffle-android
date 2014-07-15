@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2010 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2010 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -18,5 +17,5 @@
     android:updatePeriodMillis="0"
     android:initialLayout="@layout/widget_pre_honeycomb"
     android:configure="org.dodgybits.shuffle.android.widget.WidgetConfigure"
-    android:minWidth="294dp" android:minHeight="294dp">
-</appwidget-provider>
+    android:minWidth="294dp"
+    android:minHeight="294dp"></appwidget-provider>

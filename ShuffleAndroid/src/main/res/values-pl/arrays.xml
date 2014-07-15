@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2009 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -79,26 +78,26 @@
     </string-array>
 
     <string-array name="list_preferences_active_labels">
-		 <item>Pokaż wszystko</item>
-		 <item>Pokaż tylko aktywne</item>
+        <item>Pokaż wszystko</item>
+        <item>Pokaż tylko aktywne</item>
         <item>Ukryj aktywne</item>
     </string-array>
 
     <string-array name="list_preferences_deleted_labels">
         <item>Pokaż wszystko</item>
-		  <item>Pokaż tylko usunięte</item>
+        <item>Pokaż tylko usunięte</item>
         <item>Ukryj usunięte</item>
     </string-array>
 
     <string-array name="list_preferences_pending_labels">
         <item>Pokaż wszystko</item>
-		  <item>Pokaż tylko oczekujące</item>
+        <item>Pokaż tylko oczekujące</item>
         <item>Ukryj oczekujące</item>
     </string-array>
 
     <string-array name="list_preferences_completed_labels">
         <item>Pokaż wszystko</item>
-		  <item>Pokaż tylko zakończone</item>
+        <item>Pokaż tylko zakończone</item>
         <item>Ukryj zakończone</item>
     </string-array>
 </resources>

@@ -3,26 +3,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:shuffle="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/action_search"
-          android:icon="@drawable/ic_menu_search_holo_light"
-          android:title="@string/menu_search"
-          shuffle:showAsAction="ifRoom"
-            />
-    <item android:id="@+id/action_preferences"
-          android:icon="@drawable/ic_menu_settings_holo_light"
-          android:title="@string/menu_preferences"
-        shuffle:showAsAction="ifRoom"
-            />
-    <item android:id="@+id/action_help"
-          android:icon="@drawable/ic_menu_help_holo_light"
-          android:title="@string/menu_help"
-        shuffle:showAsAction="ifRoom"
-            />
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_menu_search_holo_light"
+        android:title="@string/menu_search"
+        shuffle:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_preferences"
+        android:icon="@drawable/ic_menu_settings_holo_light"
+        android:title="@string/menu_preferences"
+        shuffle:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_help"
+        android:icon="@drawable/ic_menu_help_holo_light"
+        android:title="@string/menu_help"
+        shuffle:showAsAction="ifRoom" />
 
-    <item android:id="@+id/action_synchronize"
-          android:icon="@drawable/ic_menu_refresh_holo_light"
-          android:title="@string/menu_sync"
-        shuffle:showAsAction="ifRoom"
-            />
+    <item
+        android:id="@+id/action_synchronize"
+        android:icon="@drawable/ic_menu_refresh_holo_light"
+        android:title="@string/menu_sync"
+        shuffle:showAsAction="ifRoom" />
 
 </menu>

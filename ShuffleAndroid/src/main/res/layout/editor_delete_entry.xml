@@ -1,45 +1,43 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:layout_below="@+id/deleted_divider"
-              android:paddingRight="?android:attr/scrollbarSize"
-              android:minHeight="?android:attr/listPreferredItemHeight"
-              android:background="@drawable/list_selector_background"
-              android:orientation="horizontal"
-              android:gravity="center_vertical"
-              android:focusable="true"
-              android:clickable="true"
-        >
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/deleted_divider"
+    android:paddingRight="?android:attr/scrollbarSize"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:background="@drawable/list_selector_background"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:focusable="true"
+    android:clickable="true">
 
     <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dip"
+        android:layout_marginTop="6dip"
+        android:layout_marginBottom="6dip"
+        android:layout_weight="1"
+        android:duplicateParentState="true">
+
+        <TextView
+            android:id="@+id/label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dip"
-            android:layout_marginTop="6dip"
-            android:layout_marginBottom="6dip"
-            android:layout_weight="1"
+            android:singleLine="true"
+            android:textColor="@color/label_color"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
             android:duplicateParentState="true"
-            >
-
-        <TextView android:id="@+id/label"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:singleLine="true"
-                  android:textColor="@color/label_color"
-                  android:textAppearance="?android:attr/textAppearanceMedium"
-                  android:ellipsize="marquee"
-                  android:fadingEdge="horizontal"
-                  android:duplicateParentState="true"
-                  android:text="@string/deleted_title"
-                />
+            android:text="@string/deleted_title" />
 
     </RelativeLayout>
 
-    <CheckBox android:id="@+id/deleted_entry_checkbox"
-              android:layout_width="wrap_content"
-              android:layout_height="fill_parent"
-              android:focusable="false"
-              android:clickable="false"
-            />
+    <CheckBox
+        android:id="@+id/deleted_entry_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:focusable="false"
+        android:clickable="false" />
 
 </LinearLayout>

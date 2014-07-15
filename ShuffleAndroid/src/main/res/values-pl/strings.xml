@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2009 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,13 +14,13 @@
 -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-	<!--  Activity titles -->
+    <!--  Activity titles -->
     <string name="app_name">Shuffle PL</string>
     <string name="title_inbox">Skrzynka</string>
     <string name="title_project">Projekty</string>
     <string name="title_context">Konteksty</string>
     <string name="title_next_tasks">Następne zadania</string>
-	 <string name="title_due_tasks">Zaplanowane działania</string>
+    <string name="title_due_tasks">Zaplanowane działania</string>
     <string name="title_due_today">Na dzisiaj</string>
     <string name="title_due_next_week">Na przyszły tydzień</string>
     <string name="title_due_next_month">Na przyszły miesiąc</string>
@@ -49,21 +48,21 @@
     <string name="title_context_tasks">Konteksty &gt; %s</string>
     <string name="title_shortcut_picker">Wybierz ekran skrótu</string>
     <string name="title_widget_picker">Wybierz ekran widżetu</string>
-	 <string name="title_context_picker">Wybierz kontekst</string>
-	 <string name="title_contexts_picker">Wybierz konteksty</string>
-	 <string name="title_project_picker">Wybierz projekt</string>
+    <string name="title_context_picker">Wybierz kontekst</string>
+    <string name="title_contexts_picker">Wybierz konteksty</string>
+    <string name="title_project_picker">Wybierz projekt</string>
 
-	<!--  Option menu -->
+    <!--  Option menu -->
     <string name="menu_save">Zapisz</string>
     <string name="menu_save_and_add">Zapisz i utwórz nowy</string>
     <string name="menu_complete">Oznacz jako zakończony</string>
-	 <string name="menu_incomplete">Oznacz jako niezakończony</string>
+    <string name="menu_incomplete">Oznacz jako niezakończony</string>
     <string name="menu_move_up">Do góry</string>
     <string name="menu_move_down">W dół</string>
     <string name="menu_insert">Dodaj %s</string>
     <string name="menu_edit">Modyfikuj %s</string>
     <string name="menu_delete">Usuń</string>
-	 <string name="menu_undelete">Odzyskaj</string>
+    <string name="menu_undelete">Odzyskaj</string>
     <string name="menu_delete_entity">Usuń %s</string>
     <string name="menu_undelete_entity">Odzyskaj %s</string>
     <string name="menu_revert">Przywróć</string>
@@ -71,7 +70,7 @@
     <string name="menu_preferences">Ustawienia</string>
     <string name="menu_sync">Synchronizuj</string>
     <string name="menu_search">Szukaj</string>
-	 <string name="menu_view_settings">Ustawienia widoku</string>
+    <string name="menu_view_settings">Ustawienia widoku</string>
     <string name="menu_help">Pomoc</string>
 
     <!--  general purpose -->
@@ -86,8 +85,8 @@
     <string name="ok_button_title">OK</string>
     <string name="cancel_button_title">Anuluj</string>
     <string name="replace_button_title">Zastąp</string>
-	<string name="warning_title">Ostrzeżenie</string>
-	<string name="info_title">Informacje</string>
+    <string name="warning_title">Ostrzeżenie</string>
+    <string name="info_title">Informacje</string>
     <string name="task_name">Zadanie</string>
     <string name="project_name">Projekt</string>
     <string name="context_name">Kontekst</string>
@@ -106,17 +105,18 @@
     <string name="yesterday">Wczoraj</string>
     <string name="previous_button_title">Poprzednie</string>
     <string name="next_button_title">Następne</string>
-	 <string name="pager_display">%1$d z %2$d</string><!--FIXME?-->
-    
+    <string name="pager_display">%1$d z %2$d</string>
+    <!--FIXME?-->
+
     <!--  search -->
-	 <string name="search_label_action">Działania Shuffle</string>
-	 <string name="search_hint_action">Wyszukaj działania według opisu lub szczegółów</string>
-	 <string name="search_settings_description_action">Opisy i szczegóły działań</string>
-	 <string name="search_label_context">Konteksty Shuffle</string>
-	 <string name="search_hint_context">Wyszukaj konteksty według nazwy</string>
+    <string name="search_label_action">Działania Shuffle</string>
+    <string name="search_hint_action">Wyszukaj działania według opisu lub szczegółów</string>
+    <string name="search_settings_description_action">Opisy i szczegóły działań</string>
+    <string name="search_label_context">Konteksty Shuffle</string>
+    <string name="search_hint_context">Wyszukaj konteksty według nazwy</string>
     <string name="search_settings_description_context">Nazwy kontekstów</string>
     <string name="search_label_project">Projekty Shuffle</string>
-	 <string name="search_hint_project">Wyszukaj projekty według nazwy</string>
+    <string name="search_hint_project">Wyszukaj projekty według nazwy</string>
     <string name="search_settings_description_project">Nazwy projektów</string>
 
 
@@ -129,13 +129,13 @@
     <string name="status_title">Status</string>
     <string name="created_title">Utworzono </string>
     <string name="modified_title">Zmodyfikowano </string>
-	 <string name="view_calendar_entry">Pokaż wpis w kalendarzu</string>
+    <string name="view_calendar_entry">Pokaż wpis w kalendarzu</string>
 
-	<!--  edit screens -->
+    <!--  edit screens -->
     <string name="menu_done">Zapisz</string>
     <string name="menu_doNotSave">Porzuć zmiany</string>
 
-	<!--  task edit screen -->
+    <!--  task edit screen -->
     <string name="description_title">Opis</string>
     <string name="scheduling_title">Planowanie</string>
     <string name="scheduling_collapsed">Kliknij by rozwinąć opcje planowania</string>
@@ -156,7 +156,7 @@
     <string name="deleted_title">Usunięte</string>
     <string name="clear_title">Wyczyść daty</string>
 
-	<!--  project & context edit screens -->
+    <!--  project & context edit screens -->
     <string name="colour_title">Kolor</string>
     <string name="archived_title">Zarchiwizowane</string>
     <string name="icon_title">Ikona</string>
@@ -168,79 +168,80 @@
     <string name="default_context_title">Domyślny kontekst</string>
     <string name="preview_title">Podgląd</string>
     <string name="context_errands">Zlecenia</string>
-	<string name="context_online">Online</string>
+    <string name="context_online">Online</string>
     <string name="context_athome">W domu</string>
     <string name="context_atwork">W pracy</string>
-	<string name="context_contact">Kontakt</string>
-	<string name="context_read">Przeczytaj</string>
+    <string name="context_contact">Kontakt</string>
+    <string name="context_read">Przeczytaj</string>
 
-	<!--  Calendar screen -->
+    <!--  Calendar screen -->
     <string name="day_button_title">Dzisiaj</string>
     <string name="week_button_title">Następny tydzień</string>
     <string name="month_button_title">Następny miesiąc</string>
-	
-	<!--  preferences screen -->    
-	<string name="quick_add_title">Pasek dodawania</string>
+
+    <!--  preferences screen -->
+    <string name="quick_add_title">Pasek dodawania</string>
     <string name="show_all">Pokaż wszystkie</string>
     <string name="general_preferences">Ustawienia Google</string>
-    
+
     <string name="title_calendar_preference">Wybór kalendarza</string>
     <string name="summary_calendar_preference">Dla nowych wpisów do kalendarza Google</string>
-    
-	 <string name="title_send_analytics_preference">Wysyłaj dane o używaniu</string>
-	 <string name="summary_send_analytics_preference">Zanonimizowane dane są wykorzystywane do odnajdywania błędów oraz planowania nowych funkcji.</string>
+
+    <string name="title_send_analytics_preference">Wysyłaj dane o używaniu</string>
+    <string name="summary_send_analytics_preference">Zanonimizowane dane są wykorzystywane do odnajdywania błędów oraz planowania nowych funkcji.</string>
 
     <string name="sync_preferences">Ustawienia synchronizacji</string>
 
-	<string name="backup_preferences">Ustawienia kopii zapasowej</string>
-	
-	<string name="title_create_backup_preference">Kopia na kartę SD</string>
-	<string name="summary_create_backup_preference">Zapisz wszystkie zadania, projekty i konteksty</string>
+    <string name="backup_preferences">Ustawienia kopii zapasowej</string>
+
+    <string name="title_create_backup_preference">Kopia na kartę SD</string>
+    <string name="summary_create_backup_preference">Zapisz wszystkie zadania, projekty i konteksty</string>
 
     <string name="filename_title">Plik kopii zapasowej</string>
-	<string name="backup_progress">Zapisywanie <xliff:g id="type">%s</xliff:g> <xliff:g id="name">%s</xliff:g>.</string>
-	<string name="toast_backup_saved">Dane zapisane do <xliff:g id="filename">%s</xliff:g>.</string>
+    <string name="backup_progress">Zapisywanie <xliff:g id="type">%s</xliff:g> <xliff:g id="name">%s</xliff:g>.</string>
+    <string name="toast_backup_saved">Dane zapisane do <xliff:g id="filename">%s</xliff:g>.</string>
 
-	<string name="title_restore_backup_preference">Przywróć kopię z karty SD</string>
-	<string name="summary_restore_backup_preference">Przywróć dane z kopii zapasowej</string>
-	<string name="toast_backup_restored">Dane przywrócone z  <xliff:g id="filename">%s</xliff:g>.</string>
-	<string name="restore_progress">Czytanie <xliff:g id="type">%s</xliff:g> <xliff:g id="name">%s</xliff:g>.</string>
-	<string name="restore_button_title">Przywróć</string>
+    <string name="title_restore_backup_preference">Przywróć kopię z karty SD</string>
+    <string name="summary_restore_backup_preference">Przywróć dane z kopii zapasowej</string>
+    <string name="toast_backup_restored">Dane przywrócone z  <xliff:g id="filename">%s</xliff:g>.</string>
+    <string name="restore_progress">Czytanie <xliff:g id="type">%s</xliff:g> <xliff:g id="name">%s</xliff:g>.</string>
+    <string name="restore_button_title">Przywróć</string>
 
     <string name="warning_filename_empty">Musisz podać nazwę pliku.</string>
-	<string name="warning_filename_exists"><xliff:g id="filename">%s</xliff:g> już istnieje.</string>
-	<string name="warning_media_not_mounted">Karta nie jest zamontowana <xliff:g id="error">%s</xliff:g></string>
-	<string name="warning_backup_failed">Kopia nie powiodła się <xliff:g id="error">%s</xliff:g></string>
+    <string name="warning_filename_exists"><xliff:g id="filename">%s</xliff:g> już istnieje.</string>
+    <string name="warning_media_not_mounted">Karta nie jest zamontowana <xliff:g id="error">%s</xliff:g></string>
+    <string name="warning_backup_failed">Kopia nie powiodła się <xliff:g id="error">%s</xliff:g></string>
     <string name="warning_no_files">Brak plików do wyświetlenia.</string>
-	<string name="warning_restore_failed">Przywrócenie nie powiodło się <xliff:g id="error">%s</xliff:g></string>
+    <string name="warning_restore_failed">Przywrócenie nie powiodło się <xliff:g id="error">%s</xliff:g></string>
     <string name="status_checking_media">Sprawdzanie stanu nośnika.</string>
     <string name="status_creating_backup">Tworzenie pliku kopii.</string>
     <string name="status_backup_complete">Kopia gotowa.</string>
     <string name="status_reading_backup">Czytanie pliku kopii.</string>
     <string name="status_restore_complete">Przywracania ukończone.</string>
 
-	<string name="cleanup_preferences">Ustawienia czyszczenia</string>
+    <string name="cleanup_preferences">Ustawienia czyszczenia</string>
 
-	<string name="dialog_title_cleanup_preference">Usuń zakończone działania</string>
+    <string name="dialog_title_cleanup_preference">Usuń zakończone działania</string>
 
-	<string name="title_delete_completed_preference">Usuń zakończone działania</string>
+    <string name="title_delete_completed_preference">Usuń zakończone działania</string>
 
-	<string name="title_permanently_delete_preference">Usuń na zawsze</string>
-	<string name="summary_permanently_delete_preference">Na zawsze usuń wszystkie usunięte działania, projekty i konteksty.</string>
+    <string name="title_permanently_delete_preference">Usuń na zawsze</string>
+    <string name="summary_permanently_delete_preference">Na zawsze usuń wszystkie usunięte działania, projekty i konteksty.</string>
 
-	<string name="title_delete_all_preference">Usuń wszystko!</string>
-	<string name="summary_delete_all_preference">Usuń wszystkie zadania, projekty i konteksty.</string>
+    <string name="title_delete_all_preference">Usuń wszystko!</string>
+    <string name="summary_delete_all_preference">Usuń wszystkie zadania, projekty i konteksty.</string>
 
     <string name="delete_completed_button_title">Usuń</string>
     <string name="clean_slate_button_title">Usuń</string>
 
-	 <string name="permanently_delete_button_title">Usuń na zawsze</string>
+    <string name="permanently_delete_button_title">Usuń na zawsze</string>
 
     <!-- Toast displayed when an item is created -->
     <string name="itemCreatedToast">Utworzono <xliff:g id="itemName">%s</xliff:g>.</string>
 
-	 <string name="warning_empty_trash">Usunąć na zawsze wszystkie usunięte pozycje?</string>
-	 <string name="toast_empty_trash">Usunięto na zawsze: akcji: %1$s; kontekstów: %2$s; projektów: %2$s.</string><!--FIXME-->
+    <string name="warning_empty_trash">Usunąć na zawsze wszystkie usunięte pozycje?</string>
+    <string name="toast_empty_trash">Usunięto na zawsze: akcji: %1$s; kontekstów: %2$s; projektów: %2$s.</string>
+    <!--FIXME-->
 
     <!-- Toast displayed when an item is saved -->
     <string name="itemSavedToast">Zachowano <xliff:g id="itemName">%s</xliff:g>.</string>
@@ -250,27 +251,27 @@
     <string name="itemUndeletedToast">Odzyskano %1$s.</string>
 
     <!-- App engine sync -->
-	 <string name="title_gae_sync_preferences">Ustawienia synchronizacji z serwerem</string>
-	 <string name="summary_gae_sync_preferences">Konfiguruj synchronizację</string>
+    <string name="title_gae_sync_preferences">Ustawienia synchronizacji z serwerem</string>
+    <string name="summary_gae_sync_preferences">Konfiguruj synchronizację</string>
 	 <string name="sync_introduction">W celu włączenia synchronizacji
 wybierz konto Google wykorzystane do zalogowania na stronie www.shuffle.co</string>
     <string name="select_account_button_title">Wybierz konto</string>
     <string name="logout_button_title">Wyloguj</string>
     <string name="sync_now_button_title">Synchronizuj teraz</string>
-	 <string name="last_sync_title">Ostatnia pomyślna synchronizacja %1$s</string>
-	 <string name="no_previous_sync">Dotychczas nie synchronizowano tego konta</string>
-	 <string name="sync_selected_account">Zalogowano jako %1$s</string>
-	 <string name="no_sync_accounts">Nie ma ustawionych kont Google. Dodać je?</string>
+    <string name="last_sync_title">Ostatnia pomyślna synchronizacja %1$s</string>
+    <string name="no_previous_sync">Dotychczas nie synchronizowano tego konta</string>
+    <string name="sync_selected_account">Zalogowano jako %1$s</string>
+    <string name="no_sync_accounts">Nie ma ustawionych kont Google. Dodać je?</string>
 
     <!-- list filter preferences -->
     <string name="list_settings_title">– Ustawienia</string>
     <string name="active_items_title">Aktywne pozycje</string>
     <string name="deleted_items_title">Usunięte pozycje</string>
-	 <string name="pending_items_title">Działania rozpoczynające się w przyszłości</string>
-	 <string name="completed_items_title">Zakończone działania</string>
+    <string name="pending_items_title">Działania rozpoczynające się w przyszłości</string>
+    <string name="completed_items_title">Zakończone działania</string>
 
     <plurals name="task_view_selected_message_count">
-        <item quantity="one"  >Zaznaczono: <xliff:g id="message_count" example="1">%d</xliff:g></item>
+        <item quantity="one">Zaznaczono: <xliff:g id="message_count" example="1">%d</xliff:g></item>
         <item quantity="other">Zaznaczono: <xliff:g id="message_count" example="9">%d</xliff:g></item>
     </plurals>
 
@@ -280,7 +281,7 @@ wybierz konto Google wykorzystane do zalogowania na stronie www.shuffle.co</stri
     <string name="more_than_999">"999+"</string>
     <string name="widget_loading">Wczytywanie\u2026</string>
 
-	<!--  messages -->
+    <!--  messages -->
     <string name="no_due_date">Brak daty wykonania</string>
     <string name="no_icon">Brak ikony</string>
     <string name="no_tasks">Brak zadań do wyświetlenia. Rozpocznij wybierając z menu \"Dodaj zadania\".</string>
@@ -292,9 +293,9 @@ wybierz konto Google wykorzystane do zalogowania na stronie www.shuffle.co</stri
     <string name="clean_slate_warning">Usunąć <i>wszystkie</i> zadania, projekty i własne konteksty?</string>
     <string name="clean_task_message">Usunięto %d ukończonych zadań.</string>
     <string name="clean_slate_message">Wszystkie zadania, projekty i własne konteksty zostały usunięte.</string>
-   	<string name="error_title">Błąd</string>
-	<string name="error_message">Błąd ładowania zadania</string>
-	<string name="web_error_message">Nie można nawiązać połączenia z Tracks</string>
+    <string name="error_title">Błąd</string>
+    <string name="error_message">Błąd ładowania zadania</string>
+    <string name="web_error_message">Nie można nawiązać połączenia z Tracks</string>
     <string name="welcome1">
 Witam w Shuffle, osobistym narzędziu do organizacji pracy inspirowanym
 metodologią \"Getting Things Done\".
@@ -442,12 +443,12 @@ Gdy kontekst zostaje oznaczony jako usunięty, zerwane zostają jego powiązania
              days is a parameter. -->
         <item quantity="other"><xliff:g id="count">%d</xliff:g> dni</item>
     </plurals>
-    
 
-	 <string name="aerc_authentication_failed">Uwierzytelnienie nie powiodło się</string>
+
+    <string name="aerc_authentication_failed">Uwierzytelnienie nie powiodło się</string>
     <string name="aerc_failed">nie powiodło się</string>
-	 <string name="aerc_no_auth_token">Nie otrzymano tokenu uwierzytelniającego</string>
-	 <string name="aerc_no_cookie">Silnik aplikacji nie dostarczył ciasteczka</string>
-	 <string name="aerc_no_network">Brak połączenia z siecią</string>
+    <string name="aerc_no_auth_token">Nie otrzymano tokenu uwierzytelniającego</string>
+    <string name="aerc_no_cookie">Silnik aplikacji nie dostarczył ciasteczka</string>
+    <string name="aerc_no_network">Brak połączenia z siecią</string>
 
 </resources>

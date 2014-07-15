@@ -1,21 +1,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:orientation="horizontal"
->
+    android:orientation="horizontal">
 
-    <Button android:id="@+id/action_done"
+    <Button
+        android:id="@+id/action_done"
         android:layout_width="0dip"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="@string/menu_done"
-    />
+        android:text="@string/menu_done" />
 
-    <Button android:id="@+id/action_cancel"
+    <Button
+        android:id="@+id/action_cancel"
         android:layout_width="0dip"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="@string/cancel_button_title"
-    />
+        android:text="@string/cancel_button_title" />
 
 </LinearLayout>

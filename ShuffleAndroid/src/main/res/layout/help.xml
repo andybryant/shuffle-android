@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright (C) 2009 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="UTF-8"?><!-- Copyright (C) 2009 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,35 +14,32 @@
 -->
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
     <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:gravity="bottom|right"
-            >
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="bottom|right">
 
-        <TextView android:id="@+id/help_text"
+        <TextView
+            android:id="@+id/help_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:autoLink="web"
             android:padding="8dip"
-            style="?android:attr/textAppearanceMedium"
-            />
+            style="?android:attr/textAppearanceMedium" />
 
         <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/help_swipe_hint"
-                android:textColor="@color/view_minimal_text_color"
-                android:padding="8dip"
-                style="?android:attr/textAppearanceSmall"
-                />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/help_swipe_hint"
+            android:textColor="@color/view_minimal_text_color"
+            android:padding="8dip"
+            style="?android:attr/textAppearanceSmall" />
 
     </LinearLayout>
 

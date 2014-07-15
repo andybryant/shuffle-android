@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2014 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -57,64 +56,64 @@
     </array>
 
     <array name="text_colours">
-    	<item>c5b6985</item>
-    	<item>c2c6cfc</item>
-    	<item>c1800c9</item>
-    	<item>c5528a1</item>
-    	<item>c854f61</item>
-    	<item>cca000f</item>
+        <item>c5b6985</item>
+        <item>c2c6cfc</item>
+        <item>c1800c9</item>
+        <item>c5528a1</item>
+        <item>c854f61</item>
+        <item>cca000f</item>
 
-    	<item>cdee5f2</item>
-    	<item>ce1ecfe</item>
-    	<item>ce0e2fe</item>
-    	<item>ce1d5f8</item>
-    	<item>cfde9f4</item>
-    	<item>cffe3e3</item>
+        <item>cdee5f2</item>
+        <item>ce1ecfe</item>
+        <item>ce0e2fe</item>
+        <item>ce1d5f8</item>
+        <item>cfde9f4</item>
+        <item>cffe3e3</item>
 
-    	<item>cea7015</item>
-    	<item>cb16d12</item>
-    	<item>ca98b13</item>
-    	<item>c626332</item>
-    	<item>c639930</item>
-    	<item>c006634</item>
-    	
-    	<item>cfef0e2</item>
-    	<item>cf9dcb4</item>
-    	<item>cf2e7b4</item>
-    	<item>cfeffd5</item>
-    	<item>cf9ffef</item>
-    	<item>cf1f5ec</item>
+        <item>cea7015</item>
+        <item>cb16d12</item>
+        <item>ca98b13</item>
+        <item>c626332</item>
+        <item>c639930</item>
+        <item>c006634</item>
+
+        <item>cfef0e2</item>
+        <item>cf9dcb4</item>
+        <item>cf2e7b4</item>
+        <item>cfeffd5</item>
+        <item>cf9ffef</item>
+        <item>cf1f5ec</item>
     </array>
     <array name="background_colours">
-    	<item>cdee5f2</item>
-    	<item>ce1ecfe</item>
-    	<item>ce0e2fe</item>
-    	<item>ce1d5f8</item>
-    	<item>cfde9f4</item>
-    	<item>cffe3e3</item>
+        <item>cdee5f2</item>
+        <item>ce1ecfe</item>
+        <item>ce0e2fe</item>
+        <item>ce1d5f8</item>
+        <item>cfde9f4</item>
+        <item>cffe3e3</item>
 
-    	<item>c5b6985</item>
-    	<item>c2c6cfc</item>
-    	<item>c1800c9</item>
-    	<item>c5528a1</item>
-    	<item>c854f61</item>
-    	<item>cca000f</item>
+        <item>c5b6985</item>
+        <item>c2c6cfc</item>
+        <item>c1800c9</item>
+        <item>c5528a1</item>
+        <item>c854f61</item>
+        <item>cca000f</item>
 
-    	<item>cfef0e2</item>
-    	<item>cf9dcb4</item>
-    	<item>cf2e7b4</item>
-		<item>cfeffd5</item>
-    	<item>cf9ffef</item>
-    	<item>cf1f5ec</item>
+        <item>cfef0e2</item>
+        <item>cf9dcb4</item>
+        <item>cf2e7b4</item>
+        <item>cfeffd5</item>
+        <item>cf9ffef</item>
+        <item>cf1f5ec</item>
 
-    	<item>cea7015</item>
-    	<item>cb16d12</item>
-    	<item>ca98b13</item>
-    	<item>c626332</item>
-    	<item>c639930</item>
-    	<item>c006634</item>
+        <item>cea7015</item>
+        <item>cb16d12</item>
+        <item>ca98b13</item>
+        <item>c626332</item>
+        <item>c639930</item>
+        <item>c006634</item>
     </array>
-    
+
     <!-- Choices for the "Reminder minutes" spinner.
          These must be kept in sync with the reminder_minutes_values array.
     -->
@@ -134,7 +133,7 @@
         <item>2 days</item>
         <item>1 week</item>
     </string-array>
-    
+
     <string-array name="reminder_minutes_values" translatable="false">
         <item>"5"</item>
         <item>"10"</item>
@@ -151,7 +150,7 @@
         <item>"2880"</item>
         <item>"10080"</item>
     </string-array>
-    
+
     <string-array name="preferences_default_reminder_labels">
         <item>None</item>
         <item>5 minutes</item>
@@ -169,7 +168,7 @@
         <item>2 days</item>
         <item>1 week</item>
     </string-array>
-    
+
     <string-array name="preferences_default_reminder_values" translatable="false">
         <item>"0"</item>
         <item>"5"</item>

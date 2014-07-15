@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright (C) 2009 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -178,7 +177,8 @@ lieber nicht möchten, können Sie dies in den Einstellungen deaktivieren.
 </string>
 
     <!-- task view screen -->
-    <string name="complete_toggle_button">Mark %s</string> <!-- TODO -->
+    <string name="complete_toggle_button">Mark %s</string>
+    <!-- TODO -->
     <string name="status_title">Status</string>
     <string name="created_title">Erstellt</string>
     <string name="modified_title">zuletzt geändert</string>

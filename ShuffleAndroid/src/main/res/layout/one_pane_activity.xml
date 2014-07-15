@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -13,36 +12,32 @@
         android:layout_height="match_parent">
 
         <include
-                android:id="@+id/quick_add"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                layout="@layout/quick_add"
-                />
+            android:id="@+id/quick_add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/quick_add" />
 
         <FrameLayout
-                android:id="@+id/entity_list_pane"
-                android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="1"
-                />
+            android:id="@+id/entity_list_pane"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1" />
 
         <android.support.v4.view.ViewPager
-                android:id="@+id/task_pane"
-                android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="1"
-                >
-        </android.support.v4.view.ViewPager>
+            android:id="@+id/task_pane"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1"></android.support.v4.view.ViewPager>
 
     </LinearLayout>
 
-    <fragment android:id="@+id/navigation_drawer"
+    <fragment
+        android:id="@+id/navigation_drawer"
         android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:choiceMode="singleChoice"
         android:background="#fff"
-        android:name="org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment"
-        />
+        android:name="org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment" />
 
 </android.support.v4.widget.DrawerLayout>

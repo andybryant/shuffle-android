@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2009 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,168 +13,164 @@
      limitations under the License.
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-        >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
-            android:padding="4dip"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
+        android:padding="4dip"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <org.dodgybits.shuffle.android.list.view.context.ContextListItem
-                android:id="@+id/context_preview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dip"
-                android:layout_marginBottom="20dip"
-                />
+            android:id="@+id/context_preview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dip"
+            android:layout_marginBottom="20dip" />
 
 
-        <EditText android:id="@+id/name"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_marginTop="16dip"
-                  android:hint="@string/context_name_title"
-                  android:autoText="true"
-                  android:singleLine="true"
-                  android:maxLength="50"
-                  android:inputType="textAutoCorrect|textCapSentences"
-                >
-            <requestFocus/>
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dip"
+            android:hint="@string/context_name_title"
+            android:autoText="true"
+            android:singleLine="true"
+            android:maxLength="50"
+            android:inputType="textAutoCorrect|textCapSentences">
+
+            <requestFocus />
         </EditText>
 
 
-        <RelativeLayout android:id="@+id/colour_entry"
-                      android:layout_width="fill_parent"
-                      android:layout_height="wrap_content"
-                      android:minHeight="?android:attr/listPreferredItemHeight"
-                      android:paddingRight="?android:attr/scrollbarSize"
-                      android:background="@drawable/list_selector_background"
-                      android:focusable="true"
-                      android:clickable="true"
-                >
+        <RelativeLayout
+            android:id="@+id/colour_entry"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?android:attr/listPreferredItemHeight"
+            android:paddingRight="?android:attr/scrollbarSize"
+            android:background="@drawable/list_selector_background"
+            android:focusable="true"
+            android:clickable="true">
 
-            <TextView android:id="@+id/colour_label"
-                      android:layout_width="fill_parent"
-                      android:layout_height="wrap_content"
-                      android:layout_centerVertical="true"
-                      android:layout_alignParentLeft="true"
-                      android:layout_toLeftOf="@+id/colour_display"
-                      android:focusable="false"
-                      android:clickable="false"
-                      android:paddingLeft="8dip"
-                      android:paddingRight="8dip"
-                      android:singleLine="true"
-                      android:textColor="@color/label_color"
-                      android:textAppearance="?android:attr/textAppearanceMedium"
-                      android:text="@string/colour_title"
-                      android:duplicateParentState="true"
-                    />
+            <TextView
+                android:id="@+id/colour_label"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/colour_display"
+                android:focusable="false"
+                android:clickable="false"
+                android:paddingLeft="8dip"
+                android:paddingRight="8dip"
+                android:singleLine="true"
+                android:textColor="@color/label_color"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/colour_title"
+                android:duplicateParentState="true" />
 
-            <TextView android:id="@+id/colour_display"
-                      android:layout_width="40dip"
-                      android:layout_height="40dip"
-                      android:layout_alignParentRight="true"
-                      android:layout_marginRight="80dip"
-                      android:layout_centerVertical="true"
-                      android:paddingTop="8dip"
-                      android:focusable="false"
-                      android:clickable="false"
-                      android:duplicateParentState="true"
-                    />
+            <TextView
+                android:id="@+id/colour_display"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="80dip"
+                android:layout_centerVertical="true"
+                android:paddingTop="8dip"
+                android:focusable="false"
+                android:clickable="false"
+                android:duplicateParentState="true" />
 
         </RelativeLayout>
 
         <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dip"
-                android:background="@android:drawable/divider_horizontal_bright"
-                />
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@android:drawable/divider_horizontal_bright" />
 
 
-        <RelativeLayout android:id="@+id/icon_entry"
-                      android:layout_width="fill_parent"
-                      android:layout_height="wrap_content"
-                      android:minHeight="?android:attr/listPreferredItemHeight"
-                      android:paddingRight="?android:attr/scrollbarSize"
-                      android:background="@drawable/list_selector_background"
-                      android:focusable="true"
-                      android:clickable="true"
-                >
+        <RelativeLayout
+            android:id="@+id/icon_entry"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?android:attr/listPreferredItemHeight"
+            android:paddingRight="?android:attr/scrollbarSize"
+            android:background="@drawable/list_selector_background"
+            android:focusable="true"
+            android:clickable="true">
 
-            <TextView android:id="@+id/icon_label"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:layout_centerVertical="true"
-                      android:layout_alignParentLeft="true"
-                      android:layout_toLeftOf="@+id/icon_display"
-                      android:focusable="false"
-                      android:clickable="false"
-                      android:paddingLeft="8dip"
-                      android:paddingRight="8dip"
-                      android:singleLine="true"
-                      android:textColor="@color/label_color"
-                      android:textAppearance="?android:attr/textAppearanceMedium"
-                      android:text="@string/icon_title"
-                      android:duplicateParentState="true"
-                    />
+            <TextView
+                android:id="@+id/icon_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/icon_display"
+                android:focusable="false"
+                android:clickable="false"
+                android:paddingLeft="8dip"
+                android:paddingRight="8dip"
+                android:singleLine="true"
+                android:textColor="@color/label_color"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/icon_title"
+                android:duplicateParentState="true" />
 
-            <ImageButton android:id="@+id/icon_clear_button"
-                         android:layout_width="wrap_content"
-                         android:layout_height="wrap_content"
-                         android:layout_alignParentRight="true"
-                         android:layout_centerVertical="true"
-                         android:background="@drawable/blank"
-                         android:src="@drawable/ic_menu_remove_field_holo_light"
-                    />
+            <ImageButton
+                android:id="@+id/icon_clear_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/blank"
+                android:src="@drawable/ic_menu_remove_field_holo_light" />
 
-            <ImageView android:id="@+id/icon_display"
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:layout_toLeftOf="@+id/icon_clear_button"
-                       android:layout_centerVertical="true"
-                       android:layout_marginRight="40dip"
-                       android:focusable="false"
-                       android:clickable="false"
-                    />
+            <ImageView
+                android:id="@+id/icon_display"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/icon_clear_button"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="40dip"
+                android:focusable="false"
+                android:clickable="false" />
 
-            <TextView android:id="@+id/icon_none"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_toLeftOf="@+id/icon_clear_button"
-                      android:layout_centerVertical="true"
-                      android:layout_marginRight="40dip"
-                      android:text="@string/no_icon"
-                      android:visibility="gone"
-                      android:focusable="false"
-                      android:clickable="false"
-                    />
+            <TextView
+                android:id="@+id/icon_none"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/icon_clear_button"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="40dip"
+                android:text="@string/no_icon"
+                android:visibility="gone"
+                android:focusable="false"
+                android:clickable="false" />
 
         </RelativeLayout>
 
 
         <View
-              android:layout_width="fill_parent"
-              android:layout_height="1dip"
-              android:background="@android:drawable/divider_horizontal_bright"
-                />
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@android:drawable/divider_horizontal_bright" />
 
-        <include layout="@layout/editor_active_entry"
-                 android:id="@+id/active_entry"
-                />
+        <include
+            layout="@layout/editor_active_entry"
+            android:id="@+id/active_entry" />
 
-        <View   android:id="@+id/deleted_divider"
-                android:layout_width="fill_parent"
-                android:layout_height="1dip"
-                android:background="@android:drawable/divider_horizontal_bright"
-                />
+        <View
+            android:id="@+id/deleted_divider"
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@android:drawable/divider_horizontal_bright" />
 
-        <include layout="@layout/editor_delete_entry"
-                 android:id="@+id/deleted_entry"
-                />
+        <include
+            layout="@layout/editor_delete_entry"
+            android:id="@+id/deleted_entry" />
 
     </LinearLayout>
 

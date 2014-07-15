@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2009 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -59,7 +58,7 @@
         <item>2 天</item>
         <item>1 周</item>
     </string-array>
-    
+
     <string-array name="preferences_default_reminder_labels">
         <item>無</item>
         <item>5 分鐘</item>
@@ -77,5 +76,5 @@
         <item>2 天</item>
         <item>1 周</item>
     </string-array>
-    
+
 </resources>

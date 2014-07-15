@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2014 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -26,11 +25,10 @@
         android:layout_height="match_parent">
 
         <include
-                android:id="@+id/quick_add"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                layout="@layout/quick_add"
-                />
+            android:id="@+id/quick_add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/quick_add" />
 
         <FrameLayout
             android:id="@+id/entity_list_pane"
@@ -38,20 +36,20 @@
             android:layout_height="match_parent" />
 
         <android.support.v4.view.ViewPager
-                android:id="@+id/task_pane"
-                android:layout_width="0dp"
-                android:layout_height="match_parent" />
+            android:id="@+id/task_pane"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
 
     </org.dodgybits.shuffle.android.core.view.TwoPaneLayout>
 
-    <fragment android:id="@+id/navigation_drawer"
-              android:layout_width="@dimen/navigation_drawer_width"
-              android:layout_height="match_parent"
-              android:layout_gravity="start"
-              android:choiceMode="singleChoice"
-              android:background="#fff"
-              android:name="org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment"
-            />
+    <fragment
+        android:id="@+id/navigation_drawer"
+        android:layout_width="@dimen/navigation_drawer_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:choiceMode="singleChoice"
+        android:background="#fff"
+        android:name="org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment" />
 
 
 </android.support.v4.widget.DrawerLayout>

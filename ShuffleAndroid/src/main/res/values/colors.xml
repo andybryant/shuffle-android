@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2014 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -21,14 +20,14 @@
     <color name="description">#000000</color>
     <color name="details">#002663</color>
 
-	<color name="white">#ffffff</color>
+    <color name="white">#ffffff</color>
     <color name="red">#ff0000</color>
-	<color name="light_gray">#e7e3e7</color>
-	<color name="dark_brown">#312f28</color>
-	<color name="light_brown">#dadabe</color>
+    <color name="light_gray">#e7e3e7</color>
+    <color name="dark_brown">#312f28</color>
+    <color name="light_brown">#dadabe</color>
     <color name="mid_gray">#424242</color>
-	<color name="dark_gray">#313031</color>
-	<color name="black">#000000</color>
+    <color name="dark_gray">#313031</color>
+    <color name="black">#000000</color>
 
     <!-- new colours -->
 

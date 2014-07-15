@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright (C) 2009 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="UTF-8"?><!-- Copyright (C) 2009 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,43 +13,43 @@
      limitations under the License.
 -->
 
-<LinearLayout
-		xmlns:android="http://schemas.android.com/apk/res/android" 
-        android:orientation="vertical"
-        android:layout_width="fill_parent" 
-        android:layout_height="fill_parent"
-        android:paddingTop="12dp"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingTop="12dp"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp">
 
-    <TextView android:layout_width="fill_parent" 
-              android:layout_height="wrap_content"
-              android:text="@string/welcome1"
-              />
-              
-    <Button android:id="@+id/sample_data_button"
-           android:layout_width="fill_parent"
-           android:layout_height="wrap_content"
-           android:text="@string/sample_data_title">
-        <requestFocus/>
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/welcome1" />
+
+    <Button
+        android:id="@+id/sample_data_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sample_data_title">
+
+        <requestFocus />
     </Button>
-              
 
-    <TextView android:layout_width="fill_parent" 
-              android:layout_height="wrap_content"
-              android:text="@string/welcome2"
-              />
 
-    <Button android:id="@+id/clean_slate_button"
-           android:layout_width="fill_parent"
-           android:layout_height="wrap_content"
-           android:text="@string/clean_slate_title"
-           />	
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/welcome2" />
 
-    <TextView android:layout_width="fill_parent" 
-              android:layout_height="wrap_content"
-              android:text="@string/welcome3"
-              />
-              
+    <Button
+        android:id="@+id/clean_slate_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/clean_slate_title" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/welcome3" />
+
 </LinearLayout>

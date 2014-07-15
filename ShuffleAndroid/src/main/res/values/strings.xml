@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2014 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,7 +14,7 @@
 -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-	<!--  Activity titles -->
+    <!--  Activity titles -->
     <string name="app_name">Shuffle</string>
     <string name="title_inbox">Inbox</string>
     <string name="title_project">Projects</string>
@@ -52,7 +51,7 @@
     <string name="title_contexts_picker">Pick tags</string>
     <string name="title_project_picker">Pick a project</string>
 
-	<!--  Option menu -->
+    <!--  Option menu -->
     <string name="menu_save">Save</string>
     <string name="menu_save_and_add">Save and New</string>
     <string name="menu_complete">Mark complete</string>
@@ -85,8 +84,8 @@
     <string name="ok_button_title">OK</string>
     <string name="cancel_button_title">Cancel</string>
     <string name="replace_button_title">Replace</string>
-	<string name="warning_title">Warning</string>
-	<string name="info_title">Information</string>
+    <string name="warning_title">Warning</string>
+    <string name="info_title">Information</string>
     <string name="task_name">Action</string>
     <string name="project_name">Project</string>
     <string name="context_name">Tag</string>
@@ -106,7 +105,7 @@
     <string name="previous_button_title">Previous</string>
     <string name="next_button_title">Next</string>
     <string name="pager_display">%1$d of %2$d</string>
-    
+
     <!--  search -->
     <string name="search_label_action">Shuffle actions</string>
     <string name="search_hint_action">Search actions</string>
@@ -124,7 +123,7 @@
     <string name="clean_slate_title">Clean slate</string>
 
     <!--  What's new dialog -->
-<string name="whats_new_dialog_title">Shuffle</string>
+    <string name="whats_new_dialog_title">Shuffle</string>
 <string name="whats_new_dialog_message">Thanks for downloading Shuffle.\n\n
 <b>New in this version:</b>\n
 \t• Translation fixes\n
@@ -191,11 +190,11 @@ allow that, you can turn it off under Settings.</string>
     <string name="modified_title">Last modified</string>
     <string name="view_calendar_entry">View calendar entry</string>
 
-	<!--  edit screens -->
+    <!--  edit screens -->
     <string name="menu_done">Save</string>
     <string name="menu_doNotSave">Discard changes</string>
 
-	<!--  task edit screen -->
+    <!--  task edit screen -->
     <string name="description_title">Description</string>
     <string name="scheduling_title">Scheduling</string>
     <string name="scheduling_collapsed">Click to reveal scheduling options</string>
@@ -216,7 +215,7 @@ allow that, you can turn it off under Settings.</string>
     <string name="deleted_title">Deleted</string>
     <string name="clear_title">Clear dates</string>
 
-	<!--  project & context edit screens -->
+    <!--  project & context edit screens -->
     <string name="colour_title">Color</string>
     <string name="archived_title">Archived</string>
     <string name="icon_title">Icon</string>
@@ -228,68 +227,68 @@ allow that, you can turn it off under Settings.</string>
     <string name="default_context_title">Default context</string>
     <string name="preview_title">Preview</string>
     <string name="context_errands">Errands</string>
-	<string name="context_online">Online</string>
+    <string name="context_online">Online</string>
     <string name="context_athome">At home</string>
     <string name="context_atwork">At work</string>
-	<string name="context_contact">Contact</string>
-	<string name="context_read">Read</string>
+    <string name="context_contact">Contact</string>
+    <string name="context_read">Read</string>
 
-	<!--  Calendar screen -->
+    <!--  Calendar screen -->
     <string name="day_button_title">Today</string>
     <string name="week_button_title">Next week</string>
     <string name="month_button_title">Next month</string>
-	
-	<!--  preferences screen -->    
+
+    <!--  preferences screen -->
     <string name="quick_add_title">Quick Add Bar</string>
     <string name="show_all">Show all</string>
     <string name="general_preferences">Google settings</string>
-    
+
     <string name="title_calendar_preference">Calendar selection</string>
     <string name="summary_calendar_preference">For new Google Calendar entries</string>
-    
+
     <string name="title_send_analytics_preference">Send usage data</string>
     <string name="summary_send_analytics_preference">Anonymous data is used for finding bugs and prioritizing features.</string>
 
     <string name="sync_preferences">Synchronization settings</string>
 
-	<string name="backup_preferences">Backup settings</string>
-	
-	<string name="title_create_backup_preference">Backup to SD Card</string>
-	<string name="summary_create_backup_preference">Save all actions, projects and contexts</string>
+    <string name="backup_preferences">Backup settings</string>
+
+    <string name="title_create_backup_preference">Backup to SD Card</string>
+    <string name="summary_create_backup_preference">Save all actions, projects and contexts</string>
 
     <string name="filename_title">Backup file</string>
-	<string name="backup_progress">Writing %1$s %2$s.</string>
-	<string name="toast_backup_saved">Data successfully backed up to %1$s.</string>
+    <string name="backup_progress">Writing %1$s %2$s.</string>
+    <string name="toast_backup_saved">Data successfully backed up to %1$s.</string>
 
-	<string name="title_restore_backup_preference">Restore from SD Card</string>
-	<string name="summary_restore_backup_preference">Recover data from backup</string>
-	<string name="toast_backup_restored">Data successfully recovered from %1$s.</string>
-	<string name="restore_progress">Reading %1$s %2$s.</string>
-	<string name="restore_button_title">Restore</string>
+    <string name="title_restore_backup_preference">Restore from SD Card</string>
+    <string name="summary_restore_backup_preference">Recover data from backup</string>
+    <string name="toast_backup_restored">Data successfully recovered from %1$s.</string>
+    <string name="restore_progress">Reading %1$s %2$s.</string>
+    <string name="restore_button_title">Restore</string>
 
     <string name="warning_filename_empty">You must specify a filename.</string>
-	<string name="warning_filename_exists">%1$s already exists.</string>
-	<string name="warning_media_not_mounted">Media is not mounted %1$s</string>
-	<string name="warning_backup_failed">Backup failed %1$s</string>
+    <string name="warning_filename_exists">%1$s already exists.</string>
+    <string name="warning_media_not_mounted">Media is not mounted %1$s</string>
+    <string name="warning_backup_failed">Backup failed %1$s</string>
     <string name="warning_no_files">There are no files to display.</string>
-	<string name="warning_restore_failed">Restore failed %1$s</string>
+    <string name="warning_restore_failed">Restore failed %1$s</string>
     <string name="status_checking_media">Checking media state.</string>
     <string name="status_creating_backup">Creating backup file.</string>
     <string name="status_backup_complete">Backup complete.</string>
     <string name="status_reading_backup">Reading backup file.</string>
     <string name="status_restore_complete">Restore complete.</string>
 
-	<string name="cleanup_preferences">Clean up settings</string>
+    <string name="cleanup_preferences">Clean up settings</string>
 
-	<string name="dialog_title_cleanup_preference">Delete completed actions</string>
+    <string name="dialog_title_cleanup_preference">Delete completed actions</string>
 
     <string name="title_delete_completed_preference">Delete completed actions</string>
 
     <string name="title_permanently_delete_preference">Permanently remove deleted</string>
     <string name="summary_permanently_delete_preference">Remove all deleted actions, projects and contexts.</string>
 
-	<string name="title_delete_all_preference">Delete everything!</string>
-	<string name="summary_delete_all_preference">Remove all actions, projects and custom contexts.</string>
+    <string name="title_delete_all_preference">Delete everything!</string>
+    <string name="summary_delete_all_preference">Remove all actions, projects and custom contexts.</string>
 
     <string name="delete_completed_button_title">Delete</string>
     <string name="clean_slate_button_title">Delete</string>
@@ -301,7 +300,7 @@ allow that, you can turn it off under Settings.</string>
 
     <string name="warning_empty_trash">Permanently remove all deleted items?</string>
     <string name="toast_empty_trash">Permanently deleted %1$s action(s), %2$s context(s) and %3$s projects(s).</string>
-    
+
     <!-- Toast displayed when an item is saved -->
     <string name="itemSavedToast">%1$s saved.</string>
 
@@ -342,7 +341,7 @@ you need to select the Google account you use to login to www.shuffle.co</string
     <string name="task_list_contents_snippet_divider" translatable="false"> - </string>
 
     <plurals name="task_view_selected_message_count">
-        <item quantity="one"  ><xliff:g id="message_count" example="1">%d</xliff:g> selected</item>
+        <item quantity="one"><xliff:g id="message_count" example="1">%d</xliff:g> selected</item>
         <item quantity="other"><xliff:g id="message_count" example="9">%d</xliff:g> selected</item>
     </plurals>
 
@@ -352,7 +351,7 @@ you need to select the Google account you use to login to www.shuffle.co</string
     <string name="more_than_999">"999+"</string>
     <string name="widget_loading">Loading\u2026</string>
 
-	<!--  messages -->
+    <!--  messages -->
     <string name="no_due_date">No due date</string>
     <string name="no_icon">No icon</string>
     <string name="no_tasks">There are no actions to display. Get started by selecting \"Add Action\" from the menu.</string>
@@ -364,9 +363,9 @@ you need to select the Google account you use to login to www.shuffle.co</string
     <string name="clean_slate_warning">Delete <i>all</i> actions, projects and custom tags?</string>
     <string name="clean_task_message">Deleted %1$d completed actions.</string>
     <string name="clean_slate_message">Deleted all actions, projects and custom tags.</string>
-   	<string name="error_title">Error</string>
-	<string name="error_message">Error loading action</string>
-	<string name="web_error_message">Unable to connect to Tracks</string>    
+    <string name="error_title">Error</string>
+    <string name="error_message">Error loading action</string>
+    <string name="web_error_message">Unable to connect to Tracks</string>
     <string name="welcome1">
 Welcome to Shuffle, a \"Getting Things Done\" inspired personal organization tool.
 If you want to see how best to use Shuffle, click \"Demonstration\" to 

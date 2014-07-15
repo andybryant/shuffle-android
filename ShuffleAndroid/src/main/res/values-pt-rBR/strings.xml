@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2009 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,7 +14,7 @@
 -->
 
 <resources>
-	<!--  Activity titles -->
+    <!--  Activity titles -->
     <string name="app_name">Shuffle</string>
     <string name="title_inbox">Caixa de Entrada</string>
     <string name="title_project">Projetos</string>
@@ -48,7 +47,7 @@
     <string name="title_shortcut_picker">Pegar atalho</string>
     <string name="title_widget_picker">Pegar conteúdo do widget</string>
 
-	<!--  Option menu -->
+    <!--  Option menu -->
     <string name="menu_save">Salvar</string>
     <string name="menu_save_and_add">Salvar e Nova</string>
     <string name="menu_delete">Excluir</string>
@@ -77,8 +76,8 @@
     <string name="ok_button_title">OK</string>
     <string name="cancel_button_title">Cancelar</string>
     <string name="replace_button_title">Substituir</string>
-	<string name="warning_title">Atenção</string>
-	<string name="info_title">Informação</string>
+    <string name="warning_title">Atenção</string>
+    <string name="info_title">Informação</string>
     <string name="task_name">Ação</string>
     <string name="project_name">Projeto</string>
     <string name="context_name">Contexto</string>
@@ -97,7 +96,7 @@
     <string name="previous_button_title">Anterior</string>
     <string name="next_button_title">Próximo</string>
 
-    
+
     <!--  search -->
     <string name="search_label_action">Ações Shuffle</string>
     <string name="search_hint_action">Pesquisar ações pela descrição ou detalhes</string>
@@ -115,7 +114,7 @@
     <string name="clean_slate_title">Início limpo</string>
 
     <!--  What's new dialog -->
-<string name="whats_new_dialog_title">Shuffle</string>
+    <string name="whats_new_dialog_title">Shuffle</string>
 <string name="whats_new_dialog_message">Obrigado por baixar o Shuffle.\n\n
 <b>Novidades nesta versão:</b>\n
 \t• Filtros de exibição, personalizáveis em cada tela.\n
@@ -168,11 +167,11 @@ esse comportamento, poderá desligá-lo nas Preferências.</string>
     <string name="modified_title">Últ. modificação</string>
     <string name="view_calendar_entry">Ver item de agenda</string>
 
-	<!--  edit screens -->
+    <!--  edit screens -->
     <string name="menu_done">Salvar</string>
     <string name="menu_doNotSave">Descartar alterações</string>
 
-	<!--  task edit screen -->
+    <!--  task edit screen -->
     <string name="description_title">Descrição</string>
     <string name="scheduling_title">Agendamento</string>
     <string name="scheduling_collapsed">Clique para revelar opções de agendamento</string>
@@ -191,7 +190,7 @@ esse comportamento, poderá desligá-lo nas Preferências.</string>
     <string name="deleted_title">Excluído</string>
     <string name="clear_title">Limpar datas</string>
 
-	<!--  project & context edit screens -->
+    <!--  project & context edit screens -->
     <string name="colour_title">Cor</string>
     <string name="archived_title">Arquivado</string>
     <string name="icon_title">Ícone</string>
@@ -201,30 +200,29 @@ esse comportamento, poderá desligá-lo nas Preferências.</string>
     <string name="default_context_title">Contexto padrão</string>
     <string name="preview_title">Pré-visualizar</string>
     <string name="context_errands">Mandados</string>
-	<string name="context_online">Online</string>
+    <string name="context_online">Online</string>
     <string name="context_athome">Em casa</string>
     <string name="context_atwork">No trabalho</string>
-	<string name="context_contact">Contato</string>
-	<string name="context_read">Ler</string>
+    <string name="context_contact">Contato</string>
+    <string name="context_read">Ler</string>
 
-	<!--  Calendar screen -->
+    <!--  Calendar screen -->
     <string name="day_button_title">Hoje</string>
     <string name="week_button_title">Próxima semana</string>
     <string name="month_button_title">Próximo mês</string>
-	
-	<!--  preferences screen -->    
+
+    <!--  preferences screen -->
     <string name="context_name_title">Nome do Contexto</string>
     <string name="due_date_title">Data de Vencimento</string>
 
 
     <string name="general_preferences">Preferências do Google</string>
-    
+
     <string name="title_calendar_preference">Seleção de agenda</string>
     <string name="summary_calendar_preference">Para novos itens da Agenda do Google</string>
-    
+
     <string name="title_send_analytics_preference">Enviar dados de uso</string>
     <string name="summary_send_analytics_preference">Dados anônimos são enviados para detecção de bugs e priorização de funcionalidades.</string>
-
 
 
     <string name="sync_preferences">Preferências de Sincronização</string>
@@ -232,44 +230,44 @@ esse comportamento, poderá desligá-lo nas Preferências.</string>
     <string name="changeSynchronizationSettings">Configurações do Tracks</string>
 
 
-	<string name="backup_preferences">Preferências de Backup</string>
-	
-	<string name="title_create_backup_preference">Backup para Cartão SD</string>
-	<string name="summary_create_backup_preference">Salvar todas as ações, projetos e contextos</string>
+    <string name="backup_preferences">Preferências de Backup</string>
+
+    <string name="title_create_backup_preference">Backup para Cartão SD</string>
+    <string name="summary_create_backup_preference">Salvar todas as ações, projetos e contextos</string>
 
     <string name="filename_title">Arquivo de backup</string>
-	<string name="backup_progress">Gravando %1$s %2$s.</string>
-	<string name="toast_backup_saved">Os dados foram gravados para %1$s com sucesso.</string>
+    <string name="backup_progress">Gravando %1$s %2$s.</string>
+    <string name="toast_backup_saved">Os dados foram gravados para %1$s com sucesso.</string>
 
-	<string name="title_restore_backup_preference">Restaurar do Cartão SD</string>
-	<string name="summary_restore_backup_preference">Recuperar dados do backup</string>
-	<string name="toast_backup_restored">Dados recuperados de %1$s com sucesso.</string>
-	<string name="restore_progress">Lendo %1$s %2$s.</string>
-	<string name="restore_button_title">Restaurar</string>
+    <string name="title_restore_backup_preference">Restaurar do Cartão SD</string>
+    <string name="summary_restore_backup_preference">Recuperar dados do backup</string>
+    <string name="toast_backup_restored">Dados recuperados de %1$s com sucesso.</string>
+    <string name="restore_progress">Lendo %1$s %2$s.</string>
+    <string name="restore_button_title">Restaurar</string>
 
     <string name="warning_filename_empty">Você deve informar um nome de arquivo.</string>
-	<string name="warning_filename_exists">%1$s já existe.</string>
-	<string name="warning_media_not_mounted">Mídia não está montada %1$s</string>
-	<string name="warning_backup_failed">Backup falhou %1$s</string>
+    <string name="warning_filename_exists">%1$s já existe.</string>
+    <string name="warning_media_not_mounted">Mídia não está montada %1$s</string>
+    <string name="warning_backup_failed">Backup falhou %1$s</string>
     <string name="warning_no_files">Não há arquivos para mostrar.</string>
-	<string name="warning_restore_failed">Restauração falhou %1$s</string>
+    <string name="warning_restore_failed">Restauração falhou %1$s</string>
     <string name="status_checking_media">Verificando estado da mídia.</string>
     <string name="status_creating_backup">Criando arquivo de backup.</string>
     <string name="status_backup_complete">Backup concluído.</string>
     <string name="status_reading_backup">Lendo arquivo de backup.</string>
     <string name="status_restore_complete">Restauração concluída.</string>
 
-	<string name="cleanup_preferences">Preferências de Limpeza</string>
+    <string name="cleanup_preferences">Preferências de Limpeza</string>
 
-	<string name="dialog_title_cleanup_preference">Excluir ações completadas</string>
+    <string name="dialog_title_cleanup_preference">Excluir ações completadas</string>
 
     <string name="title_delete_completed_preference">Excluir ações completadas</string>
 
     <string name="title_permanently_delete_preference">Remover permanentemente as excluídas</string>
     <string name="summary_permanently_delete_preference">Remove todas as ações, projetos e contextos excluídos.</string>
 
-	<string name="title_delete_all_preference">Excluir tudo!</string>
-	<string name="summary_delete_all_preference">Remove todas as ações, projetos e contextos personalizados.</string>
+    <string name="title_delete_all_preference">Excluir tudo!</string>
+    <string name="summary_delete_all_preference">Remove todas as ações, projetos e contextos personalizados.</string>
 
     <string name="delete_completed_button_title">Excluir</string>
     <string name="clean_slate_button_title">Excluir</string>
@@ -281,7 +279,7 @@ esse comportamento, poderá desligá-lo nas Preferências.</string>
 
     <string name="warning_empty_trash">Remover permanentemente todos os itens excluídos?</string>
     <string name="toast_empty_trash">Excluídos permanentemente: %1$s ação(ões), %2$s contexto(s) e %3$s projeto(s).</string>
-    
+
     <!-- Toast displayed when an item is saved -->
     <string name="itemSavedToast">%1$s salvo.</string>
 
@@ -296,7 +294,7 @@ esse comportamento, poderá desligá-lo nas Preferências.</string>
     <string name="completed_items_title">Ações completadas</string>
 
 
-	<!--  messages -->
+    <!--  messages -->
     <string name="no_due_date">Sem data de vencimento</string>
     <string name="no_icon">Sem ícone</string>
     <string name="no_tasks">Não há ações para exibir. Comece selecionando \"Incluir Ação\" no menu.</string>
@@ -308,9 +306,9 @@ esse comportamento, poderá desligá-lo nas Preferências.</string>
     <string name="clean_slate_warning">Excluir <i>tudo:</i> ações, projetos e contextos personalizados?</string>
     <string name="clean_task_message">Excluídas %1$d ações completadas.</string>
     <string name="clean_slate_message">Excluídas todas as ações, projetos e contextos personalizados.</string>
-   	<string name="error_title">Erro</string>
-	<string name="error_message">Erro ao carregar ação</string>
-	<string name="web_error_message">Impossível conectar ao Tracks</string>    
+    <string name="error_title">Erro</string>
+    <string name="error_message">Erro ao carregar ação</string>
+    <string name="web_error_message">Impossível conectar ao Tracks</string>
     <string name="welcome1">
 Bem-vindo ao Shuffle, uma ferramenta de organização pessoal inspirada no \"Getting Things Done\".
 Se você quiser ver como melhor utilizar o Shuffle, clique em \"Demonstração\" para
@@ -444,7 +442,6 @@ Para feedback ou relatório de erros, por favor verifique http://code.google.com
              days is a parameter. -->
         <item quantity="other">%1$d dias</item>
     </plurals>
-    
 
 
 </resources>

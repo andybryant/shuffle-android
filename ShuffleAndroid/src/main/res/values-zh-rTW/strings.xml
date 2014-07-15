@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2009 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,7 +14,7 @@
 -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-	<!--  Activity titles -->
+    <!--  Activity titles -->
     <string name="app_name">Shuffle</string>
     <string name="title_inbox">活動清單</string>
     <string name="title_project">內容</string>
@@ -42,7 +41,7 @@
     <string name="title_context_tasks">情景 > %s</string>
     <string name="title_shortcut_picker">選擇捷徑螢幕</string>
 
-	<!--  Option menu -->
+    <!--  Option menu -->
     <string name="menu_save">儲存檔案</string>
     <string name="menu_save_and_add">儲存檔案並開啟新檔</string>
     <string name="menu_delete">移除</string>
@@ -69,8 +68,8 @@
     <string name="ok_button_title">確認</string>
     <string name="cancel_button_title">取消</string>
     <string name="replace_button_title">取代</string>
-	<string name="warning_title">警告</string>
-	<string name="info_title">資訊</string>
+    <string name="warning_title">警告</string>
+    <string name="info_title">資訊</string>
     <string name="task_name">活動</string>
     <string name="project_name">內容</string>
     <string name="context_name">情景</string>
@@ -81,16 +80,16 @@
     <string name="yesterday">昨天</string>
     <string name="previous_button_title">上個</string>
     <string name="next_button_title">下個</string>
-        
+
     <!--  Welcome screen -->
     <string name="sample_data_title">演示</string>
     <string name="clean_slate_title">清空</string>
 
-	<!--  edit screens -->
+    <!--  edit screens -->
     <string name="menu_done">儲存檔案</string>
     <string name="menu_doNotSave">放棄變更</string>
 
-	<!--  task edit screen -->
+    <!--  task edit screen -->
     <string name="description_title">描述</string>
     <string name="scheduling_title">時間安排</string>
     <string name="scheduling_collapsed">按顯示時間安排選項</string>
@@ -107,7 +106,7 @@
     <string name="completed_title">已完成</string>
     <string name="clear_title">清除日期</string>
 
-	<!--  project & context edit screens -->
+    <!--  project & context edit screens -->
     <string name="colour_title">色彩</string>
     <string name="archived_title">存檔</string>
     <string name="icon_title">圖示</string>
@@ -117,67 +116,67 @@
     <string name="default_context_title">預設情景</string>
     <string name="preview_title">預覽</string>
     <string name="context_errands">出差</string>
-	<string name="context_online">上網</string>
+    <string name="context_online">上網</string>
     <string name="context_athome">在家</string>
     <string name="context_atwork">工作</string>
-	<string name="context_contact">聯絡</string>
-	<string name="context_read">閱讀</string>
+    <string name="context_contact">聯絡</string>
+    <string name="context_read">閱讀</string>
 
-	<!--  Calendar screen -->
+    <!--  Calendar screen -->
     <string name="day_button_title">今天</string>
     <string name="week_button_title">下週</string>
     <string name="month_button_title">下月</string>
-	
-	<!--  preferences screen -->    
+
+    <!--  preferences screen -->
     <string name="context_name_title">情景名稱</string>
     <string name="due_date_title">預訂日期</string>
 
 
     <string name="general_preferences">谷歌設定</string>
-    
+
     <string name="title_calendar_preference">日曆選擇</string>
     <string name="summary_calendar_preference">對於新的谷歌日曆條目</string>
-  
+
     <string name="sync_preferences">同步設定</string>
 
     <string name="changeSynchronizationSettings">Tracks 設定</string>
 
 
-	<string name="backup_preferences">備份設定</string>
-	
-	<string name="title_create_backup_preference">備份到 SD 卡</string>
-	<string name="summary_create_backup_preference">儲存檔案所有活動, 內容和情景</string>
+    <string name="backup_preferences">備份設定</string>
+
+    <string name="title_create_backup_preference">備份到 SD 卡</string>
+    <string name="summary_create_backup_preference">儲存檔案所有活動, 內容和情景</string>
 
     <string name="filename_title">備份檔案</string>
-	<string name="backup_progress">等待 <xliff:g id="type">%s</xliff:g> <xliff:g id="name">%s</xliff:g>。</string>
-	<string name="toast_backup_saved">資料已成功的備份到 <xliff:g id="filename">%s</xliff:g>。</string>
+    <string name="backup_progress">等待 <xliff:g id="type">%s</xliff:g> <xliff:g id="name">%s</xliff:g>。</string>
+    <string name="toast_backup_saved">資料已成功的備份到 <xliff:g id="filename">%s</xliff:g>。</string>
 
-	<string name="title_restore_backup_preference">從 SD 卡恢復</string>
-	<string name="summary_restore_backup_preference">從備份恢複數據</string>
-	<string name="toast_backup_restored">資料成功的從 <xliff:g id="filename">%s</xliff:g> 恢復。</string>
-	<string name="restore_progress">正在讀取 <xliff:g id="type">%s</xliff:g> <xliff:g id="name">%s</xliff:g>。</string>
-	<string name="restore_button_title">恢復</string>
+    <string name="title_restore_backup_preference">從 SD 卡恢復</string>
+    <string name="summary_restore_backup_preference">從備份恢複數據</string>
+    <string name="toast_backup_restored">資料成功的從 <xliff:g id="filename">%s</xliff:g> 恢復。</string>
+    <string name="restore_progress">正在讀取 <xliff:g id="type">%s</xliff:g> <xliff:g id="name">%s</xliff:g>。</string>
+    <string name="restore_button_title">恢復</string>
 
     <string name="warning_filename_empty">您必須指定一個檔案名。</string>
-	<string name="warning_filename_exists"><xliff:g id="filename">%s</xliff:g> 已存在。</string>
-	<string name="warning_media_not_mounted">媒體沒有安裝 <xliff:g id="error">%s</xliff:g></string>
-	<string name="warning_backup_failed">備份失敗 <xliff:g id="error">%s</xliff:g></string>
+    <string name="warning_filename_exists"><xliff:g id="filename">%s</xliff:g> 已存在。</string>
+    <string name="warning_media_not_mounted">媒體沒有安裝 <xliff:g id="error">%s</xliff:g></string>
+    <string name="warning_backup_failed">備份失敗 <xliff:g id="error">%s</xliff:g></string>
     <string name="warning_no_files">沒有要顯示的檔案。</string>
-	<string name="warning_restore_failed">恢復失敗 <xliff:g id="error">%s</xliff:g></string>
+    <string name="warning_restore_failed">恢復失敗 <xliff:g id="error">%s</xliff:g></string>
     <string name="status_checking_media">正在檢查媒體狀態。</string>
     <string name="status_creating_backup">正在建立備份檔案。</string>
     <string name="status_backup_complete">備份完成。</string>
     <string name="status_reading_backup">正在讀取備份檔案。</string>
     <string name="status_restore_complete">恢復完成。</string>
 
-	<string name="cleanup_preferences">清空設定</string>
+    <string name="cleanup_preferences">清空設定</string>
 
-	<string name="dialog_title_cleanup_preference">移除完成的活動</string>
+    <string name="dialog_title_cleanup_preference">移除完成的活動</string>
 
-	<string name="title_delete_completed_preference">移除完成的活動</string>
+    <string name="title_delete_completed_preference">移除完成的活動</string>
 
-	<string name="title_delete_all_preference">移除全部!</string>
-	<string name="summary_delete_all_preference">移除全部活動, 內容和自訂情景。</string>
+    <string name="title_delete_all_preference">移除全部!</string>
+    <string name="summary_delete_all_preference">移除全部活動, 內容和自訂情景。</string>
 
     <string name="delete_completed_button_title">移除</string>
     <string name="clean_slate_button_title">移除</string>
@@ -191,7 +190,7 @@
     <!-- Toast displayed when an item is saved -->
     <string name="itemDeletedToast"><xliff:g id="itemName">%s</xliff:g> 已移除。</string>
 
-	<!--  messages -->
+    <!--  messages -->
     <string name="no_due_date">無預定日期</string>
     <string name="no_icon">無圖示</string>
     <string name="no_tasks">沒有活動可以顯示。從功能表項 \"新增活動\" 開始建立活動。</string>
@@ -203,9 +202,9 @@
     <string name="clean_slate_warning">移除 <i>全部</i> 活動, 內容和定義的情景?</string>
     <string name="clean_task_message">移除 %d 條已完成活動。</string>
     <string name="clean_slate_message">移除全部活動, 內容和定義的情景。</string>
-   	<string name="error_title">錯誤</string>
-	<string name="error_message">載入活動錯誤</string>
-	<string name="web_error_message">無法連線到 Tracks</string>    
+    <string name="error_title">錯誤</string>
+    <string name="error_message">載入活動錯誤</string>
+    <string name="web_error_message">無法連線到 Tracks</string>
     <string name="welcome1">
 歡迎使用 Shuffle, 一款激勵人們 \"把事情做好\" 的有創意的個人事務管理工具。
 如果您想瞭解如何最好地利用 Shuffle, 按 \"演示\" 來載入一些樣例項目和活動。
@@ -291,7 +290,7 @@ Shuffle 有許多地方可供使用者設定。所有視圖中都可以透過功
 \n
 要回饋跟多資訊或者 Bug, 請存取 http://code.google.com/p/android-shuffle/issues/list 或發送郵件到 andy@dodgybits.org
     </string>
-    
+
     <!-- Reminder format strings -->
     <plurals name="Nminutes">
         <!-- This is the label for a 1-minute reminder. -->
@@ -331,5 +330,5 @@ Shuffle 有許多地方可供使用者設定。所有視圖中都可以透過功
              days is a parameter. -->
         <item quantity="other"><xliff:g id="count">%d</xliff:g> 天</item>
     </plurals>
-    
+
 </resources>
