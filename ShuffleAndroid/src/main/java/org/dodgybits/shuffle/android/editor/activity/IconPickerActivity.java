@@ -26,7 +26,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import com.google.analytics.tracking.android.EasyTracker;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import roboguice.activity.RoboActivity;
