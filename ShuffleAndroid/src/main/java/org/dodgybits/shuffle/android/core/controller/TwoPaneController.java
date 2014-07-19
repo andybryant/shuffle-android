@@ -46,7 +46,8 @@ public class TwoPaneController extends AbstractActivityController {
             Log.wtf(TAG, "mLayout is null!");
             return false;
         }
-        mLayout.setController(this, Intent.ACTION_SEARCH.equals(mActivity.getIntent().getAction()));
+        boolean isSearchList = Intent.ACTION_SEARCH.equals(mActivity.getIntent().getAction());
+        mLayout.setController(this, isSearchList);
 
         return super.onCreate(savedState);
     }
