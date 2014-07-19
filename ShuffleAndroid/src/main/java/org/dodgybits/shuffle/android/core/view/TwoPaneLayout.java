@@ -173,7 +173,7 @@ public class TwoPaneLayout extends FrameLayout {
 
         // only adjust the fixed task view width when my width changes
         if (parentWidth != getMeasuredWidth()) {
-            Log.i(TAG, "setting up new TPL, w=" + parentWidth + "tv=" + taskWidth);
+            Log.i(TAG, "setting up new TPL, w=" + parentWidth + " tw=" + taskWidth + " mode=" + mCurrentMode);
             setPaneWidth(mTaskView, taskWidth);
         }
 
@@ -237,7 +237,7 @@ public class TwoPaneLayout extends FrameLayout {
                 taskX = width;
                 listX = 0;
                 hasPositions = true;
-                Log.i(TAG, "conv-list mode layout, x=" + listX + "/" + taskX);
+                Log.i(TAG, "task-list mode layout, x=" + listX + "/" + taskX);
                 break;
             }
             default:

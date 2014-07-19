@@ -412,6 +412,7 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        mViewMode.handleSaveInstanceState(outState);
 
     }
 
