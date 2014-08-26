@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -84,6 +85,10 @@ public abstract class AbstractActivityController implements ActivityController {
     public static final String QUERY_NAME = "queryName";
     private static final int WHATS_NEW_DIALOG = 0;
 
+    /** Key to store {@link #mTaskListScrollPositions} */
+    private static final String SAVED_TASK_LIST_SCROLL_POSITIONS =
+            "saved-task-list-scroll-positions";
+
     private static final int LOADER_ID_TASK_LIST_LOADER = 1;
 
     /** Tag used when loading a task list fragment. */
@@ -94,6 +99,10 @@ public abstract class AbstractActivityController implements ActivityController {
 
     private Cursor mTaskListCursor;
     private TaskListContext mListContext;
+
+
+    /** A map of {@link ListQuery} to scroll position in the task list. */
+    private final Bundle mTaskListScrollPositions = new Bundle();
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -231,8 +240,15 @@ public abstract class AbstractActivityController implements ActivityController {
         return mTaskListCursor;
     }
 
+    @Override
+    public void setTaskListScrollPosition(ListQuery listQuery, Parcelable savedPosition) {
+        mTaskListScrollPositions.putParcelable(listQuery.name(), savedPosition);
+    }
 
-
+    @Override
+    public Parcelable getTaskListScrollPosition(ListQuery listQuery) {
+        return mTaskListScrollPositions.getParcelable(listQuery.name());
+    }
 
     private void checkLastVersion() {
         final int lastVersion = Preferences.getLastVersion(mActivity);
@@ -406,14 +422,18 @@ public abstract class AbstractActivityController implements ActivityController {
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-
+    public void onRestoreInstanceState(Bundle savedState) {
+        mTaskListScrollPositions.clear();
+        mTaskListScrollPositions.putAll(
+                savedState.getBundle(SAVED_TASK_LIST_SCROLL_POSITIONS));
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         mViewMode.handleSaveInstanceState(outState);
 
+        outState.putBundle(SAVED_TASK_LIST_SCROLL_POSITIONS,
+                mTaskListScrollPositions);
     }
 
     @Override

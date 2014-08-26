@@ -197,6 +197,8 @@ public class ViewMode {
         }
     }
 
+    public void handleRestore()
+
     /**
      * Save the existing mode only. Does not save the existing listeners.
      * @param outState

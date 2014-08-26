@@ -25,6 +25,7 @@ import org.dodgybits.shuffle.android.core.util.IntentUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.TaskListCallbacks;
 import org.dodgybits.shuffle.android.list.event.*;
+import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.QuickAddController;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
@@ -69,8 +70,6 @@ public class TaskListFragment extends RoboListFragment
     private ActionMode mSelectionMode;
     private SelectionModeCallback mLastSelectionModeCallback;
 
-    private Parcelable mSavedListState;
-
     // UI Support
     private boolean mIsViewCreated;
 
@@ -93,6 +92,13 @@ public class TaskListFragment extends RoboListFragment
 
     private MainActivity mActivity;
     private TaskListCallbacks mListHandler;
+
+    /**
+     * If <code>true</code>, we have restored (or attempted to restore) the list's scroll position
+     * from when we were last on this conversation list.
+     */
+    private boolean mScrollPositionRestored = false;
+
 
     private void initializeArgCache() {
         if (mListContext != null) return;
@@ -154,13 +160,6 @@ public class TaskListFragment extends RoboListFragment
         // Re-load caused by content changed events shouldn't scroll the list.
         highlightSelectedMessage(mIsFirstLoad);
 
-        // Restore the state -- this step has to be the last, because Some of the
-        // "post processing" seems to reset the scroll position.
-        if (mSavedListState != null) {
-            getListView().onRestoreInstanceState(mSavedListState);
-            mSavedListState = null;
-        }
-
         mIsFirstLoad = false;
     }
 
@@ -170,6 +169,8 @@ public class TaskListFragment extends RoboListFragment
 
         mResumed = true;
         onVisibilityChange();
+
+        restoreLastScrolledPosition();
     }
 
     @Override
@@ -188,11 +189,11 @@ public class TaskListFragment extends RoboListFragment
 
     @Override
     public void onPause() {
-        mSavedListState = getListView().onSaveInstanceState();
+        super.onPause();
         mResumed = false;
 
         Log.d(TAG, "onPause with context " + getListContext());
-        super.onPause();
+        saveLastScrolledPosition();
     }
 
     @Override
@@ -254,7 +255,6 @@ public class TaskListFragment extends RoboListFragment
 
     public void restoreInstanceState(Bundle savedInstanceState) {
         mListAdapter.loadState(savedInstanceState);
-        mSavedListState = savedInstanceState.getParcelable(BUNDLE_LIST_STATE);
         mSelectedTaskId = savedInstanceState.getLong(BUNDLE_KEY_SELECTED_TASK_ID);
     }
 
@@ -629,5 +629,31 @@ public class TaskListFragment extends RoboListFragment
             break;
         }
     }
+
+    private void saveLastScrolledPosition() {
+        if (mListAdapter.getCursor() == null) {
+            // If you save your scroll position in an empty list, you're gonna have a bad time
+            return;
+        }
+
+        final Parcelable savedState = getListView().onSaveInstanceState();
+
+        mActivity.getListHandler().setTaskListScrollPosition(
+                mListContext.getListQuery(), savedState);
+    }
+
+    private void restoreLastScrolledPosition() {
+        // Scroll to our previous position, if necessary
+        if (!mScrollPositionRestored && mListContext != null) {
+            final ListQuery key = mListContext.getListQuery();
+            final Parcelable savedState = mActivity.getListHandler()
+                    .getTaskListScrollPosition(key);
+            if (savedState != null) {
+                getListView().onRestoreInstanceState(savedState);
+            }
+            mScrollPositionRestored = true;
+        }
+    }
+
 
 }
