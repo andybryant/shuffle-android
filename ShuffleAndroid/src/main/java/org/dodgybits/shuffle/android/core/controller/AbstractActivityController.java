@@ -90,6 +90,8 @@ public abstract class AbstractActivityController implements ActivityController {
             "saved-task-list-scroll-positions";
 
     private static final int LOADER_ID_TASK_LIST_LOADER = 1;
+    private static final int LOADER_ID_CONTEXT_LIST_LOADER = 2;
+    private static final int LOADER_ID_PROJECT_LIST_LOADER = 3;
 
     /** Tag used when loading a task list fragment. */
     public static final String TAG_TASK_LIST = "tag-task-list";
@@ -293,7 +295,7 @@ public abstract class AbstractActivityController implements ActivityController {
      * @param intent intent passed to the activity.
      */
     private void handleIntent(Intent intent) {
-        Log.d(TAG, "IN AAC.handleIntent. action=" + intent.getAction());
+        Log.d(TAG, "IN AAC.handleIntent. action=" + intent.getAction() + " data="  + intent.getData());
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             final String query = intent.getStringExtra(SearchManager.QUERY);
@@ -302,7 +304,7 @@ public abstract class AbstractActivityController implements ActivityController {
 //            } else {
                 mViewMode.enterSearchResultsListMode();
 //            }
-        } else {
+        } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             // default to inbox
             ListQuery query = ListQuery.inbox;
             String queryName = intent.getStringExtra(QUERY_NAME);
@@ -313,6 +315,8 @@ public abstract class AbstractActivityController implements ActivityController {
             mViewMode.enterTaskListMode();
 
             startLoading();
+        } else {
+            Log.e(TAG, "Unexpected intent" + intent);
         }
     }
 

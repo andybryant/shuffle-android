@@ -16,7 +16,7 @@
     android:versionCode="60" android:versionName="3.0.0">
 
     <!--  C2DM requires Android SDK version 2.2 (API level 8) or above -->
-    <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="19" />
+    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="19" />
 
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.READ_CALENDAR" />
@@ -88,6 +88,33 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
+
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.dodgybits.context" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.dodgybits.project" />
+            </intent-filter>
+
+            <intent-filter android:label="@string/title_view_task">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.dodgybits.task" />
+            </intent-filter>
+
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/search_tasks" />
+
+
         </activity>
 
         <meta-data android:name="android.app.default_searchable"
@@ -100,12 +127,12 @@
                 >
             <meta-data android:name="android.support.UI_OPTIONS"
                        android:value="splitActionBarWhenNarrow" />
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.SEARCH" />-->
+            <!--</intent-filter>-->
 
-            <meta-data android:name="android.app.searchable"
-                       android:resource="@xml/search_tasks" />
+            <!--<meta-data android:name="android.app.searchable"-->
+                       <!--android:resource="@xml/search_tasks" />-->
 
         </activity>
 
@@ -120,11 +147,11 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
 
-            <intent-filter android:label="@string/app_name">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="vnd.android.cursor.item/vnd.dodgybits.context" />
-            </intent-filter>
+            <!--<intent-filter android:label="@string/app_name">-->
+                <!--<action android:name="android.intent.action.VIEW" />-->
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
+                <!--<data android:mimeType="vnd.android.cursor.item/vnd.dodgybits.context" />-->
+            <!--</intent-filter>-->
 
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -146,11 +173,11 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
 
-            <intent-filter android:label="@string/app_name">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="vnd.android.cursor.item/vnd.dodgybits.project" />
-            </intent-filter>
+            <!--<intent-filter android:label="@string/app_name">-->
+                <!--<action android:name="android.intent.action.VIEW" />-->
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
+                <!--<data android:mimeType="vnd.android.cursor.item/vnd.dodgybits.project" />-->
+            <!--</intent-filter>-->
 
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -206,11 +233,11 @@
                 >
             <meta-data android:name="android.support.UI_OPTIONS"
                 android:value="splitActionBarWhenNarrow" />
-            <intent-filter android:label="@string/title_view_task">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="vnd.android.cursor.item/vnd.dodgybits.task" />
-            </intent-filter>
+            <!--<intent-filter android:label="@string/title_view_task">-->
+                <!--<action android:name="android.intent.action.VIEW" />-->
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
+                <!--<data android:mimeType="vnd.android.cursor.item/vnd.dodgybits.task" />-->
+            <!--</intent-filter>-->
 
         </activity>
 
