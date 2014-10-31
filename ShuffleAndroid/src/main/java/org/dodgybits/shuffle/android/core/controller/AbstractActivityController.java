@@ -46,8 +46,8 @@ import org.dodgybits.shuffle.android.core.view.TaskSelectionSet;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.ListSettingsUpdatedEvent;
 import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
-import org.dodgybits.shuffle.android.list.listener.EntityUpdateListener;
-import org.dodgybits.shuffle.android.list.listener.NavigationListener;
+import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
+import org.dodgybits.shuffle.android.core.listener.NavigationListener;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.context.ContextListFragment;
 import org.dodgybits.shuffle.android.list.view.project.ProjectListFragment;
@@ -79,22 +79,13 @@ import java.util.Map;
  * AbstractActivityController.
  * </p>
  */
-public abstract class AbstractActivityController implements ActivityController {
-    private static final String TAG = "AbsActController";
-
-    public static final String QUERY_NAME = "queryName";
-    private static final int WHATS_NEW_DIALOG = 0;
+public abstract class AbstractActivityController {
 
     /** Key to store {@link #mTaskListScrollPositions} */
     private static final String SAVED_TASK_LIST_SCROLL_POSITIONS =
             "saved-task-list-scroll-positions";
 
-    private static final int LOADER_ID_TASK_LIST_LOADER = 1;
-    private static final int LOADER_ID_CONTEXT_LIST_LOADER = 2;
-    private static final int LOADER_ID_PROJECT_LIST_LOADER = 3;
 
-    /** Tag used when loading a task list fragment. */
-    public static final String TAG_TASK_LIST = "tag-task-list";
 
     protected MainActivity mActivity;
     protected ViewMode mViewMode;
@@ -106,34 +97,9 @@ public abstract class AbstractActivityController implements ActivityController {
     /** A map of {@link ListQuery} to scroll position in the task list. */
     private final Bundle mTaskListScrollPositions = new Bundle();
 
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-     */
-    private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    @Inject
-    private GcmRegister mGcmRegister;
-
-    @Inject
-    protected EventManager mEventManager;
-
-    @Inject
-    private NavigationListener mNavigationListener;
-
-    @Inject
-    private EntityUpdateListener mEntityUpdateListener;
-
-    @Inject
-    private AuthTokenRetriever mAuthTokenRetriever;
 
     private Map<ListQuery,Integer> mQueryIndex;
-
-    @Inject
-    private ContextScopedProvider<TaskListFragment> mTaskListFragmentProvider;
-    @Inject
-    private ContextScopedProvider<ContextListFragment> mContextListFragmentProvider;
-    @Inject
-    private ContextScopedProvider<ProjectListFragment> mProjectListFragmentProvider;
 
     /**
      * Selected conversations, if any.
@@ -179,67 +145,8 @@ public abstract class AbstractActivityController implements ActivityController {
     }
 
     @Override
-    public TaskListContext getListContext() {
-        return mListContext;
-    }
-
-    protected abstract boolean handleBackPress();
-    protected abstract boolean handleUpPress();
-
-    @Override
     public boolean onUpPressed() {
         return handleUpPress();
-    }
-
-    /**
-     * The application can be started from the following entry points:
-     * <ul>
-     *     <li>Launcher: you tap on Shuffle icon in the launcher. This is what most users think of
-     *         as “Starting the app”.</li>
-     *     <li>Shortcut: Users can make a shortcut to take them directly to view.</li>
-     *     <li>Widget: Shows the contents of a list view, and allows:
-     *     <ul>
-     *         <li>Viewing the list (tapping on the title)</li>
-     *         <li>Creating a new action (tapping on the new message icon in the title. This
-     *         launches the {@link org.dodgybits.shuffle.android.editor.activity.EditTaskActivity}.
-     *         </li>
-     *         <li>Viewing a single action (tapping on a list element)</li>
-     *     </ul>
-     *
-     *     </li>
-     *     <li>...and most importantly, the activity life cycle can tear down the application and
-     *     restart it:
-     *     <ul>
-     *         <li>Rotate the application: it is destroyed and recreated.</li>
-     *         <li>Navigate away, and return from recent applications.</li>
-     *     </ul>
-     *     </li>
-     * </ul>
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean onCreate(Bundle savedState) {
-        // don't show soft keyboard unless user clicks on quick add box
-        mActivity.getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        RoboGuice.getInjector(mActivity).injectMembersWithoutViews(this);
-        checkLastVersion();
-        setupNavigationDrawer();
-        setupSync();
-
-        final Intent intent = mActivity.getIntent();
-        if (savedState != null) {
-            mViewMode.handleRestore(savedState);
-        } else if (intent != null) {
-            handleIntent(intent);
-        }
-
-        return true;
-    }
-
-    @Override
-    public Cursor getTaskListCursor() {
-        return mTaskListCursor;
     }
 
     @Override
@@ -252,178 +159,6 @@ public abstract class AbstractActivityController implements ActivityController {
         return mTaskListScrollPositions.getParcelable(listQuery.name());
     }
 
-    private void checkLastVersion() {
-        final int lastVersion = Preferences.getLastVersion(mActivity);
-        final int currentVersion = PackageUtils.getAppVersion(mActivity);
-        if (Math.abs(lastVersion) < Math.abs(currentVersion)) {
-            // This is a new install or an upgrade.
-
-            // show what's new message
-            SharedPreferences.Editor editor = Preferences.getEditor(mActivity);
-            editor.putInt(Preferences.LAST_VERSION, currentVersion);
-            // clear out GCM Registration ID after an upgrade
-            editor.putString(Preferences.GCM_REGISTRATION_ID, "");
-            editor.commit();
-
-            mActivity.showDialog(WHATS_NEW_DIALOG);
-        }
-    }
-
-    private void setupNavigationDrawer() {
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                mActivity.getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        DrawerLayout drawerLayout = (DrawerLayout) mActivity.findViewById(R.id.drawer_layout);
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                drawerLayout);
-    }
-
-    private void setupSync() {
-        mEventManager.fire(new RegisterGcmEvent(mActivity));
-        mActivity.startService(new Intent(mActivity, SyncAlarmService.class));
-        mAuthTokenRetriever.retrieveToken();
-    }
-
-    /**
-     * Handle an intent to open the app. This method is called only when there is no saved state,
-     * so we need to set state that wasn't set before. It is correct to change the viewmode here
-     * since it has not been previously set.
-     *
-     * This method is called for a subset of the reasons mentioned in
-     * {@link #onCreate(android.os.Bundle)}. Notably, this is called when launching the app from
-     * notifications, widgets, and shortcuts.
-     * @param intent intent passed to the activity.
-     */
-    private void handleIntent(Intent intent) {
-        Log.d(TAG, "IN AAC.handleIntent. action=" + intent.getAction() + " data="  + intent.getData());
-
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            final String query = intent.getStringExtra(SearchManager.QUERY);
-//            if (shouldEnterSearchTaskMode()) {
-//                mViewMode.enterSearchResultsTaskMode();
-//            } else {
-                mViewMode.enterSearchResultsListMode();
-//            }
-        } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            // default to inbox
-            ListQuery query = ListQuery.inbox;
-            String queryName = intent.getStringExtra(QUERY_NAME);
-            if (queryName != null) {
-                query = ListQuery.valueOf(queryName);
-            }
-            mListContext = TaskListContext.create(query);
-            mViewMode.enterTaskListMode();
-
-            startLoading();
-        } else {
-            Log.e(TAG, "Unexpected intent" + intent);
-        }
-    }
-
-    @Override
-    public void onPostCreate(Bundle savedState) {
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-    }
-
-    @Override
-    public void onStart() {
-
-    }
-
-    @Override
-    public void onRestart() {
-
-    }
-
-    @Override
-    public Dialog onCreateDialog(int id, Bundle bundle) {
-        Dialog dialog = null;
-        if (id == WHATS_NEW_DIALOG) {
-            dialog = new AlertDialog.Builder(mActivity)
-                    .setTitle(R.string.whats_new_dialog_title)
-                    .setPositiveButton(R.string.ok_button_title, null)
-                    .setMessage(R.string.whats_new_dialog_message)
-                    .create();
-        }
-
-        return dialog;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-
-            // TODO define menu when drawer open
-//            getMenuInflater().inflate(R.menu.main, menu);
-            restoreActionBar();
-            return true;
-        }
-
-        return false;
-    }
-
-    public void restoreActionBar() {
-        ActionBar actionBar = mActivity.getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-//        if (mTitle != null) {
-//            actionBar.setTitle(mTitle);
-//        }
-    }
-
-
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return false;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_preferences:
-                Log.d(TAG, "Bringing up preferences");
-                mEventManager.fire(new ViewPreferencesEvent());
-                return true;
-            case R.id.action_search:
-                Log.d(TAG, "Bringing up search");
-                startSearch();
-                return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public void onPause() {
-
-    }
-
-    @Override
-    public void onDestroy() {
-
-    }
-
-    @Override
-    public void onPrepareDialog(int id, Dialog dialog, Bundle bundle) {
-
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return false;
-    }
-
-    @Override
-    public void onResume() {
-        mActivity.supportInvalidateOptionsMenu();
-    }
 
     @Override
     public void onRestoreInstanceState(Bundle savedState) {
@@ -441,16 +176,6 @@ public abstract class AbstractActivityController implements ActivityController {
     }
 
     @Override
-    public void onStop() {
-
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-
-    }
-
-    @Override
     public void startSearch() {
 //        mActionBarView.expandSearch();
     }
@@ -465,110 +190,6 @@ public abstract class AbstractActivityController implements ActivityController {
     public void disablePagerUpdates() {
 //        mPagerController.stopListening();
     }
-
-    @Override
-    public void onNavigationDrawerItemSelected(int position) {
-
-    }
-
-    @Override
-    public int getRequestedPosition() {
-        return 0;
-    }
-
-    ////////
-    /// From activity
-    ////////
-
-    private void addTaskList() {
-        TaskListFragment fragment = findOrCreateTaskFragment(mListContext);
-
-        FragmentTransaction fragmentTransaction =
-                mActivity.getSupportFragmentManager().beginTransaction();
-        // Use cross fading animation.
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragmentTransaction.replace(R.id.entity_list_pane, fragment,
-                TAG_TASK_LIST);
-        fragmentTransaction.commitAllowingStateLoss();
-    }
-
-    private TaskListFragment findOrCreateTaskFragment(TaskListContext listContext) {
-        TaskListFragment fragment = getTaskListFragment();
-        if (fragment == null) {
-            fragment = mTaskListFragmentProvider.get(mActivity);
-            Bundle args = new Bundle();
-            args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, listContext);
-            fragment.setArguments(args);
-        }
-        return fragment;
-    }
-
-    /**
-     * Get the task list fragment for this activity. If the task list fragment is
-     * not attached, this method returns null.
-     *
-     * Caution! This method returns the {@link TaskListFragment} after the fragment has been
-     * added, <b>and</b> after the {@link android.app.FragmentManager} has run through its queue to add the
-     * fragment. There is a non-trivial amount of time after the fragment is instantiated and before
-     * this call returns a non-null value, depending on the {@link android.app.FragmentManager}. If you
-     * need the fragment immediately after adding it, consider making the fragment an observer of
-     * the controller and perform the task immediately on {@link android.app.Fragment#onActivityCreated(Bundle)}
-     */
-    protected TaskListFragment getTaskListFragment() {
-        final Fragment fragment = mFragmentManager.findFragmentByTag(TAG_TASK_LIST);
-        if (isValidFragment(fragment)) {
-            return (TaskListFragment) fragment;
-        }
-        return null;
-    }
-
-
-    public void onListSettingsUpdated(@Observes ListSettingsUpdatedEvent event) {
-        if (event.getListQuery().equals(getListContext().getListQuery())) {
-            // our list settings changed - reload list (even if this list isn't currently visible)
-            restartLoading();
-        }
-    }
-
-    private void startLoading() {
-        Log.d(TAG, "Creating list cursor");
-        final LoaderManager lm = mActivity.getSupportLoaderManager();
-        lm.initLoader(LOADER_ID_TASK_LIST_LOADER, null, LOADER_CALLBACKS);
-    }
-
-    protected void restartLoading() {
-        Log.d(TAG, "Refreshing list cursor");
-        final LoaderManager lm = mActivity.getSupportLoaderManager();
-        lm.restartLoader(LOADER_ID_TASK_LIST_LOADER, null, LOADER_CALLBACKS);
-    }
-
-
-    /**
-     * Loader callbacks for tasks list.
-     */
-    private final LoaderManager.LoaderCallbacks<Cursor> LOADER_CALLBACKS =
-            new LoaderManager.LoaderCallbacks<Cursor>() {
-
-                @Override
-                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                    final TaskListContext listContext = getListContext();
-                    return TaskListAdaptor.createLoader(mActivity, listContext);
-                }
-
-                @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
-                    Log.d(TAG, "IN AAC.TaskCursor.onLoadFinished");
-
-                    mTaskListCursor = c;
-                    addTaskList();
-                }
-
-                @Override
-                public void onLoaderReset(Loader<Cursor> loader) {
-                    mTaskListCursor = null;
-                }
-            };
-
 
 
 }

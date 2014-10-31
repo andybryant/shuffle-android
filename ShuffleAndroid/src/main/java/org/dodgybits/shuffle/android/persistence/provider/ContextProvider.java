@@ -8,7 +8,7 @@ public class  ContextProvider extends AbstractCollectionProvider {
 
     public static final String UPDATE_INTENT = "org.dodgybits.shuffle.android.CONTEXT_UPDATE";
 
-	private static final String AUTHORITY = Shuffle.PACKAGE + ".contextprovider";
+	public static final String AUTHORITY = Shuffle.PACKAGE + ".contextprovider";
 
 	static final int CONTEXT_TASKS = 103;
 

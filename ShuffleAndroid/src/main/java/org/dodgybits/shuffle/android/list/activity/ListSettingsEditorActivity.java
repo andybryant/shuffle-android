@@ -159,7 +159,7 @@ public class ListSettingsEditorActivity extends RoboPreferenceActivity {
 
     @SuppressLint("NewApi")
     private Preference createQuickAdd() {
-        Preference quickAddPref = OSUtils.atLeastICS() ? new SwitchPreference(this) : new CheckBoxPreference(this);
+        Preference quickAddPref = new SwitchPreference(this);
         quickAddPref.setTitle(R.string.quick_add_title);
         quickAddPref.setDefaultValue(mSettings.getDefaultQuickAdd());
         quickAddPref.setKey(mSettings.getPrefix() + ListSettings.LIST_FILTER_QUICK_ADD);

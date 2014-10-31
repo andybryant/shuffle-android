@@ -19,7 +19,9 @@ import android.util.Log;
 import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.NavigationDrawSelectionChangeEvent;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.ContextSelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.EntitySelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.ProjectSelector;
@@ -27,6 +29,8 @@ import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelecto
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
+import roboguice.event.EventManager;
+import roboguice.fragment.RoboFragment;
 
 ;
 
@@ -35,7 +39,7 @@ import org.dodgybits.shuffle.android.preference.model.Preferences;
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
-public class NavigationDrawerFragment extends Fragment {
+public class NavigationDrawerFragment extends RoboFragment {
     private static final String TAG = "HomeListFragment";
     private static final String[] PROJECTION = new String[]{"_id"};
 
@@ -49,10 +53,8 @@ public class NavigationDrawerFragment extends Fragment {
      */
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
-    /**
-     * A pointer to the current callbacks instance (the Activity).
-     */
-    private NavigationDrawerCallbacks mCallbacks;
+    @Inject
+    private EventManager mEventManager;
 
     /**
      * Helper component that ties the action bar to the navigation drawer.
@@ -265,11 +267,7 @@ public class NavigationDrawerFragment extends Fragment {
             position = savedInstanceState.getInt(POSITION, -1);
         }
         if (position < 0) {
-            if (mCallbacks != null) {
-                position = mCallbacks.getRequestedPosition();
-            } else {
-                position = 0;
-            }
+            position = 0;
         }
         return position;
     }
@@ -282,25 +280,8 @@ public class NavigationDrawerFragment extends Fragment {
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
-        if (mCallbacks != null) {
-            mCallbacks.onNavigationDrawerItemSelected(position);
-        }
-    }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mCallbacks = (NavigationDrawerCallbacks) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallbacks = null;
+        mEventManager.fire(new NavigationDrawSelectionChangeEvent(position));
     }
 
     @Override
@@ -362,21 +343,8 @@ public class NavigationDrawerFragment extends Fragment {
         return title;
     }
 
-
     private ActionBar getActionBar() {
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
-    }
-
-    /**
-     * Callbacks interface that all activities using this fragment must implement.
-     */
-    public static interface NavigationDrawerCallbacks {
-        /**
-         * Called when an item in the navigation drawer is selected.
-         */
-        void onNavigationDrawerItemSelected(int position);
-
-        int getRequestedPosition();
     }
 
     private class CalculateCountTask extends AsyncTask<Void, Void, Void> {

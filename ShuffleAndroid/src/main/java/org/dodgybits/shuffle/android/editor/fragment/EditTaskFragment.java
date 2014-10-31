@@ -482,10 +482,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
         values.put("description", description);
 
-        if (!OSUtils.atLeastICS()) {
-            values.put("transparency", 0);
-            values.put("visibility", 0);
-        }
 
         List<Context> contexts = mContextCache.findById(mSelectedContextIds);
         if (!contexts.isEmpty()) {

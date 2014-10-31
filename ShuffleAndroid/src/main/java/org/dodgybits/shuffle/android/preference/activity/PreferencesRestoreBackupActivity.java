@@ -20,7 +20,7 @@ import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.model.protocol.*;
 import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import org.dodgybits.shuffle.android.core.util.StringUtils;
-import org.dodgybits.shuffle.android.core.view.AlertUtils;
+import org.dodgybits.shuffle.android.core.util.AlertUtils;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.android.preference.view.Progress;

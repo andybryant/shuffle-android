@@ -24,7 +24,7 @@ import org.dodgybits.shuffle.android.core.model.protocol.ContextProtocolTranslat
 import org.dodgybits.shuffle.android.core.model.protocol.ProjectProtocolTranslator;
 import org.dodgybits.shuffle.android.core.model.protocol.TaskProtocolTranslator;
 import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
-import org.dodgybits.shuffle.android.core.view.AlertUtils;
+import org.dodgybits.shuffle.android.core.util.AlertUtils;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;

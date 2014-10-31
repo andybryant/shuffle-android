@@ -471,7 +471,7 @@ public class TaskListItem extends View {
     }
 
     private int getFontColor(int defaultColor) {
-        return  (OSUtils.atLeastHoneycomb() && isActivated()) ? ACTIVATED_TEXT_COLOR : defaultColor;
+        return  isActivated() ? ACTIVATED_TEXT_COLOR : defaultColor;
     }
 
     @Override
@@ -608,8 +608,7 @@ public class TaskListItem extends View {
             final Configuration config = res.getConfiguration();
             final float density = res.getDisplayMetrics().density;
             final float sizeAndDensity;
-            if (OSUtils.atLeastHoneycomb() &&
-                    config.isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_XLARGE)) {
+            if (config.isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_XLARGE)) {
                 sizeAndDensity = density * 1.5f;
             } else {
                 sizeAndDensity = density;

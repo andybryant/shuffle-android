@@ -6,16 +6,12 @@ import java.lang.reflect.Field;
 
 public class OSUtils {
 
-    public static boolean atLeastFroyo() {
-        return osAtLeast(Build.VERSION_CODES.FROYO);
+    public static boolean atLeastLollipop() {
+        return osAtLeast(Build.VERSION_CODES.LOLLIPOP);
     }
 
-    public static boolean atLeastHoneycomb() {
-        return osAtLeast(Build.VERSION_CODES.HONEYCOMB);
-    }
-
-    public static boolean atLeastICS() {
-        return osAtLeast(Build.VERSION_CODES.ICE_CREAM_SANDWICH);
+    public static boolean atLeastKitkat() {
+        return osAtLeast(Build.VERSION_CODES.KITKAT);
     }
 
     private static int sVersion = -1;

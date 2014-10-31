@@ -84,12 +84,7 @@ public class UiUtilities {
     public static int getX(View view) {
         int x = 0;
         while (view != null) {
-            if (OSUtils.atLeastHoneycomb())
-            {
-                x += (int) view.getX();
-            } else {
-                x += view.getLeft();
-            }
+            x += (int) view.getX();
             ViewParent parent = view.getParent();
             view = parent != null ? (View) parent : null;
         }
@@ -102,14 +97,7 @@ public class UiUtilities {
     public static int getY(View view) {
         int y = 0;
         while (view != null) {
-            if (OSUtils.atLeastHoneycomb())
-            {
-                y += (int) view.getY();
-            }
-            else
-            {
-                y += view.getTop();
-            }
+            y += (int) view.getY();
             ViewParent parent = view.getParent();
             view = parent != null ? (View) parent : null;
         }

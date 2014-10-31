@@ -9,7 +9,7 @@ public class ProjectProvider extends AbstractCollectionProvider {
 
     public static final String UPDATE_INTENT = "org.dodgybits.shuffle.android.PROJECT_UPDATE";
 
-	private static final String AUTHORITY = Shuffle.PACKAGE+".projectprovider";
+	public static final String AUTHORITY = Shuffle.PACKAGE+".projectprovider";
 
 	static final int PROJECT_TASKS = 203;
 

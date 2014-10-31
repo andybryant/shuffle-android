@@ -16,6 +16,7 @@ import org.dodgybits.shuffle.android.core.util.IntentUtils;
 import org.dodgybits.shuffle.android.core.view.IconNameCountListAdaptor;
 import org.dodgybits.shuffle.android.core.view.IconNameCountListAdaptor.ListItem;
 import org.dodgybits.shuffle.android.core.view.ListIcons;
+import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 
 import roboguice.fragment.RoboListFragment;
@@ -129,7 +130,7 @@ public class LaunchListFragment extends RoboListFragment {
 
         private Intent getIntent(Activity activity) {
             Intent intent = new Intent(activity, MainActivity.class);
-            intent.putExtra(AbstractActivityController.QUERY_NAME, mListQuery.name());
+            intent.putExtra(MainView.QUERY_NAME, mListQuery.name());
             return intent;
         }
 

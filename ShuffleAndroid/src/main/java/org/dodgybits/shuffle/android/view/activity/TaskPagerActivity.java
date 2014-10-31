@@ -25,8 +25,8 @@ import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelecto
 import org.dodgybits.shuffle.android.list.event.ViewContextEvent;
 import org.dodgybits.shuffle.android.list.event.ViewProjectEvent;
 import org.dodgybits.shuffle.android.list.event.ViewTaskSearchResultsEvent;
-import org.dodgybits.shuffle.android.list.listener.EntityUpdateListener;
-import org.dodgybits.shuffle.android.list.listener.NavigationListener;
+import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
+import org.dodgybits.shuffle.android.core.listener.NavigationListener;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;

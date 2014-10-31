@@ -15,9 +15,6 @@
 	package="org.dodgybits.android.shuffle"
     android:versionCode="60" android:versionName="3.0.0">
 
-    <!--  C2DM requires Android SDK version 2.2 (API level 8) or above -->
-    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="19" />
-
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.READ_CALENDAR" />
 	<uses-permission android:name="android.permission.WRITE_CALENDAR" />

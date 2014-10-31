@@ -244,7 +244,7 @@ public class TwoPaneLayout extends FrameLayout {
                 break;
         }
 
-        if (hasPositions && OSUtils.atLeastHoneycomb()) {
+        if (hasPositions) {
             mListView.setX(listX);
             mTaskView.setX(taskX);
             mQuickAddView.setX(listX);

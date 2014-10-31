@@ -1,4 +1,4 @@
-package org.dodgybits.shuffle.android.list.listener;
+package org.dodgybits.shuffle.android.core.listener;
 
 import android.app.Activity;
 import android.text.TextUtils;
