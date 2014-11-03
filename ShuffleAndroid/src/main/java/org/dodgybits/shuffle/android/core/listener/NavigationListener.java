@@ -18,7 +18,9 @@ import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 import org.dodgybits.shuffle.android.preference.activity.PreferencesActivity;
 import roboguice.event.Observes;
+import roboguice.inject.ContextSingleton;
 
+@ContextSingleton
 public class NavigationListener {
 
     private Activity mActivity;

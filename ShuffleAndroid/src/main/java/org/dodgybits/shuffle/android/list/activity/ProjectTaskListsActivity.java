@@ -15,23 +15,20 @@ import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.WindowManager;
-
 import com.google.inject.Inject;
-
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
-import org.dodgybits.shuffle.android.core.controller.AbstractActivityController;
-import org.dodgybits.shuffle.android.core.model.Id;
-import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
-import org.dodgybits.shuffle.android.list.content.ProjectCursorLoader;
-import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.core.listener.NavigationListener;
+import org.dodgybits.shuffle.android.core.model.Id;
+import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
+import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.list.content.ProjectCursorLoader;
+import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
 import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
-
 import roboguice.event.EventManager;
 import roboguice.inject.ContextScopedProvider;
 
@@ -85,7 +82,7 @@ public class ProjectTaskListsActivity extends RoboActionBarActivity {
             case android.R.id.home:
                 Intent intent = new Intent(this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(AbstractActivityController.QUERY_NAME, ListQuery.project.name());
+                intent.putExtra(MainView.QUERY_NAME, ListQuery.project.name());
                 startActivity(intent);
                 finish();
                 return true;

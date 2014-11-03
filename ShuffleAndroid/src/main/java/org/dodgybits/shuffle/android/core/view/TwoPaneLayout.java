@@ -15,26 +15,19 @@
  */
 package org.dodgybits.shuffle.android.core.view;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Build;
 import android.support.v4.widget.DrawerLayout;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.FrameLayout;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.controller.AbstractActivityController;
 import org.dodgybits.shuffle.android.core.event.EntityListVisibiltyChangeEvent;
-import org.dodgybits.shuffle.android.core.event.ModeChangeEvent;
+import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.event.TaskVisibilityChangeEvent;
-import org.dodgybits.shuffle.android.core.util.OSUtils;
 import roboguice.RoboGuice;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -68,17 +61,16 @@ public class TwoPaneLayout extends FrameLayout {
     private final boolean mListCollapsible;
 
     /**
-     * The current mode that the tablet layout is in. This is a constant integer that holds values
-     * that are {@link ViewMode} constants like {@link ViewMode#TASK}.
+     * The current voew that the tablet layout is in.
      */
-    private int mCurrentMode = ViewMode.UNKNOWN;
+    private MainView mCurrentView = MainView.createView(ViewMode.UNKNOWN);
+
     /**
      * This mode represents the current positions of the three panes. This is split out from the
      * current mode to give context to state transitions.
      */
-    private int mPositionedMode = ViewMode.UNKNOWN;
+    private MainView mPositionedView = MainView.createView(ViewMode.UNKNOWN);
 
-    private AbstractActivityController mController;
     private boolean mIsSearchResult;
 
     private DrawerLayout mDrawerLayout;
@@ -127,25 +119,16 @@ public class TwoPaneLayout extends FrameLayout {
         mQuickAddView = findViewById(R.id.quick_add);
         mListView = findViewById(R.id.entity_list_pane);
         mTaskView = findViewById(R.id.task_pane);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // all panes start GONE in initial UNKNOWN mode to avoid drawing misplaced panes
-        mCurrentMode = ViewMode.UNKNOWN;
+        mCurrentView = MainView.createView(ViewMode.UNKNOWN);
         mQuickAddView.setVisibility(GONE);
         mListView.setVisibility(GONE);
         mTaskView.setVisibility(GONE);
 
         Log.d(TAG, "Injecting dependencies");
         RoboGuice.getInjector(getContext()).injectMembersWithoutViews(this);
-    }
-
-    @VisibleForTesting
-    public void setController(AbstractActivityController controller, boolean isSearchResult) {
-        mController = controller;
-        mIsSearchResult = isSearchResult;
-    }
-
-    public void setDrawerLayout(DrawerLayout drawerLayout) {
-        mDrawerLayout = drawerLayout;
     }
 
     @Override
@@ -156,7 +139,7 @@ public class TwoPaneLayout extends FrameLayout {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        if (changed || mCurrentMode != mPositionedMode) {
+        if (changed || !mCurrentView.equals(mPositionedView)) {
             positionPanes(getMeasuredWidth());
         }
         super.onLayout(changed, l, t, r, b);
@@ -170,26 +153,27 @@ public class TwoPaneLayout extends FrameLayout {
      */
     private void setupPaneWidths(int parentWidth) {
         final int taskWidth = computeTaskWidth(parentWidth);
+        ViewMode viewMode = mCurrentView.getViewMode();
 
         // only adjust the fixed task view width when my width changes
         if (parentWidth != getMeasuredWidth()) {
-            Log.i(TAG, "setting up new TPL, w=" + parentWidth + " tw=" + taskWidth + " mode=" + mCurrentMode);
+            Log.i(TAG, "setting up new TPL, w=" + parentWidth + " tw=" + taskWidth + " mode=" + viewMode);
             setPaneWidth(mTaskView, taskWidth);
         }
 
         final int currListWidth = getPaneWidth(mListView);
         int listWidth = currListWidth;
-        switch (mCurrentMode) {
-            case ViewMode.TASK:
-            case ViewMode.SEARCH_RESULTS_TASK:
+        switch (viewMode) {
+            case TASK:
+            case SEARCH_RESULTS_TASK:
                 if (!mListCollapsible) {
                     listWidth = parentWidth - taskWidth;
                 }
                 break;
-            case ViewMode.TASK_LIST:
-            case ViewMode.PROJECT_LIST:
-            case ViewMode.CONTEXT_LIST:
-            case ViewMode.SEARCH_RESULTS_LIST:
+            case TASK_LIST:
+            case PROJECT_LIST:
+            case CONTEXT_LIST:
+            case SEARCH_RESULTS_LIST:
                 listWidth = parentWidth;
                 break;
             default:
@@ -205,18 +189,17 @@ public class TwoPaneLayout extends FrameLayout {
      *
      * @param width
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void positionPanes(int width) {
-        if (mPositionedMode == mCurrentMode) {
+        if (mPositionedView.equals(mCurrentView)) {
             return;
         }
 
         boolean hasPositions = false;
         int taskX = 0, listX = 0;
 
-        switch (mCurrentMode) {
-            case ViewMode.TASK:
-            case ViewMode.SEARCH_RESULTS_TASK: {
+        switch (mCurrentView.getViewMode()) {
+            case TASK:
+            case SEARCH_RESULTS_TASK: {
                 final int listW = getPaneWidth(mListView);
 
                 if (mListCollapsible) {
@@ -230,10 +213,10 @@ public class TwoPaneLayout extends FrameLayout {
                 Log.i(TAG, "task mode layout, x=" + listX + "/" + taskX);
                 break;
             }
-            case ViewMode.TASK_LIST:
-            case ViewMode.PROJECT_LIST:
-            case ViewMode.CONTEXT_LIST:
-            case ViewMode.SEARCH_RESULTS_LIST: {
+            case TASK_LIST:
+            case PROJECT_LIST:
+            case CONTEXT_LIST:
+            case SEARCH_RESULTS_LIST: {
                 taskX = width;
                 listX = 0;
                 hasPositions = true;
@@ -254,20 +237,20 @@ public class TwoPaneLayout extends FrameLayout {
             post(mTransitionCompleteRunnable);
         }
 
-        mPositionedMode = mCurrentMode;
+        mPositionedView = mCurrentView;
     }
 
     private void onTransitionComplete() {
-        switch (mCurrentMode) {
-            case ViewMode.TASK:
-            case ViewMode.SEARCH_RESULTS_TASK:
+        switch (mCurrentView.getViewMode()) {
+            case TASK:
+            case SEARCH_RESULTS_TASK:
                 mEventManager.fire(new TaskVisibilityChangeEvent(true));
                 mEventManager.fire(new EntityListVisibiltyChangeEvent(!isEntityListCollapsed()));
                 break;
-            case ViewMode.TASK_LIST:
-            case ViewMode.PROJECT_LIST:
-            case ViewMode.CONTEXT_LIST:
-            case ViewMode.SEARCH_RESULTS_LIST:
+            case TASK_LIST:
+            case PROJECT_LIST:
+            case CONTEXT_LIST:
+            case SEARCH_RESULTS_LIST:
                 mEventManager.fire(new TaskVisibilityChangeEvent(false));
                 mEventManager.fire(new EntityListVisibiltyChangeEvent(true));
                 break;
@@ -287,14 +270,14 @@ public class TwoPaneLayout extends FrameLayout {
      * Computes the width of the task list in stable state of the current mode.
      */
     private int computeTaskListWidth(int totalWidth) {
-        switch (mCurrentMode) {
-            case ViewMode.TASK_LIST:
-            case ViewMode.PROJECT_LIST:
-            case ViewMode.CONTEXT_LIST:
-            case ViewMode.SEARCH_RESULTS_LIST:
+        switch (mCurrentView.getViewMode()) {
+            case TASK_LIST:
+            case PROJECT_LIST:
+            case CONTEXT_LIST:
+            case SEARCH_RESULTS_LIST:
                 return totalWidth;
-            case ViewMode.TASK:
-            case ViewMode.SEARCH_RESULTS_TASK:
+            case TASK:
+            case SEARCH_RESULTS_TASK:
                 return (int) (totalWidth * mTaskListWeight);
         }
         return 0;
@@ -329,26 +312,27 @@ public class TwoPaneLayout extends FrameLayout {
      * @return Whether or not the task list is visible on screen.
      */
     public boolean isEntityListCollapsed() {
-        return !ViewMode.isListMode(mCurrentMode) && mListCollapsible;
+        return !ViewMode.isListMode(mCurrentView.getViewMode()) && mListCollapsible;
     }
 
-    public void onViewModeChanged(@Observes ModeChangeEvent modeChangeEvent) {
-        int newMode = modeChangeEvent.getNewMode();
+    public void onViewChanged(@Observes MainViewUpdateEvent event) {
+        MainView newView = event.getMainView();
         // make all initially GONE panes visible only when the view mode is first determined
-        if (mCurrentMode == ViewMode.UNKNOWN) {
+        ViewMode currentMode = mCurrentView.getViewMode();
+        if (currentMode == ViewMode.UNKNOWN) {
             mQuickAddView.setVisibility(VISIBLE);
             mListView.setVisibility(VISIBLE);
             mTaskView.setVisibility(VISIBLE);
         }
 
         // detach the pager immediately from its data source (to prevent processing updates)
-        if (ViewMode.isTaskMode(mCurrentMode)) {
-            mController.disablePagerUpdates();
+        if (ViewMode.isTaskMode(currentMode)) {
+//            mController.disablePagerUpdates();
         }
 
         mDrawerInitialSetupComplete = true;
-        mCurrentMode = newMode;
-        Log.i(TAG, "onViewModeChanged " + newMode);
+        mCurrentView = newView;
+        Log.i(TAG, "onViewChanged " + newView);
 
         // do all the real work in onMeasure/onLayout, when panes are sized and positioned for the
         // current width/height anyway
@@ -356,7 +340,7 @@ public class TwoPaneLayout extends FrameLayout {
     }
 
     public boolean isModeChangePending() {
-        return mPositionedMode != mCurrentMode;
+        return !mPositionedView.equals(mCurrentView);
     }
 
     private void setPaneWidth(View pane, int w) {
@@ -368,9 +352,9 @@ public class TwoPaneLayout extends FrameLayout {
         pane.setLayoutParams(lp);
         final String s;
         if (pane == mListView) {
-            s = "conv-list";
+            s = "task-list";
         } else if (pane == mTaskView) {
-            s = "conv-view";
+            s = "task-view";
         } else {
             s = "???:" + pane;
         }

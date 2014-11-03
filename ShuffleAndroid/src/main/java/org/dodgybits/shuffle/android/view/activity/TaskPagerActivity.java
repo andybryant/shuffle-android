@@ -17,16 +17,16 @@ import android.view.MenuItem;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
-import org.dodgybits.shuffle.android.core.controller.AbstractActivityController;
+import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
+import org.dodgybits.shuffle.android.core.listener.NavigationListener;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.encoding.TaskEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
+import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.list.event.ViewContextEvent;
 import org.dodgybits.shuffle.android.list.event.ViewProjectEvent;
 import org.dodgybits.shuffle.android.list.event.ViewTaskSearchResultsEvent;
-import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
-import org.dodgybits.shuffle.android.core.listener.NavigationListener;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
@@ -100,7 +100,7 @@ public class TaskPagerActivity extends RoboActionBarActivity {
                     default:
                         Intent intent = new Intent(this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(AbstractActivityController.QUERY_NAME, listQuery.name());
+                        intent.putExtra(MainView.QUERY_NAME, listQuery.name());
                         startActivity(intent);
                         break;
                 }

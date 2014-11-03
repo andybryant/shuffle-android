@@ -18,6 +18,7 @@ import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
+import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
@@ -88,10 +89,12 @@ public class TaskListFragment extends RoboListFragment
     @Inject
     private QuickAddController mQuickAddController;
 
+    @Inject
+    private CursorProvider mCursorProvider;
+
     private TaskListContext mListContext;
 
     private MainActivity mActivity;
-    private TaskListCallbacks mListHandler;
 
     /**
      * If <code>true</code>, we have restored (or attempted to restore) the list's scroll position
@@ -149,10 +152,9 @@ public class TaskListFragment extends RoboListFragment
         }
 
         mActivity = (MainActivity) getActivity();
-        mListHandler = mActivity.getListHandler();
 
         // Update the list
-        mListAdapter.swapCursor(mListHandler.getTaskListCursor());
+        mListAdapter.swapCursor(mCursorProvider.getCursor());
         setListAdapter(mListAdapter);
         updateSelectionMode();
 
@@ -638,21 +640,23 @@ public class TaskListFragment extends RoboListFragment
 
         final Parcelable savedState = getListView().onSaveInstanceState();
 
-        mActivity.getListHandler().setTaskListScrollPosition(
-                mListContext.getListQuery(), savedState);
+       // TODO add back scroll position persistence
+
+//        mActivity.getListHandler().setTaskListScrollPosition(
+//                mListContext.getListQuery(), savedState);
     }
 
     private void restoreLastScrolledPosition() {
         // Scroll to our previous position, if necessary
-        if (!mScrollPositionRestored && mListContext != null) {
-            final ListQuery key = mListContext.getListQuery();
-            final Parcelable savedState = mActivity.getListHandler()
-                    .getTaskListScrollPosition(key);
-            if (savedState != null) {
-                getListView().onRestoreInstanceState(savedState);
-            }
-            mScrollPositionRestored = true;
-        }
+//        if (!mScrollPositionRestored && mListContext != null) {
+//            final ListQuery key = mListContext.getListQuery();
+//            final Parcelable savedState = mActivity.getListHandler()
+//                    .getTaskListScrollPosition(key);
+//            if (savedState != null) {
+//                getListView().onRestoreInstanceState(savedState);
+//            }
+//            mScrollPositionRestored = true;
+//        }
     }
 
 

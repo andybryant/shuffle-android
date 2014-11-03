@@ -75,7 +75,7 @@ public class MainView {
                 mode = ViewMode.CONTEXT_LIST;
                 break;
             default:
-                mode = null;
+                mode = ViewMode.UNKNOWN;
         }
         return new MainView(mode, listQuery, null, null);
     }
@@ -152,5 +152,30 @@ public class MainView {
                 ", mEntityId=" + mEntityId +
                 ", mSearchQuery='" + mSearchQuery + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MainView mainView = (MainView) o;
+
+        if (mEntityId != null ? !mEntityId.equals(mainView.mEntityId) : mainView.mEntityId != null) return false;
+        if (mListQuery != mainView.mListQuery) return false;
+        if (mSearchQuery != null ? !mSearchQuery.equals(mainView.mSearchQuery) : mainView.mSearchQuery != null)
+            return false;
+        if (mViewMode != mainView.mViewMode) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = mViewMode.hashCode();
+        result = 31 * result + (mListQuery != null ? mListQuery.hashCode() : 0);
+        result = 31 * result + (mEntityId != null ? mEntityId.hashCode() : 0);
+        result = 31 * result + (mSearchQuery != null ? mSearchQuery.hashCode() : 0);
+        return result;
     }
 }

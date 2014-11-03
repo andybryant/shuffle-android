@@ -13,23 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dodgybits.shuffle.android.core.event;
+package org.dodgybits.shuffle.android.core.listener;
 
-public class ModeChangeEvent {
-    private int mNewMode;
+import android.database.Cursor;
+import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
+import roboguice.event.Observes;
+import roboguice.inject.ContextSingleton;
 
-    public ModeChangeEvent(int newMode) {
-        this.mNewMode = newMode;
+@ContextSingleton
+public class CursorProvider {
+    private Cursor mCursor;
+
+    public void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
+        mCursor = event.getCursor();
     }
 
-    public int getNewMode() {
-        return mNewMode;
-    }
-
-    @Override
-    public String toString() {
-        return "ModeChangeEvent{" +
-                "mNewMode=" + mNewMode +
-                '}';
+    public Cursor getCursor() {
+        return mCursor;
     }
 }

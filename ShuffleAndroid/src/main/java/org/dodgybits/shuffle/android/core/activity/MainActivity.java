@@ -145,6 +145,7 @@ public class MainActivity extends RoboActionBarActivity {
     }
 
     public void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
+        Log.i(TAG, "Task list Cursor loaded - loading fragment now");
         addTaskList(event.getTaskListContext());
     }
 
