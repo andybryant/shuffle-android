@@ -6,9 +6,9 @@ import java.lang.reflect.Field;
 
 public class OSUtils {
 
-    public static boolean atLeastLollipop() {
-        return osAtLeast(Build.VERSION_CODES.LOLLIPOP);
-    }
+//    public static boolean atLeastLollipop() {
+//        return osAtLeast(Build.VERSION_CODES.LOLLIPOP);
+//    }
 
     public static boolean atLeastKitkat() {
         return osAtLeast(Build.VERSION_CODES.KITKAT);

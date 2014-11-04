@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.OnCreatedEvent;
 import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.listener.MainListeners;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
@@ -77,6 +78,8 @@ public class MainActivity extends RoboActionBarActivity {
      */
     @Override
     public void onCreate(Bundle savedState) {
+        super.onCreate(savedState);
+
         // don't show soft keyboard unless user clicks on quick add box
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -85,7 +88,7 @@ public class MainActivity extends RoboActionBarActivity {
         Log.d(TAG, "Using tablet layout? " + tabletUi);
         setContentView(tabletUi ? R.layout.two_pane_activity : R.layout.one_pane_activity);
 
-        super.onCreate(savedState);
+        mEventManager.fire(new OnCreatedEvent());
     }
 
     @Override

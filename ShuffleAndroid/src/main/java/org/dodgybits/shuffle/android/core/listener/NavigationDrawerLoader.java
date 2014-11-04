@@ -17,13 +17,17 @@ package org.dodgybits.shuffle.android.core.listener;
 
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.OnCreatedEvent;
 import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
-import roboguice.activity.event.OnCreateEvent;
 import roboguice.event.Observes;
+import roboguice.inject.ContextSingleton;
 
+@ContextSingleton
 public class NavigationDrawerLoader {
+    private static final String TAG = "NavDrawerLdr";
 
     @Inject
     private FragmentActivity mActivity;
@@ -33,9 +37,10 @@ public class NavigationDrawerLoader {
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    public void onCreate(@Observes OnCreateEvent event) {
+    public void onCreate(@Observes OnCreatedEvent event) {
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 mActivity.getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        Log.d(TAG, "Finding view " + R.id.drawer_layout);
         DrawerLayout drawerLayout = (DrawerLayout) mActivity.findViewById(R.id.drawer_layout);
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
