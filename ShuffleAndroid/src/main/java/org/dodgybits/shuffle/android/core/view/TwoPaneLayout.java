@@ -28,6 +28,7 @@ import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.EntityListVisibiltyChangeEvent;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.event.TaskVisibilityChangeEvent;
+import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
 import roboguice.RoboGuice;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -90,6 +91,9 @@ public class TwoPaneLayout extends FrameLayout {
     @Inject
     protected EventManager mEventManager;
 
+    @Inject
+    private MainViewProvider mMainViewProvider;
+
     public TwoPaneLayout(Context context) {
         this(context, null);
     }
@@ -129,6 +133,7 @@ public class TwoPaneLayout extends FrameLayout {
 
         Log.d(TAG, "Injecting dependencies");
         RoboGuice.getInjector(getContext()).injectMembersWithoutViews(this);
+        onViewChanged(mMainViewProvider.getMainView());
     }
 
     @Override
@@ -317,6 +322,10 @@ public class TwoPaneLayout extends FrameLayout {
 
     public void onViewChanged(@Observes MainViewUpdateEvent event) {
         MainView newView = event.getMainView();
+        onViewChanged(newView);
+    }
+
+    private void onViewChanged(MainView newView) {
         // make all initially GONE panes visible only when the view mode is first determined
         ViewMode currentMode = mCurrentView.getViewMode();
         if (currentMode == ViewMode.UNKNOWN) {

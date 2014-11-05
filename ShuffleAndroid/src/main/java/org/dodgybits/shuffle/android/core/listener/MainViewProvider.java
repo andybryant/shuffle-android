@@ -15,35 +15,20 @@
  */
 package org.dodgybits.shuffle.android.core.listener;
 
-import com.google.inject.Inject;
-import org.dodgybits.shuffle.android.server.gcm.GcmRegister;
+import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
+import org.dodgybits.shuffle.android.core.view.MainView;
+import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
 
 @ContextSingleton
-public class MainListeners {
+public class MainViewProvider {
+    private MainView mMainView;
 
-    @Inject
-    private EntityUpdateListener mEntityUpdateListener;
+    public void onViewChanged(@Observes MainViewUpdateEvent event) {
+        mMainView = event.getMainView();
+    }
 
-    @Inject
-    private NavigationListener mNavigationListener;
-
-    @Inject
-    private GcmRegister mGcmRegister;
-
-    @Inject
-    private SyncRegister mSyncRegister;
-
-    @Inject
-    private CursorLoader mCursorLoader;
-
-    @Inject
-    private CursorProvider mCursorProvider;
-
-    @Inject
-    private RequestParser mRequestParser;
-
-    @Inject
-    private MainViewProvider mMainViewProvider;
-
+    public MainView getMainView() {
+        return mMainView;
+    }
 }
