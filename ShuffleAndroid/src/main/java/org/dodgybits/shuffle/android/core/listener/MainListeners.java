@@ -17,7 +17,9 @@ package org.dodgybits.shuffle.android.core.listener;
 
 import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.server.gcm.GcmRegister;
+import roboguice.inject.ContextSingleton;
 
+@ContextSingleton
 public class MainListeners {
 
     @Inject
@@ -31,9 +33,5 @@ public class MainListeners {
 
     @Inject
     private SyncRegister mSyncRegister;
-
-    @Inject
-    private NavigationDrawerLoader mNavigationDrawerLoader;
-
 
 }

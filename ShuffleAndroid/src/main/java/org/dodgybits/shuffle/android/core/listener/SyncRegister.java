@@ -24,7 +24,9 @@ import org.dodgybits.shuffle.android.server.sync.SyncAlarmService;
 import roboguice.activity.event.OnCreateEvent;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
+import roboguice.inject.ContextSingleton;
 
+@ContextSingleton
 public class SyncRegister {
 
 

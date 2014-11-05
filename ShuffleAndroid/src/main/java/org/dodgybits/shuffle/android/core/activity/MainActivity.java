@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.Menu;
@@ -87,6 +88,13 @@ public class MainActivity extends RoboActionBarActivity {
         final boolean tabletUi = UiUtilities.useTabletUI(this.getResources());
         Log.d(TAG, "Using tablet layout? " + tabletUi);
         setContentView(tabletUi ? R.layout.two_pane_activity : R.layout.one_pane_activity);
+
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
+                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                drawerLayout);
 
         mEventManager.fire(new OnCreatedEvent());
     }

@@ -17,12 +17,14 @@ import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.list.event.*;
 import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import roboguice.event.Observes;
+import roboguice.inject.ContextSingleton;
 
 import java.util.List;
 import java.util.Set;
 
 import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.LOCAL_CHANGE_SOURCE;
 
+@ContextSingleton
 public class EntityUpdateListener {
     private static final String TAG = "EntityUpdateListener";
 
