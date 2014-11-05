@@ -15,6 +15,7 @@
  */
 package org.dodgybits.shuffle.android.core.listener;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -35,16 +36,16 @@ import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import roboguice.activity.event.OnCreateEvent;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
+import roboguice.inject.ContextSingleton;
 
 import java.util.List;
 
+@ContextSingleton
 public class RequestParser {
     private static final String TAG = "RequestParser";
 
-    @Inject
     private FragmentActivity mActivity;
 
-    @Inject
     private EventManager mEventManager;
 
     private static UriMatcher sUriMatcher;
@@ -57,6 +58,12 @@ public class RequestParser {
         sUriMatcher.addURI(ProjectProvider.AUTHORITY, "projects/#", PROJECT);
     }
 
+    @Inject
+    public RequestParser(Activity activity, EventManager eventManager) {
+        mActivity = (FragmentActivity) activity;
+        mEventManager = eventManager;
+    }
+
     public void onCreate(@Observes OnCreateEvent event) {
         final Intent intent = mActivity.getIntent();
         Bundle savedState = event.getSavedInstanceState();
@@ -64,6 +71,10 @@ public class RequestParser {
             handleRestore(savedState);
         } else if (intent != null) {
             handleIntent(intent);
+        } else {
+            MainView mainView = MainView.createView(ListQuery.inbox);
+            Log.d(TAG, "IN onCreate - no saved state or intent. defaulting to=" + mainView);
+            mEventManager.fire(new MainViewUpdateEvent(mainView));
         }
 
     }
@@ -79,6 +90,7 @@ public class RequestParser {
         }
 
         MainView mainView = MainView.handleRestore(inState);
+        Log.d(TAG, "IN handleRestore. mainView=" + mainView);
         mEventManager.fire(new MainViewUpdateEvent(mainView));
     }
 

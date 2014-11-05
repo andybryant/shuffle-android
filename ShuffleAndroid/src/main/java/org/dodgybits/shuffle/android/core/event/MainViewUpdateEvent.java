@@ -28,4 +28,10 @@ public class MainViewUpdateEvent {
         return mMainView;
     }
 
+    @Override
+    public String toString() {
+        return "MainViewUpdateEvent{" +
+                "mMainView=" + mMainView +
+                '}';
+    }
 }

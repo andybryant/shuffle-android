@@ -34,4 +34,13 @@ public class MainListeners {
     @Inject
     private SyncRegister mSyncRegister;
 
+    @Inject
+    private CursorLoader mCursorLoader;
+
+    @Inject
+    private CursorProvider mCursorProvider;
+
+    @Inject
+    private RequestParser mRequestParser;
+
 }

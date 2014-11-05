@@ -15,6 +15,7 @@
  */
 package org.dodgybits.shuffle.android.core.listener;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -32,22 +33,29 @@ import org.dodgybits.shuffle.android.list.view.task.TaskListAdaptor;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
+import roboguice.inject.ContextSingleton;
 
+@ContextSingleton
 public class CursorLoader {
     private static final String TAG = "CursorLoader";
     private static final int LOADER_ID_TASK_LIST_LOADER = 1;
 
-    @Inject
     private FragmentActivity mActivity;
 
-    @Inject
     private EventManager mEventManager;
 
     private MainView mMainView;
 
     private TaskListContext mTaskListContext;
 
+    @Inject
+    public CursorLoader(Activity activity, EventManager eventManager) {
+        mActivity = (FragmentActivity) activity;
+        mEventManager = eventManager;
+    }
+
     public void onViewUpdated(@Observes MainViewUpdateEvent event) {
+        Log.d(TAG, "Received view update event " + event);
         mMainView = event.getMainView();
         startLoading();
     }
@@ -65,6 +73,7 @@ public class CursorLoader {
         switch (mMainView.getViewMode()) {
             case TASK:
             case TASK_LIST:
+                updateTaskListContext();
                 lm.initLoader(LOADER_ID_TASK_LIST_LOADER, null, LOADER_CALLBACKS);
                 break;
             default:
