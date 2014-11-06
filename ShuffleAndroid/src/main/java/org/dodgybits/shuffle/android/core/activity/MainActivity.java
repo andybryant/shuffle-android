@@ -13,12 +13,14 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.LoadTaskFragmentEvent;
+import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.event.OnCreatedEvent;
 import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.listener.MainListeners;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
+import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
-import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
@@ -35,7 +37,7 @@ public class MainActivity extends RoboActionBarActivity {
     /** Tag used when loading a task list fragment. */
     public static final String TAG_TASK_LIST = "tag-task-list";
 
-    private ViewMode mViewMode;
+    private MainView mMainView;
 
     @Inject
     private MainListeners mListeners;
@@ -145,6 +147,14 @@ public class MainActivity extends RoboActionBarActivity {
         return false;
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mMainView != null) {
+            mMainView.handleSaveInstanceState(outState);
+        }
+
+        super.onSaveInstanceState(outState);
+    }
 
     private void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
@@ -153,6 +163,10 @@ public class MainActivity extends RoboActionBarActivity {
 //        if (mTitle != null) {
 //            actionBar.setTitle(mTitle);
 //        }
+    }
+
+    public void onViewChanged(@Observes MainViewUpdateEvent event) {
+        mMainView = event.getMainView();
     }
 
     public void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {

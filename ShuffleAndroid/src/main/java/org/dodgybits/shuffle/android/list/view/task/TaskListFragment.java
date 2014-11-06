@@ -18,6 +18,7 @@ import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
+import org.dodgybits.shuffle.android.core.event.LoadTaskFragmentEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
@@ -152,17 +153,6 @@ public class TaskListFragment extends RoboListFragment
         }
 
         mActivity = (MainActivity) getActivity();
-
-        // Update the list
-        mListAdapter.swapCursor(mCursorProvider.getCursor());
-        setListAdapter(mListAdapter);
-        updateSelectionMode();
-
-        // We want to make visible the selection only for the first load.
-        // Re-load caused by content changed events shouldn't scroll the list.
-        highlightSelectedMessage(mIsFirstLoad);
-
-        mIsFirstLoad = false;
     }
 
     @Override
@@ -344,6 +334,19 @@ public class TaskListFragment extends RoboListFragment
             updateQuickAdd();
         }
         updateSelectionMode();
+    }
+
+    public void onCursorLoaded(@Observes LoadTaskFragmentEvent event) {
+        // Update the list
+        mListAdapter.swapCursor(mCursorProvider.getCursor());
+        setListAdapter(mListAdapter);
+        updateSelectionMode();
+
+        // We want to make visible the selection only for the first load.
+        // Re-load caused by content changed events shouldn't scroll the list.
+        highlightSelectedMessage(mIsFirstLoad);
+
+        mIsFirstLoad = false;
     }
 
     private void flushCaches() {
