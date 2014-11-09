@@ -153,6 +153,8 @@ public class TaskListFragment extends RoboListFragment
         }
 
         mActivity = (MainActivity) getActivity();
+
+        updateCursor();
     }
 
     @Override
@@ -337,6 +339,10 @@ public class TaskListFragment extends RoboListFragment
     }
 
     public void onCursorLoaded(@Observes LoadTaskFragmentEvent event) {
+        updateCursor();
+    }
+
+    private void updateCursor() {
         // Update the list
         mListAdapter.swapCursor(mCursorProvider.getCursor());
         setListAdapter(mListAdapter);

@@ -175,26 +175,22 @@ public class MainActivity extends RoboActionBarActivity {
     }
 
     private void addTaskList(TaskListContext listContext) {
-        TaskListFragment fragment = findOrCreateTaskFragment(listContext);
-
-        FragmentTransaction fragmentTransaction =
-                getSupportFragmentManager().beginTransaction();
-        // Use cross fading animation.
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragmentTransaction.replace(R.id.entity_list_pane, fragment,
-                TAG_TASK_LIST);
-        fragmentTransaction.commitAllowingStateLoss();
-    }
-
-    private TaskListFragment findOrCreateTaskFragment(TaskListContext listContext) {
         TaskListFragment fragment = getTaskListFragment();
         if (fragment == null) {
             fragment = mTaskListFragmentProvider.get(this);
             Bundle args = new Bundle();
             args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, listContext);
             fragment.setArguments(args);
+
+            FragmentTransaction fragmentTransaction =
+                    getSupportFragmentManager().beginTransaction();
+            // Use cross fading animation.
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.replace(R.id.entity_list_pane, fragment,
+                    TAG_TASK_LIST);
+            fragmentTransaction.commitAllowingStateLoss();
         }
-        return fragment;
+
     }
 
     /**
