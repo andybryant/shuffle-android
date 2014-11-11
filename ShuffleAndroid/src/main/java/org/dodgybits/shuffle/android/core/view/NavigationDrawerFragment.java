@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -21,7 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.NavigationDrawSelectionChangeEvent;
+import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.ContextSelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.EntitySelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.ProjectSelector;
@@ -281,7 +280,11 @@ public class NavigationDrawerFragment extends RoboFragment {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
 
-        mEventManager.fire(new NavigationDrawSelectionChangeEvent(position));
+        if (sListItems != null && position >= 0 && position < sListItems.length) {
+            IconNameCountListAdaptor.ListItem<HomeEntry> listItem = sListItems[position];
+            MainView mainView = MainView.createView(listItem.getPayload().mListQuery);
+            mEventManager.fire(new MainViewUpdateEvent(mainView));
+        }
     }
 
     @Override

@@ -57,7 +57,7 @@ public class CursorLoader {
     public void onViewUpdated(@Observes MainViewUpdateEvent event) {
         Log.d(TAG, "Received view update event " + event);
         mMainView = event.getMainView();
-        startLoading();
+        restartLoading();
     }
 
     public void onListSettingsUpdated(@Observes ListSettingsUpdatedEvent event) {

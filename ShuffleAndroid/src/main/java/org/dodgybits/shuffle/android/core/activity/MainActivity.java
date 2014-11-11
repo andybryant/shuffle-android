@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.LoadTaskFragmentEvent;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.event.OnCreatedEvent;
 import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
@@ -175,22 +174,18 @@ public class MainActivity extends RoboActionBarActivity {
     }
 
     private void addTaskList(TaskListContext listContext) {
-        TaskListFragment fragment = getTaskListFragment();
-        if (fragment == null) {
-            fragment = mTaskListFragmentProvider.get(this);
-            Bundle args = new Bundle();
-            args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, listContext);
-            fragment.setArguments(args);
+        TaskListFragment fragment = mTaskListFragmentProvider.get(this);
+        Bundle args = new Bundle();
+        args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, listContext);
+        fragment.setArguments(args);
 
-            FragmentTransaction fragmentTransaction =
-                    getSupportFragmentManager().beginTransaction();
-            // Use cross fading animation.
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.replace(R.id.entity_list_pane, fragment,
-                    TAG_TASK_LIST);
-            fragmentTransaction.commitAllowingStateLoss();
-        }
-
+        FragmentTransaction fragmentTransaction =
+                getSupportFragmentManager().beginTransaction();
+        // Use cross fading animation.
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragmentTransaction.replace(R.id.entity_list_pane, fragment,
+                TAG_TASK_LIST);
+        fragmentTransaction.commitAllowingStateLoss();
     }
 
     /**
