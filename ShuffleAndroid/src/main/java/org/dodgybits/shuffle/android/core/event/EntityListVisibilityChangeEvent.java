@@ -15,10 +15,10 @@
  */
 package org.dodgybits.shuffle.android.core.event;
 
-public class EntityListVisibiltyChangeEvent {
+public class EntityListVisibilityChangeEvent {
     private boolean mListVisible;
 
-    public EntityListVisibiltyChangeEvent(boolean listVisible) {
+    public EntityListVisibilityChangeEvent(boolean listVisible) {
         mListVisible = listVisible;
     }
 

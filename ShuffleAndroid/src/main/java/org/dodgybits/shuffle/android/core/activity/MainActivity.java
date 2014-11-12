@@ -20,10 +20,12 @@ import org.dodgybits.shuffle.android.core.listener.MainListeners;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
+import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
 import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
+import org.dodgybits.shuffle.android.view.fragment.TaskPagerFragment;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.inject.ContextScopedProvider;
@@ -35,6 +37,7 @@ public class MainActivity extends RoboActionBarActivity {
 
     /** Tag used when loading a task list fragment. */
     public static final String TAG_TASK_LIST = "tag-task-list";
+    public static final String TAG_TASK_ITEM = "tag-task-item";
 
     private MainView mMainView;
 
@@ -46,6 +49,9 @@ public class MainActivity extends RoboActionBarActivity {
 
     @Inject
     ContextScopedProvider<TaskListFragment> mTaskListFragmentProvider;
+
+    @Inject
+    ContextScopedProvider<TaskPagerFragment> mTaskPagerFragmentProvider;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -171,6 +177,9 @@ public class MainActivity extends RoboActionBarActivity {
     public void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
         Log.i(TAG, "Task list Cursor loaded - loading fragment now");
         addTaskList(event.getTaskListContext());
+        if (mMainView.getViewMode() == ViewMode.TASK) {
+            addTaskView(event.getTaskListContext());
+        }
     }
 
     private void addTaskList(TaskListContext listContext) {
@@ -185,6 +194,22 @@ public class MainActivity extends RoboActionBarActivity {
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.replace(R.id.entity_list_pane, fragment,
                 TAG_TASK_LIST);
+        fragmentTransaction.commitAllowingStateLoss();
+    }
+
+    private void addTaskView(TaskListContext listContext) {
+        TaskPagerFragment fragment = mTaskPagerFragmentProvider.get(this);
+        Bundle args = new Bundle();
+        args.putParcelable(TaskPagerFragment.TASK_LIST_CONTEXT, listContext);
+        args.putInt(TaskPagerFragment.INITIAL_POSITION, mMainView.getSelectedIndex());
+        fragment.setArguments(args);
+
+        FragmentTransaction fragmentTransaction =
+                getSupportFragmentManager().beginTransaction();
+        // Use cross fading animation.
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragmentTransaction.replace(R.id.task_pane, fragment,
+                TAG_TASK_ITEM);
         fragmentTransaction.commitAllowingStateLoss();
     }
 

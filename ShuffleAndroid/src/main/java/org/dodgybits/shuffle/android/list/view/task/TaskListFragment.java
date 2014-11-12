@@ -19,13 +19,16 @@ import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
 import org.dodgybits.shuffle.android.core.event.LoadTaskFragmentEvent;
+import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.IntentUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
+import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.core.view.TaskListCallbacks;
+import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.*;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.QuickAddController;
@@ -221,9 +224,8 @@ public class TaskListFragment extends RoboListFragment
             intent.putExtras(bundle);
             getActivity().setResult(Activity.RESULT_OK, intent);
         } else {
-            // Launch activity to view the currently selected item
-            Intent intent = IntentUtils.createTaskViewIntent(getActivity(), mListContext, position);
-            startActivity(intent);
+            MainView mainView = MainView.createTaskView(mListContext, position);
+            mEventManager.fire(new MainViewUpdateEvent(mainView));
         }
     }
 
@@ -343,6 +345,7 @@ public class TaskListFragment extends RoboListFragment
     }
 
     private void updateCursor() {
+        Log.d(TAG, "Swapping cursor");
         // Update the list
         mListAdapter.swapCursor(mCursorProvider.getCursor());
         setListAdapter(mListAdapter);

@@ -16,7 +16,10 @@
 package org.dodgybits.shuffle.android.core.view;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
+import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 
 /**
  * Immutable description of the current view of the main activity.
@@ -27,32 +30,43 @@ public class MainView {
     private static final String VIEW_MODE_KEY = "view-mode";
     private static final String LIST_QUERY_KEY = "list-query";
     private static final String ENTITIY_ID_KEY = "entityId";
+    private static final String SELECTED_INDEX_KEY = "selectedIndex";
     private static final String SEARCH_QUERY_KEY = "search-query";
 
     private final ViewMode mViewMode;
     private final ListQuery mListQuery;
-    private final Long mEntityId;
+    private final Id mEntityId;
     private final String mSearchQuery;
-
+    private final int mSelectedIndex;
 
     public static MainView createView(ViewMode viewMode) {
-        return new MainView(viewMode, null, null, null);
+        return new MainView(viewMode, null, Id.NONE, null, -1);
+    }
+
+    public static MainView createTaskView(TaskListContext context, int index) {
+        ListQuery listQuery = context.getListQuery();
+        Id entityId = context.getEntityId();
+        return new MainView(ViewMode.TASK, listQuery, entityId, context.getSearchQuery(), index);
+    }
+
+    public static MainView createTaskView(TaskListContext context) {
+        return createTaskView(context, -1);
     }
 
     public static MainView createSearchList(String searchQuery) {
-        return new MainView(ViewMode.SEARCH_RESULTS_LIST, ListQuery.search, null, searchQuery);
+        return new MainView(ViewMode.SEARCH_RESULTS_LIST, ListQuery.search, Id.NONE, searchQuery, -1);
     }
 
-    public static MainView createSearchListItem(String searchQuery, Long taskId) {
-        return new MainView(ViewMode.SEARCH_RESULTS_TASK, ListQuery.search, taskId, searchQuery);
+    public static MainView createSearchListItem(String searchQuery, Id taskId) {
+        return new MainView(ViewMode.SEARCH_RESULTS_TASK, ListQuery.search, taskId, searchQuery, -1);
     }
 
-    public static MainView createContextTaskList(Long contextId) {
-        return new MainView(ViewMode.CONTEXT_LIST, ListQuery.context, contextId, null);
+    public static MainView createContextTaskList(Id contextId) {
+        return new MainView(ViewMode.CONTEXT_LIST, ListQuery.context, contextId, null, -1);
     }
 
-    public static MainView createProjectTaskList(Long projectId) {
-        return new MainView(ViewMode.PROJECT_LIST, ListQuery.project, projectId, null);
+    public static MainView createProjectTaskList(Id projectId) {
+        return new MainView(ViewMode.PROJECT_LIST, ListQuery.project, projectId, null, -1);
     }
 
     public static MainView createView(ListQuery listQuery) {
@@ -77,14 +91,16 @@ public class MainView {
             default:
                 mode = ViewMode.UNKNOWN;
         }
-        return new MainView(mode, listQuery, null, null);
+        return new MainView(mode, listQuery, Id.NONE, null, -1);
     }
 
-    private MainView(ViewMode viewMode, ListQuery listQuery, Long entityId, String searchQuery) {
+    private MainView(ViewMode viewMode, ListQuery listQuery, @NonNull Id entityId, String searchQuery, int index) {
         mViewMode = viewMode;
         mListQuery = listQuery;
         mEntityId = entityId;
         mSearchQuery = searchQuery;
+        mSelectedIndex = index;
+        if (entityId == null) throw new NullPointerException();
     }
 
     public ViewMode getViewMode() {
@@ -95,8 +111,12 @@ public class MainView {
         return mListQuery;
     }
 
-    public Long getEntityId() {
+    public Id getEntityId() {
         return mEntityId;
+    }
+
+    public int getSelectedIndex() {
+        return mSelectedIndex;
     }
 
     /**
@@ -117,11 +137,10 @@ public class MainView {
             listQuery = ListQuery.valueOf(queryName);
         }
         Long entityId = inState.getLong(ENTITIY_ID_KEY, -1);
-        if (entityId == -1) {
-            entityId = null;
-        }
+        Id id = entityId == -1 ? Id.NONE : Id.create(entityId);
         String searchQuery = inState.getString(SEARCH_QUERY_KEY, null);
-        return new MainView(mode, listQuery, entityId, searchQuery);
+        int selectedIndex = inState.getInt(SELECTED_INDEX_KEY, -1);
+        return new MainView(mode, listQuery, id, searchQuery, selectedIndex);
     }
 
     /**
@@ -136,11 +155,14 @@ public class MainView {
         if (mListQuery != null) {
             outState.putString(LIST_QUERY_KEY, mListQuery.name());
         }
-        if (mEntityId != null) {
-            outState.putLong(ENTITIY_ID_KEY, mEntityId.longValue());
+        if (mEntityId.isInitialised()) {
+            outState.putLong(ENTITIY_ID_KEY, mEntityId.getId());
         }
         if (mSearchQuery != null) {
             outState.putString(SEARCH_QUERY_KEY, mSearchQuery);
+        }
+        if (mSelectedIndex > -1) {
+            outState.putInt(SELECTED_INDEX_KEY, mSelectedIndex);
         }
     }
 
@@ -151,6 +173,7 @@ public class MainView {
                 ", mListQuery=" + mListQuery +
                 ", mEntityId=" + mEntityId +
                 ", mSearchQuery='" + mSearchQuery + '\'' +
+                ", mSelectedIndex=" + mSelectedIndex +
                 '}';
     }
 
@@ -161,7 +184,8 @@ public class MainView {
 
         MainView mainView = (MainView) o;
 
-        if (mEntityId != null ? !mEntityId.equals(mainView.mEntityId) : mainView.mEntityId != null) return false;
+        if (!mEntityId.equals(mainView.mEntityId)) return false;
+        if (mSelectedIndex != mainView.mSelectedIndex) return false;
         if (mListQuery != mainView.mListQuery) return false;
         if (mSearchQuery != null ? !mSearchQuery.equals(mainView.mSearchQuery) : mainView.mSearchQuery != null)
             return false;
@@ -174,8 +198,9 @@ public class MainView {
     public int hashCode() {
         int result = mViewMode.hashCode();
         result = 31 * result + (mListQuery != null ? mListQuery.hashCode() : 0);
-        result = 31 * result + (mEntityId != null ? mEntityId.hashCode() : 0);
+        result = 31 * result + mEntityId.hashCode();
         result = 31 * result + (mSearchQuery != null ? mSearchQuery.hashCode() : 0);
+        result = 31 * result + mSelectedIndex;
         return result;
     }
 }

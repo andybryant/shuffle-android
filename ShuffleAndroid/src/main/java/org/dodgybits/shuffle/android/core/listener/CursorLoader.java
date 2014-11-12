@@ -99,9 +99,9 @@ public class CursorLoader {
         mTaskListContext = null;
         ListQuery listQuery = mMainView.getListQuery();
         if (listQuery == ListQuery.context) {
-            mTaskListContext = TaskListContext.createForContext(Id.create(mMainView.getEntityId()));
+            mTaskListContext = TaskListContext.createForContext(mMainView.getEntityId());
         } else if (listQuery == ListQuery.project) {
-            mTaskListContext = TaskListContext.createForProject(Id.create(mMainView.getEntityId()));
+            mTaskListContext = TaskListContext.createForProject(mMainView.getEntityId());
         } else {
             mTaskListContext = TaskListContext.create(listQuery);
         }

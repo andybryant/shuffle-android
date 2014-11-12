@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.EntityListVisibiltyChangeEvent;
+import org.dodgybits.shuffle.android.core.event.EntityListVisibilityChangeEvent;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.event.TaskVisibilityChangeEvent;
 import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
@@ -250,14 +250,14 @@ public class TwoPaneLayout extends FrameLayout {
             case TASK:
             case SEARCH_RESULTS_TASK:
                 mEventManager.fire(new TaskVisibilityChangeEvent(true));
-                mEventManager.fire(new EntityListVisibiltyChangeEvent(!isEntityListCollapsed()));
+                mEventManager.fire(new EntityListVisibilityChangeEvent(!isEntityListCollapsed()));
                 break;
             case TASK_LIST:
             case PROJECT_LIST:
             case CONTEXT_LIST:
             case SEARCH_RESULTS_LIST:
                 mEventManager.fire(new TaskVisibilityChangeEvent(false));
-                mEventManager.fire(new EntityListVisibiltyChangeEvent(true));
+                mEventManager.fire(new EntityListVisibilityChangeEvent(true));
                 break;
             default:
                 break;

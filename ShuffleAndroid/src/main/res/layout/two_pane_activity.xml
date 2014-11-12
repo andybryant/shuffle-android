@@ -35,7 +35,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent" />
 
-        <android.support.v4.view.ViewPager
+        <FrameLayout
             android:id="@+id/task_pane"
             android:layout_width="0dp"
             android:layout_height="match_parent" />

@@ -27,6 +27,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
+import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
@@ -126,10 +127,10 @@ public class RequestParser {
                 int match = sUriMatcher.match(uri);
                 if (match == CONTEXT) {
                     long contextId = ContentUris.parseId(uri);
-                    mainView = MainView.createContextTaskList(contextId);
+                    mainView = MainView.createContextTaskList(Id.create(contextId));
                 } else if (match == PROJECT) {
                     long projectId = ContentUris.parseId(uri);
-                    mainView = MainView.createProjectTaskList(projectId);
+                    mainView = MainView.createProjectTaskList(Id.create(projectId));
                 } else {
                     Log.e(TAG, "Unexpected intent uri" + uri);
                 }

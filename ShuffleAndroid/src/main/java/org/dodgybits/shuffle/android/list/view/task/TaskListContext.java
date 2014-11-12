@@ -105,7 +105,7 @@ public class TaskListContext implements Parcelable {
     }
 
     public Id getEntityId() {
-        Id result = null;
+        Id result = Id.NONE;
         if (mSelector.getContextId().isInitialised()) {
             result = mSelector.getContextId();
         } else if (mSelector.getProjectId().isInitialised()) {
