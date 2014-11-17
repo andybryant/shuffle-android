@@ -30,8 +30,8 @@ import org.dodgybits.shuffle.android.list.event.ViewTaskSearchResultsEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
-import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
 import org.dodgybits.shuffle.android.view.fragment.TaskViewFragment;
+import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
 
 /**

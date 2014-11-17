@@ -17,7 +17,6 @@ package org.dodgybits.shuffle.android.core.listener;
 
 import android.app.Activity;
 import android.app.SearchManager;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.UriMatcher;
@@ -29,17 +28,13 @@ import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.view.MainView;
-import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
-import roboguice.activity.event.OnCreateEvent;
+import roboguice.context.event.OnCreateEvent;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
-
-import java.util.List;
 
 @ContextSingleton
 public class RequestParser {

@@ -25,20 +25,17 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.MenuItem;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
-
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.fragment.HelpListFragment;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
-import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
+import roboguice.activity.RoboActionBarActivity;
+import roboguice.inject.ContextScopedProvider;
 
 import java.util.List;
 import java.util.Map;
-
-import roboguice.inject.ContextScopedProvider;
 
 public class HelpActivity extends RoboActionBarActivity {
     private static final String TAG = "HelpActivity";

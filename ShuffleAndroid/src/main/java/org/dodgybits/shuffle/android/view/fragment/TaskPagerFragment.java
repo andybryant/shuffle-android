@@ -34,6 +34,8 @@ import android.view.ViewGroup;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
+import org.dodgybits.shuffle.android.core.event.LoadTaskFragmentEvent;
+import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.core.listener.NavigationListener;
 import org.dodgybits.shuffle.android.core.model.Task;
@@ -48,6 +50,7 @@ import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 import roboguice.event.EventManager;
+import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
 
 public class TaskPagerFragment extends RoboFragment {
@@ -73,6 +76,9 @@ public class TaskPagerFragment extends RoboFragment {
     @Inject
     private EntityUpdateListener mEntityUpdateListener;
 
+    @Inject
+    private CursorProvider mCursorProvider;
+
     MyAdapter mAdapter;
 
     ViewPager mPager;
@@ -92,7 +98,7 @@ public class TaskPagerFragment extends RoboFragment {
 
         mPager = (ViewPager)getActivity().findViewById(R.id.pager);
 
-        startLoading();
+        updateCursor();
     }
 
     @Override
@@ -125,10 +131,8 @@ public class TaskPagerFragment extends RoboFragment {
         return false;
     }
 
-    private void startLoading() {
-        Log.d(TAG, "Creating list cursor");
-        final LoaderManager lm = getActivity().getSupportLoaderManager();
-        lm.initLoader(LOADER_ID_TASK_LIST_LOADER, getActivity().getIntent().getExtras(), LOADER_CALLBACKS);
+    public void onCursorLoaded(@Observes LoadTaskFragmentEvent event) {
+        updateCursor();
     }
 
     private TaskListContext getListContext() {
@@ -138,58 +142,22 @@ public class TaskPagerFragment extends RoboFragment {
         return mListContext;
     }
 
+    private void updateCursor() {
+        Log.d(TAG, "Swapping cursor");
+        // Update the list
 
-    /**
-     * Loader callbacks for task list.
-     */
-    private final LoaderManager.LoaderCallbacks<Cursor> LOADER_CALLBACKS =
-            new LoaderManager.LoaderCallbacks<Cursor>() {
-
-                int mInitialPosition;
-
-                @Override
-                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                    mInitialPosition = args.getInt(INITIAL_POSITION, 0);
-                    return new TaskCursorLoader(getActivity(), getListContext());
-                }
-
-                @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
-                    mAdapter = new MyAdapter(getActivity().getSupportFragmentManager(), c);
-                    mPager.setAdapter(mAdapter);
-                    mPager.setCurrentItem(mInitialPosition);
-                }
-
-
-                @Override
-                public void onLoaderReset(Loader<Cursor> loader) {
-                }
-            };
-
-    private static class TaskCursorLoader extends CursorLoader {
-        protected final Context mContext;
-
-        private TaskSelector mSelector;
-
-        public TaskCursorLoader(Context context, TaskListContext listContext) {
-            // Initialize with no where clause.  We'll set it later.
-            super(context, TaskProvider.Tasks.CONTENT_URI,
-                    TaskProvider.Tasks.FULL_PROJECTION, null, null,
-                    null);
-            mSelector = listContext.createSelectorWithPreferences(context);
-            mContext = context;
+        if (getActivity() == null) {
+            Log.wtf(TAG, "Activity not set on " + this);
+            return;
         }
 
-        @Override
-        public Cursor loadInBackground() {
-            // Build the where cause (which can't be done on the UI thread.)
-            setSelection(mSelector.getSelection(mContext));
-            setSelectionArgs(mSelector.getSelectionArgs());
-            setSortOrder(mSelector.getSortOrder());
-            // Then do a query to get the cursor
-            return super.loadInBackground();
+        Cursor cursor = mCursorProvider.getCursor();
+        if (cursor != null) {
+            int initialPosition = getArguments().getInt(INITIAL_POSITION, 0);
+            mAdapter = new MyAdapter(getActivity().getSupportFragmentManager(), cursor);
+            mPager.setAdapter(mAdapter);
+            mPager.setCurrentItem(initialPosition);
         }
-
     }
 
     public class MyAdapter extends FragmentPagerAdapter {

@@ -32,8 +32,8 @@ import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.core.listener.NavigationListener;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
-import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
 import org.dodgybits.shuffle.android.view.activity.TaskViewActivity;
+import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
 import roboguice.inject.ContextScopedProvider;
 

@@ -21,7 +21,7 @@ import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.server.gcm.event.RegisterGcmEvent;
 import org.dodgybits.shuffle.android.server.sync.AuthTokenRetriever;
 import org.dodgybits.shuffle.android.server.sync.SyncAlarmService;
-import roboguice.activity.event.OnCreateEvent;
+import roboguice.context.event.OnCreateEvent;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;

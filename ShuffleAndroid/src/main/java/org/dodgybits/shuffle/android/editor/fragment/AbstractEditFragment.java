@@ -18,8 +18,8 @@ import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Entity;
 import org.dodgybits.shuffle.android.core.model.encoding.EntityEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityPersister;
-import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
 
+import roboguice.activity.RoboActionBarActivity;
 import roboguice.fragment.RoboFragment;
 
 public abstract class AbstractEditFragment<E extends Entity> extends RoboFragment

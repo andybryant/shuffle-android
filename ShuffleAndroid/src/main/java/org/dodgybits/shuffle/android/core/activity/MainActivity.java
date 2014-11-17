@@ -24,8 +24,8 @@ import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
-import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
 import org.dodgybits.shuffle.android.view.fragment.TaskPagerFragment;
+import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.inject.ContextScopedProvider;
@@ -174,11 +174,22 @@ public class MainActivity extends RoboActionBarActivity {
         mMainView = event.getMainView();
     }
 
-    public void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
+    public void onTaskListCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
         Log.i(TAG, "Task list Cursor loaded - loading fragment now");
-        addTaskList(event.getTaskListContext());
+        switch (mMainView.getViewMode()) {
+            case TASK_LIST:
+                addTaskList(event.getTaskListContext());
+                break;
+            case TASK:
+                addTaskList(event.getTaskListContext());
+                addTaskView(event.getTaskListContext());
+                break;
+            default:
+                Log.w(TAG, "Unexpected view mode " + mMainView.getViewMode());
+                break;
+        }
+
         if (mMainView.getViewMode() == ViewMode.TASK) {
-            addTaskView(event.getTaskListContext());
         }
     }
 
@@ -187,6 +198,8 @@ public class MainActivity extends RoboActionBarActivity {
         Bundle args = new Bundle();
         args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, listContext);
         fragment.setArguments(args);
+
+        // TODO make fragment support updating listContext?
 
         FragmentTransaction fragmentTransaction =
                 getSupportFragmentManager().beginTransaction();
@@ -203,6 +216,8 @@ public class MainActivity extends RoboActionBarActivity {
         args.putParcelable(TaskPagerFragment.TASK_LIST_CONTEXT, listContext);
         args.putInt(TaskPagerFragment.INITIAL_POSITION, mMainView.getSelectedIndex());
         fragment.setArguments(args);
+
+        Log.d(TAG, "Creating task pager " + fragment);
 
         FragmentTransaction fragmentTransaction =
                 getSupportFragmentManager().beginTransaction();

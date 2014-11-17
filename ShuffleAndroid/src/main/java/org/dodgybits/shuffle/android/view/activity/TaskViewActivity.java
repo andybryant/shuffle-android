@@ -39,8 +39,8 @@ import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.core.listener.NavigationListener;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
-import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
 import org.dodgybits.shuffle.android.view.fragment.TaskViewFragment;
+import roboguice.activity.RoboActionBarActivity;
 
 /**
  * A generic activity for viewing a task.

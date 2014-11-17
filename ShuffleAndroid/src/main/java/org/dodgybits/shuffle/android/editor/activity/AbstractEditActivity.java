@@ -6,7 +6,7 @@ import android.support.v7.app.ActionBar;
 import android.util.Log;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.editor.fragment.AbstractEditFragment;
-import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
+import roboguice.activity.RoboActionBarActivity;
 
 public abstract class AbstractEditActivity extends RoboActionBarActivity {
     private static final String TAG = "AbstractEditActivity";

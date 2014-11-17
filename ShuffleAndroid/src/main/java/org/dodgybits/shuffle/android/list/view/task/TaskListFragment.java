@@ -7,8 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.util.Log;
@@ -17,23 +15,18 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.activity.MainActivity;
 import org.dodgybits.shuffle.android.core.event.LoadTaskFragmentEvent;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
-import org.dodgybits.shuffle.android.core.util.IntentUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.MainView;
-import org.dodgybits.shuffle.android.core.view.TaskListCallbacks;
-import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.*;
-import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.QuickAddController;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
-import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
+import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboListFragment;
@@ -98,8 +91,6 @@ public class TaskListFragment extends RoboListFragment
 
     private TaskListContext mListContext;
 
-    private MainActivity mActivity;
-
     /**
      * If <code>true</code>, we have restored (or attempted to restore) the list's scroll position
      * from when we were last on this conversation list.
@@ -154,8 +145,6 @@ public class TaskListFragment extends RoboListFragment
             // Fragment doesn't have this method.  Call it manually.
             restoreInstanceState(savedInstanceState);
         }
-
-        mActivity = (MainActivity) getActivity();
 
         updateCursor();
     }

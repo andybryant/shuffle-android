@@ -24,14 +24,11 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
 import com.google.inject.Inject;
-
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.persistence.InitialDataGenerator;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
-import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
-
+import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
 public class WelcomeActivity extends RoboActionBarActivity {

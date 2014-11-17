@@ -25,8 +25,8 @@ import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
 import org.dodgybits.shuffle.android.list.view.QuickAddController;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
-import org.dodgybits.shuffle.android.roboguice.RoboActionBarActivity;
 
+import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboListFragment;
