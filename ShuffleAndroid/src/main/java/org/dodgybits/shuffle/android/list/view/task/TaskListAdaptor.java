@@ -90,12 +90,15 @@ public class TaskListAdaptor extends CursorAdapter {
     }
 
     public void loadState(Bundle savedInstanceState) {
-        Set<Long> checkedSet = getSelectedSet();
-        checkedSet.clear();
-        for (long l: savedInstanceState.getLongArray(STATE_CHECKED_ITEMS)) {
-            checkedSet.add(l);
+        if (savedInstanceState.containsKey(STATE_CHECKED_ITEMS)) {
+            long[] checkedIds = savedInstanceState.getLongArray(STATE_CHECKED_ITEMS);
+            Set<Long> checkedSet = getSelectedSet();
+            checkedSet.clear();
+            for (long l : checkedIds) {
+                checkedSet.add(l);
+            }
         }
-        mProjectNameVisible = savedInstanceState.getBoolean(SHOW_PROJECT_NAMES);
+        mProjectNameVisible = savedInstanceState.getBoolean(SHOW_PROJECT_NAMES, false);
         notifyDataSetChanged();
     }
 

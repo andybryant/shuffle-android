@@ -15,16 +15,12 @@
  */
 package org.dodgybits.shuffle.android.view.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,20 +31,20 @@ import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
 import org.dodgybits.shuffle.android.core.event.LoadTaskFragmentEvent;
+import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.core.listener.NavigationListener;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.encoding.TaskEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
-import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
+import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.list.event.ViewContextEvent;
 import org.dodgybits.shuffle.android.list.event.ViewProjectEvent;
 import org.dodgybits.shuffle.android.list.event.ViewTaskSearchResultsEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
-import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
@@ -58,8 +54,6 @@ public class TaskPagerFragment extends RoboFragment {
 
     public static final String INITIAL_POSITION = "selectedIndex";
     public static final String TASK_LIST_CONTEXT = "taskListContext";
-
-    private static final int LOADER_ID_TASK_LIST_LOADER = 1;
 
     @Inject
     TaskPersister mPersister;
@@ -85,7 +79,20 @@ public class TaskPagerFragment extends RoboFragment {
 
     TaskListContext mListContext;
 
+    int mPosition = 0;
+
+    public TaskPagerFragment() {
+        Log.d(TAG, "Created " + this);
+    }
+
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        loadConfiguration(savedInstanceState);
+    }
+
+        @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
@@ -98,7 +105,25 @@ public class TaskPagerFragment extends RoboFragment {
 
         mPager = (ViewPager)getActivity().findViewById(R.id.pager);
 
+        loadConfiguration(savedInstanceState);
         updateCursor();
+    }
+
+    private void loadConfiguration(Bundle savedInstanceState) {
+        Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
+        mListContext = bundle.getParcelable(TASK_LIST_CONTEXT);
+        mPosition = bundle.getInt(INITIAL_POSITION, 0);
+    }
+
+    public void onViewUpdate(@Observes MainViewUpdateEvent event) {
+        TaskListContext newListContext = TaskListContext.create(event.getMainView());
+        if (!ObjectUtils.equals(mListContext, newListContext)) {
+            mListContext = newListContext;
+        }
+        mPosition = event.getMainView().getSelectedIndex();
+        if (mPager != null) {
+            mPager.setCurrentItem(mPosition);
+        }
     }
 
     @Override
@@ -106,16 +131,16 @@ public class TaskPagerFragment extends RoboFragment {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // app icon in action bar clicked; go home
-                ListQuery listQuery = getListContext().getListQuery();
+                ListQuery listQuery = mListContext.getListQuery();
                 switch (listQuery) {
                     case project:
-                        mEventManager.fire(new ViewProjectEvent(getListContext().getEntityId()));
+                        mEventManager.fire(new ViewProjectEvent(mListContext.getEntityId()));
                         break;
                     case context:
-                        mEventManager.fire(new ViewContextEvent(getListContext().getEntityId()));
+                        mEventManager.fire(new ViewContextEvent(mListContext.getEntityId()));
                         break;
                     case search:
-                        mEventManager.fire(new ViewTaskSearchResultsEvent(getListContext().getSearchQuery()));
+                        mEventManager.fire(new ViewTaskSearchResultsEvent(mListContext.getSearchQuery()));
                         break;
                     default:
                         Intent intent = new Intent(getActivity(), MainActivity.class);
@@ -134,16 +159,9 @@ public class TaskPagerFragment extends RoboFragment {
     public void onCursorLoaded(@Observes LoadTaskFragmentEvent event) {
         updateCursor();
     }
-
-    private TaskListContext getListContext() {
-        if (mListContext == null) {
-            mListContext = getActivity().getIntent().getParcelableExtra(TASK_LIST_CONTEXT);
-        }
-        return mListContext;
-    }
-
+    
     private void updateCursor() {
-        Log.d(TAG, "Swapping cursor");
+        Log.d(TAG, "Swapping cursor " + this);
         // Update the list
 
         if (getActivity() == null) {
@@ -153,10 +171,9 @@ public class TaskPagerFragment extends RoboFragment {
 
         Cursor cursor = mCursorProvider.getCursor();
         if (cursor != null) {
-            int initialPosition = getArguments().getInt(INITIAL_POSITION, 0);
             mAdapter = new MyAdapter(getActivity().getSupportFragmentManager(), cursor);
             mPager.setAdapter(mAdapter);
-            mPager.setCurrentItem(initialPosition);
+            mPager.setCurrentItem(mPosition);
         }
     }
 

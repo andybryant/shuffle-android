@@ -172,7 +172,7 @@ public class ProjectTaskListsActivity extends RoboActionBarActivity {
             TaskListContext listContext = TaskListContext.createForProject(projectId);
             TaskListFragment fragment = mTaskListFragmentProvider.get(ProjectTaskListsActivity.this);
             Bundle args = new Bundle();
-            args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, listContext);
+            args.putParcelable(TaskListFragment.TASK_LIST_CONTEXT, listContext);
             fragment.setArguments(args);
             return fragment;
         }

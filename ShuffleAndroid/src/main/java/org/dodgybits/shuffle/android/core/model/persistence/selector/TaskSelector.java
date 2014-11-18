@@ -314,7 +314,36 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
                 mListQuery, mProjectId, mContextId, mComplete,
                 mSortOrder, mActive, mDeleted, mPending, mSearchQuery);
     }
-    
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TaskSelector that = (TaskSelector) o;
+
+        if (mComplete != that.mComplete) return false;
+        if (!mContextId.equals(that.mContextId)) return false;
+        if (mListQuery != that.mListQuery) return false;
+        if (mPending != that.mPending) return false;
+        if (!mProjectId.equals(that.mProjectId)) return false;
+        if (mSearchQuery != null ? !mSearchQuery.equals(that.mSearchQuery) : that.mSearchQuery != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = mListQuery.hashCode();
+        result = 31 * result + mProjectId.hashCode();
+        result = 31 * result + mContextId.hashCode();
+        result = 31 * result + mComplete.hashCode();
+        result = 31 * result + mPending.hashCode();
+        result = 31 * result + (mSearchQuery != null ? mSearchQuery.hashCode() : 0);
+        return result;
+    }
+
     public static Builder newBuilder() {
         return Builder.create();
     }

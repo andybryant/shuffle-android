@@ -28,7 +28,6 @@ import org.dodgybits.shuffle.android.view.fragment.TaskPagerFragment;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
-import roboguice.inject.ContextScopedProvider;
 
 public class MainActivity extends RoboActionBarActivity {
     private static final String TAG = "MainActivity";
@@ -47,11 +46,11 @@ public class MainActivity extends RoboActionBarActivity {
     @Inject
     private EventManager mEventManager;
 
-    @Inject
-    ContextScopedProvider<TaskListFragment> mTaskListFragmentProvider;
-
-    @Inject
-    ContextScopedProvider<TaskPagerFragment> mTaskPagerFragmentProvider;
+//    @Inject
+//    ContextScopedProvider<TaskListFragment> mTaskListFragmentProvider;
+//
+//    @Inject
+//    ContextScopedProvider<TaskPagerFragment> mTaskPagerFragmentProvider;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -194,38 +193,42 @@ public class MainActivity extends RoboActionBarActivity {
     }
 
     private void addTaskList(TaskListContext listContext) {
-        TaskListFragment fragment = mTaskListFragmentProvider.get(this);
-        Bundle args = new Bundle();
-        args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, listContext);
-        fragment.setArguments(args);
+        TaskListFragment fragment = getTaskListFragment();
+        if (fragment == null) {
+            fragment = new TaskListFragment();
+            Bundle args = new Bundle();
+            args.putParcelable(TaskListFragment.TASK_LIST_CONTEXT, listContext);
+            fragment.setArguments(args);
 
-        // TODO make fragment support updating listContext?
-
-        FragmentTransaction fragmentTransaction =
-                getSupportFragmentManager().beginTransaction();
-        // Use cross fading animation.
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragmentTransaction.replace(R.id.entity_list_pane, fragment,
-                TAG_TASK_LIST);
-        fragmentTransaction.commitAllowingStateLoss();
+            FragmentTransaction fragmentTransaction =
+                    getSupportFragmentManager().beginTransaction();
+            // Use cross fading animation.
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.replace(R.id.entity_list_pane, fragment,
+                    TAG_TASK_LIST);
+            fragmentTransaction.commitAllowingStateLoss();
+        }
     }
 
     private void addTaskView(TaskListContext listContext) {
-        TaskPagerFragment fragment = mTaskPagerFragmentProvider.get(this);
-        Bundle args = new Bundle();
-        args.putParcelable(TaskPagerFragment.TASK_LIST_CONTEXT, listContext);
-        args.putInt(TaskPagerFragment.INITIAL_POSITION, mMainView.getSelectedIndex());
-        fragment.setArguments(args);
+        TaskPagerFragment fragment = getTaskPagerFragment() ;
+        if (fragment == null) {
+            fragment = new TaskPagerFragment();
+            Bundle args = new Bundle();
+            args.putParcelable(TaskPagerFragment.TASK_LIST_CONTEXT, listContext);
+            args.putInt(TaskPagerFragment.INITIAL_POSITION, mMainView.getSelectedIndex());
+            fragment.setArguments(args);
 
-        Log.d(TAG, "Creating task pager " + fragment);
+            Log.d(TAG, "Creating task pager " + fragment);
 
-        FragmentTransaction fragmentTransaction =
-                getSupportFragmentManager().beginTransaction();
-        // Use cross fading animation.
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragmentTransaction.replace(R.id.task_pane, fragment,
-                TAG_TASK_ITEM);
-        fragmentTransaction.commitAllowingStateLoss();
+            FragmentTransaction fragmentTransaction =
+                    getSupportFragmentManager().beginTransaction();
+            // Use cross fading animation.
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.replace(R.id.task_pane, fragment,
+                    TAG_TASK_ITEM);
+            fragmentTransaction.commitAllowingStateLoss();
+        }
     }
 
     /**
@@ -243,6 +246,14 @@ public class MainActivity extends RoboActionBarActivity {
         final Fragment fragment = getSupportFragmentManager().findFragmentByTag(TAG_TASK_LIST);
         if (isValidFragment(fragment)) {
             return (TaskListFragment) fragment;
+        }
+        return null;
+    }
+
+    protected TaskPagerFragment getTaskPagerFragment() {
+        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(TAG_TASK_ITEM);
+        if (isValidFragment(fragment)) {
+            return (TaskPagerFragment) fragment;
         }
         return null;
     }

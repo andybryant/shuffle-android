@@ -109,7 +109,7 @@ public class TaskSearchResultsActivity extends RoboActionBarActivity {
         if (fragment == null) {
             TaskListContext taskListContext = TaskListContext.createForSearch(query);
             Bundle args = new Bundle();
-            args.putParcelable(TaskListFragment.ARG_LIST_CONTEXT, taskListContext);
+            args.putParcelable(TaskListFragment.TASK_LIST_CONTEXT, taskListContext);
             fragment = mTaskListFragmentProvider.get(this);
             fragment.setArguments(args);
 

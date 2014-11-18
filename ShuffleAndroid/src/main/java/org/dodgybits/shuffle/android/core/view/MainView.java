@@ -119,6 +119,10 @@ public class MainView {
         return mSelectedIndex;
     }
 
+    public String getSearchQuery() {
+        return mSearchQuery;
+    }
+
     /**
      * Restoring from a saved state restores only the mode.
      *

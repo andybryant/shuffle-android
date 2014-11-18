@@ -3,14 +3,15 @@ package org.dodgybits.shuffle.android.list.view.task;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
+import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.list.event.*;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
@@ -18,6 +19,7 @@ import org.dodgybits.shuffle.android.list.model.ListTitles;
 import org.dodgybits.shuffle.android.preference.model.ListSettings;
 
 public class TaskListContext implements Parcelable {
+    @NonNull
     protected TaskSelector mSelector;
     protected int mTitleId;
     private boolean mProjectNameVisible = true;
@@ -54,6 +56,18 @@ public class TaskListContext implements Parcelable {
         TaskSelector selector = TaskSelector.newBuilder().setListQuery(ListQuery.search).
                 setSearchQuery(query).build();
         return create(selector);
+    }
+
+    public static final TaskListContext create(MainView mainView) {
+        TaskSelector.Builder builder = TaskSelector.newBuilder()
+                .setListQuery(mainView.getListQuery())
+                .setSearchQuery(mainView.getSearchQuery());
+        if (mainView.getListQuery() == ListQuery.project) {
+            builder.setProjectId(mainView.getEntityId());
+        } else if (mainView.getListQuery() == ListQuery.context) {
+            builder.setContextId(mainView.getEntityId());
+        }
+        return create(builder.build());
     }
 
     public static final TaskListContext create(ListQuery query) {
@@ -266,5 +280,22 @@ public class TaskListContext implements Parcelable {
                 throw new UnsupportedOperationException("Cannot create delete event for listContext " + this);
         }
         return event;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TaskListContext that = (TaskListContext) o;
+
+        if (!mSelector.equals(that.mSelector)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return mSelector.hashCode();
     }
 }

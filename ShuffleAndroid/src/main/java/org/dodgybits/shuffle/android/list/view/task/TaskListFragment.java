@@ -21,6 +21,7 @@ import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
+import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.list.event.*;
@@ -38,7 +39,7 @@ public class TaskListFragment extends RoboListFragment
     private static final String TAG = "TaskListFragment"; 
     
     /** Argument name(s) */
-    public static final String ARG_LIST_CONTEXT = "listContext";
+    public static final String TASK_LIST_CONTEXT = "listContext";
 
     private static final String BUNDLE_LIST_STATE = "taskListFragment.state.listState";
     private static final String BUNDLE_KEY_SELECTED_TASK_ID
@@ -97,28 +98,13 @@ public class TaskListFragment extends RoboListFragment
      */
     private boolean mScrollPositionRestored = false;
 
-
-    private void initializeArgCache() {
-        if (mListContext != null) return;
-        mListContext = getArguments().getParcelable(ARG_LIST_CONTEXT);
-        mShowMoveActions = mListContext.showMoveActions();
+    public TaskListFragment() {
+        Log.d(TAG, "Created " + this);
     }
+
 
     protected RoboActionBarActivity getRoboActionBarActivity() {
         return (RoboActionBarActivity)getActivity();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        Log.d(TAG, "onCreate with context " + getListContext());
-
-        setHasOptionsMenu(true);
-
-        mListAdapter.setProjectNameVisible(mListContext.isProjectNameVisible());
-        mListAdapter.setCallback(this);
-        mIsFirstLoad = true;
     }
 
     @Override
@@ -134,6 +120,14 @@ public class TaskListFragment extends RoboListFragment
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, "+onActivityCreated");
 
+        loadConfiguration(savedInstanceState);
+
+        setHasOptionsMenu(true);
+
+        mListAdapter.setProjectNameVisible(mListContext.isProjectNameVisible());
+        mListAdapter.setCallback(this);
+        mIsFirstLoad = true;
+
         final ListView lv = getListView();
         lv.setOnItemLongClickListener(this);
         lv.setItemsCanFocus(false);
@@ -141,12 +135,15 @@ public class TaskListFragment extends RoboListFragment
 
         setEmptyText(getString(R.string.no_tasks));
 
-        if (savedInstanceState != null) {
-            // Fragment doesn't have this method.  Call it manually.
-            restoreInstanceState(savedInstanceState);
-        }
-
         updateCursor();
+    }
+
+    private void loadConfiguration(Bundle savedInstanceState) {
+        Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
+        mListContext = bundle.getParcelable(TASK_LIST_CONTEXT);
+        mShowMoveActions = mListContext.showMoveActions();
+        mListAdapter.loadState(bundle);
+        mSelectedTaskId = bundle.getLong(BUNDLE_KEY_SELECTED_TASK_ID);
     }
 
     @Override
@@ -228,6 +225,13 @@ public class TaskListFragment extends RoboListFragment
         updateSelectionMode();
     }
 
+    public void onViewUpdate(@Observes MainViewUpdateEvent event) {
+        TaskListContext newListContext = TaskListContext.create(event.getMainView());
+        if (!ObjectUtils.equals(mListContext, newListContext)) {
+            mListContext = newListContext;
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -236,11 +240,7 @@ public class TaskListFragment extends RoboListFragment
             outState.putParcelable(BUNDLE_LIST_STATE, getListView().onSaveInstanceState());
         }
         outState.putLong(BUNDLE_KEY_SELECTED_TASK_ID, mSelectedTaskId);
-    }
-
-    public void restoreInstanceState(Bundle savedInstanceState) {
-        mListAdapter.loadState(savedInstanceState);
-        mSelectedTaskId = savedInstanceState.getLong(BUNDLE_KEY_SELECTED_TASK_ID);
+        outState.putParcelable(TASK_LIST_CONTEXT, mListContext);
     }
 
     @Override
@@ -334,7 +334,7 @@ public class TaskListFragment extends RoboListFragment
     }
 
     private void updateCursor() {
-        Log.d(TAG, "Swapping cursor");
+        Log.d(TAG, "Swapping cursor " + this);
         // Update the list
         mListAdapter.swapCursor(mCursorProvider.getCursor());
         setListAdapter(mListAdapter);
@@ -370,12 +370,10 @@ public class TaskListFragment extends RoboListFragment
 
 
     public TaskListContext getListContext() {
-        initializeArgCache();
         return mListContext;
     }
 
     private boolean showMoveActions() {
-        initializeArgCache();
         return mShowMoveActions;
     }
 
@@ -606,7 +604,7 @@ public class TaskListFragment extends RoboListFragment
 }
 
     /**
-     * Highlight the selected message.
+     * Highlight the selected task.
      */
     private void highlightSelectedMessage(boolean ensureSelectionVisible) {
         if (!isViewCreated()) {
@@ -615,7 +613,7 @@ public class TaskListFragment extends RoboListFragment
 
         final ListView lv = getListView();
         if (mSelectedTaskId == -1) {
-            // No message selected
+            // No task selected
             lv.clearChoices();
             return;
         }
