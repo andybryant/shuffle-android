@@ -110,9 +110,11 @@ public class TaskPagerFragment extends RoboFragment {
     }
 
     private void loadConfiguration(Bundle savedInstanceState) {
-        Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
-        mListContext = bundle.getParcelable(TASK_LIST_CONTEXT);
-        mPosition = bundle.getInt(INITIAL_POSITION, 0);
+        if (mListContext == null) {
+            Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
+            mListContext = bundle.getParcelable(TASK_LIST_CONTEXT);
+            mPosition = bundle.getInt(INITIAL_POSITION, 0);
+        }
     }
 
     public void onViewUpdate(@Observes MainViewUpdateEvent event) {

@@ -29,6 +29,7 @@ import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
 import roboguice.event.EventManager;
+import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
 
 ;
@@ -42,7 +43,7 @@ public class NavigationDrawerFragment extends RoboFragment {
     private static final String TAG = "HomeListFragment";
     private static final String[] PROJECTION = new String[]{"_id"};
 
-    private static final String POSITION = "position";
+    private static final String POSITION = "NavigationDrawerFragment.position";
 
     private static IconNameCountListAdaptor.ListItem<HomeEntry>[] sListItems = null;
 
@@ -70,6 +71,12 @@ public class NavigationDrawerFragment extends RoboFragment {
     private AsyncTask<?, ?, ?> mTask;
 
     private IconNameCountListAdaptor mAdaptor;
+
+    private MainView mMainView;
+
+    public void onViewChange(@Observes MainViewUpdateEvent event) {
+        mMainView = event.getMainView();
+    }
 
     private void createListItems() {
         if (sListItems == null) {
@@ -282,8 +289,10 @@ public class NavigationDrawerFragment extends RoboFragment {
 
         if (sListItems != null && position >= 0 && position < sListItems.length) {
             IconNameCountListAdaptor.ListItem<HomeEntry> listItem = sListItems[position];
-            MainView mainView = MainView.createView(listItem.getPayload().mListQuery);
-            mEventManager.fire(new MainViewUpdateEvent(mainView));
+            if (mMainView != null && mMainView.getListQuery() != listItem.getPayload().mListQuery) {
+                MainView mainView = MainView.createView(listItem.getPayload().mListQuery);
+                mEventManager.fire(new MainViewUpdateEvent(mainView));
+            }
         }
     }
 

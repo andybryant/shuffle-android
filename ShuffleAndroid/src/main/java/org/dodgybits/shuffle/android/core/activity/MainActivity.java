@@ -3,6 +3,7 @@ package org.dodgybits.shuffle.android.core.activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -45,12 +46,6 @@ public class MainActivity extends RoboActionBarActivity {
 
     @Inject
     private EventManager mEventManager;
-
-//    @Inject
-//    ContextScopedProvider<TaskListFragment> mTaskListFragmentProvider;
-//
-//    @Inject
-//    ContextScopedProvider<TaskPagerFragment> mTaskPagerFragmentProvider;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -158,6 +153,13 @@ public class MainActivity extends RoboActionBarActivity {
         }
 
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        mMainView = MainView.handleRestore(savedInstanceState);
+
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     private void restoreActionBar() {
