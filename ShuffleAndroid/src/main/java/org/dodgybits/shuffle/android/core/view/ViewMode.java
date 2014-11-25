@@ -23,10 +23,6 @@ package org.dodgybits.shuffle.android.core.view;
 public enum ViewMode {
 
     /**
-     * Uncertain mode. The mode has not been initialized.
-     */
-    UNKNOWN,
-    /**
      * Mode when showing a single task.
      */
     TASK,

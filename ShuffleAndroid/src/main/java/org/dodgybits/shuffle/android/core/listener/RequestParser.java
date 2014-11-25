@@ -25,9 +25,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import com.google.inject.Inject;
+import org.dodgybits.shuffle.android.core.activity.MainActivity;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
@@ -68,7 +70,7 @@ public class RequestParser {
         } else if (intent != null) {
             handleIntent(intent);
         } else {
-            MainView mainView = MainView.createView(ListQuery.inbox);
+            MainView mainView = MainView.newBuilder().build();
             Log.d(TAG, "IN onCreate - no saved state or intent. defaulting to=" + mainView);
             mEventManager.fire(new MainViewUpdateEvent(mainView));
         }
@@ -85,7 +87,7 @@ public class RequestParser {
             return;
         }
 
-        MainView mainView = MainView.handleRestore(inState);
+        MainView mainView = inState.getParcelable(MainActivity.MAIN_VIEW_KEY);
         Log.d(TAG, "IN handleRestore. mainView=" + mainView);
         mEventManager.fire(new MainViewUpdateEvent(mainView));
     }
@@ -104,28 +106,33 @@ public class RequestParser {
         Uri uri = intent.getData();
         Log.d(TAG, "IN handleIntent. action=" + intent.getAction() + " data=" + uri);
 
-        // default to inbox
-        MainView mainView = MainView.createView(ListQuery.inbox);
+        MainView.Builder builder = MainView.newBuilder();
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             final String query = intent.getStringExtra(SearchManager.QUERY);
 //            if (shouldEnterSearchTaskMode()) {
 //               mainView = MainView.createSearchListItem(query, taskId);
 //            } else {
-            mainView = MainView.createSearchList(query);
+            builder.setViewMode(ViewMode.SEARCH_RESULTS_LIST)
+                    .setSearchQuery(query)
+                    .setListQuery(ListQuery.search);
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             String queryName = intent.getStringExtra(MainView.QUERY_NAME);
             if (queryName != null) {
                 ListQuery query = ListQuery.valueOf(queryName);
-                mainView = MainView.createView(query);
+                builder.setListQuery(query).listView();
             } else if (uri != null) {
                 int match = sUriMatcher.match(uri);
                 if (match == CONTEXT) {
                     long contextId = ContentUris.parseId(uri);
-                    mainView = MainView.createContextTaskList(Id.create(contextId));
+                    builder.setListQuery(ListQuery.context)
+                            .setViewMode(ViewMode.CONTEXT_LIST)
+                            .setEntityId(Id.create(contextId));
                 } else if (match == PROJECT) {
                     long projectId = ContentUris.parseId(uri);
-                    mainView = MainView.createProjectTaskList(Id.create(projectId));
+                    builder.setListQuery(ListQuery.project)
+                            .setViewMode(ViewMode.PROJECT_LIST)
+                            .setEntityId(Id.create(projectId));
                 } else {
                     Log.e(TAG, "Unexpected intent uri" + uri);
                 }
@@ -134,7 +141,7 @@ public class RequestParser {
             Log.e(TAG, "Unexpected intent" + intent);
         }
 
-        mEventManager.fire(new MainViewUpdateEvent(mainView));
+        mEventManager.fire(new MainViewUpdateEvent(builder.build()));
     }
 
 }

@@ -171,9 +171,6 @@ public class ContextTaskListsActivity extends RoboActionBarActivity {
             Id contextId = mPersister.read(mCursor).getLocalId();
             TaskListContext listContext = TaskListContext.createForContext(contextId);
             TaskListFragment fragment = mTaskListFragmentProvider.get(ContextTaskListsActivity.this);
-            Bundle args = new Bundle();
-            args.putParcelable(TaskListFragment.TASK_LIST_CONTEXT, listContext);
-            fragment.setArguments(args);
             return fragment;
         }
 

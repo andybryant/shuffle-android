@@ -107,11 +107,7 @@ public class TaskSearchResultsActivity extends RoboActionBarActivity {
     private void showResults(String query) {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.container);
         if (fragment == null) {
-            TaskListContext taskListContext = TaskListContext.createForSearch(query);
-            Bundle args = new Bundle();
-            args.putParcelable(TaskListFragment.TASK_LIST_CONTEXT, taskListContext);
             fragment = mTaskListFragmentProvider.get(this);
-            fragment.setArguments(args);
 
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.container, fragment);

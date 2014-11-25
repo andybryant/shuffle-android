@@ -21,6 +21,7 @@ import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
+import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.ContextSelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.EntitySelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.ProjectSelector;
@@ -55,6 +56,9 @@ public class NavigationDrawerFragment extends RoboFragment {
 
     @Inject
     private EventManager mEventManager;
+
+    @Inject
+    private MainViewProvider mMainViewProvider;
 
     /**
      * Helper component that ties the action bar to the navigation drawer.
@@ -120,6 +124,8 @@ public class NavigationDrawerFragment extends RoboFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mMainView = mMainViewProvider.getMainView();
 
         // Read in the flag indicating whether or not the user has demonstrated awareness of the
         // drawer. See PREF_USER_LEARNED_DRAWER for details.
@@ -289,8 +295,9 @@ public class NavigationDrawerFragment extends RoboFragment {
 
         if (sListItems != null && position >= 0 && position < sListItems.length) {
             IconNameCountListAdaptor.ListItem<HomeEntry> listItem = sListItems[position];
-            if (mMainView != null && mMainView.getListQuery() != listItem.getPayload().mListQuery) {
-                MainView mainView = MainView.createView(listItem.getPayload().mListQuery);
+            ListQuery listQuery = listItem.getPayload().mListQuery;
+            if (mMainView != null && mMainView.getListQuery() != listQuery) {
+                MainView mainView = MainView.newBuilder().setListQuery(listQuery).listView().build();
                 mEventManager.fire(new MainViewUpdateEvent(mainView));
             }
         }

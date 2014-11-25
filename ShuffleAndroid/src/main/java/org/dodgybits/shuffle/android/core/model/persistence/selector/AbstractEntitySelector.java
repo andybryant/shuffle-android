@@ -109,8 +109,10 @@ public abstract class AbstractEntitySelector<E extends EntitySelector<E>> implem
             }
             E returnMe = mResult;
             mResult = null;
-            
-            Log.d(cTag,returnMe.toString());
+
+            if (Log.isLoggable(cTag, Log.DEBUG)) {
+                Log.d(cTag, returnMe.toString());
+            }
             return returnMe;
         }
 

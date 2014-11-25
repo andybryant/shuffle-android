@@ -15,7 +15,6 @@
  */
 package org.dodgybits.shuffle.android.view.fragment;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,31 +28,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.activity.MainActivity;
 import org.dodgybits.shuffle.android.core.event.LoadTaskFragmentEvent;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
+import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
 import org.dodgybits.shuffle.android.core.listener.NavigationListener;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.encoding.TaskEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
-import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.view.MainView;
-import org.dodgybits.shuffle.android.list.event.ViewContextEvent;
-import org.dodgybits.shuffle.android.list.event.ViewProjectEvent;
-import org.dodgybits.shuffle.android.list.event.ViewTaskSearchResultsEvent;
-import org.dodgybits.shuffle.android.list.model.ListQuery;
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
 
-public class TaskPagerFragment extends RoboFragment {
-    private static final String TAG = "TaskPagerFragment";
 
-    public static final String INITIAL_POSITION = "selectedIndex";
-    public static final String TASK_LIST_CONTEXT = "taskListContext";
+
+public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageChangeListener {
+    private static final String TAG = "TaskPagerFragment";
 
     @Inject
     TaskPersister mPersister;
@@ -73,26 +65,16 @@ public class TaskPagerFragment extends RoboFragment {
     @Inject
     private CursorProvider mCursorProvider;
 
+    @Inject
+    private MainViewProvider mMainViewProvider;
+
     MyAdapter mAdapter;
 
     ViewPager mPager;
 
-    TaskListContext mListContext;
-
-    int mPosition = 0;
-
-    public TaskPagerFragment() {
-        Log.d(TAG, "Created " + this);
-    }
+    MainView mMainView;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        loadConfiguration(savedInstanceState);
-    }
-
-        @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
@@ -104,54 +86,30 @@ public class TaskPagerFragment extends RoboFragment {
         super.onActivityCreated(savedInstanceState);
 
         mPager = (ViewPager)getActivity().findViewById(R.id.pager);
+        mPager.setOnPageChangeListener(this);
 
-        loadConfiguration(savedInstanceState);
+        onViewUpdate(mMainViewProvider.getMainView());
         updateCursor();
     }
 
-    private void loadConfiguration(Bundle savedInstanceState) {
-        if (mListContext == null) {
-            Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
-            mListContext = bundle.getParcelable(TASK_LIST_CONTEXT);
-            mPosition = bundle.getInt(INITIAL_POSITION, 0);
-        }
+    public void onViewUpdate(@Observes MainViewUpdateEvent event) {
+        onViewUpdate(event.getMainView());
     }
 
-    public void onViewUpdate(@Observes MainViewUpdateEvent event) {
-        TaskListContext newListContext = TaskListContext.create(event.getMainView());
-        if (!ObjectUtils.equals(mListContext, newListContext)) {
-            mListContext = newListContext;
-        }
-        mPosition = event.getMainView().getSelectedIndex();
+    private void onViewUpdate(MainView mainView) {
+        mMainView = mainView;
         if (mPager != null) {
-            mPager.setCurrentItem(mPosition);
+            mPager.setCurrentItem(mMainView.getSelectedIndex());
         }
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // app icon in action bar clicked; go home
-                ListQuery listQuery = mListContext.getListQuery();
-                switch (listQuery) {
-                    case project:
-                        mEventManager.fire(new ViewProjectEvent(mListContext.getEntityId()));
-                        break;
-                    case context:
-                        mEventManager.fire(new ViewContextEvent(mListContext.getEntityId()));
-                        break;
-                    case search:
-                        mEventManager.fire(new ViewTaskSearchResultsEvent(mListContext.getSearchQuery()));
-                        break;
-                    default:
-                        Intent intent = new Intent(getActivity(), MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(MainView.QUERY_NAME, listQuery.name());
-                        startActivity(intent);
-                        break;
-                }
-                getActivity().finish();
+                MainView parentView = mMainView.builderFrom().listView().build();
+                mEventManager.fire(new MainViewUpdateEvent(parentView));
                 return true;
         }
 
@@ -164,7 +122,6 @@ public class TaskPagerFragment extends RoboFragment {
     
     private void updateCursor() {
         Log.d(TAG, "Swapping cursor " + this);
-        // Update the list
 
         if (getActivity() == null) {
             Log.wtf(TAG, "Activity not set on " + this);
@@ -172,11 +129,31 @@ public class TaskPagerFragment extends RoboFragment {
         }
 
         Cursor cursor = mCursorProvider.getCursor();
-        if (cursor != null) {
+        if (cursor != null && mMainView != null) {
             mAdapter = new MyAdapter(getActivity().getSupportFragmentManager(), cursor);
             mPager.setAdapter(mAdapter);
-            mPager.setCurrentItem(mPosition);
+            mPager.setCurrentItem(mMainView.getSelectedIndex());
+
         }
+    }
+
+    @Override
+    public void onPageScrolled(int i, float v, int i1) {
+
+    }
+
+    @Override
+    public void onPageSelected(int newIndex) {
+        if (mMainView.getSelectedIndex() != newIndex) {
+            Log.d(TAG, "View changed from " + mMainView.getSelectedIndex() + " to " + newIndex);
+            MainView newView = mMainView.builderFrom().setSelectedIndex(newIndex).build();
+            mEventManager.fire(new MainViewUpdateEvent(newView));
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int i) {
+
     }
 
     public class MyAdapter extends FragmentPagerAdapter {
@@ -193,6 +170,7 @@ public class TaskPagerFragment extends RoboFragment {
         public int getCount() {
             return mCursor.getCount();
         }
+
 
         @Override
         public Fragment getItem(int position) {

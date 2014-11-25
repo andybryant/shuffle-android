@@ -3,7 +3,6 @@ package org.dodgybits.shuffle.android.core.activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -35,7 +34,9 @@ public class MainActivity extends RoboActionBarActivity {
 
     private static final int WHATS_NEW_DIALOG = 5000;
 
-    /** Tag used when loading a task list fragment. */
+    public static final String MAIN_VIEW_KEY = "MainActivity.mainView";
+
+    /** Tags used when loading fragments. */
     public static final String TAG_TASK_LIST = "tag-task-list";
     public static final String TAG_TASK_ITEM = "tag-task-item";
 
@@ -148,18 +149,9 @@ public class MainActivity extends RoboActionBarActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (mMainView != null) {
-            mMainView.handleSaveInstanceState(outState);
-        }
+        outState.putParcelable(MAIN_VIEW_KEY, mMainView);
 
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        mMainView = MainView.handleRestore(savedInstanceState);
-
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     private void restoreActionBar() {
@@ -198,9 +190,7 @@ public class MainActivity extends RoboActionBarActivity {
         TaskListFragment fragment = getTaskListFragment();
         if (fragment == null) {
             fragment = new TaskListFragment();
-            Bundle args = new Bundle();
-            args.putParcelable(TaskListFragment.TASK_LIST_CONTEXT, listContext);
-            fragment.setArguments(args);
+            Log.d(TAG, "Creating task list fragment " + fragment);
 
             FragmentTransaction fragmentTransaction =
                     getSupportFragmentManager().beginTransaction();
@@ -216,11 +206,6 @@ public class MainActivity extends RoboActionBarActivity {
         TaskPagerFragment fragment = getTaskPagerFragment() ;
         if (fragment == null) {
             fragment = new TaskPagerFragment();
-            Bundle args = new Bundle();
-            args.putParcelable(TaskPagerFragment.TASK_LIST_CONTEXT, listContext);
-            args.putInt(TaskPagerFragment.INITIAL_POSITION, mMainView.getSelectedIndex());
-            fragment.setArguments(args);
-
             Log.d(TAG, "Creating task pager " + fragment);
 
             FragmentTransaction fragmentTransaction =
@@ -269,8 +254,4 @@ public class MainActivity extends RoboActionBarActivity {
         return !(in == null || in.getActivity() == null || in.getView() == null);
     }
 
-
-
-
 }
-

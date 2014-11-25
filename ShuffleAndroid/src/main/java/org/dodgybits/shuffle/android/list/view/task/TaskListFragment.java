@@ -18,12 +18,14 @@ import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.LoadTaskFragmentEvent;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
+import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.*;
 import org.dodgybits.shuffle.android.list.view.QuickAddController;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
@@ -37,13 +39,6 @@ import java.util.Set;
 public class TaskListFragment extends RoboListFragment
         implements AdapterView.OnItemLongClickListener, TaskListAdaptor.Callback {
     private static final String TAG = "TaskListFragment"; 
-    
-    /** Argument name(s) */
-    public static final String TASK_LIST_CONTEXT = "listContext";
-
-    private static final String BUNDLE_LIST_STATE = "taskListFragment.state.listState";
-    private static final String BUNDLE_KEY_SELECTED_TASK_ID
-            = "taskListFragment.state.listState.selected_task_id";
 
     private static final String SELECTED_ITEM = "SELECTED_ITEM";
 
@@ -90,6 +85,11 @@ public class TaskListFragment extends RoboListFragment
     @Inject
     private CursorProvider mCursorProvider;
 
+    @Inject
+    private MainViewProvider mMainViewProvider;
+
+    private MainView mMainView;
+
     private TaskListContext mListContext;
 
     /**
@@ -97,11 +97,6 @@ public class TaskListFragment extends RoboListFragment
      * from when we were last on this conversation list.
      */
     private boolean mScrollPositionRestored = false;
-
-    public TaskListFragment() {
-        Log.d(TAG, "Created " + this);
-    }
-
 
     protected RoboActionBarActivity getRoboActionBarActivity() {
         return (RoboActionBarActivity)getActivity();
@@ -119,13 +114,14 @@ public class TaskListFragment extends RoboListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, "+onActivityCreated");
-
-        loadConfiguration(savedInstanceState);
-
         setHasOptionsMenu(true);
 
-        mListAdapter.setProjectNameVisible(mListContext.isProjectNameVisible());
+        if (savedInstanceState != null) {
+            mListAdapter.loadState(savedInstanceState);
+        }
+
         mListAdapter.setCallback(this);
+
         mIsFirstLoad = true;
 
         final ListView lv = getListView();
@@ -135,15 +131,8 @@ public class TaskListFragment extends RoboListFragment
 
         setEmptyText(getString(R.string.no_tasks));
 
+        onViewUpdate(mMainViewProvider.getMainView());
         updateCursor();
-    }
-
-    private void loadConfiguration(Bundle savedInstanceState) {
-        Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
-        mListContext = bundle.getParcelable(TASK_LIST_CONTEXT);
-        mShowMoveActions = mListContext.showMoveActions();
-        mListAdapter.loadState(bundle);
-        mSelectedTaskId = bundle.getLong(BUNDLE_KEY_SELECTED_TASK_ID);
     }
 
     @Override
@@ -210,7 +199,9 @@ public class TaskListFragment extends RoboListFragment
             intent.putExtras(bundle);
             getActivity().setResult(Activity.RESULT_OK, intent);
         } else {
-            MainView mainView = MainView.createTaskView(mListContext, position);
+            MainView mainView = mMainView.builderFrom()
+                    .setViewMode(ViewMode.TASK)
+                    .setSelectedIndex(position).build();
             mEventManager.fire(new MainViewUpdateEvent(mainView));
         }
     }
@@ -226,21 +217,27 @@ public class TaskListFragment extends RoboListFragment
     }
 
     public void onViewUpdate(@Observes MainViewUpdateEvent event) {
-        TaskListContext newListContext = TaskListContext.create(event.getMainView());
-        if (!ObjectUtils.equals(mListContext, newListContext)) {
-            mListContext = newListContext;
+        onViewUpdate(event.getMainView());
+    }
+
+    private void onViewUpdate(MainView mainView) {
+        if (!ObjectUtils.equals(mainView, mMainView)) {
+            mMainView = mainView;
+            mListContext = TaskListContext.create(mMainView);
+
+
+            mShowMoveActions = mListContext.showMoveActions();
+            mSelectedTaskId = mMainView.getSelectedIndex();
+            mListAdapter.setProjectNameVisible(mListContext.isProjectNameVisible());
         }
+
+
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mListAdapter.onSaveInstanceState(outState);
-        if (isViewCreated()) {
-            outState.putParcelable(BUNDLE_LIST_STATE, getListView().onSaveInstanceState());
-        }
-        outState.putLong(BUNDLE_KEY_SELECTED_TASK_ID, mSelectedTaskId);
-        outState.putParcelable(TASK_LIST_CONTEXT, mListContext);
     }
 
     @Override
@@ -334,9 +331,14 @@ public class TaskListFragment extends RoboListFragment
     }
 
     private void updateCursor() {
+        Cursor cursor = mCursorProvider.getCursor();
+        if (cursor == null) {
+            return;
+        }
+
         Log.d(TAG, "Swapping cursor " + this);
         // Update the list
-        mListAdapter.swapCursor(mCursorProvider.getCursor());
+        mListAdapter.swapCursor(cursor);
         setListAdapter(mListAdapter);
         updateSelectionMode();
 

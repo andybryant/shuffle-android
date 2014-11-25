@@ -62,15 +62,15 @@ public class TwoPaneLayout extends FrameLayout {
     private final boolean mListCollapsible;
 
     /**
-     * The current voew that the tablet layout is in.
+     * The current view that the tablet layout is in.
      */
-    private MainView mCurrentView = MainView.createView(ViewMode.UNKNOWN);
+    private MainView mCurrentView = MainView.newBuilder().build();
 
     /**
      * This mode represents the current positions of the three panes. This is split out from the
      * current mode to give context to state transitions.
      */
-    private MainView mPositionedView = MainView.createView(ViewMode.UNKNOWN);
+    private MainView mPositionedView = MainView.newBuilder().build();
 
     private boolean mIsSearchResult;
 
@@ -126,7 +126,7 @@ public class TwoPaneLayout extends FrameLayout {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // all panes start GONE in initial UNKNOWN mode to avoid drawing misplaced panes
-        mCurrentView = MainView.createView(ViewMode.UNKNOWN);
+        mCurrentView = MainView.newBuilder().build();
         mQuickAddView.setVisibility(GONE);
         mListView.setVisibility(GONE);
         mTaskView.setVisibility(GONE);
@@ -195,7 +195,7 @@ public class TwoPaneLayout extends FrameLayout {
      * @param width
      */
     private void positionPanes(int width) {
-        if (mPositionedView.equals(mCurrentView)) {
+        if (!isModeChangePending()) {
             return;
         }
 
@@ -241,6 +241,11 @@ public class TwoPaneLayout extends FrameLayout {
             // defer notifying listeners because we're in a layout pass, and they might do layout.
             post(mTransitionCompleteRunnable);
         }
+
+        // For views that are not on the screen, let's set their visibility for accessibility.
+        mQuickAddView.setVisibility(listX >= 0 ? VISIBLE : INVISIBLE);
+        mListView.setVisibility(listX >= 0 ? VISIBLE : INVISIBLE);
+        mTaskView.setVisibility(taskX < width ? VISIBLE : INVISIBLE);
 
         mPositionedView = mCurrentView;
     }
@@ -328,16 +333,15 @@ public class TwoPaneLayout extends FrameLayout {
     private void onViewChanged(MainView newView) {
         // make all initially GONE panes visible only when the view mode is first determined
         ViewMode currentMode = mCurrentView.getViewMode();
-        if (currentMode == ViewMode.UNKNOWN) {
-            mQuickAddView.setVisibility(VISIBLE);
-            mListView.setVisibility(VISIBLE);
-            mTaskView.setVisibility(VISIBLE);
-        }
 
         // detach the pager immediately from its data source (to prevent processing updates)
         if (ViewMode.isTaskMode(currentMode)) {
 //            mController.disablePagerUpdates();
         }
+
+        mQuickAddView.setVisibility(VISIBLE);
+        mListView.setVisibility(VISIBLE);
+        mTaskView.setVisibility(VISIBLE);
 
         mDrawerInitialSetupComplete = true;
         mCurrentView = newView;
