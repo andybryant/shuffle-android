@@ -20,14 +20,12 @@ import android.widget.ListView;
 import com.google.inject.Inject;
 
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.ContextListCursorLoadedEvent;
-import org.dodgybits.shuffle.android.core.event.ContextTaskCountCursorLoadedEvent;
-import org.dodgybits.shuffle.android.core.event.ReloadCountCursorEvent;
-import org.dodgybits.shuffle.android.core.event.ReloadListCursorEvent;
+import org.dodgybits.shuffle.android.core.event.*;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
+import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.list.content.ContextCursorLoader;
 import org.dodgybits.shuffle.android.list.event.EditContextEvent;
 import org.dodgybits.shuffle.android.list.event.EditListSettingsEvent;
@@ -134,7 +132,11 @@ public class ContextListFragment extends RoboListFragment {
      */
     @Override
     public void onListItemClick(ListView parent, View view, int position, long id) {
-        mEventManager.fire(new ViewContextEvent(Id.create(id), position));
+        MainView mainView = MainView.newBuilder()
+                .setListQuery(ListQuery.context)
+                .setEntityId(Id.create(id))
+                .build();
+        mEventManager.fire(new MainViewUpdateEvent(mainView));
     }
 
     @Override
@@ -221,6 +223,7 @@ public class ContextListFragment extends RoboListFragment {
     }
 
     public void onCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
+        Log.d(TAG, "Swapping cursor and setting adapter");
         mListAdapter.swapCursor(event.getCursor());
         setListAdapter(mListAdapter);
 

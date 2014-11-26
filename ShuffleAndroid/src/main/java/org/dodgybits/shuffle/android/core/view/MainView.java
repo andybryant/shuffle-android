@@ -207,10 +207,10 @@ public class MainView implements Parcelable {
                     mode = itemView ? ViewMode.SEARCH_RESULTS_TASK : ViewMode.SEARCH_RESULTS_LIST;
                     break;
                 case project:
-                    mode = ViewMode.PROJECT_LIST;
+                    mode = mResult.getEntityId().isInitialised() ? ViewMode.TASK_LIST : ViewMode.PROJECT_LIST;
                     break;
                 case context:
-                    mode = ViewMode.CONTEXT_LIST;
+                    mode = mResult.getEntityId().isInitialised() ? ViewMode.TASK_LIST : ViewMode.CONTEXT_LIST;
                     break;
                 default:
                     mode = itemView ? ViewMode.TASK : ViewMode.TASK_LIST;
