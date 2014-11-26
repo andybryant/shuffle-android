@@ -200,7 +200,6 @@ public class TaskListFragment extends RoboListFragment
             getActivity().setResult(Activity.RESULT_OK, intent);
         } else {
             MainView mainView = mMainView.builderFrom()
-                    .setViewMode(ViewMode.TASK)
                     .setSelectedIndex(position).build();
             mEventManager.fire(new MainViewUpdateEvent(mainView));
         }

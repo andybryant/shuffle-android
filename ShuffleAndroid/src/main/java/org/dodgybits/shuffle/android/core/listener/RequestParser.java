@@ -113,25 +113,22 @@ public class RequestParser {
 //            if (shouldEnterSearchTaskMode()) {
 //               mainView = MainView.createSearchListItem(query, taskId);
 //            } else {
-            builder.setViewMode(ViewMode.SEARCH_RESULTS_LIST)
-                    .setSearchQuery(query)
+            builder.setSearchQuery(query)
                     .setListQuery(ListQuery.search);
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             String queryName = intent.getStringExtra(MainView.QUERY_NAME);
             if (queryName != null) {
                 ListQuery query = ListQuery.valueOf(queryName);
-                builder.setListQuery(query).listView();
+                builder.setListQuery(query);
             } else if (uri != null) {
                 int match = sUriMatcher.match(uri);
                 if (match == CONTEXT) {
                     long contextId = ContentUris.parseId(uri);
                     builder.setListQuery(ListQuery.context)
-                            .setViewMode(ViewMode.CONTEXT_LIST)
                             .setEntityId(Id.create(contextId));
                 } else if (match == PROJECT) {
                     long projectId = ContentUris.parseId(uri);
                     builder.setListQuery(ListQuery.project)
-                            .setViewMode(ViewMode.PROJECT_LIST)
                             .setEntityId(Id.create(projectId));
                 } else {
                     Log.e(TAG, "Unexpected intent uri" + uri);

@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.ContextListCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.event.OnCreatedEvent;
 import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
@@ -20,8 +21,8 @@ import org.dodgybits.shuffle.android.core.listener.MainListeners;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
-import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
+import org.dodgybits.shuffle.android.list.view.context.ContextListFragment;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
 import org.dodgybits.shuffle.android.view.fragment.TaskPagerFragment;
@@ -39,6 +40,7 @@ public class MainActivity extends RoboActionBarActivity {
     /** Tags used when loading fragments. */
     public static final String TAG_TASK_LIST = "tag-task-list";
     public static final String TAG_TASK_ITEM = "tag-task-item";
+    public static final String TAG_CONTEXT_LIST = "tag-context-list";
 
     private MainView mMainView;
 
@@ -181,9 +183,10 @@ public class MainActivity extends RoboActionBarActivity {
                 Log.w(TAG, "Unexpected view mode " + mMainView.getViewMode());
                 break;
         }
+    }
 
-        if (mMainView.getViewMode() == ViewMode.TASK) {
-        }
+    public void onContextListCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
+        addContextList();
     }
 
     private void addTaskList(TaskListContext listContext) {
@@ -218,6 +221,22 @@ public class MainActivity extends RoboActionBarActivity {
         }
     }
 
+    private void addContextList() {
+        ContextListFragment fragment = getContextListFragment();
+        if (fragment == null) {
+            fragment = new ContextListFragment();
+            Log.d(TAG, "Creating context list fragment " + fragment);
+
+            FragmentTransaction fragmentTransaction =
+                    getSupportFragmentManager().beginTransaction();
+            // Use cross fading animation.
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.replace(R.id.entity_list_pane, fragment,
+                    TAG_CONTEXT_LIST);
+            fragmentTransaction.commitAllowingStateLoss();
+        }
+    }
+
     /**
      * Get the task list fragment for this activity. If the task list fragment is
      * not attached, this method returns null.
@@ -241,6 +260,14 @@ public class MainActivity extends RoboActionBarActivity {
         final Fragment fragment = getSupportFragmentManager().findFragmentByTag(TAG_TASK_ITEM);
         if (isValidFragment(fragment)) {
             return (TaskPagerFragment) fragment;
+        }
+        return null;
+    }
+
+    protected ContextListFragment getContextListFragment() {
+        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(TAG_CONTEXT_LIST);
+        if (isValidFragment(fragment)) {
+            return (ContextListFragment) fragment;
         }
         return null;
     }

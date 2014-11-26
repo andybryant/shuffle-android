@@ -83,61 +83,6 @@ public class MainView implements Parcelable {
         }
     };
 
-//    public static MainView createView(ViewMode viewMode) {
-//        return new MainView(viewMode, null, Id.NONE, null, -1);
-//    }
-//
-//    public static MainView createTaskView(TaskListContext context, int index) {
-//        ListQuery listQuery = context.getListQuery();
-//        Id entityId = context.getEntityId();
-//        return new MainView(ViewMode.TASK, listQuery, entityId, context.getSearchQuery(), index);
-//    }
-//
-//    public static MainView createTaskView(TaskListContext context) {
-//        return createTaskView(context, -1);
-//    }
-//
-//    public static MainView createSearchList(String searchQuery) {
-//        return new MainView(ViewMode.SEARCH_RESULTS_LIST, ListQuery.search, Id.NONE, searchQuery, -1);
-//    }
-//
-//    public static MainView createSearchListItem(String searchQuery, Id taskId) {
-//        return new MainView(ViewMode.SEARCH_RESULTS_TASK, ListQuery.search, taskId, searchQuery, -1);
-//    }
-//
-//    public static MainView createContextTaskList(Id contextId) {
-//        return new MainView(ViewMode.CONTEXT_LIST, ListQuery.context, contextId, null, -1);
-//    }
-//
-//    public static MainView createProjectTaskList(Id projectId) {
-//        return new MainView(ViewMode.PROJECT_LIST, ListQuery.project, projectId, null, -1);
-//    }
-//
-//    public static MainView createView(ListQuery listQuery) {
-//        ViewMode mode;
-//        switch (listQuery) {
-//            case all:
-//            case custom:
-//            case dueNextMonth:
-//            case dueNextWeek:
-//            case dueToday:
-//            case inbox:
-//            case nextTasks:
-//            case tickler:
-//                mode = ViewMode.TASK_LIST;
-//                break;
-//            case project:
-//                mode = ViewMode.PROJECT_LIST;
-//                break;
-//            case context:
-//                mode = ViewMode.CONTEXT_LIST;
-//                break;
-//            default:
-//                mode = ViewMode.UNKNOWN;
-//        }
-//        return new MainView(mode, listQuery, Id.NONE, null, -1);
-//    }
-
     private MainView() {
     }
 
@@ -209,11 +154,11 @@ public class MainView implements Parcelable {
             return builder;
         }
 
-        public ViewMode getViewMode() {
+        private ViewMode getViewMode() {
             return mResult.mViewMode;
         }
 
-        public Builder setViewMode(ViewMode viewMode) {
+        private Builder setViewMode(ViewMode viewMode) {
             mResult.mViewMode = viewMode;
             return this;
         }
@@ -254,11 +199,12 @@ public class MainView implements Parcelable {
             return this;
         }
 
-        public Builder listView() {
+        private Builder deriveViewMode() {
             ViewMode mode;
+            boolean itemView = mResult.mSelectedIndex >= 0;
             switch (mResult.mListQuery) {
                 case search:
-                    mode = ViewMode.SEARCH_RESULTS_LIST;
+                    mode = itemView ? ViewMode.SEARCH_RESULTS_TASK : ViewMode.SEARCH_RESULTS_LIST;
                     break;
                 case project:
                     mode = ViewMode.PROJECT_LIST;
@@ -267,7 +213,7 @@ public class MainView implements Parcelable {
                     mode = ViewMode.CONTEXT_LIST;
                     break;
                 default:
-                    mode = ViewMode.TASK_LIST;
+                    mode = itemView ? ViewMode.TASK : ViewMode.TASK_LIST;
                     break;
             }
             setViewMode(mode);
@@ -289,6 +235,7 @@ public class MainView implements Parcelable {
                 throw new IllegalStateException(
                         "build() has already been called on this Builder.");
             }
+            deriveViewMode();
             MainView returnMe = mResult;
             mResult = null;
 

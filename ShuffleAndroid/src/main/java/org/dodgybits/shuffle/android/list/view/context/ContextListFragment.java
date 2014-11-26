@@ -20,6 +20,10 @@ import android.widget.ListView;
 import com.google.inject.Inject;
 
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.ContextListCursorLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.ContextTaskCountCursorLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.ReloadCountCursorEvent;
+import org.dodgybits.shuffle.android.core.event.ReloadListCursorEvent;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
@@ -48,13 +52,9 @@ public class ContextListFragment extends RoboListFragment {
     
     /** Argument name(s) */
     private static final String BUNDLE_LIST_STATE = "ContextListFragment.state.listState";
-    private static final String SELECTED_ITEM = "SELECTED_ITEM";
 
     // result codes
     private static final int FILTER_CONFIG = 600;
-
-    private static final int LOADER_ID_CONTEXT_LIST_LOADER = 2001;
-    private static final int LOADER_ID_TASK_COUNT_LOADER = 2002;
 
     @Inject
     private ContextListAdaptor mListAdapter;
@@ -100,8 +100,6 @@ public class ContextListFragment extends RoboListFragment {
             // Fragment doesn't have this method.  Call it manually.
             restoreInstanceState(savedInstanceState);
         }
-
-        startLoading();
 
         Log.d(TAG, "-onActivityCreated");
     }
@@ -172,7 +170,6 @@ public class ContextListFragment extends RoboListFragment {
         Log.d(TAG, "Got resultCode " + resultCode + " with data " + data);
         switch (requestCode) {
             case FILTER_CONFIG:
-                restartLoading();
                 break;
 
             default:
@@ -212,15 +209,39 @@ public class ContextListFragment extends RoboListFragment {
                 return true;
             case R.id.action_delete:
                 mEventManager.fire(new UpdateContextDeletedEvent(Id.create(info.id), true));
-                restartLoading();
+                mEventManager.fire(new ReloadListCursorEvent());
                 return true;
             case R.id.action_undelete:
                 mEventManager.fire(new UpdateContextDeletedEvent(Id.create(info.id), false));
-                restartLoading();
+                mEventManager.fire(new ReloadListCursorEvent());
                 return true;
         }
 
         return super.onContextItemSelected(item);
+    }
+
+    public void onCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
+        mListAdapter.swapCursor(event.getCursor());
+        setListAdapter(mListAdapter);
+
+        // Restore the state -- this step has to be the last, because Some of the
+        // "post processing" seems to reset the scroll position.
+        if (mSavedListState != null) {
+            getListView().onRestoreInstanceState(mSavedListState);
+            mSavedListState = null;
+        }
+    }
+
+    public void onTaskCountCursorLoaded(@Observes ContextTaskCountCursorLoadedEvent event) {
+        Cursor cursor = event.getCursor();
+        mListAdapter.setTaskCountArray(mTaskPersister.readCountArray(cursor));
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getListView().invalidateViews();
+            }
+        });
+        cursor.close();
     }
 
     private void onVisibilityChange() {
@@ -255,110 +276,9 @@ public class ContextListFragment extends RoboListFragment {
         mSavedListState = savedInstanceState.getParcelable(BUNDLE_LIST_STATE);
     }
 
-    private void startLoading() {
-        Log.d(TAG, "Creating list cursor");
-        final LoaderManager lm = getLoaderManager();
-        lm.initLoader(LOADER_ID_CONTEXT_LIST_LOADER, null, LOADER_CALLBACKS);
-    }
-
-    private void restartLoading() {
-        Log.d(TAG, "Refreshing list cursor");
-        final LoaderManager lm = getLoaderManager();
-        lm.restartLoader(LOADER_ID_CONTEXT_LIST_LOADER, null, LOADER_CALLBACKS);
-    }
 
     private void refreshChildCount() {
-        Log.d(TAG, "Refreshing list cursor");
-        final LoaderManager lm = getLoaderManager();
-        lm.restartLoader(LOADER_ID_TASK_COUNT_LOADER, null, LOADER_COUNT_CALLBACKS);
-    }
-
-
-    /**
-     * Loader callbacks for message list.
-     */
-    private final LoaderManager.LoaderCallbacks<Cursor> LOADER_CALLBACKS =
-            new LoaderManager.LoaderCallbacks<Cursor>() {
-
-                @Override
-                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                    return new ContextCursorLoader(getActivity());
-                }
-
-                @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
-                    // Update the list
-                    mListAdapter.swapCursor(c);
-                    setListAdapter(mListAdapter);
-
-                    // Restore the state -- this step has to be the last, because Some of the
-                    // "post processing" seems to reset the scroll position.
-                    if (mSavedListState != null) {
-                        getListView().onRestoreInstanceState(mSavedListState);
-                        mSavedListState = null;
-                    }
-                }
-
-
-                @Override
-                public void onLoaderReset(Loader<Cursor> loader) {
-                    mListAdapter.swapCursor(null);
-                }
-            };
-
-    /**
-     * Loader callbacks for task counts.
-     */
-    private final LoaderManager.LoaderCallbacks<Cursor> LOADER_COUNT_CALLBACKS =
-            new LoaderManager.LoaderCallbacks<Cursor>() {
-
-                @Override
-                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                    return new TaskCountCursorLoader(getActivity());
-                }
-
-                @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-                    mListAdapter.setTaskCountArray(mTaskPersister.readCountArray(cursor));
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            getListView().invalidateViews();
-                        }
-                    });
-                    cursor.close();
-                }
-
-                @Override
-                public void onLoaderReset(Loader<Cursor> loader) {
-                }
-            };
-
-    private static class TaskCountCursorLoader extends CursorLoader {
-        protected final Context mContext;
-
-        private TaskSelector mSelector;
-
-        public TaskCountCursorLoader(Context context) {
-            // Initialize with no where clause.  We'll set it later.
-            super(context, ContextProvider.Contexts.CONTEXT_TASKS_CONTENT_URI,
-                    ContextProvider.Contexts.FULL_TASK_PROJECTION, null, null,
-                    null);
-            mSelector = TaskSelector.newBuilder().applyListPreferences(context,
-                    ListSettingsCache.findSettings(ListQuery.context)).build();
-            mContext = context;
-        }
-
-        @Override
-        public Cursor loadInBackground() {
-            // Build the where cause (which can't be done on the UI thread.)
-            setSelection(mSelector.getSelection(mContext));
-            setSelectionArgs(mSelector.getSelectionArgs());
-            setSortOrder(mSelector.getSortOrder());
-            // Then do a query to get the cursor
-            return super.loadInBackground();
-        }
-
+        mEventManager.fire(new ReloadCountCursorEvent());
     }
 
 }

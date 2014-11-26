@@ -15,18 +15,5 @@
  */
 package org.dodgybits.shuffle.android.core.event;
 
-import android.database.Cursor;
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
-
-public class TaskListCursorLoadedEvent extends AbstractCursorLoadedEvent {
-    private TaskListContext mTaskListContext;
-
-    public TaskListCursorLoadedEvent(Cursor cursor, TaskListContext taskListContext) {
-        super(cursor);
-        mTaskListContext = taskListContext;
-    }
-
-    public TaskListContext getTaskListContext() {
-        return mTaskListContext;
-    }
+public class ReloadListCursorEvent {
 }

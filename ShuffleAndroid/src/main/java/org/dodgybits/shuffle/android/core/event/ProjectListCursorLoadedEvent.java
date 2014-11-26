@@ -16,17 +16,10 @@
 package org.dodgybits.shuffle.android.core.event;
 
 import android.database.Cursor;
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 
-public class TaskListCursorLoadedEvent extends AbstractCursorLoadedEvent {
-    private TaskListContext mTaskListContext;
+public class ProjectListCursorLoadedEvent extends AbstractCursorLoadedEvent {
 
-    public TaskListCursorLoadedEvent(Cursor cursor, TaskListContext taskListContext) {
+    public ProjectListCursorLoadedEvent(Cursor cursor) {
         super(cursor);
-        mTaskListContext = taskListContext;
-    }
-
-    public TaskListContext getTaskListContext() {
-        return mTaskListContext;
     }
 }
