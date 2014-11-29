@@ -106,6 +106,14 @@ public class MainView implements Parcelable {
         return mSearchQuery;
     }
 
+    public boolean isListView() {
+        return mViewMode.isListMode();
+    }
+
+    public boolean isChildView() {
+        return mSelectedIndex >= 0 || mEntityId.isInitialised();
+    }
+
     @Override
     public String toString() {
         return "MainView{" +

@@ -28,12 +28,14 @@ import org.dodgybits.shuffle.android.core.event.*;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.list.content.ContextCursorLoader;
+import org.dodgybits.shuffle.android.list.content.ProjectCursorLoader;
 import org.dodgybits.shuffle.android.list.event.ListSettingsUpdatedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
 import org.dodgybits.shuffle.android.list.view.task.TaskListAdaptor;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
+import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
@@ -44,6 +46,8 @@ public class CursorLoader {
     private static final int LOADER_ID_TASK_LIST_LOADER = 1;
     private static final int LOADER_ID_CONTEXT_LIST_LOADER = 2;
     private static final int LOADER_ID_CONTEXT_TASK_COUNT_LOADER = 3;
+    private static final int LOADER_ID_PROJECT_LIST_LOADER = 4;
+    private static final int LOADER_ID_PROJECT_TASK_COUNT_LOADER = 5;
 
     private FragmentActivity mActivity;
 
@@ -96,6 +100,9 @@ public class CursorLoader {
             case CONTEXT_LIST:
                 lm.initLoader(LOADER_ID_CONTEXT_LIST_LOADER, null, CONTEXT_LIST_LOADER_CALLBACKS);
                 break;
+            case PROJECT_LIST:
+                lm.initLoader(LOADER_ID_PROJECT_LIST_LOADER, null, PROJECT_LIST_LOADER_CALLBACKS);
+                break;
             default:
                 // TODO
         }
@@ -107,6 +114,9 @@ public class CursorLoader {
         switch (mMainView.getViewMode()) {
             case CONTEXT_LIST:
                 lm.initLoader(LOADER_ID_CONTEXT_TASK_COUNT_LOADER, null, CONTEXT_TASK_COUNT_LOADER_CALLBACKS);
+                break;
+            case PROJECT_LIST:
+                lm.initLoader(LOADER_ID_PROJECT_TASK_COUNT_LOADER, null, PROJECT_TASK_COUNT_LOADER_CALLBACKS);
                 break;
             default:
                 // TODO
@@ -124,6 +134,9 @@ public class CursorLoader {
             case CONTEXT_LIST:
                 lm.restartLoader(LOADER_ID_CONTEXT_LIST_LOADER, null, CONTEXT_LIST_LOADER_CALLBACKS);
                 break;
+            case PROJECT_LIST:
+                lm.restartLoader(LOADER_ID_PROJECT_LIST_LOADER, null, PROJECT_LIST_LOADER_CALLBACKS);
+                break;
             default:
                 // TODO
         }
@@ -135,6 +148,9 @@ public class CursorLoader {
         switch (mMainView.getViewMode()) {
             case CONTEXT_LIST:
                 lm.restartLoader(LOADER_ID_CONTEXT_TASK_COUNT_LOADER, null, CONTEXT_TASK_COUNT_LOADER_CALLBACKS);
+                break;
+            case PROJECT_LIST:
+                lm.restartLoader(LOADER_ID_PROJECT_TASK_COUNT_LOADER, null, PROJECT_TASK_COUNT_LOADER_CALLBACKS);
                 break;
             default:
                 // TODO
@@ -178,7 +194,7 @@ public class CursorLoader {
 
                 @Override
                 public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
-                    Log.d(TAG, "In TASK_LIST_LOADER_CALLBACKS.onLoadFinished");
+                    Log.d(TAG, "In CONTEXT_LIST_LOADER_CALLBACKS.onLoadFinished");
 
                     mEventManager.fire(new ContextListCursorLoadedEvent(c));
                 }
@@ -224,6 +240,80 @@ public class CursorLoader {
                     null);
             mSelector = TaskSelector.newBuilder().applyListPreferences(context,
                     ListSettingsCache.findSettings(ListQuery.context)).build();
+            mContext = context;
+        }
+
+        @Override
+        public Cursor loadInBackground() {
+            // Build the where cause (which can't be done on the UI thread.)
+            setSelection(mSelector.getSelection(mContext));
+            setSelectionArgs(mSelector.getSelectionArgs());
+            setSortOrder(mSelector.getSortOrder());
+            // Then do a query to get the cursor
+            return super.loadInBackground();
+        }
+
+    }
+
+    /**
+     * Loader callbacks for message list.
+     */
+    private final LoaderManager.LoaderCallbacks<Cursor> PROJECT_LIST_LOADER_CALLBACKS =
+            new LoaderManager.LoaderCallbacks<Cursor>() {
+
+                @Override
+                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                    return new ProjectCursorLoader(mActivity);
+                }
+
+                @Override
+                public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
+                    Log.d(TAG, "In PROJECT_LIST_LOADER_CALLBACKS.onLoadFinished");
+
+                    mEventManager.fire(new ProjectListCursorLoadedEvent(c));
+                }
+
+
+                @Override
+                public void onLoaderReset(Loader<Cursor> loader) {
+                }
+            };
+
+    /**
+     * Loader callbacks for task counts.
+     */
+    private final LoaderManager.LoaderCallbacks<Cursor> PROJECT_TASK_COUNT_LOADER_CALLBACKS =
+            new LoaderManager.LoaderCallbacks<Cursor>() {
+
+                @Override
+                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                    return new ProjectTaskCountCursorLoader(mActivity);
+                }
+
+                @Override
+                public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+                    Log.d(TAG, "In PROJECT_TASK_COUNT_LOADER_CALLBACKS.onLoadFinished");
+
+                    mEventManager.fire(new ProjectTaskCountCursorLoadedEvent(cursor));
+                }
+
+                @Override
+                public void onLoaderReset(Loader<Cursor> loader) {
+                }
+            };
+
+    private static class ProjectTaskCountCursorLoader extends android.support.v4.content.CursorLoader {
+        protected final Context mContext;
+
+        private TaskSelector mSelector;
+
+        public ProjectTaskCountCursorLoader(Context context) {
+            // Initialize with no where clause.  We'll set it later.
+            super(context, ProjectProvider.Projects.PROJECT_TASKS_CONTENT_URI,
+                    ProjectProvider.Projects.FULL_TASK_PROJECTION, null, null,
+                    null);
+            mSelector = TaskSelector.newBuilder().applyListPreferences(context,
+                    ListSettingsCache.findSettings(ListQuery.project)).build();
             mContext = context;
         }
 

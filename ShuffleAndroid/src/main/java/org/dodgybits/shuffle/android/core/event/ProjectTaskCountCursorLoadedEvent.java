@@ -15,17 +15,12 @@
  */
 package org.dodgybits.shuffle.android.core.event;
 
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
+import android.database.Cursor;
 
-public class LoadTaskFragmentEvent {
+public class ProjectTaskCountCursorLoadedEvent extends AbstractCursorLoadedEvent {
 
-    private TaskListContext mTaskListContext;
-
-    public LoadTaskFragmentEvent(TaskListContext taskListContext) {
-        mTaskListContext = taskListContext;
+    public ProjectTaskCountCursorLoadedEvent(Cursor cursor) {
+        super(cursor);
     }
 
-    public TaskListContext getTaskListContext() {
-        return mTaskListContext;
-    }
 }

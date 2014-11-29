@@ -296,7 +296,7 @@ public class NavigationDrawerFragment extends RoboFragment {
         if (sListItems != null && position >= 0 && position < sListItems.length) {
             IconNameCountListAdaptor.ListItem<HomeEntry> listItem = sListItems[position];
             ListQuery listQuery = listItem.getPayload().mListQuery;
-            if (mMainView != null && mMainView.getListQuery() != listQuery) {
+            if (mMainView != null && (mMainView.getListQuery() != listQuery || mMainView.isChildView())) {
                 MainView mainView = MainView.newBuilder().setListQuery(listQuery).build();
                 mEventManager.fire(new MainViewUpdateEvent(mainView));
             }

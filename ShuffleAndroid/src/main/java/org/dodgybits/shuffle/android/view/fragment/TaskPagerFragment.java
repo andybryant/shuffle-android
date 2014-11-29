@@ -28,8 +28,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.LoadTaskFragmentEvent;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
+import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
@@ -89,7 +89,7 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
         mPager.setOnPageChangeListener(this);
 
         onViewUpdate(mMainViewProvider.getMainView());
-        updateCursor();
+        updateCursor(mCursorProvider.getCursor());
     }
 
     public void onViewUpdate(@Observes MainViewUpdateEvent event) {
@@ -116,11 +116,15 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
         return false;
     }
 
-    public void onCursorLoaded(@Observes LoadTaskFragmentEvent event) {
-        updateCursor();
+    public void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
+        updateCursor(event.getCursor());
     }
-    
-    private void updateCursor() {
+
+    private void updateCursor(Cursor cursor) {
+        if (cursor == null) {
+            return;
+        }
+
         Log.d(TAG, "Swapping cursor " + this);
 
         if (getActivity() == null) {
@@ -128,12 +132,10 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
             return;
         }
 
-        Cursor cursor = mCursorProvider.getCursor();
-        if (cursor != null && mMainView != null) {
+        if (mMainView != null) {
             mAdapter = new MyAdapter(getActivity().getSupportFragmentManager(), cursor);
             mPager.setAdapter(mAdapter);
             mPager.setCurrentItem(mMainView.getSelectedIndex());
-
         }
     }
 

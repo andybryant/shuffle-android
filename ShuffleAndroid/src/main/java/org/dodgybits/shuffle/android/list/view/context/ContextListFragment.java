@@ -1,45 +1,25 @@
 package org.dodgybits.shuffle.android.list.view.context;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import com.google.inject.Inject;
-
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.*;
+import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
-import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.core.view.MainView;
-import org.dodgybits.shuffle.android.list.content.ContextCursorLoader;
-import org.dodgybits.shuffle.android.list.event.EditContextEvent;
-import org.dodgybits.shuffle.android.list.event.EditListSettingsEvent;
-import org.dodgybits.shuffle.android.list.event.EditNewContextEvent;
-import org.dodgybits.shuffle.android.list.event.NewContextEvent;
-import org.dodgybits.shuffle.android.list.event.QuickAddEvent;
-import org.dodgybits.shuffle.android.list.event.UpdateContextDeletedEvent;
-import org.dodgybits.shuffle.android.list.event.ViewContextEvent;
-import org.dodgybits.shuffle.android.list.event.ViewHelpEvent;
+import org.dodgybits.shuffle.android.list.event.*;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
 import org.dodgybits.shuffle.android.list.view.QuickAddController;
-import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
-
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -65,6 +45,9 @@ public class ContextListFragment extends RoboListFragment {
 
     @Inject
     private EventManager mEventManager;
+
+    @Inject
+    private CursorProvider mCursorProvider;
 
     @Inject
     private QuickAddController mQuickAddController;
@@ -97,8 +80,10 @@ public class ContextListFragment extends RoboListFragment {
         if (savedInstanceState != null) {
             // Fragment doesn't have this method.  Call it manually.
             restoreInstanceState(savedInstanceState);
+            restoreListState();
         }
 
+        updateCursor(mCursorProvider.getCursor());
         Log.d(TAG, "-onActivityCreated");
     }
 
@@ -223,15 +208,29 @@ public class ContextListFragment extends RoboListFragment {
     }
 
     public void onCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
+        updateCursor(event.getCursor());
+    }
+
+    private void updateCursor(Cursor cursor) {
+        if (cursor == null) {
+            return;
+        }
+
         Log.d(TAG, "Swapping cursor and setting adapter");
-        mListAdapter.swapCursor(event.getCursor());
+        mListAdapter.swapCursor(cursor);
         setListAdapter(mListAdapter);
 
-        // Restore the state -- this step has to be the last, because Some of the
-        // "post processing" seems to reset the scroll position.
-        if (mSavedListState != null) {
-            getListView().onRestoreInstanceState(mSavedListState);
-            mSavedListState = null;
+        restoreListState();
+    }
+
+    private void restoreListState() {
+        if (getActivity() != null && getListAdapter() != null) {
+            // Restore the state -- this step has to be the last, because Some of the
+            // "post processing" seems to reset the scroll position.
+            if (mSavedListState != null) {
+                getListView().onRestoreInstanceState(mSavedListState);
+                mSavedListState = null;
+            }
         }
     }
 

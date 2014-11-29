@@ -17,10 +17,8 @@ package org.dodgybits.shuffle.android.core.listener;
 
 import android.database.Cursor;
 import android.util.Log;
-import com.google.inject.Inject;
-import org.dodgybits.shuffle.android.core.event.LoadTaskFragmentEvent;
+import org.dodgybits.shuffle.android.core.event.ContextListCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
-import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
 
@@ -31,15 +29,17 @@ public class CursorProvider {
 
     private Cursor mCursor;
 
-    @Inject
-    private EventManager mEventManager;
-
 
     public void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
         Log.d(TAG, "Updating cursor for context " + event.getTaskListContext());
         mCursor = event.getCursor();
-        mEventManager.fire(new LoadTaskFragmentEvent(event.getTaskListContext()));
     }
+
+    public void onCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
+        Log.d(TAG, "Updating cursor for context " + event.getCursor());
+        mCursor = event.getCursor();
+    }
+
 
     public Cursor getCursor() {
         return mCursor;

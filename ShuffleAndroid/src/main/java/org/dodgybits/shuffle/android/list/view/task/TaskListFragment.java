@@ -15,8 +15,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.LoadTaskFragmentEvent;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
+import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -25,7 +25,6 @@ import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.MainView;
-import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.*;
 import org.dodgybits.shuffle.android.list.view.QuickAddController;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
@@ -132,7 +131,7 @@ public class TaskListFragment extends RoboListFragment
         setEmptyText(getString(R.string.no_tasks));
 
         onViewUpdate(mMainViewProvider.getMainView());
-        updateCursor();
+        updateCursor(mCursorProvider.getCursor());
     }
 
     @Override
@@ -325,12 +324,13 @@ public class TaskListFragment extends RoboListFragment
         updateSelectionMode();
     }
 
-    public void onCursorLoaded(@Observes LoadTaskFragmentEvent event) {
-        updateCursor();
+
+
+    public void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
+        updateCursor(event.getCursor());
     }
 
-    private void updateCursor() {
-        Cursor cursor = mCursorProvider.getCursor();
+    private void updateCursor(Cursor cursor) {
         if (cursor == null) {
             return;
         }

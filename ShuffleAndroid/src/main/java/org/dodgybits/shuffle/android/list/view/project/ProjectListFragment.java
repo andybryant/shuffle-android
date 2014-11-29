@@ -14,11 +14,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.*;
+import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
+import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.list.content.ProjectCursorLoader;
 import org.dodgybits.shuffle.android.list.event.*;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
@@ -36,13 +39,9 @@ public class ProjectListFragment extends RoboListFragment {
     
     /** Argument name(s) */
     private static final String BUNDLE_LIST_STATE = "ProjectListFragment.state.listState";
-    private static final String SELECTED_ITEM = "SELECTED_ITEM";
 
     // result codes
     private static final int FILTER_CONFIG = 600;
-
-    private static final int LOADER_ID_PROJECT_LIST_LOADER = 1001;
-    private static final int LOADER_ID_TASK_COUNT_LOADER = 1002;
 
     @Inject
     private ProjectListAdaptor mListAdapter;
@@ -55,6 +54,9 @@ public class ProjectListFragment extends RoboListFragment {
 
     @Inject
     private EventManager mEventManager;
+
+    @Inject
+    private CursorProvider mCursorProvider;
 
     @Inject
     private QuickAddController mQuickAddController;
@@ -87,10 +89,10 @@ public class ProjectListFragment extends RoboListFragment {
         if (savedInstanceState != null) {
             // Fragment doesn't have this method.  Call it manually.
             restoreInstanceState(savedInstanceState);
+            restoreListState();
         }
 
-        startLoading();
-
+        updateCursor(mCursorProvider.getCursor());
         Log.d(TAG, "-onActivityCreated");
     }
 
@@ -124,7 +126,11 @@ public class ProjectListFragment extends RoboListFragment {
      */
     @Override
     public void onListItemClick(ListView parent, View view, int position, long id) {
-        mEventManager.fire(new ViewProjectEvent(Id.create(id), position));
+        MainView mainView = MainView.newBuilder()
+                .setListQuery(ListQuery.project)
+                .setEntityId(Id.create(id))
+                .build();
+        mEventManager.fire(new MainViewUpdateEvent(mainView));
     }
 
     @Override
@@ -160,7 +166,6 @@ public class ProjectListFragment extends RoboListFragment {
         Log.d(TAG, "Got resultCode " + resultCode + " with data " + data);
         switch (requestCode) {
             case FILTER_CONFIG:
-                restartLoading();
                 break;
 
             default:
@@ -200,15 +205,54 @@ public class ProjectListFragment extends RoboListFragment {
                 return true;
             case R.id.action_delete:
                 mEventManager.fire(new UpdateProjectDeletedEvent(Id.create(info.id), true));
-                restartLoading();
+                mEventManager.fire(new ReloadListCursorEvent());
                 return true;
             case R.id.action_undelete:
                 mEventManager.fire(new UpdateProjectDeletedEvent(Id.create(info.id), false));
-                restartLoading();
+                mEventManager.fire(new ReloadListCursorEvent());
                 return true;
         }
 
         return super.onContextItemSelected(item);
+    }
+
+    public void onCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
+        updateCursor(event.getCursor());
+    }
+
+    private void updateCursor(Cursor cursor) {
+        if (cursor == null) {
+            return;
+        }
+
+        Log.d(TAG, "Swapping cursor and setting adapter");
+        mListAdapter.swapCursor(cursor);
+        setListAdapter(mListAdapter);
+
+        restoreListState();
+    }
+
+    private void restoreListState() {
+        if (getActivity() != null && getListAdapter() != null) {
+            // Restore the state -- this step has to be the last, because Some of the
+            // "post processing" seems to reset the scroll position.
+            if (mSavedListState != null) {
+                getListView().onRestoreInstanceState(mSavedListState);
+                mSavedListState = null;
+            }
+        }
+    }
+
+    public void onTaskCountCursorLoaded(@Observes ProjectTaskCountCursorLoadedEvent event) {
+        Cursor cursor = event.getCursor();
+        mListAdapter.setTaskCountArray(mTaskPersister.readCountArray(cursor));
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getListView().invalidateViews();
+            }
+        });
+        cursor.close();
     }
 
     private void onVisibilityChange() {
@@ -243,110 +287,8 @@ public class ProjectListFragment extends RoboListFragment {
         mSavedListState = savedInstanceState.getParcelable(BUNDLE_LIST_STATE);
     }
 
-    private void startLoading() {
-        Log.d(TAG, "Creating list cursor");
-        final LoaderManager lm = getLoaderManager();
-        lm.initLoader(LOADER_ID_PROJECT_LIST_LOADER, null, LOADER_CALLBACKS);
-    }
-
-    private void restartLoading() {
-        Log.d(TAG, "Refreshing list cursor");
-        final LoaderManager lm = getLoaderManager();
-        lm.restartLoader(LOADER_ID_PROJECT_LIST_LOADER, null, LOADER_CALLBACKS);
-    }
-
     private void refreshChildCount() {
-        Log.d(TAG, "Refreshing list cursor");
-        final LoaderManager lm = getLoaderManager();
-        lm.restartLoader(LOADER_ID_TASK_COUNT_LOADER, null, LOADER_COUNT_CALLBACKS);
-    }
-
-
-    /**
-     * Loader callbacks for message list.
-     */
-    private final LoaderManager.LoaderCallbacks<Cursor> LOADER_CALLBACKS =
-            new LoaderManager.LoaderCallbacks<Cursor>() {
-
-                @Override
-                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                    return new ProjectCursorLoader(getActivity());
-                }
-
-                @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
-                    // Update the list
-                    mListAdapter.swapCursor(c);
-                    setListAdapter(mListAdapter);
-
-                    // Restore the state -- this step has to be the last, because Some of the
-                    // "post processing" seems to reset the scroll position.
-                    if (mSavedListState != null) {
-                        getListView().onRestoreInstanceState(mSavedListState);
-                        mSavedListState = null;
-                    }
-                }
-
-
-                @Override
-                public void onLoaderReset(Loader<Cursor> loader) {
-                    mListAdapter.swapCursor(null);
-                }
-            };
-
-    /**
-     * Loader callbacks for task counts.
-     */
-    private final LoaderManager.LoaderCallbacks<Cursor> LOADER_COUNT_CALLBACKS =
-            new LoaderManager.LoaderCallbacks<Cursor>() {
-
-                @Override
-                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                    return new TaskCountCursorLoader(getActivity());
-                }
-
-                @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-                    mListAdapter.setTaskCountArray(mTaskPersister.readCountArray(cursor));
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            getListView().invalidateViews();
-                        }
-                    });
-                    cursor.close();
-                }
-
-                @Override
-                public void onLoaderReset(Loader<Cursor> loader) {
-                }
-            };
-
-    private static class TaskCountCursorLoader extends CursorLoader {
-        protected final Context mContext;
-
-        private TaskSelector mSelector;
-
-        public TaskCountCursorLoader(Context context) {
-            // Initialize with no where clause.  We'll set it later.
-            super(context, ProjectProvider.Projects.PROJECT_TASKS_CONTENT_URI,
-                    ProjectProvider.Projects.FULL_TASK_PROJECTION, null, null,
-                    null);
-            mSelector = TaskSelector.newBuilder().applyListPreferences(context,
-                    ListSettingsCache.findSettings(ListQuery.project)).build();
-            mContext = context;
-        }
-
-        @Override
-        public Cursor loadInBackground() {
-            // Build the where cause (which can't be done on the UI thread.)
-            setSelection(mSelector.getSelection(mContext));
-            setSelectionArgs(mSelector.getSelectionArgs());
-            setSortOrder(mSelector.getSortOrder());
-            // Then do a query to get the cursor
-            return super.loadInBackground();
-        }
-
+        mEventManager.fire(new ReloadCountCursorEvent());
     }
 
 }
