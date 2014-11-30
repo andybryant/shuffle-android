@@ -237,12 +237,14 @@ public class ContextListFragment extends RoboListFragment {
     public void onTaskCountCursorLoaded(@Observes ContextTaskCountCursorLoadedEvent event) {
         Cursor cursor = event.getCursor();
         mListAdapter.setTaskCountArray(mTaskPersister.readCountArray(cursor));
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getListView().invalidateViews();
-            }
-        });
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getListView().invalidateViews();
+                }
+            });
+        }
         cursor.close();
     }
 

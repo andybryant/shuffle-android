@@ -1,13 +1,9 @@
 package org.dodgybits.shuffle.android.list.view.project;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.*;
 import android.widget.AdapterView;
@@ -20,15 +16,11 @@ import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
-import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.core.view.MainView;
-import org.dodgybits.shuffle.android.list.content.ProjectCursorLoader;
 import org.dodgybits.shuffle.android.list.event.*;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
 import org.dodgybits.shuffle.android.list.view.QuickAddController;
-import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
-
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -246,12 +238,14 @@ public class ProjectListFragment extends RoboListFragment {
     public void onTaskCountCursorLoaded(@Observes ProjectTaskCountCursorLoadedEvent event) {
         Cursor cursor = event.getCursor();
         mListAdapter.setTaskCountArray(mTaskPersister.readCountArray(cursor));
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getListView().invalidateViews();
-            }
-        });
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getListView().invalidateViews();
+                }
+            });
+        }
         cursor.close();
     }
 

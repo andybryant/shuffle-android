@@ -129,9 +129,6 @@ public class TaskListFragment extends RoboListFragment
         lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         setEmptyText(getString(R.string.no_tasks));
-
-        onViewUpdate(mMainViewProvider.getMainView());
-        updateCursor(mCursorProvider.getCursor());
     }
 
     @Override
@@ -139,6 +136,10 @@ public class TaskListFragment extends RoboListFragment
         super.onResume();
 
         mResumed = true;
+
+        onViewUpdate(mMainViewProvider.getMainView());
+        updateCursor(mCursorProvider.getCursor());
+
         onVisibilityChange();
 
         restoreLastScrolledPosition();
