@@ -15,15 +15,45 @@
 
 <resources>
 
-    <style name="ShuffleTheme" parent="Theme.AppCompat.Light"></style>
+    <style name="ShuffleTheme" parent="Theme.AppCompat.Light">
+        <!-- Set AppCompat’s actionBarStyle -->
+        <item name="actionBarStyle">@style/ActionBar</item>
 
-    <style name="ShuffleDialogTheme" parent="@android:style/Theme.Dialog"></style>
+        <!--   your app branding color for the app bar -->
+        <item name="colorPrimary">@color/primary</item>
+        <!--   darker variant for the status bar and contextual app bars -->
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <!--   theme UI controls like checkboxes and text fields -->
+        <item name="colorAccent">@color/accent</item>
+
+    </style>
+
+    <style name="ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">#eee</item>
+        <item name="android:titleTextStyle">@style/ActionBarTitle</item>
+        <item name="android:icon">@drawable/shuffle_icon</item>
+    </style>
+
+    <style name="ActionBarTitle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/actionbar_title_color</item>
+    </style>
+
+    <style name="ShuffleDialogTheme" parent="@android:style/Theme.Holo.Light.Dialog"></style>
+
+
+    <style name="EditCustomActionButton" parent="android:style/Widget.Holo.Light.ActionButton">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:focusable">true</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
 
     <style name="EditCustomActionButtonText">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-        <item name="android:textColor">@color/actionbar_title_color</item>
+        <item name="android:textAppearance">?android:attr/actionMenuTextAppearance</item>
+        <item name="android:textColor">?android:attr/actionMenuTextColor</item>
         <item name="android:orientation">horizontal</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">none</item>
