@@ -16,14 +16,15 @@
 package org.dodgybits.shuffle.android.core;
 
 import android.app.Application;
-import android.support.multidex.MultiDexApplication;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import org.dodgybits.android.shuffle.R;
 
 import java.util.HashMap;
 
-public class ShuffleApplication extends MultiDexApplication {
+//import android.support.multidex.MultiDexApplication;
+
+public class ShuffleApplication extends Application {
 
     // The following line should be changed to include the correct property id.
     private static final String PROPERTY_ID = "UA-36045118-2";

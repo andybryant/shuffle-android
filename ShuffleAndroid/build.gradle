@@ -7,11 +7,16 @@ repositories {
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.0"
+    buildToolsVersion '21.1.2'
 
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 21
+//        useJack = true
+    }
+
+    dexOptions {
+        javaMaxHeapSize "2048M"
     }
 
     compileOptions {
@@ -57,14 +62,14 @@ android {
     packagingOptions {
         exclude 'com/google/thirdparty/publicsuffix/PublicSuffixPatterns.gwt.xml'
         exclude 'com/google/thirdparty/publicsuffix/PublicSuffixType.gwt.xml'
+        exclude 'META-INF/LICENSE.txt'
     }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'org.roboguice:roboguice:3.+'
-    provided 'org.roboguice:roboblender:3.0'
-    compile 'com.google.android.gms:play-services:6.1.+'
+    provided 'org.roboguice:roboblender:3.+'
+    compile 'com.google.android.gms:play-services-base:6.5.+'
     compile 'com.android.support:support-v13:21.+'
     compile 'com.android.support:appcompat-v7:21.+'
     compile 'com.android.support:support-annotations:21.+'
@@ -73,16 +78,4 @@ dependencies {
     }
     compile 'com.google.guava:guava:16.0'
     androidTestCompile 'junit:junit:4.11'
-}
-
-afterEvaluate {
-    tasks.matching {
-        it.name.startsWith('dex')
-    }.each { dx ->
-        if (dx.additionalParameters == null) {
-            dx.additionalParameters = ['--multi-dex']
-        } else {
-            dx.additionalParameters += '--multi-dex'
-        }
-    }
 }
