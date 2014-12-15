@@ -17,7 +17,7 @@
 
     <style name="ShuffleTheme" parent="Theme.AppCompat.Light">
         <!-- Set AppCompat’s actionBarStyle -->
-        <item name="actionBarStyle">@style/ActionBar</item>
+        <!--<item name="actionBarStyle">@style/ActionBar</item>-->
 
         <!--   your app branding color for the app bar -->
         <item name="colorPrimary">@color/primary</item>
