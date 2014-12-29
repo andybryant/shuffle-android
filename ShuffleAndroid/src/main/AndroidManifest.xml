@@ -51,7 +51,7 @@
 
     <application
         android:theme="@style/ShuffleTheme"
-		android:icon="@drawable/shuffle_icon"
+		android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:hardwareAccelerated="false"
         android:name="org.dodgybits.shuffle.android.core.ShuffleApplication"
