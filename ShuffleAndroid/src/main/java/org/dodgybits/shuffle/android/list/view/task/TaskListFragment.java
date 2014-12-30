@@ -248,6 +248,11 @@ public class TaskListFragment extends RoboListFragment
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
+        TaskListContext listContext = getListContext();
+        if (listContext == null) {
+            return;
+        }
+
         String taskName = getString(R.string.task_name);
         String addTitle = getString(R.string.menu_insert, taskName);
         menu.findItem(R.id.action_add).setTitle(addTitle);
@@ -255,9 +260,9 @@ public class TaskListFragment extends RoboListFragment
         MenuItem editMenu = menu.findItem(R.id.action_edit);
         MenuItem deleteMenu = menu.findItem(R.id.action_delete);
         MenuItem undeleteMenu = menu.findItem(R.id.action_undelete);
-        if (getListContext().showEditActions()) {
-            String entityName = getListContext().getEditEntityName(getActivity());
-            boolean entityDeleted = getListContext().isEditEntityDeleted(getActivity(), mContextCache, mProjectCache);
+        if (listContext.showEditActions()) {
+            String entityName = listContext.getEditEntityName(getActivity());
+            boolean entityDeleted = listContext.isEditEntityDeleted(getActivity(), mContextCache, mProjectCache);
             editMenu.setVisible(true);
             editMenu.setTitle(getString(R.string.menu_edit, entityName));
             deleteMenu.setVisible(!entityDeleted);

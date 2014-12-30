@@ -1,23 +1,15 @@
 package org.dodgybits.shuffle.android.core.activity;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.AbsListView;
-import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
@@ -37,6 +29,7 @@ public class MainActivity extends RoboActionBarActivity {
 
     private static final int WHATS_NEW_DIALOG = 5000;
 
+    public static final String LIST_QUERY_KEY = "MainActivity.listQuery";
     public static final String MAIN_VIEW_KEY = "MainActivity.mainView";
 
 
@@ -106,12 +99,6 @@ public class MainActivity extends RoboActionBarActivity {
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-        }
-
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);

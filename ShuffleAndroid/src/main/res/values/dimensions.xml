@@ -24,6 +24,8 @@
     <dimen name="navdrawer_width">260dp</dimen>
     <dimen name="navdrawer_profile_image_size">40dp</dimen>
 
+    <dimen name="headerbar_elevation">4dp</dimen>
+
     <!-- body content -->
     <dimen name="element_spacing_normal">8dp</dimen>
     <dimen name="content_padding_normal">16dp</dimen>

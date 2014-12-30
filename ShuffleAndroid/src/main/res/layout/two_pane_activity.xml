@@ -17,34 +17,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <!-- DrawerLayout current only supports one content view (b/8752191) -->
 
-    <org.dodgybits.shuffle.android.core.view.TwoPaneLayout
-        android:id="@+id/two_pane_activity"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <include
-            android:id="@+id/toolbar"
-            layout="@layout/toolbar_actionbar"/>
+            layout="@layout/toolbar_actionbar_with_headerbar"/>
 
-        <include
-            android:id="@+id/quick_add"
+
+        <org.dodgybits.shuffle.android.core.view.TwoPaneLayout
+            android:id="@+id/two_pane_activity"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/quick_add" />
+            android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/entity_list_pane"
-            android:layout_width="0dp"
-            android:layout_height="match_parent" />
+            <include
+                android:id="@+id/quick_add"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/quick_add" />
 
-        <FrameLayout
-            android:id="@+id/task_pane"
-            android:layout_width="0dp"
-            android:layout_height="match_parent" />
+            <FrameLayout
+                android:id="@+id/entity_list_pane"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
 
-    </org.dodgybits.shuffle.android.core.view.TwoPaneLayout>
+            <FrameLayout
+                android:id="@+id/task_pane"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+
+        </org.dodgybits.shuffle.android.core.view.TwoPaneLayout>
+
+    </LinearLayout>
 
     <fragment
         android:id="@+id/navigation_drawer"

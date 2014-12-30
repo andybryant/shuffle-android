@@ -40,6 +40,9 @@
 
     <style name="ShuffleDialogTheme" parent="@android:style/Theme.Holo.Light.Dialog"></style>
 
+    <style name="HeaderBar">
+        <item name="android:background">?colorPrimary</item>
+    </style>
 
     <style name="EditCustomActionButton" parent="android:style/Widget.Holo.Light.ActionButton">
         <item name="android:layout_height">match_parent</item>

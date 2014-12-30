@@ -11,11 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include layout="@layout/toolbar_actionbar" />
-
         <include
-            android:id="@+id/toolbar"
-            layout="@layout/toolbar_actionbar"/>
+            android:id="@+id/toolbar_actionbar"
+            layout="@layout/toolbar_actionbar_with_headerbar" />
 
         <include
             android:id="@+id/quick_add"
@@ -27,7 +25,7 @@
             android:id="@+id/entity_list_pane"
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_below="@id/toolbar"
+            android:layout_below="@id/toolbar_actionbar"
             android:layout_weight="1" />
 
     </RelativeLayout>
