@@ -43,7 +43,7 @@ public class TaskListAdaptor extends CursorAdapter {
 
 
     /**
-     * Callback from MessageListAdapter.  All methods are called on the UI thread.
+     * Callback from TaskListAdaptor.  All methods are called on the UI thread.
      */
     public interface Callback {
         /** Called when the user selects/unselects a task */

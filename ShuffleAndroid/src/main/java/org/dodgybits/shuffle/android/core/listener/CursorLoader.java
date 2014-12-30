@@ -27,6 +27,7 @@ import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.core.event.*;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.content.ContextCursorLoader;
 import org.dodgybits.shuffle.android.list.content.ProjectCursorLoader;
 import org.dodgybits.shuffle.android.list.event.ListSettingsUpdatedEvent;
@@ -67,29 +68,29 @@ public class CursorLoader {
         Log.d(TAG, "Received view update event " + event);
         mMainView = event.getMainView();
         mTaskListContext = TaskListContext.create(mMainView);
-        restartListLoading();
-        restartCountLoading();
+        restartListLoading(mMainView.getViewMode());
+        restartCountLoading(mMainView.getViewMode());
     }
 
     public void onListSettingsUpdated(@Observes ListSettingsUpdatedEvent event) {
         if (event.getListQuery().equals(mMainView.getListQuery())) {
             // our list settings changed - reload list (even if this list isn't currently visible)
-            restartListLoading();
-            restartCountLoading();
+            restartListLoading(mMainView.getViewMode());
+            restartCountLoading(mMainView.getViewMode());
         }
     }
 
-    public void onReloadListCursor(@Observes ReloadListCursorEvent event) {
+    public void onReloadListCursor(@Observes LoadListCursorEvent event) {
         Log.d(TAG, "Refreshing list cursor");
-        restartListLoading();
+        restartListLoading(event.getViewMode());
     }
 
-    public void onReloadCountCursor(@Observes ReloadCountCursorEvent event) {
+    public void onReloadCountCursor(@Observes LoadCountCursorEvent event) {
         Log.d(TAG, "Refreshing count cursor");
-        restartCountLoading();
+        restartCountLoading(event.getViewMode());
     }
 
-    private void startListLoading() {
+    private void startListLoading(ViewMode viewMode) {
         Log.d(TAG, "Creating relevant list cursor for " + mMainView);
         final LoaderManager lm = mActivity.getSupportLoaderManager();
         switch (mMainView.getViewMode()) {
@@ -108,7 +109,7 @@ public class CursorLoader {
         }
     }
 
-    private void startCountLoading() {
+    private void startCountLoading(ViewMode viewMode) {
         Log.d(TAG, "Creating relevant count cursor for " + mMainView);
         final LoaderManager lm = mActivity.getSupportLoaderManager();
         switch (mMainView.getViewMode()) {
@@ -123,7 +124,7 @@ public class CursorLoader {
         }
     }
 
-    private void restartListLoading() {
+    private void restartListLoading(ViewMode viewMode) {
         Log.d(TAG, "Refreshing list cursor");
         final LoaderManager lm = mActivity.getSupportLoaderManager();
         switch (mMainView.getViewMode()) {
@@ -142,7 +143,7 @@ public class CursorLoader {
         }
     }
 
-    private void restartCountLoading() {
+    private void restartCountLoading(ViewMode viewMode) {
         Log.d(TAG, "Refreshing count cursor");
         final LoaderManager lm = mActivity.getSupportLoaderManager();
         switch (mMainView.getViewMode()) {

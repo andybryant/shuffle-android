@@ -10,7 +10,7 @@
         shuffle:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_search"
-        android:icon="@drawable/ic_menu_search_holo_light"
+        android:icon="@drawable/ic_action_search"
         android:title="@string/menu_search"
         shuffle:showAsAction="ifRoom" />
     <item

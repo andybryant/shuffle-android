@@ -76,7 +76,7 @@ public class TwoPaneLayout extends FrameLayout {
 
     private DrawerLayout mDrawerLayout;
 
-    private View mQuickAddView;
+    private View mAddView;
     private View mTaskView;
     private View mListView;
     private boolean mDrawerInitialSetupComplete;
@@ -120,14 +120,14 @@ public class TwoPaneLayout extends FrameLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        mQuickAddView = findViewById(R.id.quick_add);
+        mAddView = findViewById(R.id.quick_add);
         mListView = findViewById(R.id.entity_list_pane);
         mTaskView = findViewById(R.id.task_pane);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // all panes start GONE in initial UNKNOWN mode to avoid drawing misplaced panes
         mCurrentView = MainView.newBuilder().build();
-        mQuickAddView.setVisibility(GONE);
+        mAddView.setVisibility(GONE);
         mListView.setVisibility(GONE);
         mTaskView.setVisibility(GONE);
 
@@ -186,7 +186,7 @@ public class TwoPaneLayout extends FrameLayout {
         }
         Log.d(TAG, "task list width change, w=" + listWidth);
         setPaneWidth(mListView, listWidth);
-        setPaneWidth(mQuickAddView, listWidth);
+        setPaneWidth(mAddView, listWidth);
     }
 
     /**
@@ -235,7 +235,7 @@ public class TwoPaneLayout extends FrameLayout {
         if (hasPositions) {
             mListView.setX(listX);
             mTaskView.setX(taskX);
-            mQuickAddView.setX(listX);
+            mAddView.setX(listX);
 
             // listeners need to know that the "transition" is complete, even if one is not run.
             // defer notifying listeners because we're in a layout pass, and they might do layout.
@@ -243,7 +243,7 @@ public class TwoPaneLayout extends FrameLayout {
         }
 
         // For views that are not on the screen, let's set their visibility for accessibility.
-        mQuickAddView.setVisibility(listX >= 0 ? VISIBLE : INVISIBLE);
+        mAddView.setVisibility(listX >= 0 ? VISIBLE : INVISIBLE);
         mListView.setVisibility(listX >= 0 ? VISIBLE : INVISIBLE);
         mTaskView.setVisibility(taskX < width ? VISIBLE : INVISIBLE);
 
@@ -339,7 +339,7 @@ public class TwoPaneLayout extends FrameLayout {
 //            mController.disablePagerUpdates();
         }
 
-        mQuickAddView.setVisibility(VISIBLE);
+        mAddView.setVisibility(VISIBLE);
         mListView.setVisibility(VISIBLE);
         mTaskView.setVisibility(VISIBLE);
 

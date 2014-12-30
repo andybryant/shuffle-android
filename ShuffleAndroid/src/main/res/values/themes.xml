@@ -15,28 +15,28 @@
 
 <resources>
 
-    <style name="ShuffleTheme" parent="Theme.AppCompat.Light">
-        <!-- Set AppCompat’s actionBarStyle -->
-        <!--<item name="actionBarStyle">@style/ActionBar</item>-->
+    <style name="ShuffleTheme" parent="ShuffleTheme.Base">
+    </style>
+
+    <style name="ShuffleTheme.Base" parent="Theme.AppCompat.Light">
+        <item name="actionBarIconColor">#fff</item>
+        <item name="actionBarInsetStart">@dimen/keyline_2</item>
+        <item name="popupItemBackground">?android:selectableItemBackground</item>
+        <item name="photoItemForeground">?android:selectableItemBackground</item>
+        <item name="photoItemForegroundBorderless">?android:selectableItemBackground</item>
 
         <!--   your app branding color for the app bar -->
-        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimary">@color/theme_primary</item>
         <!--   darker variant for the status bar and contextual app bars -->
-        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
         <!--   theme UI controls like checkboxes and text fields -->
-        <item name="colorAccent">@color/accent</item>
-
+        <item name="colorAccent">@color/theme_accent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="homeAsUpIndicator">@drawable/ic_up</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_up</item>
     </style>
 
-    <style name="ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">#eee</item>
-        <item name="android:titleTextStyle">@style/ActionBarTitle</item>
-        <item name="android:icon">@drawable/shuffle_icon</item>
-    </style>
-
-    <style name="ActionBarTitle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
-        <item name="android:textColor">@color/actionbar_title_color</item>
-    </style>
 
     <style name="ShuffleDialogTheme" parent="@android:style/Theme.Holo.Light.Dialog"></style>
 

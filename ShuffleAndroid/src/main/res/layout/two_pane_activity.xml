@@ -25,6 +25,10 @@
         android:layout_height="match_parent">
 
         <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar_actionbar"/>
+
+        <include
             android:id="@+id/quick_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,7 +48,7 @@
 
     <fragment
         android:id="@+id/navigation_drawer"
-        android:layout_width="@dimen/navigation_drawer_width"
+        android:layout_width="@dimen/navdrawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:choiceMode="singleChoice"

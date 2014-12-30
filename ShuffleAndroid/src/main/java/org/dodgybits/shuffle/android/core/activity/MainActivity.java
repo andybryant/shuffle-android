@@ -1,14 +1,23 @@
 package org.dodgybits.shuffle.android.core.activity;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.AbsListView;
+import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
@@ -41,6 +50,9 @@ public class MainActivity extends RoboActionBarActivity {
 
     @Inject
     private FragmentLoader mFragmentLoader;
+
+    // Primary toolbar and drawer toggle
+    private Toolbar mActionBarToolbar;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -85,6 +97,22 @@ public class MainActivity extends RoboActionBarActivity {
         Log.d(TAG, "Using tablet layout? " + tabletUi);
         setContentView(tabletUi ? R.layout.two_pane_activity : R.layout.one_pane_activity);
 
+        mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+        if (mActionBarToolbar != null) {
+            setSupportActionBar(mActionBarToolbar);
+        }
+
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+        }
+
+
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -94,6 +122,7 @@ public class MainActivity extends RoboActionBarActivity {
 
         mEventManager.fire(new OnCreatedEvent());
     }
+
 
     @Override
     public Dialog onCreateDialog(int id, Bundle bundle) {

@@ -114,11 +114,11 @@ public class SyncResponseProcessor {
         intent.setData(Uri.parse("market://details?id=" + packageName));
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
-        builder.setSmallIcon(R.drawable.shuffle_icon);
+        builder.setSmallIcon(R.drawable.ic_notification_icon);
         builder.setContentIntent(pendingIntent);
         builder.setAutoCancel(true);
         builder.setLargeIcon(BitmapFactory.decodeResource(
-                mContext.getResources(), R.drawable.shuffle_icon));
+                mContext.getResources(), R.drawable.ic_notification_icon));
         builder.setContentTitle(mContext.getString(R.string.sync_client_old_title));
         builder.setContentText(mContext.getString(R.string.sync_client_old_text));
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(

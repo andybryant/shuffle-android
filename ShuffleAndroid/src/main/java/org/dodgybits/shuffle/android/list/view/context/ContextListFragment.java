@@ -16,6 +16,7 @@ import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.*;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
@@ -196,11 +197,11 @@ public class ContextListFragment extends RoboListFragment {
                 return true;
             case R.id.action_delete:
                 mEventManager.fire(new UpdateContextDeletedEvent(Id.create(info.id), true));
-                mEventManager.fire(new ReloadListCursorEvent());
+                mEventManager.fire(new LoadListCursorEvent(ViewMode.CONTEXT_LIST));
                 return true;
             case R.id.action_undelete:
                 mEventManager.fire(new UpdateContextDeletedEvent(Id.create(info.id), false));
-                mEventManager.fire(new ReloadListCursorEvent());
+                mEventManager.fire(new LoadListCursorEvent(ViewMode.CONTEXT_LIST));
                 return true;
         }
 
@@ -282,7 +283,7 @@ public class ContextListFragment extends RoboListFragment {
 
 
     private void refreshChildCount() {
-        mEventManager.fire(new ReloadCountCursorEvent());
+        mEventManager.fire(new LoadCountCursorEvent(ViewMode.CONTEXT_LIST));
     }
 
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:shuffle="http://schemas.android.com/apk/res-auto"
+    shuffle:theme="@style/ActionBarThemeOverlay"
+    shuffle:popupTheme="@style/ActionBarPopupThemeOverlay"
+    android:id="@+id/toolbar_actionbar"
+    android:background="@null"
+    shuffle:titleTextAppearance="@style/ActionBar.TitleText"
+    shuffle:contentInsetStart="?actionBarInsetStart"
+    android:layout_width="match_parent"
+    android:layout_height="?actionBarSize" />

@@ -142,6 +142,16 @@ public class MainView implements Parcelable {
         return true;
     }
 
+    @Override
+    public int hashCode() {
+        int result = mViewMode.hashCode();
+        result = 31 * result + mListQuery.hashCode();
+        result = 31 * result + mEntityId.hashCode();
+        result = 31 * result + (mSearchQuery != null ? mSearchQuery.hashCode() : 0);
+        result = 31 * result + mSelectedIndex;
+        return result;
+    }
+
     public Builder builderFrom() {
         return newBuilder().mergeFrom(this);
     }

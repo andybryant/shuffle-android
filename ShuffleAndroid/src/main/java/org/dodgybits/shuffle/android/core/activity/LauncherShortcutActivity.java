@@ -71,7 +71,7 @@ public class LauncherShortcutActivity extends RoboFragmentActivity {
         Dialog dialog = null;
         EntityPickerDialogHelper.OnEntitySelected listener;
         final Intent.ShortcutIconResource iconResource = Intent.ShortcutIconResource.fromContext(
-                this, R.drawable.shuffle_icon);
+                this, R.mipmap.ic_launcher);
 
         switch(id) {
             case CONTEXT_PICKER_DIALOG:

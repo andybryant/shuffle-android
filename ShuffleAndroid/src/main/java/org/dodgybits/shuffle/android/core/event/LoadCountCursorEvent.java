@@ -15,5 +15,17 @@
  */
 package org.dodgybits.shuffle.android.core.event;
 
-public class ReloadCountCursorEvent {
+import org.dodgybits.shuffle.android.core.view.ViewMode;
+
+public class LoadCountCursorEvent {
+    ViewMode mViewMode = null;
+
+    public LoadCountCursorEvent(ViewMode viewMode) {
+        mViewMode = viewMode;
+    }
+
+    public ViewMode getViewMode() {
+        return mViewMode;
+    }
+
 }

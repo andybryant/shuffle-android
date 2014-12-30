@@ -3,24 +3,20 @@ package org.dodgybits.shuffle.android.core.view;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.AndroidException;
 import android.util.Log;
 import android.view.*;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
+import org.dodgybits.shuffle.android.core.event.*;
 import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.ContextSelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.EntitySelector;
@@ -33,7 +29,10 @@ import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
 
-;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -41,12 +40,9 @@ import roboguice.fragment.RoboFragment;
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
 public class NavigationDrawerFragment extends RoboFragment {
-    private static final String TAG = "HomeListFragment";
+    private static final String TAG = "NavigationDrawerFragment";
     private static final String[] PROJECTION = new String[]{"_id"};
-
     private static final String POSITION = "NavigationDrawerFragment.position";
-
-    private static IconNameCountListAdaptor.ListItem<HomeEntry>[] sListItems = null;
 
     /**
      * Per the design guidelines, you should show the drawer on launch until the user manually
@@ -60,65 +56,28 @@ public class NavigationDrawerFragment extends RoboFragment {
     @Inject
     private MainViewProvider mMainViewProvider;
 
-    /**
-     * Helper component that ties the action bar to the navigation drawer.
-     */
-    private ActionBarDrawerToggle mDrawerToggle;
-
     private DrawerLayout mDrawerLayout;
-    private ListView mDrawerListView;
     private View mFragmentContainerView;
+    private ViewGroup mDrawerItemsListContainer;
+    private List<View> mNavDrawerItemViews;
 
     private int mCurrentSelectedPosition = 0;
     private boolean mUserLearnedDrawer;
 
-    private AsyncTask<?, ?, ?> mTask;
+    private Cursor mContextCursor;
+    private Cursor mContextCountCursor;
+    private Cursor mProjectCursor;
+    private Cursor mProjectCountCursor;
 
-    private IconNameCountListAdaptor mAdaptor;
+    private Map<MainView,NavDrawerEntry> mDrawerEntryMap;
+
+
+    private AsyncTask<?, ?, ?> mTask;
 
     private MainView mMainView;
 
     public void onViewChange(@Observes MainViewUpdateEvent event) {
         mMainView = event.getMainView();
-    }
-
-    private void createListItems() {
-        if (sListItems == null) {
-            String[] perspectives = getResources().getStringArray(R.array.perspectives).clone();
-            int[] cachedCounts = Preferences.getTopLevelCounts(getActivity());
-            int i = 0;
-            sListItems = new IconNameCountListAdaptor.ListItem[] {
-                    createTaskListItem(ListIcons.INBOX, perspectives[i], getInitialCount(cachedCounts, i++), ListQuery.inbox),
-                    createTaskListItem(ListIcons.DUE_NEXT_MONTH, perspectives[i], getInitialCount(cachedCounts, i++), ListQuery.dueNextMonth),
-                    createTaskListItem(ListIcons.NEXT_TASKS, perspectives[i], getInitialCount(cachedCounts, i++), ListQuery.nextTasks),
-                    createListItem(ListIcons.PROJECTS, perspectives[i], getInitialCount(cachedCounts, i++), ListQuery.project, ProjectSelector.newBuilder().build()),
-                    createListItem(ListIcons.CONTEXTS, perspectives[i], getInitialCount(cachedCounts, i++), ListQuery.context, ContextSelector.newBuilder().build()),
-                    createTaskListItem(ListIcons.CUSTOM, perspectives[i], getInitialCount(cachedCounts, i++), ListQuery.custom),
-                    createTaskListItem(ListIcons.TICKLER, perspectives[i], getInitialCount(cachedCounts, i++), ListQuery.tickler)
-            };
-        };
-    }
-
-    private String getInitialCount(int[] cachedCounts, int index) {
-        String result = "";
-        if (cachedCounts != null && cachedCounts.length > index) {
-            result = String.valueOf(cachedCounts[index]);
-        }
-        return result;
-    }
-
-    private IconNameCountListAdaptor.ListItem<HomeEntry> createTaskListItem(int iconResId, String name,
-                                                                            String initialCount, ListQuery query) {
-        final TaskSelector selector = TaskSelector.newBuilder().setListQuery(query).build();
-        return createListItem(iconResId, name, initialCount, query, selector);
-    }
-
-    private IconNameCountListAdaptor.ListItem<HomeEntry> createListItem(int iconResId, String name, String initialCount,
-                                                                        ListQuery query, EntitySelector selector) {
-        HomeEntry entry = new HomeEntry(query, selector);
-        IconNameCountListAdaptor.ListItem<HomeEntry> listItem = new IconNameCountListAdaptor.ListItem<>(iconResId, name, entry);
-        listItem.setCount(initialCount);
-        return listItem;
     }
 
     @Override
@@ -134,35 +93,13 @@ public class NavigationDrawerFragment extends RoboFragment {
 
         // Select either the default item (0) or the last selected item.
         mCurrentSelectedPosition = fetchSelectedPosition(savedInstanceState);
-        selectItem(mCurrentSelectedPosition);
-
-        // Indicate that this fragment would like to influence the set of actions in the action bar.
-        setHasOptionsMenu(true);
-        createListItems();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        mDrawerListView = (ListView) inflater.inflate(
+        return inflater.inflate(
                 R.layout.fragment_navigation_drawer, container, false);
-        mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectItem(position);
-            }
-        });
-        return mDrawerListView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        setupAdaptor();
-        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-
-        mTask = new CalculateCountTask().execute();
     }
 
     @Override
@@ -181,12 +118,6 @@ public class NavigationDrawerFragment extends RoboFragment {
         outState.putInt(POSITION, mCurrentSelectedPosition);
     }
 
-    private void setupAdaptor() {
-        mAdaptor = new IconNameCountListAdaptor(
-                getActivity(), R.layout.list_item_view, sListItems);
-        mDrawerListView.setAdapter(mAdaptor);
-    }
-
     public boolean isDrawerOpen() {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
     }
@@ -201,36 +132,39 @@ public class NavigationDrawerFragment extends RoboFragment {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
 
-        // set a custom shadow that overlays the main content when the drawer opens
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        // set up the drawer's list view with items and click listener
+        mDrawerLayout.setStatusBarBackgroundColor(
+                getResources().getColor(R.color.theme_primary_dark));
 
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
+        ScrimInsetsScrollView navDrawer = (ScrimInsetsScrollView)
+                mDrawerLayout.findViewById(R.id.navdrawer);
 
-        // ActionBarDrawerToggle ties together the the proper interactions
-        // between the navigation drawer and the action bar app icon.
-        mDrawerToggle = new ActionBarDrawerToggle(
-                getActivity(),                    /* host Activity */
-                mDrawerLayout,                    /* DrawerLayout object */
-                R.drawable.ic_drawer,             /* nav drawer image to replace 'Up' caret */
-                R.string.navigation_drawer_open,  /* "open drawer" description for accessibility */
-                R.string.navigation_drawer_close  /* "close drawer" description for accessibility */
-        ) {
+        if (navDrawer != null) {
+            // TODO setup account view
+        }
+
+        Toolbar actionBarToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_actionbar);
+        if (actionBarToolbar != null) {
+            actionBarToolbar.setNavigationIcon(R.drawable.ic_drawer);
+            actionBarToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mDrawerLayout.openDrawer(Gravity.START);
+                }
+            });
+        }
+
+        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
                 if (!isAdded()) {
                     return;
                 }
 
-                getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
+                onNavDrawerStateChanged(false, false);
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
                 if (!isAdded()) {
                     return;
                 }
@@ -244,34 +178,166 @@ public class NavigationDrawerFragment extends RoboFragment {
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                 }
 
-                getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
+                onNavDrawerStateChanged(true, false);
             }
-        };
 
-        // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
-        // per the navigation drawer design guidelines.
-        if (!mUserLearnedDrawer) {
-            mDrawerLayout.openDrawer(mFragmentContainerView);
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                onNavDrawerStateChanged(isNavDrawerOpen(), newState != DrawerLayout.STATE_IDLE);
+            }
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                onNavDrawerSlide(slideOffset);
+            }
+
+        });
+
+        // set a custom shadow that overlays the main content when the drawer opens
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
+
+        // populate the nav drawer with the correct items
+        fetchItems();
+
+    }
+
+    // Subclasses can override this for custom behavior
+    protected void onNavDrawerStateChanged(boolean isOpen, boolean isAnimating) {
+        // TODO - auto hide of action bar
+    }
+
+    protected void onNavDrawerSlide(float offset) {}
+
+    public boolean isNavDrawerOpen() {
+        return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(Gravity.START);
+    }
+
+    public void closeNavDrawer() {
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawer(Gravity.START);
+        }
+    }
+
+    private void fetchItems() {
+        mEventManager.fire(new LoadListCursorEvent(ViewMode.CONTEXT_LIST));
+        mEventManager.fire(new LoadListCursorEvent(ViewMode.PROJECT_LIST));
+    }
+
+    public void onContextsLoaded(@Observes ContextListCursorLoadedEvent event) {
+        mContextCursor = event.getCursor();
+        mEventManager.fire(new LoadCountCursorEvent(ViewMode.CONTEXT_LIST));
+        populateNavDrawer();
+    }
+
+    public void onProjectsLoaded(@Observes ProjectListCursorLoadedEvent event) {
+        mProjectCursor = event.getCursor();
+        mEventManager.fire(new LoadCountCursorEvent(ViewMode.PROJECT_LIST));
+        populateNavDrawer();
+    }
+
+    /** Populates the navigation drawer with the appropriate items. */
+    private void populateNavDrawer() {
+        if (mContextCursor == null || mProjectCursor == null) {
+            return;
         }
 
-        // Defer code dependent on restoration of previous instance state.
-        mDrawerLayout.post(new Runnable() {
+        mDrawerItemsListContainer = (ViewGroup) getView().findViewById(R.id.navdrawer_items_list);
+        if (mDrawerItemsListContainer == null) {
+            return;
+        }
+
+        getView().post(new Runnable() {
             @Override
             public void run() {
-                mDrawerToggle.syncState();
+                mDrawerItemsListContainer.removeAllViews();
+                mDrawerEntryMap = new HashMap<>();
+                mNavDrawerItemViews = new ArrayList<>();
+
+                String[] perspectives = getResources().getStringArray(R.array.perspectives).clone();
+                int[] cachedCounts = Preferences.getTopLevelCounts(getActivity());
+                int perspectiveIndex = 0;
+
+                addTaskItem(getInitialCount(cachedCounts, perspectiveIndex), ListIcons.INBOX, perspectives[perspectiveIndex++], ListQuery.inbox);
+                addTaskItem(getInitialCount(cachedCounts, perspectiveIndex), ListIcons.DUE_NEXT_MONTH, perspectives[perspectiveIndex++], ListQuery.dueNextMonth);
+                addTaskItem(getInitialCount(cachedCounts, perspectiveIndex), ListIcons.NEXT_TASKS, perspectives[perspectiveIndex++], ListQuery.nextTasks);
+                addTaskItem(getInitialCount(cachedCounts, perspectiveIndex), ListIcons.CUSTOM, perspectives[perspectiveIndex++], ListQuery.custom);
+                addTaskItem(getInitialCount(cachedCounts, perspectiveIndex), ListIcons.TICKLER, perspectives[perspectiveIndex++], ListQuery.tickler);
+                addSeparator(mDrawerItemsListContainer);
+                addProjectListItem(getInitialCount(cachedCounts, perspectiveIndex), ListIcons.PROJECTS, perspectives[perspectiveIndex++]);
+                addSeparator(mDrawerItemsListContainer);
+                addContextListItem(getInitialCount(cachedCounts, perspectiveIndex), ListIcons.CONTEXTS, perspectives[perspectiveIndex++]);
+
+                mTask = new CalculateCountTask().execute();
+
+                // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
+                // per the navigation drawer design guidelines.
+                if (!mUserLearnedDrawer) {
+                    mDrawerLayout.openDrawer(mFragmentContainerView);
+                }
             }
         });
 
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
-    public boolean isDrawerVisible() {
-        return mDrawerLayout != null && mDrawerLayout.isDrawerVisible(mFragmentContainerView);
+    private void addTaskItem(int count, int iconResId, String name, ListQuery listQuery) {
+        final MainView mainView = MainView.newBuilder().setListQuery(listQuery).build();
+        final TaskSelector selector = TaskSelector.newBuilder().setListQuery(listQuery).build();
+        addEntityItem(count, iconResId, name, mainView, selector);
     }
 
-    public void closeDrawers() {
-        mDrawerLayout.closeDrawers();
+    private void addProjectListItem(int count, int iconResId, String name) {
+        final MainView mainView = MainView.newBuilder().setListQuery(ListQuery.project).build();
+        addEntityItem(count, iconResId, name, mainView, ProjectSelector.newBuilder().build());
     }
+
+    private void addContextListItem(int count, int iconResId, String name) {
+        final MainView mainView = MainView.newBuilder().setListQuery(ListQuery.context).build();
+        addEntityItem(count, iconResId, name, mainView, ContextSelector.newBuilder().build());
+    }
+
+
+    private void addEntityItem(int count, int iconResId, String name, final MainView mainView,
+                         EntitySelector selector) {
+        NavDrawerEntityView view = new NavDrawerEntityView(getActivity());
+        view.init(iconResId, name, count);
+        NavDrawerEntry entry = new NavDrawerEntry(count, mainView, selector, view);
+        mDrawerEntryMap.put(entry.getMainView(), entry);
+        mNavDrawerItemViews.add(view);
+        final EventManager eventManager = mEventManager;
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mDrawerLayout != null) {
+                    mDrawerLayout.closeDrawer(mFragmentContainerView);
+                }
+                eventManager.fire(new MainViewUpdateEvent(mainView));
+            }
+        });
+    }
+
+    private void addSeparator(ViewGroup container) {
+        View view = getActivity().getLayoutInflater().inflate(R.layout.navdrawer_separator, container, false);
+        mNavDrawerItemViews.add(view);
+    }
+
+    private Integer getInitialCount(int[] cachedCounts, int index) {
+        Integer result = null;
+        if (cachedCounts != null && cachedCounts.length > index) {
+            result = cachedCounts[index];
+        }
+        return result;
+    }
+
+    public void onContextCountLoaded(@Observes ContextTaskCountCursorLoadedEvent event) {
+        final MainView mainView = MainView.newBuilder().setListQuery(ListQuery.context).build();
+        // TODO iterate through cursor - construct mainView, find entry and update
+    }
+
+    public void onProjectCountLoaded(@Observes ProjectTaskCountCursorLoadedEvent event) {
+        // TODO iterate through cursor - construct mainView, find entry and update
+
+    }
+
 
     private int fetchSelectedPosition(Bundle savedInstanceState) {
         int position = -1;
@@ -282,32 +348,6 @@ public class NavigationDrawerFragment extends RoboFragment {
             position = 0;
         }
         return position;
-    }
-
-    private void selectItem(int position) {
-        mCurrentSelectedPosition = position;
-        if (mDrawerListView != null) {
-            mDrawerListView.setItemChecked(position, true);
-        }
-        if (mDrawerLayout != null) {
-            mDrawerLayout.closeDrawer(mFragmentContainerView);
-        }
-
-        if (sListItems != null && position >= 0 && position < sListItems.length) {
-            IconNameCountListAdaptor.ListItem<HomeEntry> listItem = sListItems[position];
-            ListQuery listQuery = listItem.getPayload().mListQuery;
-            if (mMainView != null && (mMainView.getListQuery() != listQuery || mMainView.isChildView())) {
-                MainView mainView = MainView.newBuilder().setListQuery(listQuery).build();
-                mEventManager.fire(new MainViewUpdateEvent(mainView));
-            }
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        // Forward the new configuration the drawer toggle component.
-        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -325,10 +365,6 @@ public class NavigationDrawerFragment extends RoboFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
         switch (item.getItemId()) {
 
             // TODO add global options
@@ -366,23 +402,22 @@ public class NavigationDrawerFragment extends RoboFragment {
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
     }
 
-    private class CalculateCountTask extends AsyncTask<Void, Void, Void> {
-
+    private class CalculateCountTask extends AsyncTask<NavDrawerEntry, Void, Void> {
 
         @Override
-        protected Void doInBackground(Void... params) {
-            int length = sListItems.length;
+        protected Void doInBackground(NavDrawerEntry... entries) {
+            int length = entries.length;
             StringBuilder cachedCountStr = new StringBuilder();
-            for (int i = 0; i < length; i++) {
-                IconNameCountListAdaptor.ListItem<HomeEntry> item = sListItems[i];
-                String count = item.getPayload().getCount(getActivity());
-                item.setCount(count);
-                publishProgress();
+            int i = 0;
+            for (NavDrawerEntry entry : entries) {
+                int count = entry.updateCount(getActivity());
+                entry.setCount(count);
 
                 cachedCountStr.append(count);
                 if (i < length - 1) {
                     cachedCountStr.append(",");
                 }
+                i++;
             }
 
             // updated cached counts
@@ -395,7 +430,6 @@ public class NavigationDrawerFragment extends RoboFragment {
 
         @Override
         protected void onProgressUpdate(Void... values) {
-            mAdaptor.notifyDataSetChanged();
         }
 
         @Override
@@ -405,18 +439,22 @@ public class NavigationDrawerFragment extends RoboFragment {
 
     }
 
-    private static class HomeEntry {
-        final ListQuery mListQuery;
+    private static class NavDrawerEntry {
+        private Integer mCount;
+        final MainView mMainView;
         final EntitySelector mSelector;
+        final NavDrawerEntityListener mListener;
 
-        private HomeEntry(ListQuery listQuery, EntitySelector selector) {
-            mListQuery = listQuery;
+        private NavDrawerEntry(Integer count, MainView mainView, EntitySelector selector, NavDrawerEntityListener listener) {
+            mCount = count;
+            mMainView = mainView;
             mSelector = selector;
+            mListener = listener;
         }
 
-        public String getCount(Activity activity) {
+        public int updateCount(Activity activity) {
             EntitySelector selector = mSelector.builderFrom().applyListPreferences(activity,
-                    ListSettingsCache.findSettings(mListQuery)).build();
+                    ListSettingsCache.findSettings(mMainView.getListQuery())).build();
             Cursor cursor = activity.getContentResolver().query(
                     selector.getContentUri(),
                     PROJECTION,
@@ -425,9 +463,23 @@ public class NavigationDrawerFragment extends RoboFragment {
                     selector.getSortOrder());
             int count = cursor.getCount();
             cursor.close();
-            return String.valueOf(count);
+            return count;
+        }
+
+        public MainView getMainView() {
+            return mMainView;
+        }
+
+        public Integer getCount() {
+            return mCount;
+        }
+
+        public void setCount(Integer count) {
+            mCount = count;
+            mListener.onUpdateCount(count);
         }
 
     };
+
 
 }
