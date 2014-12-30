@@ -122,7 +122,7 @@ public class Preferences {
     public static int[] getTopLevelCounts(Context context) {
 		String countString = getSharedPreferences(context).getString(Preferences.TOP_LEVEL_COUNTS_KEY, null);
 		int[] result = null;
-		if (countString != null) {
+		if (countString != null && !countString.isEmpty()) {
 			String[] counts = countString.split(",");
 			result = new int[counts.length];
 			for(int i = 0; i < counts.length; i++) {

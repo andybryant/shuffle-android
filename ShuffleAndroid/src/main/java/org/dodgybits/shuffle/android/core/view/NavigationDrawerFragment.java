@@ -241,6 +241,8 @@ public class NavigationDrawerFragment extends RoboFragment {
             return;
         }
 
+        Log.d(TAG, "Populating nav drawer");
+
         mDrawerItemsListContainer = (ViewGroup) getView().findViewById(R.id.navdrawer_items_list);
         if (mDrawerItemsListContainer == null) {
             return;
@@ -255,17 +257,20 @@ public class NavigationDrawerFragment extends RoboFragment {
 
                 String[] perspectives = getResources().getStringArray(R.array.perspectives).clone();
                 int[] cachedCounts = Preferences.getTopLevelCounts(getActivity());
-                int perspectiveIndex = 0;
 
-                addTaskItem(getInitialCount(cachedCounts, perspectiveIndex), ListIcons.INBOX, perspectives[perspectiveIndex++], ListQuery.inbox);
-                addTaskItem(getInitialCount(cachedCounts, perspectiveIndex), ListIcons.DUE_NEXT_MONTH, perspectives[perspectiveIndex++], ListQuery.dueNextMonth);
-                addTaskItem(getInitialCount(cachedCounts, perspectiveIndex), ListIcons.NEXT_TASKS, perspectives[perspectiveIndex++], ListQuery.nextTasks);
-                addTaskItem(getInitialCount(cachedCounts, perspectiveIndex), ListIcons.CUSTOM, perspectives[perspectiveIndex++], ListQuery.custom);
-                addTaskItem(getInitialCount(cachedCounts, perspectiveIndex), ListIcons.TICKLER, perspectives[perspectiveIndex++], ListQuery.tickler);
+                addTaskItem(getInitialCount(cachedCounts, 0), ListIcons.INBOX, perspectives[0], ListQuery.inbox);
+                addTaskItem(getInitialCount(cachedCounts, 1), ListIcons.DUE_NEXT_MONTH, perspectives[1], ListQuery.dueNextMonth);
+                addTaskItem(getInitialCount(cachedCounts, 2), ListIcons.NEXT_TASKS, perspectives[2], ListQuery.nextTasks);
+                addTaskItem(getInitialCount(cachedCounts, 5), ListIcons.CUSTOM, perspectives[5], ListQuery.custom);
+                addTaskItem(getInitialCount(cachedCounts, 6), ListIcons.TICKLER, perspectives[6], ListQuery.tickler);
                 addSeparator(mDrawerItemsListContainer);
-                addProjectListItem(getInitialCount(cachedCounts, perspectiveIndex), ListIcons.PROJECTS, perspectives[perspectiveIndex++]);
+                addProjectListItem(getInitialCount(cachedCounts, 3), ListIcons.PROJECTS, perspectives[3]);
                 addSeparator(mDrawerItemsListContainer);
-                addContextListItem(getInitialCount(cachedCounts, perspectiveIndex), ListIcons.CONTEXTS, perspectives[perspectiveIndex++]);
+                addContextListItem(getInitialCount(cachedCounts, 4), ListIcons.CONTEXTS, perspectives[4]);
+
+                for (View view : mNavDrawerItemViews) {
+                    mDrawerItemsListContainer.addView(view);
+                }
 
                 mTask = new CalculateCountTask().execute();
 
@@ -279,24 +284,24 @@ public class NavigationDrawerFragment extends RoboFragment {
 
     }
 
-    private void addTaskItem(int count, int iconResId, String name, ListQuery listQuery) {
+    private void addTaskItem(Integer count, int iconResId, String name, ListQuery listQuery) {
         final MainView mainView = MainView.newBuilder().setListQuery(listQuery).build();
         final TaskSelector selector = TaskSelector.newBuilder().setListQuery(listQuery).build();
         addEntityItem(count, iconResId, name, mainView, selector);
     }
 
-    private void addProjectListItem(int count, int iconResId, String name) {
+    private void addProjectListItem(Integer count, int iconResId, String name) {
         final MainView mainView = MainView.newBuilder().setListQuery(ListQuery.project).build();
         addEntityItem(count, iconResId, name, mainView, ProjectSelector.newBuilder().build());
     }
 
-    private void addContextListItem(int count, int iconResId, String name) {
+    private void addContextListItem(Integer count, int iconResId, String name) {
         final MainView mainView = MainView.newBuilder().setListQuery(ListQuery.context).build();
         addEntityItem(count, iconResId, name, mainView, ContextSelector.newBuilder().build());
     }
 
 
-    private void addEntityItem(int count, int iconResId, String name, final MainView mainView,
+    private void addEntityItem(Integer count, int iconResId, String name, final MainView mainView,
                          EntitySelector selector) {
         NavDrawerEntityView view = new NavDrawerEntityView(getActivity());
         view.init(iconResId, name, count);

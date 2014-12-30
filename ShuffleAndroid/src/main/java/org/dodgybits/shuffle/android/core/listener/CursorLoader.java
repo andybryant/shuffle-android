@@ -81,19 +81,17 @@ public class CursorLoader {
     }
 
     public void onReloadListCursor(@Observes LoadListCursorEvent event) {
-        Log.d(TAG, "Refreshing list cursor");
         restartListLoading(event.getViewMode());
     }
 
     public void onReloadCountCursor(@Observes LoadCountCursorEvent event) {
-        Log.d(TAG, "Refreshing count cursor");
         restartCountLoading(event.getViewMode());
     }
 
     private void startListLoading(ViewMode viewMode) {
-        Log.d(TAG, "Creating relevant list cursor for " + mMainView);
+        Log.d(TAG, "Creating relevant list cursor for " + viewMode);
         final LoaderManager lm = mActivity.getSupportLoaderManager();
-        switch (mMainView.getViewMode()) {
+        switch (viewMode) {
             case TASK:
             case TASK_LIST:
                 lm.initLoader(LOADER_ID_TASK_LIST_LOADER, null, TASK_LIST_LOADER_CALLBACKS);
@@ -110,9 +108,9 @@ public class CursorLoader {
     }
 
     private void startCountLoading(ViewMode viewMode) {
-        Log.d(TAG, "Creating relevant count cursor for " + mMainView);
+        Log.d(TAG, "Creating relevant count cursor for " + viewMode);
         final LoaderManager lm = mActivity.getSupportLoaderManager();
-        switch (mMainView.getViewMode()) {
+        switch (viewMode) {
             case CONTEXT_LIST:
                 lm.initLoader(LOADER_ID_CONTEXT_TASK_COUNT_LOADER, null, CONTEXT_TASK_COUNT_LOADER_CALLBACKS);
                 break;
@@ -125,9 +123,9 @@ public class CursorLoader {
     }
 
     private void restartListLoading(ViewMode viewMode) {
-        Log.d(TAG, "Refreshing list cursor");
+        Log.d(TAG, "Refreshing list cursor " + viewMode);
         final LoaderManager lm = mActivity.getSupportLoaderManager();
-        switch (mMainView.getViewMode()) {
+        switch (viewMode) {
             case TASK:
             case TASK_LIST:
                 lm.restartLoader(LOADER_ID_TASK_LIST_LOADER, null, TASK_LIST_LOADER_CALLBACKS);
@@ -144,9 +142,9 @@ public class CursorLoader {
     }
 
     private void restartCountLoading(ViewMode viewMode) {
-        Log.d(TAG, "Refreshing count cursor");
+        Log.d(TAG, "Refreshing count cursor " + viewMode);
         final LoaderManager lm = mActivity.getSupportLoaderManager();
-        switch (mMainView.getViewMode()) {
+        switch (viewMode) {
             case CONTEXT_LIST:
                 lm.restartLoader(LOADER_ID_CONTEXT_TASK_COUNT_LOADER, null, CONTEXT_TASK_COUNT_LOADER_CALLBACKS);
                 break;

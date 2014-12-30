@@ -29,7 +29,6 @@ public class MainActivity extends RoboActionBarActivity {
 
     private static final int WHATS_NEW_DIALOG = 5000;
 
-    public static final String LIST_QUERY_KEY = "MainActivity.listQuery";
     public static final String MAIN_VIEW_KEY = "MainActivity.mainView";
 
 

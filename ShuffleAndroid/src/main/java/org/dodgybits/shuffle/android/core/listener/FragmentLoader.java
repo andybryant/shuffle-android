@@ -27,6 +27,7 @@ import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.event.ProjectListCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.view.context.ContextListFragment;
 import org.dodgybits.shuffle.android.list.view.project.ProjectListFragment;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
@@ -76,11 +77,15 @@ public class FragmentLoader {
     }
 
     public void onContextListCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
-        addContextList();
+        if (mMainView.getViewMode() == ViewMode.CONTEXT_LIST) {
+            addContextList();
+        }
     }
 
     public void onProjectListCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
-        addProjectList();
+        if (mMainView.getViewMode() == ViewMode.PROJECT_LIST) {
+            addProjectList();
+        }
     }
 
     private void addTaskList(TaskListContext listContext) {
