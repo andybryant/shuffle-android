@@ -22,6 +22,8 @@ import org.dodgybits.shuffle.android.core.model.persistence.selector.ContextSele
 import org.dodgybits.shuffle.android.core.model.persistence.selector.EntitySelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.ProjectSelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
+import org.dodgybits.shuffle.android.list.event.ViewHelpEvent;
+import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
@@ -267,6 +269,9 @@ public class NavigationDrawerFragment extends RoboFragment {
                 addProjectListItem(getInitialCount(cachedCounts, 3), ListIcons.PROJECTS, perspectives[3]);
                 addSeparator(mDrawerItemsListContainer);
                 addContextListItem(getInitialCount(cachedCounts, 4), ListIcons.CONTEXTS, perspectives[4]);
+                addSeparator(mDrawerItemsListContainer);
+                addSettings();
+                addHelp();
 
                 for (View view : mNavDrawerItemViews) {
                     mDrawerItemsListContainer.addView(view);
@@ -300,6 +305,36 @@ public class NavigationDrawerFragment extends RoboFragment {
         addEntityItem(count, iconResId, name, mainView, ContextSelector.newBuilder().build());
     }
 
+    private void addSettings() {
+        NavDrawerEntityView view = new NavDrawerEntityView(getActivity());
+        view.init(R.drawable.ic_drawer_settings, getString(R.string.menu_preferences), null);
+        mNavDrawerItemViews.add(view);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mDrawerLayout != null) {
+                    mDrawerLayout.closeDrawer(mFragmentContainerView);
+                }
+                mEventManager.fire(new ViewPreferencesEvent());
+            }
+        });
+    }
+
+    private void addHelp() {
+        NavDrawerEntityView view = new NavDrawerEntityView(getActivity());
+        view.init(R.drawable.ic_drawer_help, getString(R.string.menu_help), null);
+        mNavDrawerItemViews.add(view);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mDrawerLayout != null) {
+                    mDrawerLayout.closeDrawer(mFragmentContainerView);
+                }
+                mEventManager.fire(new ViewHelpEvent(ListQuery.context));
+            }
+        });
+    }
+
 
     private void addEntityItem(Integer count, int iconResId, String name, final MainView mainView,
                          EntitySelector selector) {
@@ -308,14 +343,13 @@ public class NavigationDrawerFragment extends RoboFragment {
         NavDrawerEntry entry = new NavDrawerEntry(count, mainView, selector, view);
         mDrawerEntryMap.put(entry.getMainView(), entry);
         mNavDrawerItemViews.add(view);
-        final EventManager eventManager = mEventManager;
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mDrawerLayout != null) {
                     mDrawerLayout.closeDrawer(mFragmentContainerView);
                 }
-                eventManager.fire(new MainViewUpdateEvent(mainView));
+                mEventManager.fire(new MainViewUpdateEvent(mainView));
             }
         });
     }

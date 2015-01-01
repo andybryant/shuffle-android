@@ -141,10 +141,6 @@ public class ProjectListFragment extends RoboListFragment {
                 Log.d(TAG, "adding task");
                 mEventManager.fire(new EditNewProjectEvent());
                 return true;
-            case R.id.action_help:
-                Log.d(TAG, "Bringing up help");
-                mEventManager.fire(new ViewHelpEvent(ListQuery.project));
-                return true;
             case R.id.action_view_settings:
                 Log.d(TAG, "Bringing up view settings");
                 mEventManager.fire(new EditListSettingsEvent(ListQuery.project, this, FILTER_CONFIG));

@@ -36,14 +36,4 @@
         android:title="@string/menu_undelete"
         android:visible="false"
         shuffle:showAsAction="never" />
-    <item
-        android:id="@+id/action_preferences"
-        android:icon="@drawable/ic_menu_settings_holo_light"
-        android:title="@string/menu_preferences"
-        shuffle:showAsAction="never" />
-    <item
-        android:id="@+id/action_help"
-        android:icon="@drawable/ic_menu_help_holo_light"
-        android:title="@string/menu_help"
-        shuffle:showAsAction="never" />
 </menu>

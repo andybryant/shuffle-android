@@ -140,10 +140,6 @@ public class ContextListFragment extends RoboListFragment {
                 Log.d(TAG, "adding task");
                 mEventManager.fire(new EditNewContextEvent());
                 return true;
-            case R.id.action_help:
-                Log.d(TAG, "Bringing up help");
-                mEventManager.fire(new ViewHelpEvent(ListQuery.context));
-                return true;
             case R.id.action_view_settings:
                 Log.d(TAG, "Bringing up view settings");
                 mEventManager.fire(new EditListSettingsEvent(ListQuery.context, this, FILTER_CONFIG));

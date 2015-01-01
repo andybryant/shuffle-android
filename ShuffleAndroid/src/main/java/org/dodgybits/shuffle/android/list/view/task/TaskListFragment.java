@@ -283,10 +283,6 @@ public class TaskListFragment extends RoboListFragment
                 Log.d(TAG, "adding task");
                 mEventManager.fire(mListContext.createEditNewTaskEvent());
                 return true;
-            case R.id.action_help:
-                Log.d(TAG, "Bringing up help");
-                mEventManager.fire(new ViewHelpEvent(mListContext.getListQuery()));
-                return true;
             case R.id.action_view_settings:
                 Log.d(TAG, "Bringing up view settings");
                 mEventManager.fire(new EditListSettingsEvent(mListContext.getListQuery(), this, FILTER_CONFIG));

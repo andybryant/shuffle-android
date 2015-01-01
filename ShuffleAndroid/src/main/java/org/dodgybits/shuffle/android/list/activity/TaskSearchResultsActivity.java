@@ -76,10 +76,6 @@ public class TaskSearchResultsActivity extends RoboActionBarActivity {
                 startActivity(intent);
                 finish();
                 return true;
-            case R.id.action_preferences:
-                Log.d(TAG, "Bringing up preferences");
-                mEventManager.fire(new ViewPreferencesEvent());
-                return true;
             case R.id.action_search:
                 Log.d(TAG, "Bringing up search");
                 onSearchRequested();

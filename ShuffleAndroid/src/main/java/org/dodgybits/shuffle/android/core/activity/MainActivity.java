@@ -143,10 +143,6 @@ public class MainActivity extends RoboActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_preferences:
-                Log.d(TAG, "Bringing up preferences");
-                mEventManager.fire(new ViewPreferencesEvent());
-                return true;
             case R.id.action_search:
                 Log.d(TAG, "Bringing up search");
                 // TODO - start search

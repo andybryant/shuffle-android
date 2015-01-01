@@ -8,16 +8,6 @@
         android:icon="@drawable/ic_action_search"
         android:title="@string/menu_search"
         shuffle:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_preferences"
-        android:icon="@drawable/ic_menu_settings_holo_light"
-        android:title="@string/menu_preferences"
-        shuffle:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_help"
-        android:icon="@drawable/ic_menu_help_holo_light"
-        android:title="@string/menu_help"
-        shuffle:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_synchronize"
