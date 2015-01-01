@@ -14,7 +14,7 @@ public class NavDrawerEntityView extends LinearLayout implements NavDrawerEntity
     private TextView mCount;
 
     public NavDrawerEntityView(android.content.Context context) {
-        this(context, R.layout.icon_count_list_view);
+        this(context, R.layout.navdrawer_item);
     }
 
     public NavDrawerEntityView(android.content.Context context, int layoutId) {
