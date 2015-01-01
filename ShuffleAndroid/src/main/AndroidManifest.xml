@@ -188,6 +188,7 @@
         </activity>
 
 		<activity android:name="org.dodgybits.shuffle.android.core.activity.HelpActivity"
+            android:theme="@style/ShuffleTheme.WithActionBar"
 			android:label="@string/title_help">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
@@ -252,7 +253,7 @@
 
         <activity
                 android:name="org.dodgybits.shuffle.android.editor.activity.EditTaskActivity"
-                android:label="@string/app_name" android:theme="@style/ShuffleTheme"
+                android:label="@string/app_name" android:theme="@style/ShuffleTheme.WithActionBar"
                 android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter android:label="@string/title_edit_task">
                 <action android:name="android.intent.action.EDIT" />
@@ -270,7 +271,7 @@
 
         <activity
                 android:name="org.dodgybits.shuffle.android.editor.activity.EditProjectActivity"
-                android:label="@string/title_new_project" android:theme="@style/ShuffleTheme"
+                android:label="@string/title_new_project" android:theme="@style/ShuffleTheme.WithActionBar"
                 android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter android:label="@string/title_edit_project">
                 <action android:name="android.intent.action.EDIT" />
@@ -289,7 +290,7 @@
 
         <activity
                 android:name="org.dodgybits.shuffle.android.editor.activity.EditContextActivity"
-                android:label="@string/title_new_context" android:theme="@style/ShuffleTheme"
+                android:label="@string/title_new_context" android:theme="@style/ShuffleTheme.WithActionBar"
                 android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter android:label="@string/title_edit_context">
                 <action android:name="android.intent.action.EDIT" />

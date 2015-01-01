@@ -37,8 +37,13 @@
         <item name="android:homeAsUpIndicator">@drawable/ic_up</item>
     </style>
 
+    <style name="ShuffleTheme.WithActionBar" parent="ShuffleTheme.Base">
+        <item name="windowActionBar">true</item>
+    </style>
 
-    <style name="ShuffleDialogTheme" parent="@android:style/Theme.Holo.Light.Dialog"></style>
+    <style name="ShuffleDialogTheme" parent="@android:style/Theme.Holo.Light.Dialog">
+
+    </style>
 
     <style name="HeaderBar">
         <item name="android:background">?colorPrimary</item>
