@@ -85,7 +85,7 @@ public class ProjectListFragment extends RoboListFragment {
             restoreListState();
         }
 
-        updateCursor(mCursorProvider.getCursor());
+        updateCursor(mCursorProvider.getProjectListCursor());
         Log.d(TAG, "-onActivityCreated");
     }
 

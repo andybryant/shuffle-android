@@ -28,26 +28,36 @@ public class CursorProvider {
     private static final String TAG = "CursorProvider";
 
 
-    private Cursor mCursor;
+    private Cursor mTaskListCursor;
+    private Cursor mContextListCursor;
+    private Cursor mProjectListCursor;
 
 
     public void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
         Log.d(TAG, "Updating cursor for context " + event.getTaskListContext());
-        mCursor = event.getCursor();
+        mTaskListCursor = event.getCursor();
     }
 
     public void onCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
         Log.d(TAG, "Updating cursor for context " + event.getCursor());
-        mCursor = event.getCursor();
+        mContextListCursor = event.getCursor();
     }
 
     public void onCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
         Log.d(TAG, "Updating cursor for project " + event.getCursor());
-        mCursor = event.getCursor();
+        mProjectListCursor = event.getCursor();
     }
 
-
-    public Cursor getCursor() {
-        return mCursor;
+    public Cursor getTaskListCursor() {
+        return mTaskListCursor;
     }
+
+    public Cursor getContextListCursor() {
+        return mContextListCursor;
+    }
+
+    public Cursor getProjectListCursor() {
+        return mProjectListCursor;
+    }
+
 }

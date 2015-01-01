@@ -138,7 +138,7 @@ public class TaskListFragment extends RoboListFragment
         mResumed = true;
 
         onViewUpdate(mMainViewProvider.getMainView());
-        updateCursor(mCursorProvider.getCursor());
+        updateCursor(mCursorProvider.getTaskListCursor());
 
         onVisibilityChange();
 

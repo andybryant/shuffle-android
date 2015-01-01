@@ -84,7 +84,7 @@ public class ContextListFragment extends RoboListFragment {
             restoreListState();
         }
 
-        updateCursor(mCursorProvider.getCursor());
+        updateCursor(mCursorProvider.getContextListCursor());
         Log.d(TAG, "-onActivityCreated");
     }
 

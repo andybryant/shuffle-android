@@ -89,7 +89,7 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
         mPager.setOnPageChangeListener(this);
 
         onViewUpdate(mMainViewProvider.getMainView());
-        updateCursor(mCursorProvider.getCursor());
+        updateCursor(mCursorProvider.getTaskListCursor());
     }
 
     public void onViewUpdate(@Observes MainViewUpdateEvent event) {
