@@ -44,7 +44,6 @@ import java.util.Map;
 public class NavigationDrawerFragment extends RoboFragment {
     private static final String TAG = "NavigationDrawerFragment";
     private static final String[] PROJECTION = new String[]{"_id"};
-    private static final String POSITION = "NavigationDrawerFragment.position";
 
     /**
      * Per the design guidelines, you should show the drawer on launch until the user manually
@@ -63,7 +62,6 @@ public class NavigationDrawerFragment extends RoboFragment {
     private ViewGroup mDrawerItemsListContainer;
     private List<View> mNavDrawerItemViews;
 
-    private int mCurrentSelectedPosition = 0;
     private boolean mUserLearnedDrawer;
 
     private Cursor mContextCursor;
@@ -80,6 +78,7 @@ public class NavigationDrawerFragment extends RoboFragment {
 
     public void onViewChange(@Observes MainViewUpdateEvent event) {
         mMainView = event.getMainView();
+        updateSelection();
     }
 
     @Override
@@ -92,9 +91,6 @@ public class NavigationDrawerFragment extends RoboFragment {
         // drawer. See PREF_USER_LEARNED_DRAWER for details.
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
-
-        // Select either the default item (0) or the last selected item.
-        mCurrentSelectedPosition = fetchSelectedPosition(savedInstanceState);
     }
 
     @Override
@@ -111,13 +107,6 @@ public class NavigationDrawerFragment extends RoboFragment {
         if (mTask != null) {
             mTask.cancel(true);
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putInt(POSITION, mCurrentSelectedPosition);
     }
 
     public boolean isDrawerOpen() {
@@ -277,13 +266,15 @@ public class NavigationDrawerFragment extends RoboFragment {
                     mDrawerItemsListContainer.addView(view);
                 }
 
-                mTask = new CalculateCountTask().execute();
+                mTask = new CalculateCountTask().execute(mDrawerEntryMap.values().toArray(new NavDrawerEntry[0]));
 
                 // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
                 // per the navigation drawer design guidelines.
                 if (!mUserLearnedDrawer) {
                     mDrawerLayout.openDrawer(mFragmentContainerView);
                 }
+
+                updateSelection();
             }
         });
 
@@ -377,16 +368,14 @@ public class NavigationDrawerFragment extends RoboFragment {
 
     }
 
+    private void updateSelection() {
+        if (mMainView == null || mDrawerEntryMap == null) {
+            return;
+        }
 
-    private int fetchSelectedPosition(Bundle savedInstanceState) {
-        int position = -1;
-        if (savedInstanceState != null) {
-            position = savedInstanceState.getInt(POSITION, -1);
+        for (Map.Entry<MainView, NavDrawerEntry> entry : mDrawerEntryMap.entrySet()) {
+            entry.getValue().mListener.setViewSelected(entry.getKey().equals(mMainView));
         }
-        if (position < 0) {
-            position = 0;
-        }
-        return position;
     }
 
     @Override

@@ -35,6 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_vertical"
         android:gravity="start|center_vertical"
+        android:textColor="@color/navdrawer_text_color"
         android:tag="bold"
         android:textSize="18sp" />
 

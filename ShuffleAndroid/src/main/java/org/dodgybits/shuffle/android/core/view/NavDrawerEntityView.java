@@ -9,9 +9,11 @@ import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.util.FontUtils;
 
 public class NavDrawerEntityView extends LinearLayout implements NavDrawerEntityListener {
-    private ImageView mIcon;
-    private TextView mName;
-    private TextView mCount;
+    private static final String TAG = "NavDrawerEntityView";
+
+    private ImageView mIconView;
+    private TextView mNameView;
+    private TextView mCountView;
 
     public NavDrawerEntityView(android.content.Context context) {
         this(context, R.layout.navdrawer_item);
@@ -28,24 +30,31 @@ public class NavDrawerEntityView extends LinearLayout implements NavDrawerEntity
         ViewGroup view = (ViewGroup) vi.inflate(layoutId, this, true);
 
         FontUtils.setCustomFont(view, androidContext.getAssets());
-        mName = (TextView) findViewById(R.id.name);
-        mCount = (TextView) findViewById(R.id.count);
-        mIcon = (ImageView) findViewById(R.id.icon);
+        mNameView = (TextView) findViewById(R.id.name);
+        mCountView = (TextView) findViewById(R.id.count);
+        mIconView = (ImageView) findViewById(R.id.icon);
     }
 
     public void init(final int iconResId, final String name, final Integer count) {
-        mName.setText(name);
-        mCount.setText(formatCount(count));
-        mIcon.setImageResource(iconResId);
+        mNameView.setText(name);
+        mCountView.setText(formatCount(count));
+        mIconView.setImageResource(iconResId);
     }
 
     @Override
     public void onUpdateCount(final Integer count) {
         post(new Runnable() {
             public void run() {
-                mCount.setText(formatCount(count));
+                mCountView.setText(formatCount(count));
             }
         });
+    }
+
+    @Override
+    public void setViewSelected(boolean selected) {
+        mNameView.setTextColor(selected ?
+                getResources().getColor(R.color.navdrawer_text_color_selected) :
+                getResources().getColor(R.color.navdrawer_text_color));
     }
 
     private String formatCount(Integer count) {
