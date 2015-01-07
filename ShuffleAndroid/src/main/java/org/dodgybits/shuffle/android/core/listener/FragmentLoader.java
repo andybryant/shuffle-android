@@ -26,6 +26,7 @@ import org.dodgybits.shuffle.android.core.event.ContextListCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.event.ProjectListCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
+import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.view.context.ContextListFragment;
@@ -50,11 +51,19 @@ public class FragmentLoader {
 
     private FragmentActivity mActivity;
 
+    private Boolean tabletUi;
+
     @Inject
     public FragmentLoader(Activity activity) {
         mActivity = (FragmentActivity) activity;
     }
 
+    private boolean isTabletUi() {
+        if (tabletUi == null) {
+            tabletUi = UiUtilities.useTabletUI(mActivity.getResources());
+        }
+        return tabletUi;
+    }
 
     public void onViewChanged(@Observes MainViewUpdateEvent event) {
         mMainView = event.getMainView();
@@ -67,7 +76,9 @@ public class FragmentLoader {
                 addTaskList(event.getTaskListContext());
                 break;
             case TASK:
-                addTaskList(event.getTaskListContext());
+                if (isTabletUi()) {
+                    addTaskList(event.getTaskListContext());
+                }
                 addTaskView(event.getTaskListContext());
                 break;
             default:
@@ -98,8 +109,8 @@ public class FragmentLoader {
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.replace(R.id.entity_list_pane, fragment,
-                    TAG_TASK_LIST);
+            fragmentTransaction.replace(isTabletUi() ? R.id.entity_list_pane : R.id.main_pane,
+                    fragment, TAG_TASK_LIST);
             fragmentTransaction.commitAllowingStateLoss();
         }
     }
@@ -114,8 +125,8 @@ public class FragmentLoader {
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.replace(R.id.task_pane, fragment,
-                    TAG_TASK_ITEM);
+            fragmentTransaction.replace(isTabletUi() ? R.id.task_pane : R.id.main_pane,
+                    fragment, TAG_TASK_ITEM);
             fragmentTransaction.commitAllowingStateLoss();
         }
     }
@@ -130,7 +141,8 @@ public class FragmentLoader {
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.replace(R.id.entity_list_pane, fragment,
+            fragmentTransaction.replace(isTabletUi() ? R.id.entity_list_pane : R.id.main_pane,
+                    fragment,
                     TAG_CONTEXT_LIST);
             fragmentTransaction.commitAllowingStateLoss();
         }
@@ -146,7 +158,8 @@ public class FragmentLoader {
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.replace(R.id.entity_list_pane, fragment,
+            fragmentTransaction.replace(isTabletUi() ? R.id.entity_list_pane : R.id.main_pane,
+                    fragment,
                     TAG_PROJECT_LIST);
             fragmentTransaction.commitAllowingStateLoss();
         }
