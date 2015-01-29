@@ -110,20 +110,6 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        onVisibilityChange();
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-
-        onVisibilityChange();
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.task_view_menu, menu);
         updateMenuVisibility(menu);
@@ -156,12 +142,6 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
                 return true;
         }
         return false;
-    }
-
-    private void onVisibilityChange() {
-        if (mEncoder != null && getUserVisibleHint()) {
-            updateTitle();
-        }
     }
 
     private void initializeArgCache() {

@@ -22,6 +22,7 @@ import org.dodgybits.shuffle.android.core.model.persistence.selector.ContextSele
 import org.dodgybits.shuffle.android.core.model.persistence.selector.EntitySelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.ProjectSelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
+import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.list.event.ViewHelpEvent;
 import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
@@ -246,18 +247,17 @@ public class NavigationDrawerFragment extends RoboFragment {
                 mDrawerEntryMap = new HashMap<>();
                 mNavDrawerItemViews = new ArrayList<>();
 
-                String[] perspectives = getResources().getStringArray(R.array.perspectives).clone();
                 int[] cachedCounts = Preferences.getTopLevelCounts(getActivity());
 
-                addTaskItem(getInitialCount(cachedCounts, 0), ListIcons.INBOX, perspectives[0], ListQuery.inbox);
-                addTaskItem(getInitialCount(cachedCounts, 1), ListIcons.DUE_NEXT_MONTH, perspectives[1], ListQuery.dueNextMonth);
-                addTaskItem(getInitialCount(cachedCounts, 2), ListIcons.NEXT_TASKS, perspectives[2], ListQuery.nextTasks);
-                addTaskItem(getInitialCount(cachedCounts, 5), ListIcons.CUSTOM, perspectives[5], ListQuery.custom);
-                addTaskItem(getInitialCount(cachedCounts, 6), ListIcons.TICKLER, perspectives[6], ListQuery.tickler);
+                addTaskItem(getInitialCount(cachedCounts, 0), ListIcons.INBOX, ListQuery.inbox);
+                addTaskItem(getInitialCount(cachedCounts, 1), ListIcons.DUE_NEXT_MONTH, ListQuery.dueNextMonth);
+                addTaskItem(getInitialCount(cachedCounts, 2), ListIcons.NEXT_TASKS, ListQuery.nextTasks);
+                addTaskItem(getInitialCount(cachedCounts, 5), ListIcons.CUSTOM, ListQuery.custom);
+                addTaskItem(getInitialCount(cachedCounts, 6), ListIcons.TICKLER, ListQuery.tickler);
                 addSeparator(mDrawerItemsListContainer);
-                addProjectListItem(getInitialCount(cachedCounts, 3), ListIcons.PROJECTS, perspectives[3]);
+                addProjectListItem(getInitialCount(cachedCounts, 3), ListIcons.PROJECTS);
                 addSeparator(mDrawerItemsListContainer);
-                addContextListItem(getInitialCount(cachedCounts, 4), ListIcons.CONTEXTS, perspectives[4]);
+                addContextListItem(getInitialCount(cachedCounts, 4), ListIcons.CONTEXTS);
                 addSeparator(mDrawerItemsListContainer);
                 addSettings();
                 addHelp();
@@ -280,18 +280,21 @@ public class NavigationDrawerFragment extends RoboFragment {
 
     }
 
-    private void addTaskItem(Integer count, int iconResId, String name, ListQuery listQuery) {
+    private void addTaskItem(Integer count, int iconResId, ListQuery listQuery) {
+        String name = UiUtilities.getTitle(getResources(), listQuery);
         final MainView mainView = MainView.newBuilder().setListQuery(listQuery).build();
         final TaskSelector selector = TaskSelector.newBuilder().setListQuery(listQuery).build();
         addEntityItem(count, iconResId, name, mainView, selector);
     }
 
-    private void addProjectListItem(Integer count, int iconResId, String name) {
+    private void addProjectListItem(Integer count, int iconResId) {
+        String name = UiUtilities.getTitle(getResources(), ListQuery.project);
         final MainView mainView = MainView.newBuilder().setListQuery(ListQuery.project).build();
         addEntityItem(count, iconResId, name, mainView, ProjectSelector.newBuilder().build());
     }
 
-    private void addContextListItem(Integer count, int iconResId, String name) {
+    private void addContextListItem(Integer count, int iconResId) {
+        String name = UiUtilities.getTitle(getResources(), ListQuery.context);
         final MainView mainView = MainView.newBuilder().setListQuery(ListQuery.context).build();
         addEntityItem(count, iconResId, name, mainView, ContextSelector.newBuilder().build());
     }

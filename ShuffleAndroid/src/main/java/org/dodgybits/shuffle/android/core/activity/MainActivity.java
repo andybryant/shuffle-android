@@ -133,7 +133,6 @@ public class MainActivity extends RoboActionBarActivity {
 
             // TODO define menu when drawer open
 //            getMenuInflater().inflate(R.menu.main, menu);
-            restoreActionBar();
             return true;
         }
 
@@ -162,15 +161,5 @@ public class MainActivity extends RoboActionBarActivity {
 
         super.onSaveInstanceState(outState);
     }
-
-    private void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-//        if (mTitle != null) {
-//            actionBar.setTitle(mTitle);
-//        }
-    }
-
 
 }

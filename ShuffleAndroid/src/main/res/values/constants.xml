@@ -16,7 +16,7 @@
     <!-- Boolean value indicating whether the tablet UI should be used. -->
     <bool name="use_tablet_ui">false</bool>
 
-    <!-- Whether the list is collapsible in conversation view mode -->
+    <!-- Whether the list is collapsible in task view mode -->
     <bool name="list_collapsible">true</bool>
 
     <!-- Whether to show single or 2 pane search results -->

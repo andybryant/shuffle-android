@@ -102,15 +102,7 @@ public class ContextListFragment extends RoboListFragment {
         super.onResume();
 
         mResumed = true;
-        onVisibilityChange();
         refreshChildCount();
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-
-        onVisibilityChange();
     }
 
     /**
@@ -245,20 +237,8 @@ public class ContextListFragment extends RoboListFragment {
         cursor.close();
     }
 
-    private void onVisibilityChange() {
-        if (getUserVisibleHint()) {
-            updateTitle();
-            updateQuickAdd();
-            getRoboActionBarActivity().supportInvalidateOptionsMenu();
-        }
-    }
-
     protected RoboActionBarActivity getRoboActionBarActivity() {
         return (RoboActionBarActivity) getActivity();
-    }
-
-    private void updateTitle() {
-        getActivity().setTitle(R.string.title_context);
     }
 
     public void onQuickAddEvent(@Observes QuickAddEvent event) {

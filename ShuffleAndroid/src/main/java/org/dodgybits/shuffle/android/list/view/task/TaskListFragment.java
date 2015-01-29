@@ -320,13 +320,10 @@ public class TaskListFragment extends RoboListFragment
     protected void onVisibilityChange() {
         if (getUserVisibleHint()) {
             flushCaches();
-            updateTitle();
             updateQuickAdd();
         }
         updateSelectionMode();
     }
-
-
 
     public void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
         updateCursor(event.getCursor());
@@ -353,10 +350,6 @@ public class TaskListFragment extends RoboListFragment
     private void flushCaches() {
         mContextCache.flush();
         mProjectCache.flush();
-    }
-
-    private void updateTitle() {
-        getListContext().updateTitle(((ActionBarActivity)getActivity()), mContextCache, mProjectCache);
     }
 
     public void onQuickAddEvent(@Observes QuickAddEvent event) {

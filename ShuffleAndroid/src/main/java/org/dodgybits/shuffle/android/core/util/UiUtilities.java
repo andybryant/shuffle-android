@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewParent;
 import android.widget.ListView;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.list.model.ListQuery;
 
 public class UiUtilities {
     private UiUtilities() {
@@ -18,6 +19,51 @@ public class UiUtilities {
      */
     public static boolean useTabletUI(Resources res) {
         return res.getBoolean(R.bool.use_tablet_ui);
+    }
+
+    public static boolean isListCollapsible(Resources res) {
+        return useTabletUI(res) && res.getBoolean(R.bool.list_collapsible);
+    }
+
+    public static String getTitle(Resources res, ListQuery listQuery) {
+        String title = "";
+        switch (listQuery) {
+            case inbox:
+                title = res.getString(R.string.title_inbox);
+                break;
+            case dueNextMonth:
+                title = res.getString(R.string.title_due_next_month);
+                break;
+            case dueNextWeek:
+                title = res.getString(R.string.title_due_next_week);
+                break;
+            case dueToday:
+                title = res.getString(R.string.title_due_today);
+                break;
+            case nextTasks:
+                title = res.getString(R.string.title_next_tasks);
+                break;
+            case project:
+                title = res.getString(R.string.title_project);
+                break;
+            case context:
+                title = res.getString(R.string.title_context);
+                break;
+            case custom:
+                title = res.getString(R.string.title_custom);
+                break;
+            case tickler:
+                title = res.getString(R.string.title_tickler);
+                break;
+            case all:
+                title = res.getString(R.string.title_all);
+                break;
+            case search:
+                title = res.getString(R.string.title_search);
+                break;
+
+        }
+        return title;
     }
 
     /** Generics version of {@link android.app.Activity#findViewById} */
