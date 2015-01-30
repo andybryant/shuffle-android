@@ -327,7 +327,7 @@ public class TwoPaneLayout extends FrameLayout {
         return !ViewMode.isListMode(mCurrentView.getViewMode()) && mListCollapsible;
     }
 
-    public void onViewChanged(@Observes MainViewUpdateEvent event) {
+    private void onViewChanged(@Observes MainViewUpdateEvent event) {
         MainView newView = event.getMainView();
         onViewChanged(newView);
     }

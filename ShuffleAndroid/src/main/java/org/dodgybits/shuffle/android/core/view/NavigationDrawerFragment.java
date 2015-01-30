@@ -77,7 +77,7 @@ public class NavigationDrawerFragment extends RoboFragment {
 
     private MainView mMainView;
 
-    public void onViewChange(@Observes MainViewUpdateEvent event) {
+    private void onViewChange(@Observes MainViewUpdateEvent event) {
         mMainView = event.getMainView();
         updateSelection();
     }
@@ -215,13 +215,13 @@ public class NavigationDrawerFragment extends RoboFragment {
         mEventManager.fire(new LoadListCursorEvent(ViewMode.PROJECT_LIST));
     }
 
-    public void onContextsLoaded(@Observes ContextListCursorLoadedEvent event) {
+    private void onContextsLoaded(@Observes ContextListCursorLoadedEvent event) {
         mContextCursor = event.getCursor();
         mEventManager.fire(new LoadCountCursorEvent(ViewMode.CONTEXT_LIST));
         populateNavDrawer();
     }
 
-    public void onProjectsLoaded(@Observes ProjectListCursorLoadedEvent event) {
+    private void onProjectsLoaded(@Observes ProjectListCursorLoadedEvent event) {
         mProjectCursor = event.getCursor();
         mEventManager.fire(new LoadCountCursorEvent(ViewMode.PROJECT_LIST));
         populateNavDrawer();
@@ -361,12 +361,12 @@ public class NavigationDrawerFragment extends RoboFragment {
         return result;
     }
 
-    public void onContextCountLoaded(@Observes ContextTaskCountCursorLoadedEvent event) {
+    private void onContextCountLoaded(@Observes ContextTaskCountCursorLoadedEvent event) {
         final MainView mainView = MainView.newBuilder().setListQuery(ListQuery.context).build();
         // TODO iterate through cursor - construct mainView, find entry and update
     }
 
-    public void onProjectCountLoaded(@Observes ProjectTaskCountCursorLoadedEvent event) {
+    private void onProjectCountLoaded(@Observes ProjectTaskCountCursorLoadedEvent event) {
         // TODO iterate through cursor - construct mainView, find entry and update
 
     }

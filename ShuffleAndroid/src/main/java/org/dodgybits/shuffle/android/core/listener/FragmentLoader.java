@@ -65,11 +65,11 @@ public class FragmentLoader {
         return tabletUi;
     }
 
-    public void onViewChanged(@Observes MainViewUpdateEvent event) {
+    private void onViewChanged(@Observes MainViewUpdateEvent event) {
         mMainView = event.getMainView();
     }
 
-    public void onTaskListCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
+    private void onTaskListCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
         Log.i(TAG, "Task list Cursor loaded - loading fragment now");
         switch (mMainView.getViewMode()) {
             case TASK_LIST:
@@ -87,13 +87,13 @@ public class FragmentLoader {
         }
     }
 
-    public void onContextListCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
+    private void onContextListCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
         if (mMainView.getViewMode() == ViewMode.CONTEXT_LIST) {
             addContextList();
         }
     }
 
-    public void onProjectListCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
+    private void onProjectListCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
         if (mMainView.getViewMode() == ViewMode.PROJECT_LIST) {
             addProjectList();
         }

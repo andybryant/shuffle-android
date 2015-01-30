@@ -151,7 +151,7 @@ public class MainActivity extends RoboActionBarActivity {
         return false;
     }
 
-    public void onViewChanged(@Observes MainViewUpdateEvent event) {
+    private void onViewChanged(@Observes MainViewUpdateEvent event) {
         mMainView = event.getMainView();
     }
 

@@ -197,7 +197,7 @@ public class ProjectListFragment extends RoboListFragment {
         return super.onContextItemSelected(item);
     }
 
-    public void onCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
+    private void onCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
         updateCursor(event.getCursor());
     }
 
@@ -224,7 +224,7 @@ public class ProjectListFragment extends RoboListFragment {
         }
     }
 
-    public void onTaskCountCursorLoaded(@Observes ProjectTaskCountCursorLoadedEvent event) {
+    private void onTaskCountCursorLoaded(@Observes ProjectTaskCountCursorLoadedEvent event) {
         Cursor cursor = event.getCursor();
         mListAdapter.setTaskCountArray(mTaskPersister.readCountArray(cursor));
         if (getActivity() != null) {
@@ -242,7 +242,7 @@ public class ProjectListFragment extends RoboListFragment {
         return (RoboActionBarActivity) getActivity();
     }
 
-    public void onQuickAddEvent(@Observes QuickAddEvent event) {
+    private void onQuickAddEvent(@Observes QuickAddEvent event) {
         if (getUserVisibleHint() && mResumed) {
             mEventManager.fire(new NewProjectEvent(event.getValue()));
         }

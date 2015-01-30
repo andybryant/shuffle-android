@@ -24,7 +24,7 @@ import roboguice.inject.ContextSingleton;
 public class MainViewProvider {
     private MainView mMainView;
 
-    public void onViewChanged(@Observes MainViewUpdateEvent event) {
+    private void onViewChanged(@Observes MainViewUpdateEvent event) {
         mMainView = event.getMainView();
     }
 

@@ -196,7 +196,7 @@ public class ContextListFragment extends RoboListFragment {
         return super.onContextItemSelected(item);
     }
 
-    public void onCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
+    private void onCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
         updateCursor(event.getCursor());
     }
 
@@ -223,7 +223,7 @@ public class ContextListFragment extends RoboListFragment {
         }
     }
 
-    public void onTaskCountCursorLoaded(@Observes ContextTaskCountCursorLoadedEvent event) {
+    private void onTaskCountCursorLoaded(@Observes ContextTaskCountCursorLoadedEvent event) {
         Cursor cursor = event.getCursor();
         mListAdapter.setTaskCountArray(mTaskPersister.readCountArray(cursor));
         if (getActivity() != null) {
@@ -241,7 +241,7 @@ public class ContextListFragment extends RoboListFragment {
         return (RoboActionBarActivity) getActivity();
     }
 
-    public void onQuickAddEvent(@Observes QuickAddEvent event) {
+    private void onQuickAddEvent(@Observes QuickAddEvent event) {
         if (getUserVisibleHint() && mResumed) {
             mEventManager.fire(new NewContextEvent(event.getValue()));
         }
