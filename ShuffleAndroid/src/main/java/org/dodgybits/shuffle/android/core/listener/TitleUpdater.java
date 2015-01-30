@@ -32,29 +32,51 @@ public class TitleUpdater {
         mActivity = (ActionBarActivity) activity;
     }
 
-    public void onViewChanged(@Observes MainViewUpdateEvent event) {
+    private void onViewChanged(@Observes MainViewUpdateEvent event) {
         MainView mainView = event.getMainView();
         if (mainView == null || mainView.getViewMode() == null) {
             return;
         }
         String title = "";
-
+        ListQuery listQuery = mainView.getListQuery();
         switch (mainView.getViewMode()) {
             case TASK:
                 // blank for task view unless in landscape mode on tablet
                 if (!UiUtilities.isListCollapsible(mActivity.getResources())) {
-                    title = getListQueryTitle(mainView.getListQuery());
+                    title = getTaskListTitle(mainView);
                 }
                 break;
             case TASK_LIST:
+                title = getTaskListTitle(mainView);
+                break;
             case CONTEXT_LIST:
             case PROJECT_LIST:
             case SEARCH_RESULTS_LIST:
             case SEARCH_RESULTS_TASK:
-                title = getListQueryTitle(mainView.getListQuery());
+                title = getListQueryTitle(listQuery);
                 break;
         }
         mActivity.setTitle(title);
+    }
+
+    private String getTaskListTitle(MainView mainView) {
+        String title = "";
+        ListQuery listQuery = mainView.getListQuery();
+        if (listQuery == ListQuery.context) {
+            Context context = mContextCache.findById(mainView.getEntityId());
+            if (context != null) {
+                title = context.getName();
+            }
+        } else if (listQuery == ListQuery.project) {
+            Project project = mProjectCache.findById(mainView.getEntityId());
+            if (project != null) {
+                title = project.getName();
+            }
+        }
+        if (title.isEmpty()) {
+            title = getListQueryTitle(listQuery);
+        }
+        return title;
     }
 
     private String getListQueryTitle(ListQuery listQuery) {
