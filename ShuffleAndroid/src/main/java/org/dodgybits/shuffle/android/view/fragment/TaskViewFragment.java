@@ -113,6 +113,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.task_view_menu, menu);
         updateMenuVisibility(menu);
+        // TODO - move to MenuHandler
     }
 
     @Override

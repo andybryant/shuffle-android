@@ -1,26 +1,38 @@
 package org.dodgybits.shuffle.android.list.view.context;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
-import android.view.*;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
 import com.google.inject.Inject;
+
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.*;
+import org.dodgybits.shuffle.android.core.event.ContextListCursorLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.ContextTaskCountCursorLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.LoadCountCursorEvent;
+import org.dodgybits.shuffle.android.core.event.LoadListCursorEvent;
+import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
-import org.dodgybits.shuffle.android.list.event.*;
+import org.dodgybits.shuffle.android.list.event.EditContextEvent;
+import org.dodgybits.shuffle.android.list.event.NewContextEvent;
+import org.dodgybits.shuffle.android.list.event.QuickAddEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateContextDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
 import org.dodgybits.shuffle.android.list.view.QuickAddController;
+
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -31,9 +43,6 @@ public class ContextListFragment extends RoboListFragment {
     
     /** Argument name(s) */
     private static final String BUNDLE_LIST_STATE = "ContextListFragment.state.listState";
-
-    // result codes
-    private static final int FILTER_CONFIG = 600;
 
     @Inject
     private ContextListAdaptor mListAdapter;
@@ -57,15 +66,6 @@ public class ContextListFragment extends RoboListFragment {
 
     private boolean mResumed = false;
 
-    /**
-     * When creating, retrieve this instance's number from its arguments.
-     */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setHasOptionsMenu(true);
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -115,42 +115,6 @@ public class ContextListFragment extends RoboListFragment {
                 .setEntityId(Id.create(id))
                 .build();
         mEventManager.fire(new MainViewUpdateEvent(mainView));
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.list_menu, menu);
-
-        String addTitle = getString(R.string.menu_insert, getString(R.string.context_name));
-        menu.findItem(R.id.action_add).setTitle(addTitle);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_add:
-                Log.d(TAG, "adding task");
-                mEventManager.fire(new EditNewContextEvent());
-                return true;
-            case R.id.action_view_settings:
-                Log.d(TAG, "Bringing up view settings");
-                mEventManager.fire(new EditListSettingsEvent(ListQuery.context, this, FILTER_CONFIG));
-                return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode,
-                                 Intent data) {
-        Log.d(TAG, "Got resultCode " + resultCode + " with data " + data);
-        switch (requestCode) {
-            case FILTER_CONFIG:
-                break;
-
-            default:
-                Log.e(TAG, ("Unknown requestCode: " + requestCode));
-        }
     }
 
     @Override
