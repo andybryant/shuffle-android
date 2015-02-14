@@ -256,6 +256,20 @@ public class MainView implements Parcelable {
             return this;
         }
 
+        public Builder parentView() {
+            deriveViewMode();
+            if (mResult.mViewMode == ViewMode.TASK) {
+                mResult.mSelectedIndex = -1;
+                deriveViewMode();
+            } else if (mResult.getEntityId().isInitialised()) {
+                mResult.mEntityId = Id.NONE;
+                deriveViewMode();
+            } else {
+                Log.w(TAG, "No parent view for top level view " + mResult);
+            }
+            return this;
+        }
+
         public MainView build() {
             if (mResult == null) {
                 throw new IllegalStateException(

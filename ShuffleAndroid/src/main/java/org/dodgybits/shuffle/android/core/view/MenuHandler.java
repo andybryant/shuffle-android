@@ -17,6 +17,9 @@ import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.list.event.EditListSettingsEvent;
 import org.dodgybits.shuffle.android.list.event.EditNewContextEvent;
 import org.dodgybits.shuffle.android.list.event.EditNewProjectEvent;
+import org.dodgybits.shuffle.android.list.event.EditTaskEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 
@@ -148,17 +151,14 @@ public class MenuHandler {
                         new EditListSettingsEvent(mMainView.getListQuery(), mActivity, FILTER_CONFIG));
                 return true;
             case R.id.action_edit:
-                mEventManager.fire(mTaskListContext.createEditEvent());
-                return true;
-            case R.id.action_delete:
-                mEventManager.fire(mTaskListContext.createDeleteEvent(true));
-                // TODO - go back to parent view
-                mActivity.finish();
-                return true;
-            case R.id.action_undelete:
-                mEventManager.fire(mTaskListContext.createDeleteEvent(false));
-                // TODO - go back to parent view
-                mActivity.finish();
+                if (mMainView.getViewMode() != ViewMode.TASK) {
+                    mEventManager.fire(mTaskListContext.createEditEvent());
+                    return true;
+                }
+                break;
+            case android.R.id.home:
+                MainView parentView = mMainView.builderFrom().parentView().build();
+                mEventManager.fire(new MainViewUpdateEvent(parentView));
                 return true;
         }
         return false;

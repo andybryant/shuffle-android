@@ -110,13 +110,6 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.task_view_menu, menu);
-        updateMenuVisibility(menu);
-        // TODO - move to MenuHandler
-    }
-
-    @Override
     public void onPrepareOptionsMenu(Menu menu) {
         updateMenuVisibility(menu);
     }
@@ -133,13 +126,13 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
             case R.id.action_edit:
                 Log.d(TAG, "Editing the action");
                 mEventManager.fire(new EditTaskEvent(mTask.getLocalId()));
-                getActivity().finish();
+                // TODO - add parent view to top of stack
                 return true;
             case R.id.action_delete:
             case R.id.action_undelete:
                 Log.d(TAG, "Toggling delete on task");
                 mEventManager.fire(new UpdateTasksDeletedEvent(mTask.getLocalId().getId(), !mTask.isDeleted()));
-                getActivity().finish();
+                // TODO - go to parent view
                 return true;
         }
         return false;
