@@ -42,7 +42,7 @@
         style="@style/EditCustomActionButton">
 
         <ImageView
-            android:src="@drawable/ic_menu_done_holo_light"
+            android:src="@drawable/ic_check_wht_24dp"
             style="@style/EditCustomActionButtonImage" />
 
         <TextView

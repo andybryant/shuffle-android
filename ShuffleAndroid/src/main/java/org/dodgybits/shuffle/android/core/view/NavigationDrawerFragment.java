@@ -42,7 +42,7 @@ import java.util.Map;
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
 public class NavigationDrawerFragment extends RoboFragment {
-    private static final String TAG = "NavigationDrawerFragment";
+    private static final String TAG = "NavDrawerFragment";
     private static final String[] PROJECTION = new String[]{"_id"};
 
     /**

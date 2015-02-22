@@ -59,7 +59,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="4dip"
-                android:src="@drawable/ic_menu_add_field_holo_light"
+                android:src="@drawable/ic_menu_compose_holo_dark"
                 android:background="@drawable/blank" />
 
             <Spinner

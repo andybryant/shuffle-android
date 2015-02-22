@@ -24,7 +24,7 @@
         android:layout_width="0dip"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:drawableLeft="@drawable/ic_menu_cancel_holo_light"
+        android:drawableLeft="@drawable/ic_close_wht_24dp"
         android:text="@string/cancel_button_title" />
 
     <!-- id must match corresponding menu item id -->
@@ -33,7 +33,7 @@
         android:layout_width="0dip"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:drawableLeft="@drawable/ic_menu_done_holo_light"
+        android:drawableLeft="@drawable/ic_check_wht_24dp"
         android:text="@string/save_button_title" />
 
 
