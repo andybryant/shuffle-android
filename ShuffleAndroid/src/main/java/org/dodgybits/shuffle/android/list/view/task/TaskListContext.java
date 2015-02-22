@@ -233,12 +233,12 @@ public class TaskListContext implements Parcelable {
         switch (getListQuery()) {
             case context:
                 org.dodgybits.shuffle.android.core.model.Context context = contextCache.findById(mSelector.getContextId());
-                isDeleted = context.isDeleted();
+                isDeleted = context != null && context.isDeleted();
                 break;
 
             case project:
                 Project project = projectCache.findById(mSelector.getProjectId());
-                isDeleted = project.isDeleted();
+                isDeleted = project != null && project.isDeleted();
                 break;
 
             default:

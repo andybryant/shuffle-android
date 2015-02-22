@@ -41,9 +41,6 @@ public class TaskListFragment extends RoboListFragment
 
     private static final String SELECTED_ITEM = "SELECTED_ITEM";
 
-    // result codes
-    private static final int FILTER_CONFIG = 600;
-    
     private boolean mShowMoveActions = false;
 
     /** ID of the message to highlight. */
@@ -224,13 +221,10 @@ public class TaskListFragment extends RoboListFragment
             mMainView = mainView;
             mListContext = TaskListContext.create(mMainView);
 
-
             mShowMoveActions = mListContext.showMoveActions();
             mSelectedTaskId = mMainView.getSelectedIndex();
             mListAdapter.setProjectNameVisible(mListContext.isProjectNameVisible());
         }
-
-
     }
 
     @Override
@@ -239,96 +233,15 @@ public class TaskListFragment extends RoboListFragment
         mListAdapter.onSaveInstanceState(outState);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.list_menu, menu);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-
-        TaskListContext listContext = getListContext();
-        if (listContext == null) {
-            return;
-        }
-
-        String taskName = getString(R.string.task_name);
-        String addTitle = getString(R.string.menu_insert, taskName);
-        menu.findItem(R.id.action_add).setTitle(addTitle);
-
-        MenuItem editMenu = menu.findItem(R.id.action_edit);
-        MenuItem deleteMenu = menu.findItem(R.id.action_delete);
-        MenuItem undeleteMenu = menu.findItem(R.id.action_undelete);
-        if (listContext.showEditActions()) {
-            String entityName = listContext.getEditEntityName(getActivity());
-            boolean entityDeleted = listContext.isEditEntityDeleted(getActivity(), mContextCache, mProjectCache);
-            editMenu.setVisible(true);
-            editMenu.setTitle(getString(R.string.menu_edit, entityName));
-            deleteMenu.setVisible(!entityDeleted);
-            deleteMenu.setTitle(getString(R.string.menu_delete_entity, entityName));
-            undeleteMenu.setVisible(entityDeleted);
-            undeleteMenu.setTitle(getString(R.string.menu_undelete_entity, entityName));
-        } else {
-            editMenu.setVisible(false);
-            deleteMenu.setVisible(false);
-            undeleteMenu.setVisible(false);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_add:
-                Log.d(TAG, "adding task");
-                mEventManager.fire(mListContext.createEditNewTaskEvent());
-                return true;
-            case R.id.action_view_settings:
-                Log.d(TAG, "Bringing up view settings");
-                mEventManager.fire(new EditListSettingsEvent(mListContext.getListQuery(), this, FILTER_CONFIG));
-                return true;
-            case R.id.action_edit:
-                mEventManager.fire(mListContext.createEditEvent());
-                return true;
-            case R.id.action_delete:
-                mEventManager.fire(mListContext.createDeleteEvent(true));
-                getActivity().finish();
-                return true;
-            case R.id.action_undelete:
-                mEventManager.fire(mListContext.createDeleteEvent(false));
-                getActivity().finish();
-                return true;
-
-        }
-        return false;
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode,
-                                    Intent data) {
-        Log.d(TAG, "Got resultCode " + resultCode + " with data " + data);
-        switch (requestCode) {
-            case FILTER_CONFIG:
-                mEventManager.fire(new ListSettingsUpdatedEvent(getListContext().getListQuery()));
-                break;
-
-            default:
-                Log.e(TAG, "Unknown requestCode: " + requestCode);
-        }
-    }
-
     protected void onVisibilityChange() {
         if (getUserVisibleHint()) {
             flushCaches();
-            updateTitle();
             updateQuickAdd();
         }
         updateSelectionMode();
     }
 
-
-
-    public void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
+    private void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
         updateCursor(event.getCursor());
     }
 
@@ -355,11 +268,7 @@ public class TaskListFragment extends RoboListFragment
         mProjectCache.flush();
     }
 
-    private void updateTitle() {
-        getListContext().updateTitle(((ActionBarActivity)getActivity()), mContextCache, mProjectCache);
-    }
-
-    public void onQuickAddEvent(@Observes QuickAddEvent event) {
+    private void onQuickAddEvent(@Observes QuickAddEvent event) {
         if (getUserVisibleHint() && mResumed) {
             mEventManager.fire(getListContext().createNewTaskEventWithDescription(event.getValue()));
         }

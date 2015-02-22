@@ -29,6 +29,8 @@ import org.dodgybits.shuffle.android.core.event.EntityListVisibilityChangeEvent;
 import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
 import org.dodgybits.shuffle.android.core.event.TaskVisibilityChangeEvent;
 import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
+import org.dodgybits.shuffle.android.core.util.UiUtilities;
+
 import roboguice.RoboGuice;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -106,7 +108,7 @@ public class TwoPaneLayout extends FrameLayout {
         // The task list might be visible now, depending on the layout: in portrait we
         // don't show the task list, but in landscape we do.  This information is stored
         // in the constants
-        mListCollapsible = res.getBoolean(R.bool.list_collapsible);
+        mListCollapsible = UiUtilities.isListCollapsible(res);
 
         final int taskListWeight = res.getInteger(R.integer.task_list_weight);
         final int taskViewWeight = res.getInteger(R.integer.task_view_weight);
@@ -319,13 +321,13 @@ public class TwoPaneLayout extends FrameLayout {
     }
 
     /**
-     * @return Whether or not the task list is visible on screen.
+     * @return Whether or not the entity list is visible on screen.
      */
     public boolean isEntityListCollapsed() {
         return !ViewMode.isListMode(mCurrentView.getViewMode()) && mListCollapsible;
     }
 
-    public void onViewChanged(@Observes MainViewUpdateEvent event) {
+    private void onViewChanged(@Observes MainViewUpdateEvent event) {
         MainView newView = event.getMainView();
         onViewChanged(newView);
     }

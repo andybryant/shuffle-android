@@ -33,17 +33,17 @@ public class CursorProvider {
     private Cursor mProjectListCursor;
 
 
-    public void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
+    private void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
         Log.d(TAG, "Updating cursor for context " + event.getTaskListContext());
         mTaskListCursor = event.getCursor();
     }
 
-    public void onCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
+    private void onCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
         Log.d(TAG, "Updating cursor for context " + event.getCursor());
         mContextListCursor = event.getCursor();
     }
 
-    public void onCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
+    private void onCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
         Log.d(TAG, "Updating cursor for project " + event.getCursor());
         mProjectListCursor = event.getCursor();
     }

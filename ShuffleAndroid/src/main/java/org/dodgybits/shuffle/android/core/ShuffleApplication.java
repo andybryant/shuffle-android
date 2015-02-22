@@ -22,8 +22,6 @@ import org.dodgybits.android.shuffle.R;
 
 import java.util.HashMap;
 
-//import android.support.multidex.MultiDexApplication;
-
 public class ShuffleApplication extends Application {
 
     // The following line should be changed to include the correct property id.

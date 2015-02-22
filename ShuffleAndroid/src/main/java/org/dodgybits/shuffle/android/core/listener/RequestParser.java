@@ -62,7 +62,7 @@ public class RequestParser {
         mEventManager = eventManager;
     }
 
-    public void onCreate(@Observes OnCreateEvent event) {
+    private void onCreate(@Observes OnCreateEvent event) {
         final Intent intent = mActivity.getIntent();
         Bundle savedState = event.getSavedInstanceState();
         if (savedState != null) {
@@ -74,7 +74,6 @@ public class RequestParser {
             Log.d(TAG, "IN onCreate - no saved state or intent. defaulting to=" + mainView);
             mEventManager.fire(new MainViewUpdateEvent(mainView));
         }
-
     }
 
     /**

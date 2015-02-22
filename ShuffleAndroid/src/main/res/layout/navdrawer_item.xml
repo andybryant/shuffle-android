@@ -14,10 +14,8 @@
 -->
 
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="?android:selectableItemBackground"
-    android:gravity="start|center_vertical"
     android:paddingLeft="@dimen/keyline_1"
     android:paddingRight="@dimen/keyline_1"
     android:layout_width="match_parent"
@@ -27,14 +25,16 @@
         android:id="@+id/icon"
         android:layout_height="24dp"
         android:layout_width="24dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
         android:layout_marginRight="32dp" />
 
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="start|center_vertical"
-        android:gravity="start|center_vertical"
+        android:layout_toRightOf="@id/icon"
+        android:layout_centerVertical="true"
         android:textColor="@color/navdrawer_text_color"
         android:tag="bold"
         android:textSize="18sp" />
@@ -43,7 +43,8 @@
         android:id="@+id/count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|center_vertical"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:textSize="18sp"
         android:tag="regular"
         android:textColor="@color/view_minimal_text_color"
@@ -52,4 +53,4 @@
         android:shadowDy="1"
         android:shadowRadius="1" />
 
-</LinearLayout>
+</RelativeLayout>

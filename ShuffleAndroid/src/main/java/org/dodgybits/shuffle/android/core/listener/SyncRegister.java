@@ -39,7 +39,7 @@ public class SyncRegister {
     @Inject
     private Activity mActivity;
 
-    public void onCreate(@Observes OnCreateEvent event) {
+    private void onCreate(@Observes OnCreateEvent event) {
         mEventManager.fire(new RegisterGcmEvent(mActivity));
         mActivity.startService(new Intent(mActivity, SyncAlarmService.class));
         mAuthTokenRetriever.retrieveToken();

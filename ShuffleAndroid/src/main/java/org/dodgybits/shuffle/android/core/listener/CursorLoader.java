@@ -64,7 +64,7 @@ public class CursorLoader {
         mEventManager = eventManager;
     }
 
-    public void onViewUpdated(@Observes MainViewUpdateEvent event) {
+    private void onViewUpdated(@Observes MainViewUpdateEvent event) {
         Log.d(TAG, "Received view update event " + event);
         mMainView = event.getMainView();
         mTaskListContext = TaskListContext.create(mMainView);
@@ -72,7 +72,7 @@ public class CursorLoader {
         restartCountLoading(mMainView.getViewMode());
     }
 
-    public void onListSettingsUpdated(@Observes ListSettingsUpdatedEvent event) {
+    private void onListSettingsUpdated(@Observes ListSettingsUpdatedEvent event) {
         if (event.getListQuery().equals(mMainView.getListQuery())) {
             // our list settings changed - reload list (even if this list isn't currently visible)
             restartListLoading(mMainView.getViewMode());
@@ -80,11 +80,11 @@ public class CursorLoader {
         }
     }
 
-    public void onReloadListCursor(@Observes LoadListCursorEvent event) {
+    private void onReloadListCursor(@Observes LoadListCursorEvent event) {
         restartListLoading(event.getViewMode());
     }
 
-    public void onReloadCountCursor(@Observes LoadCountCursorEvent event) {
+    private void onReloadCountCursor(@Observes LoadCountCursorEvent event) {
         restartCountLoading(event.getViewMode());
     }
 

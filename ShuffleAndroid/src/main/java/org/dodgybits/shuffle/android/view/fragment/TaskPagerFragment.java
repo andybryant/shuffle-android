@@ -104,18 +104,6 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                MainView parentView = mMainView.builderFrom().build();
-                mEventManager.fire(new MainViewUpdateEvent(parentView));
-                return true;
-        }
-
-        return false;
-    }
-
     public void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
         updateCursor(event.getCursor());
     }

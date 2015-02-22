@@ -42,7 +42,7 @@ public class EntityUpdateListener {
         mTaskPersister = taskPersister;
     }
 
-    public void onToggleProjectDeleted(@Observes UpdateProjectDeletedEvent event) {
+    private void onToggleProjectDeleted(@Observes UpdateProjectDeletedEvent event) {
         Id id = event.getProjectId();
         boolean isDeleted = event.isDeleted();
         if (event.isDeleted() == null) {
@@ -57,7 +57,7 @@ public class EntityUpdateListener {
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
-    public void onToggleContextDeleted(@Observes UpdateContextDeletedEvent event) {
+    private void onToggleContextDeleted(@Observes UpdateContextDeletedEvent event) {
         Id id = event.getContextId();
         boolean isDeleted = event.isDeleted();
         if (event.isDeleted() == null) {
@@ -72,11 +72,11 @@ public class EntityUpdateListener {
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
-    public void onMoveTasks(@Observes MoveTasksEvent event) {
+    private void onMoveTasks(@Observes MoveTasksEvent event) {
         mTaskPersister.moveTasksWithinProject(event.getTaskIds(), event.getCursor(), event.isMoveUp());
     }
 
-    public void onToggleTasksDeleted(@Observes UpdateTasksDeletedEvent event) {
+    private void onToggleTasksDeleted(@Observes UpdateTasksDeletedEvent event) {
         Set<Long> taskIds = event.getTaskIds();
         for (Long taskId : taskIds) {
             Id id = Id.create(taskId);
@@ -88,7 +88,7 @@ public class EntityUpdateListener {
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
-    public void onToggleTaskCompleted(@Observes UpdateTasksCompletedEvent event) {
+    private void onToggleTaskCompleted(@Observes UpdateTasksCompletedEvent event) {
         Set<Long> taskIds = event.getTaskIds();
         for (Long taskId : taskIds) {
             Id id = Id.create(taskId);
@@ -99,8 +99,8 @@ public class EntityUpdateListener {
         showSavedToast(entityName);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
-    
-    public void onNewTask(@Observes NewTaskEvent event) {
+
+    private void onNewTask(@Observes NewTaskEvent event) {
         if (TextUtils.isEmpty(event.getDescription())) {
             Log.d(TAG, "Ignoring new task event with no description");
             return;
@@ -132,7 +132,7 @@ public class EntityUpdateListener {
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
-    public void onNewProject(@Observes NewProjectEvent event) {
+    private void onNewProject(@Observes NewProjectEvent event) {
         if (TextUtils.isEmpty(event.getName())) {
             Log.d(TAG, "Ignoring new project event with no name");
             return;
@@ -148,7 +148,7 @@ public class EntityUpdateListener {
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
-    public void onNewContext(@Observes NewContextEvent event) {
+    private void onNewContext(@Observes NewContextEvent event) {
         if (TextUtils.isEmpty(event.getName())) {
             Log.d(TAG, "Ignoring new context event with no name");
             return;

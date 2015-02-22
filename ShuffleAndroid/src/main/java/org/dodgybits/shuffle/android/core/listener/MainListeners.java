@@ -46,4 +46,8 @@ public class MainListeners {
     @Inject
     private MainViewProvider mMainViewProvider;
 
+    @Inject
+    private TitleUpdater mTitleUpdater;
+
+
 }

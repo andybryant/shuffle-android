@@ -18,6 +18,7 @@ import org.dodgybits.shuffle.android.core.listener.FragmentLoader;
 import org.dodgybits.shuffle.android.core.listener.MainListeners;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.MenuHandler;
 import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
 import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
 import roboguice.activity.RoboActionBarActivity;
@@ -42,6 +43,9 @@ public class MainActivity extends RoboActionBarActivity {
 
     @Inject
     private FragmentLoader mFragmentLoader;
+
+    @Inject
+    private MenuHandler mMenuHandler;
 
     // Primary toolbar and drawer toggle
     private Toolbar mActionBarToolbar;
@@ -126,33 +130,23 @@ public class MainActivity extends RoboActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
+        super.onCreateOptionsMenu(menu);
+        boolean drawerOpen = mNavigationDrawerFragment.isDrawerOpen();
+        return mMenuHandler.onCreateOptionsMenu(menu, getMenuInflater(), drawerOpen);
+    }
 
-            // TODO define menu when drawer open
-//            getMenuInflater().inflate(R.menu.main, menu);
-            restoreActionBar();
-            return true;
-        }
-
-        return false;
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        return mMenuHandler.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                Log.d(TAG, "Bringing up search");
-                // TODO - start search
-                return true;
-        }
-
-        return false;
+        return mMenuHandler.onOptionsItemSelected(item);
     }
 
-    public void onViewChanged(@Observes MainViewUpdateEvent event) {
+    private void onViewChanged(@Observes MainViewUpdateEvent event) {
         mMainView = event.getMainView();
     }
 
@@ -162,15 +156,5 @@ public class MainActivity extends RoboActionBarActivity {
 
         super.onSaveInstanceState(outState);
     }
-
-    private void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-//        if (mTitle != null) {
-//            actionBar.setTitle(mTitle);
-//        }
-    }
-
 
 }

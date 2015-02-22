@@ -1,16 +1,17 @@
 package org.dodgybits.shuffle.android.list.event;
 
+import android.app.Activity;
 import android.support.v4.app.Fragment;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 
 public class EditListSettingsEvent {
     private ListQuery mListQuery;
-    private final Fragment mFragment;
+    private final Activity mActivity;
     private int mRequestCode;
 
-    public EditListSettingsEvent(ListQuery query, Fragment fragment, int requestCode) {
+    public EditListSettingsEvent(ListQuery query, Activity activity, int requestCode) {
         mListQuery = query;
-        mFragment = fragment;
+        mActivity = activity;
         mRequestCode = requestCode;
     }
 
@@ -22,7 +23,7 @@ public class EditListSettingsEvent {
         return mRequestCode;
     }
 
-    public Fragment getFragment() {
-        return mFragment;
+    public Activity getActivity() {
+        return mActivity;
     }
 }

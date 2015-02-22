@@ -1,16 +1,24 @@
 package org.dodgybits.shuffle.android.list.view.project;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
-import android.view.*;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
 import com.google.inject.Inject;
+
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.*;
+import org.dodgybits.shuffle.android.core.event.LoadCountCursorEvent;
+import org.dodgybits.shuffle.android.core.event.LoadListCursorEvent;
+import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
+import org.dodgybits.shuffle.android.core.event.ProjectListCursorLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.ProjectTaskCountCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -18,10 +26,14 @@ import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
-import org.dodgybits.shuffle.android.list.event.*;
+import org.dodgybits.shuffle.android.list.event.EditProjectEvent;
+import org.dodgybits.shuffle.android.list.event.NewProjectEvent;
+import org.dodgybits.shuffle.android.list.event.QuickAddEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
 import org.dodgybits.shuffle.android.list.view.QuickAddController;
+
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -32,9 +44,6 @@ public class ProjectListFragment extends RoboListFragment {
     
     /** Argument name(s) */
     private static final String BUNDLE_LIST_STATE = "ProjectListFragment.state.listState";
-
-    // result codes
-    private static final int FILTER_CONFIG = 600;
 
     @Inject
     private ProjectListAdaptor mListAdapter;
@@ -103,15 +112,7 @@ public class ProjectListFragment extends RoboListFragment {
         super.onResume();
 
         mResumed = true;
-        onVisibilityChange();
         refreshChildCount();
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-
-        onVisibilityChange();
     }
 
     /**
@@ -124,42 +125,6 @@ public class ProjectListFragment extends RoboListFragment {
                 .setEntityId(Id.create(id))
                 .build();
         mEventManager.fire(new MainViewUpdateEvent(mainView));
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.list_menu, menu);
-
-        String addTitle = getString(R.string.menu_insert, getString(R.string.project_name));
-        menu.findItem(R.id.action_add).setTitle(addTitle);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_add:
-                Log.d(TAG, "adding task");
-                mEventManager.fire(new EditNewProjectEvent());
-                return true;
-            case R.id.action_view_settings:
-                Log.d(TAG, "Bringing up view settings");
-                mEventManager.fire(new EditListSettingsEvent(ListQuery.project, this, FILTER_CONFIG));
-                return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode,
-                                 Intent data) {
-        Log.d(TAG, "Got resultCode " + resultCode + " with data " + data);
-        switch (requestCode) {
-            case FILTER_CONFIG:
-                break;
-
-            default:
-                Log.e(TAG, "Unknown requestCode: " + requestCode);
-        }
     }
 
     @Override
@@ -205,7 +170,7 @@ public class ProjectListFragment extends RoboListFragment {
         return super.onContextItemSelected(item);
     }
 
-    public void onCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
+    private void onCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
         updateCursor(event.getCursor());
     }
 
@@ -232,7 +197,7 @@ public class ProjectListFragment extends RoboListFragment {
         }
     }
 
-    public void onTaskCountCursorLoaded(@Observes ProjectTaskCountCursorLoadedEvent event) {
+    private void onTaskCountCursorLoaded(@Observes ProjectTaskCountCursorLoadedEvent event) {
         Cursor cursor = event.getCursor();
         mListAdapter.setTaskCountArray(mTaskPersister.readCountArray(cursor));
         if (getActivity() != null) {
@@ -246,23 +211,11 @@ public class ProjectListFragment extends RoboListFragment {
         cursor.close();
     }
 
-    private void onVisibilityChange() {
-        if (getUserVisibleHint()) {
-            updateTitle();
-            updateQuickAdd();
-            getRoboActionBarActivity().supportInvalidateOptionsMenu();
-        }
-    }
-
     protected RoboActionBarActivity getRoboActionBarActivity() {
         return (RoboActionBarActivity) getActivity();
     }
 
-    private void updateTitle() {
-        getActivity().setTitle(R.string.title_project);
-    }
-
-    public void onQuickAddEvent(@Observes QuickAddEvent event) {
+    private void onQuickAddEvent(@Observes QuickAddEvent event) {
         if (getUserVisibleHint() && mResumed) {
             mEventManager.fire(new NewProjectEvent(event.getValue()));
         }
