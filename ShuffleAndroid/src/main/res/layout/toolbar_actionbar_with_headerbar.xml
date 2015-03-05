@@ -15,12 +15,12 @@
   -->
 
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:iosched="http://schemas.android.com/apk/res-auto"
+    xmlns:shuffle="http://schemas.android.com/apk/res-auto"
     style="@style/HeaderBar"
     android:id="@+id/toolbar_actionbar"
-    iosched:theme="@style/ActionBarThemeOverlay"
-    iosched:popupTheme="@style/ActionBarPopupThemeOverlay"
-    iosched:titleTextAppearance="@style/ActionBar.TitleText"
-    iosched:contentInsetStart="?actionBarInsetStart"
+    shuffle:theme="@style/ActionBarThemeOverlay"
+    shuffle:popupTheme="@style/ActionBarPopupThemeOverlay"
+    shuffle:titleTextAppearance="@style/ActionBar.TitleText"
+    shuffle:contentInsetStart="?actionBarInsetStart"
     android:layout_width="match_parent"
     android:layout_height="?actionBarSize" />

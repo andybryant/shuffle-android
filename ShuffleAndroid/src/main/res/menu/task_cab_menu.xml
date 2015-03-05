@@ -15,22 +15,22 @@
         shuffle:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_mark_complete"
-        android:icon="@drawable/ic_menu_mark"
+        android:icon="@drawable/ic_menu_mark_dark"
         android:title="@string/complete"
         shuffle:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/action_mark_incomplete"
-        android:icon="@drawable/ic_menu_mark"
+        android:icon="@drawable/ic_menu_mark_dark"
         android:title="@string/incomplete"
         shuffle:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/action_delete"
-        android:icon="@drawable/ic_menu_trash_holo_light"
+        android:icon="@drawable/ic_menu_trash_holo_dark"
         android:title="@string/menu_delete"
         shuffle:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_undelete"
-        android:icon="@drawable/ic_menu_trash_holo_light"
+        android:icon="@drawable/ic_menu_revert_holo_dark"
         android:title="@string/menu_undelete"
         shuffle:showAsAction="ifRoom" />
 

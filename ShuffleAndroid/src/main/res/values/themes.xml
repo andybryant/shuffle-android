@@ -35,6 +35,8 @@
         <item name="windowActionBar">false</item>
         <item name="homeAsUpIndicator">@drawable/ic_up</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_up</item>
+        <item name="windowActionModeOverlay">true</item>
+
     </style>
 
     <style name="ShuffleTheme.WithActionBar" parent="ShuffleTheme.Base">
@@ -44,6 +46,14 @@
     <style name="ShuffleDialogTheme" parent="@android:style/Theme.Holo.Light.Dialog">
 
     </style>
+
+    <style name="ActionBarThemeOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    </style>
+
+    <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" >
+    </style>
+
+
 
     <style name="HeaderBar">
         <item name="android:background">?colorPrimary</item>
