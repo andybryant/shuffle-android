@@ -74,4 +74,11 @@
 
     <dimen name="context_widget_corner_radius">5dip</dimen>
 
+    <dimen name="fab_elevation">8dp</dimen>
+    <dimen name="fab_press_translation_z">9dp</dimen>
+    <dimen name="fab_size">56dp</dimen>
+    <dimen name="fab_size_small">40dp</dimen>
+    <dimen name="fab_icon_size">24dp</dimen>
+
+
 </resources>

@@ -12,6 +12,7 @@ import android.support.v7.view.ActionMode;
 import android.util.Log;
 import android.view.*;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
@@ -24,6 +25,7 @@ import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
+import org.dodgybits.shuffle.android.core.view.FloatingActionButton;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.list.event.*;
 import org.dodgybits.shuffle.android.list.view.QuickAddController;
@@ -100,7 +102,8 @@ public class TaskListFragment extends RoboListFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = super.onCreateView(inflater, container, savedInstanceState);
+        ViewGroup root = (ViewGroup) super.onCreateView(inflater, container, savedInstanceState);
+        inflater.inflate(R.layout.fab, root, true);
 
         mIsViewCreated = true;
         return root;
@@ -125,7 +128,16 @@ public class TaskListFragment extends RoboListFragment
         lv.setItemsCanFocus(false);
         lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        setEmptyText(getString(R.string.no_tasks));
+//        setEmptyText(getString(R.string.no_tasks));
+
+        getActivity().findViewById(R.id.fab).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mEventManager.fire(mListContext.createEditNewTaskEvent());
+                    }
+                }
+        );
     }
 
     @Override

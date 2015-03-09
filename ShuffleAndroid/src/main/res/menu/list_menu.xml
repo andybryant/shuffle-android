@@ -4,11 +4,6 @@
     xmlns:shuffle="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_add"
-        android:icon="@drawable/ic_menu_add_field_holo_light"
-        android:title="@string/menu_insert"
-        shuffle:showAsAction="ifRoom" />
-    <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_action_search"
         android:title="@string/menu_search"

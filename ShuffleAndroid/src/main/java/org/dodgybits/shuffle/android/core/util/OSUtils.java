@@ -14,6 +14,10 @@ public class OSUtils {
         return osAtLeast(Build.VERSION_CODES.KITKAT);
     }
 
+    public static boolean atLeastLollipop() {
+        return osAtLeast(Build.VERSION_CODES.LOLLIPOP);
+    }
+
     private static int sVersion = -1;
 
     private static boolean osAtLeast(int requiredVersion) {

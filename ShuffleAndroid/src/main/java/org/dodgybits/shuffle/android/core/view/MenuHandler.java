@@ -61,13 +61,13 @@ public class MenuHandler {
 
         switch (mMainView.getViewMode()) {
             case CONTEXT_LIST:
-                addListMenu(menu, inflater, getString(R.string.context_name));
+                inflater.inflate(R.menu.list_menu, menu);
                 break;
             case PROJECT_LIST:
-                addListMenu(menu, inflater, getString(R.string.project_name));
+                inflater.inflate(R.menu.list_menu, menu);
                 break;
             case TASK_LIST:
-                addListMenu(menu, inflater, getString(R.string.task_name));
+                inflater.inflate(R.menu.list_menu, menu);
                 break;
             case TASK:
                 inflater.inflate(R.menu.task_view_menu, menu);
@@ -78,12 +78,6 @@ public class MenuHandler {
         }
 
         return true;
-    }
-
-    private void addListMenu(Menu menu, MenuInflater inflater, String entityName) {
-        inflater.inflate(R.menu.list_menu, menu);
-        String addTitle = getString(R.string.menu_insert, entityName);
-        menu.findItem(R.id.action_add).setTitle(addTitle);
     }
 
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -101,10 +95,6 @@ public class MenuHandler {
                 if (listContext == null) {
                     return false;
                 }
-
-                String taskName = getString(R.string.task_name);
-                String addTitle = getString(R.string.menu_insert, taskName);
-                menu.findItem(R.id.action_add).setTitle(addTitle);
 
                 MenuItem editMenu = menu.findItem(R.id.action_edit);
                 MenuItem deleteMenu = menu.findItem(R.id.action_delete);
@@ -136,15 +126,15 @@ public class MenuHandler {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_add:
-                if (mMainView.getViewMode() == ViewMode.CONTEXT_LIST) {
-                    mEventManager.fire(new EditNewContextEvent());
-                } else if (mMainView.getViewMode() == ViewMode.PROJECT_LIST) {
-                    mEventManager.fire(new EditNewProjectEvent());
-                } else {
-                    mEventManager.fire(mTaskListContext.createEditNewTaskEvent());
-                }
-                return true;
+    //            case R.id.action_add:
+    //                if (mMainView.getViewMode() == ViewMode.CONTEXT_LIST) {
+    //                    mEventManager.fire(new EditNewContextEvent());
+    //                } else if (mMainView.getViewMode() == ViewMode.PROJECT_LIST) {
+    //                    mEventManager.fire(new EditNewProjectEvent());
+    //                } else {
+    //                    mEventManager.fire(mTaskListContext.createEditNewTaskEvent());
+    //                }
+    //                return true;
             case R.id.action_view_settings:
                 Log.d(TAG, "Bringing up view settings");
                 mEventManager.fire(
