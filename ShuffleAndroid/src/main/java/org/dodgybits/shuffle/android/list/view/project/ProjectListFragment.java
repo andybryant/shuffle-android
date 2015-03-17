@@ -4,10 +4,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import com.google.inject.Inject;
@@ -20,6 +17,8 @@ import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
+import org.dodgybits.shuffle.android.list.event.EditNewContextEvent;
+import org.dodgybits.shuffle.android.list.event.EditNewProjectEvent;
 import org.dodgybits.shuffle.android.list.event.EditProjectEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
@@ -64,6 +63,13 @@ public class ProjectListFragment extends RoboListFragment {
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ViewGroup root = (ViewGroup) super.onCreateView(inflater, container, savedInstanceState);
+        inflater.inflate(R.layout.fab, root, true);
+        return root;
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -82,6 +88,15 @@ public class ProjectListFragment extends RoboListFragment {
 
         updateCursor(mCursorProvider.getProjectListCursor());
         Log.d(TAG, "-onActivityCreated");
+
+        getActivity().findViewById(R.id.fab).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mEventManager.fire(new EditNewProjectEvent());
+                    }
+                }
+        );
     }
 
     @Override
