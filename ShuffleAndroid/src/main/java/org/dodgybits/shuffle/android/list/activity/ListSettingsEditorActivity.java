@@ -121,8 +121,6 @@ public class ListSettingsEditorActivity extends RoboPreferenceActivity {
         screen.addPreference(createContextList());
         screen.addPreference(createProjectList());
 
-        screen.addPreference(createQuickAdd());
-
         setPreferenceScreen(screen);
     }
 
@@ -157,25 +155,6 @@ public class ListSettingsEditorActivity extends RoboPreferenceActivity {
         return listPreference;
     }
 
-    @SuppressLint("NewApi")
-    private Preference createQuickAdd() {
-        Preference quickAddPref = new SwitchPreference(this);
-        quickAddPref.setTitle(R.string.quick_add_title);
-        quickAddPref.setDefaultValue(mSettings.getDefaultQuickAdd());
-        quickAddPref.setKey(mSettings.getPrefix() + ListSettings.LIST_FILTER_QUICK_ADD);
-        quickAddPref.setEnabled(mSettings.isQuickAddEnabled());
-        quickAddPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object o) {
-                mPrefsChanged = true;
-                return true;
-            }
-
-        });
-        return quickAddPref;       
-    }
-    
     private Preference createContextList() {
         Cursor contextCursor = getContentResolver().query(
                 ContextProvider.Contexts.CONTENT_URI, CONTEXT_PROJECTION,

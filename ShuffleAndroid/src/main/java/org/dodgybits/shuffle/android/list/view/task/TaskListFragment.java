@@ -7,12 +7,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.util.Log;
 import android.view.*;
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
 import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
@@ -25,10 +23,10 @@ import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
-import org.dodgybits.shuffle.android.core.view.FloatingActionButton;
 import org.dodgybits.shuffle.android.core.view.MainView;
-import org.dodgybits.shuffle.android.list.event.*;
-import org.dodgybits.shuffle.android.list.view.QuickAddController;
+import org.dodgybits.shuffle.android.list.event.MoveTasksEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
@@ -76,9 +74,6 @@ public class TaskListFragment extends RoboListFragment
 
     @Inject
     EntityCache<Project> mProjectCache;
-
-    @Inject
-    private QuickAddController mQuickAddController;
 
     @Inject
     private CursorProvider mCursorProvider;
@@ -248,7 +243,6 @@ public class TaskListFragment extends RoboListFragment
     protected void onVisibilityChange() {
         if (getUserVisibleHint()) {
             flushCaches();
-            updateQuickAdd();
         }
         updateSelectionMode();
     }
@@ -279,19 +273,6 @@ public class TaskListFragment extends RoboListFragment
         mContextCache.flush();
         mProjectCache.flush();
     }
-
-    private void onQuickAddEvent(@Observes QuickAddEvent event) {
-        if (getUserVisibleHint() && mResumed) {
-            mEventManager.fire(getListContext().createNewTaskEventWithDescription(event.getValue()));
-        }
-    }
-
-    private void updateQuickAdd() {
-        mQuickAddController.init(getActivity());
-        mQuickAddController.setEnabled(getListContext().isQuickAddEnabled(getActivity()));
-        mQuickAddController.setEntityName(getString(R.string.task_name));
-    }
-
 
     public TaskListContext getListContext() {
         return mListContext;
@@ -348,8 +329,6 @@ public class TaskListFragment extends RoboListFragment
         }
         return false;
     }
-
-
 
     /**
      * @return true if the content view is created and not destroyed yet. (i.e. between

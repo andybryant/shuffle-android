@@ -6,12 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/quick_add"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/quick_add" />
-
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"

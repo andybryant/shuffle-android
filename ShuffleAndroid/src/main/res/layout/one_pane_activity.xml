@@ -15,12 +15,6 @@
             android:id="@+id/toolbar_actionbar"
             layout="@layout/toolbar_actionbar_with_headerbar" />
 
-        <include
-            android:id="@+id/quick_add"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/quick_add" />
-
         <FrameLayout
             android:id="@+id/main_pane"
             android:layout_width="match_parent"

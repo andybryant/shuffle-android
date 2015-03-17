@@ -10,15 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import com.google.inject.Inject;
-
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.LoadCountCursorEvent;
-import org.dodgybits.shuffle.android.core.event.LoadListCursorEvent;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
-import org.dodgybits.shuffle.android.core.event.ProjectListCursorLoadedEvent;
-import org.dodgybits.shuffle.android.core.event.ProjectTaskCountCursorLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.*;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -27,13 +21,8 @@ import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.EditProjectEvent;
-import org.dodgybits.shuffle.android.list.event.NewProjectEvent;
-import org.dodgybits.shuffle.android.list.event.QuickAddEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
-import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
-import org.dodgybits.shuffle.android.list.view.QuickAddController;
-
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -59,9 +48,6 @@ public class ProjectListFragment extends RoboListFragment {
 
     @Inject
     private CursorProvider mCursorProvider;
-
-    @Inject
-    private QuickAddController mQuickAddController;
 
     private Parcelable mSavedListState;
 
@@ -213,18 +199,6 @@ public class ProjectListFragment extends RoboListFragment {
 
     protected RoboActionBarActivity getRoboActionBarActivity() {
         return (RoboActionBarActivity) getActivity();
-    }
-
-    private void onQuickAddEvent(@Observes QuickAddEvent event) {
-        if (getUserVisibleHint() && mResumed) {
-            mEventManager.fire(new NewProjectEvent(event.getValue()));
-        }
-    }
-
-    private void updateQuickAdd() {
-        mQuickAddController.init(getActivity());
-        mQuickAddController.setEnabled(ListSettingsCache.findSettings(ListQuery.project).getQuickAdd(getActivity()));
-        mQuickAddController.setEntityName(getString(R.string.project_name));
     }
 
     void restoreInstanceState(Bundle savedInstanceState) {

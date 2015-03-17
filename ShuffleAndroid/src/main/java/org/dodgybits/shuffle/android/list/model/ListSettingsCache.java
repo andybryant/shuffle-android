@@ -14,14 +14,11 @@ public class ListSettingsCache {
     private static final String NEXT_TASKS_SETTINGS_KEY = "next_tasks";
 
     private static ListSettings projectSettings =
-            new ListSettings(ListQuery.project.name()).
-                    setDefaultQuickAdd(true).disableProject();
+            new ListSettings(ListQuery.project.name()).disableProject();
     private static ListSettings contextSettings =
-            new ListSettings(ListQuery.context.name()).
-                    setDefaultQuickAdd(true).disableContext();
+            new ListSettings(ListQuery.context.name()).disableContext();
     private static ListSettings inboxSettings =
-            new ListSettings(ListQuery.inbox.name()).
-                    setDefaultQuickAdd(true);
+            new ListSettings(ListQuery.inbox.name());
     private static ListSettings dueTaskSettings =
             new ListSettings(DUE_TASKS_SETTINGS_KEY).
                     setDefaultCompleted(Flag.no);

@@ -186,11 +186,6 @@ public class TaskListContext implements Parcelable {
         return new NewTaskEvent(description, mSelector.getContextId(), mSelector.getProjectId());
     }
 
-    public boolean isQuickAddEnabled(Context context) {
-        ListSettings settings = ListSettingsCache.findSettings(mSelector.getListQuery());
-        return settings.getQuickAdd(context);
-    }
-    
     @Override
     public String toString() {
         return "[TaskListContext " + mSelector.getListQuery() + "]";
