@@ -156,11 +156,18 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     private void updateMenuVisibility(Menu menu) {
         if (getTask() != null) {
             final boolean isComplete = getTask().isComplete();
-            menu.findItem(R.id.action_mark_complete).setVisible(!isComplete);
-            menu.findItem(R.id.action_mark_incomplete).setVisible(isComplete);
+            setVisible(menu, R.id.action_mark_complete, !isComplete);
+            setVisible(menu, R.id.action_mark_incomplete, isComplete);
             final boolean isDeleted = getTask().isDeleted();
-            menu.findItem(R.id.action_delete).setVisible(!isDeleted);
-            menu.findItem(R.id.action_undelete).setVisible(isDeleted);
+            setVisible(menu, R.id.action_delete, !isDeleted);
+            setVisible(menu, R.id.action_undelete, isDeleted);
+        }
+    }
+
+    private void setVisible(Menu menu, int id, boolean visible) {
+        MenuItem item = menu.findItem(id);
+        if (item != null) {
+            item.setVisible(visible);
         }
     }
 

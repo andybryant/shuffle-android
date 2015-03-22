@@ -2,17 +2,14 @@ package org.dodgybits.shuffle.android.core.listener;
 
 import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
-
 import com.google.inject.Inject;
-
-import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
+import org.dodgybits.shuffle.android.core.event.MainViewUpdatingEvent;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
-
 import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
 
@@ -32,7 +29,7 @@ public class TitleUpdater {
         mActivity = (ActionBarActivity) activity;
     }
 
-    private void onViewChanged(@Observes MainViewUpdateEvent event) {
+    private void onViewChanged(@Observes MainViewUpdatingEvent event) {
         MainView mainView = event.getMainView();
         if (mainView == null || mainView.getViewMode() == null) {
             return;

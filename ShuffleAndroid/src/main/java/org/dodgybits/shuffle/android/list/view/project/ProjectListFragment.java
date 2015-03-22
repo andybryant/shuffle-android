@@ -17,7 +17,6 @@ import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
-import org.dodgybits.shuffle.android.list.event.EditNewContextEvent;
 import org.dodgybits.shuffle.android.list.event.EditNewProjectEvent;
 import org.dodgybits.shuffle.android.list.event.EditProjectEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
@@ -50,7 +49,7 @@ public class ProjectListFragment extends RoboListFragment {
 
     private Parcelable mSavedListState;
 
-    private boolean mResumed = false;
+    private Cursor mCursor;
 
     /**
      * When creating, retrieve this instance's number from its arguments.
@@ -86,7 +85,7 @@ public class ProjectListFragment extends RoboListFragment {
             restoreListState();
         }
 
-        updateCursor(mCursorProvider.getProjectListCursor());
+        updateCursor();
         Log.d(TAG, "-onActivityCreated");
 
         getActivity().findViewById(R.id.fab).setOnClickListener(
@@ -104,7 +103,6 @@ public class ProjectListFragment extends RoboListFragment {
         mSavedListState = getListView().onSaveInstanceState();
         super.onPause();
 
-        mResumed = false;
         Log.d(TAG, "-onPause");
     }
 
@@ -112,7 +110,6 @@ public class ProjectListFragment extends RoboListFragment {
     public void onResume() {
         super.onResume();
 
-        mResumed = true;
         refreshChildCount();
     }
 
@@ -125,7 +122,7 @@ public class ProjectListFragment extends RoboListFragment {
                 .setListQuery(ListQuery.project)
                 .setEntityId(Id.create(id))
                 .build();
-        mEventManager.fire(new MainViewUpdateEvent(mainView));
+        mEventManager.fire(new MainViewUpdatingEvent(mainView));
     }
 
     @Override
@@ -171,16 +168,25 @@ public class ProjectListFragment extends RoboListFragment {
         return super.onContextItemSelected(item);
     }
 
-    private void onCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
-        updateCursor(event.getCursor());
+    private void onViewLoaded(@Observes MainViewUpdatedEvent event) {
+        updateCursor();
+    }
+
+    private void updateCursor() {
+        updateCursor(mCursorProvider.getProjectListCursor());
     }
 
     private void updateCursor(Cursor cursor) {
-        if (cursor == null) {
+        if (cursor == null || mCursor == cursor) {
+            return;
+        }
+        if (getActivity() == null) {
+            Log.w(TAG, "Activity not set on " + this);
             return;
         }
 
         Log.d(TAG, "Swapping cursor and setting adapter");
+        mCursor = cursor;
         mListAdapter.swapCursor(cursor);
         setListAdapter(mListAdapter);
 

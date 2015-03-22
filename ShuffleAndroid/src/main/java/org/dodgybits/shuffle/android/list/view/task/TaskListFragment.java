@@ -14,8 +14,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
-import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.MainViewUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.MainViewUpdatingEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -85,6 +85,8 @@ public class TaskListFragment extends RoboListFragment
 
     private TaskListContext mListContext;
 
+    private Cursor mCursor;
+
     /**
      * If <code>true</code>, we have restored (or attempted to restore) the list's scroll position
      * from when we were last on this conversation list.
@@ -142,7 +144,7 @@ public class TaskListFragment extends RoboListFragment
         mResumed = true;
 
         onViewUpdate(mMainViewProvider.getMainView());
-        updateCursor(mCursorProvider.getTaskListCursor());
+        updateCursor();
 
         onVisibilityChange();
 
@@ -205,7 +207,7 @@ public class TaskListFragment extends RoboListFragment
         } else {
             MainView mainView = mMainView.builderFrom()
                     .setSelectedIndex(position).build();
-            mEventManager.fire(new MainViewUpdateEvent(mainView));
+            mEventManager.fire(new MainViewUpdatingEvent(mainView));
         }
     }
 
@@ -219,7 +221,7 @@ public class TaskListFragment extends RoboListFragment
         updateSelectionMode();
     }
 
-    public void onViewUpdate(@Observes MainViewUpdateEvent event) {
+    public void onViewUpdate(@Observes MainViewUpdatedEvent event) {
         onViewUpdate(event.getMainView());
     }
 
@@ -231,6 +233,7 @@ public class TaskListFragment extends RoboListFragment
             mShowMoveActions = mListContext.showMoveActions();
             mSelectedTaskId = mMainView.getSelectedIndex();
             mListAdapter.setProjectNameVisible(mListContext.isProjectNameVisible());
+            updateCursor();
         }
     }
 
@@ -247,16 +250,23 @@ public class TaskListFragment extends RoboListFragment
         updateSelectionMode();
     }
 
-    private void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
-        updateCursor(event.getCursor());
+
+    private void updateCursor() {
+        updateCursor(mCursorProvider.getTaskListCursor());
     }
 
     private void updateCursor(Cursor cursor) {
-        if (cursor == null) {
+        if (cursor == null || mCursor == cursor) {
+            return;
+        }
+        if (getActivity() == null) {
+            Log.w(TAG, "Activity not set on " + this);
             return;
         }
 
         Log.d(TAG, "Swapping cursor " + this);
+        mCursor = cursor;
+
         // Update the list
         mListAdapter.swapCursor(cursor);
         setListAdapter(mListAdapter);

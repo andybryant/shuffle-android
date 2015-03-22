@@ -48,7 +48,7 @@ public class ContextListFragment extends RoboListFragment {
 
     private Parcelable mSavedListState;
 
-    private boolean mResumed = false;
+    private Cursor mCursor;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -74,7 +74,7 @@ public class ContextListFragment extends RoboListFragment {
             restoreListState();
         }
 
-        updateCursor(mCursorProvider.getContextListCursor());
+        updateCursor();
         Log.d(TAG, "-onActivityCreated");
 
         getActivity().findViewById(R.id.fab).setOnClickListener(
@@ -92,7 +92,6 @@ public class ContextListFragment extends RoboListFragment {
         mSavedListState = getListView().onSaveInstanceState();
         super.onPause();
 
-        mResumed = false;
         Log.d(TAG, "-onPause");
     }
 
@@ -100,7 +99,6 @@ public class ContextListFragment extends RoboListFragment {
     public void onResume() {
         super.onResume();
 
-        mResumed = true;
         refreshChildCount();
     }
 
@@ -113,7 +111,7 @@ public class ContextListFragment extends RoboListFragment {
                 .setListQuery(ListQuery.context)
                 .setEntityId(Id.create(id))
                 .build();
-        mEventManager.fire(new MainViewUpdateEvent(mainView));
+        mEventManager.fire(new MainViewUpdatingEvent(mainView));
     }
 
     @Override
@@ -159,16 +157,26 @@ public class ContextListFragment extends RoboListFragment {
         return super.onContextItemSelected(item);
     }
 
-    private void onCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
-        updateCursor(event.getCursor());
+    private void onViewLoaded(@Observes MainViewUpdatedEvent event) {
+        updateCursor();
+    }
+
+    private void updateCursor() {
+        updateCursor(mCursorProvider.getContextListCursor());
     }
 
     private void updateCursor(Cursor cursor) {
-        if (cursor == null) {
+        if (cursor == null || cursor == mCursor) {
+            return;
+        }
+        if (getActivity() == null) {
+            Log.w(TAG, "Activity not set on " + this);
             return;
         }
 
         Log.d(TAG, "Swapping cursor and setting adapter");
+        mCursor = cursor;
+
         mListAdapter.swapCursor(cursor);
         setListAdapter(mListAdapter);
 

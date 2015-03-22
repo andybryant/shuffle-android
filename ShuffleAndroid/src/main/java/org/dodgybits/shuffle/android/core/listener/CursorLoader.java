@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -64,7 +65,7 @@ public class CursorLoader {
         mEventManager = eventManager;
     }
 
-    private void onViewUpdated(@Observes MainViewUpdateEvent event) {
+    private void onViewUpdated(@Observes MainViewUpdatingEvent event) {
         Log.d(TAG, "Received view update event " + event);
         mMainView = event.getMainView();
         mTaskListContext = TaskListContext.create(mMainView);
@@ -169,10 +170,15 @@ public class CursorLoader {
                 }
 
                 @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
+                public void onLoadFinished(Loader<Cursor> loader, final Cursor c) {
                     Log.d(TAG, "In TASK_LIST_LOADER_CALLBACKS.onLoadFinished");
 
-                    mEventManager.fire(new TaskListCursorLoadedEvent(c, mTaskListContext));
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mEventManager.fire(new TaskListCursorLoadedEvent(c, mTaskListContext));
+                        }
+                    });
                 }
 
                 @Override
@@ -192,10 +198,15 @@ public class CursorLoader {
                 }
 
                 @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
+                public void onLoadFinished(Loader<Cursor> loader, final Cursor c) {
                     Log.d(TAG, "In CONTEXT_LIST_LOADER_CALLBACKS.onLoadFinished");
 
-                    mEventManager.fire(new ContextListCursorLoadedEvent(c));
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mEventManager.fire(new ContextListCursorLoadedEvent(c));
+                        }
+                    });
                 }
 
 
@@ -216,10 +227,15 @@ public class CursorLoader {
                 }
 
                 @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+                public void onLoadFinished(Loader<Cursor> loader, final Cursor cursor) {
                     Log.d(TAG, "In CONTEXT_TASK_COUNT_LOADER_CALLBACKS.onLoadFinished");
 
-                    mEventManager.fire(new ContextTaskCountCursorLoadedEvent(cursor));
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mEventManager.fire(new ContextTaskCountCursorLoadedEvent(cursor));
+                        }
+                    });
                 }
 
                 @Override
@@ -266,10 +282,15 @@ public class CursorLoader {
                 }
 
                 @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
+                public void onLoadFinished(Loader<Cursor> loader, final Cursor c) {
                     Log.d(TAG, "In PROJECT_LIST_LOADER_CALLBACKS.onLoadFinished");
 
-                    mEventManager.fire(new ProjectListCursorLoadedEvent(c));
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mEventManager.fire(new ProjectListCursorLoadedEvent(c));
+                        }
+                    });
                 }
 
 
@@ -290,10 +311,15 @@ public class CursorLoader {
                 }
 
                 @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+                public void onLoadFinished(Loader<Cursor> loader, final Cursor cursor) {
                     Log.d(TAG, "In PROJECT_TASK_COUNT_LOADER_CALLBACKS.onLoadFinished");
 
-                    mEventManager.fire(new ProjectTaskCountCursorLoadedEvent(cursor));
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mEventManager.fire(new ProjectTaskCountCursorLoadedEvent(cursor));
+                        }
+                    });
                 }
 
                 @Override

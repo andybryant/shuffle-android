@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
+import org.dodgybits.shuffle.android.core.event.MainViewUpdatingEvent;
 import org.dodgybits.shuffle.android.core.event.OnCreatedEvent;
 import org.dodgybits.shuffle.android.core.listener.FragmentLoader;
 import org.dodgybits.shuffle.android.core.listener.MainListeners;
@@ -20,7 +20,6 @@ import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.core.view.MenuHandler;
 import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
-import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -146,7 +145,7 @@ public class MainActivity extends RoboActionBarActivity {
         return mMenuHandler.onOptionsItemSelected(item);
     }
 
-    private void onViewChanged(@Observes MainViewUpdateEvent event) {
+    private void onViewChanged(@Observes MainViewUpdatingEvent event) {
         mMainView = event.getMainView();
     }
 

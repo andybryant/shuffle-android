@@ -23,13 +23,12 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
-import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.MainViewUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.MainViewUpdatingEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
@@ -68,6 +67,8 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
     @Inject
     private MainViewProvider mMainViewProvider;
 
+    Cursor mCursor;
+
     MyAdapter mAdapter;
 
     ViewPager mPager;
@@ -88,37 +89,30 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
         mPager = (ViewPager)getActivity().findViewById(R.id.pager);
         mPager.setOnPageChangeListener(this);
 
-        onViewUpdate(mMainViewProvider.getMainView());
+        mMainView = mMainViewProvider.getMainView();
+        updateCursor();
+    }
+
+    private void onViewUpdated(@Observes MainViewUpdatedEvent event) {
+        mMainView = event.getMainView();
+        updateCursor();
+    }
+
+    private void updateCursor() {
         updateCursor(mCursorProvider.getTaskListCursor());
     }
 
-    public void onViewUpdate(@Observes MainViewUpdateEvent event) {
-        onViewUpdate(event.getMainView());
-    }
-
-    private void onViewUpdate(MainView mainView) {
-        mMainView = mainView;
-        if (mPager != null) {
-            mPager.setCurrentItem(mMainView.getSelectedIndex());
-        }
-
-    }
-
-    public void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
-        updateCursor(event.getCursor());
-    }
-
     private void updateCursor(Cursor cursor) {
-        if (cursor == null) {
+        if (cursor == null || mCursor == cursor) {
+            return;
+        }
+        if (getActivity() == null) {
+            Log.w(TAG, "Activity not set on " + this);
             return;
         }
 
         Log.d(TAG, "Swapping cursor " + this);
-
-        if (getActivity() == null) {
-            Log.wtf(TAG, "Activity not set on " + this);
-            return;
-        }
+        mCursor = cursor;
 
         if (mMainView != null) {
             mAdapter = new MyAdapter(getActivity().getSupportFragmentManager(), cursor);
@@ -137,7 +131,7 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
         if (mMainView.getSelectedIndex() != newIndex) {
             Log.d(TAG, "View changed from " + mMainView.getSelectedIndex() + " to " + newIndex);
             MainView newView = mMainView.builderFrom().setSelectedIndex(newIndex).build();
-            mEventManager.fire(new MainViewUpdateEvent(newView));
+            mEventManager.fire(new MainViewUpdatingEvent(newView));
         }
     }
 

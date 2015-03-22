@@ -22,10 +22,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.ContextListCursorLoadedEvent;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
-import org.dodgybits.shuffle.android.core.event.ProjectListCursorLoadedEvent;
-import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.*;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
@@ -34,6 +31,7 @@ import org.dodgybits.shuffle.android.list.view.project.ProjectListFragment;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
 import org.dodgybits.shuffle.android.view.fragment.TaskPagerFragment;
+import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
 
@@ -54,6 +52,9 @@ public class FragmentLoader {
     private Boolean tabletUi;
 
     @Inject
+    private EventManager mEventManager;
+
+    @Inject
     public FragmentLoader(Activity activity) {
         mActivity = (FragmentActivity) activity;
     }
@@ -65,7 +66,7 @@ public class FragmentLoader {
         return tabletUi;
     }
 
-    private void onViewChanged(@Observes MainViewUpdateEvent event) {
+    private void onViewChanging(@Observes MainViewUpdatingEvent event) {
         mMainView = event.getMainView();
     }
 
@@ -85,18 +86,21 @@ public class FragmentLoader {
                 Log.w(TAG, "Unexpected view mode " + mMainView.getViewMode());
                 break;
         }
+        mEventManager.fire(new MainViewUpdatedEvent(mMainView));
     }
 
     private void onContextListCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
         if (mMainView.getViewMode() == ViewMode.CONTEXT_LIST) {
             addContextList();
         }
+        mEventManager.fire(new MainViewUpdatedEvent(mMainView));
     }
 
     private void onProjectListCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
         if (mMainView.getViewMode() == ViewMode.PROJECT_LIST) {
             addProjectList();
         }
+        mEventManager.fire(new MainViewUpdatedEvent(mMainView));
     }
 
     private void addTaskList(TaskListContext listContext) {
@@ -111,7 +115,7 @@ public class FragmentLoader {
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.replace(isTabletUi() ? R.id.entity_list_pane : R.id.main_pane,
                     fragment, TAG_TASK_LIST);
-            fragmentTransaction.commitAllowingStateLoss();
+            fragmentTransaction.commit();
         }
     }
 
@@ -127,7 +131,7 @@ public class FragmentLoader {
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.replace(isTabletUi() ? R.id.task_pane : R.id.main_pane,
                     fragment, TAG_TASK_ITEM);
-            fragmentTransaction.commitAllowingStateLoss();
+            fragmentTransaction.commit();
         }
     }
 
@@ -144,7 +148,7 @@ public class FragmentLoader {
             fragmentTransaction.replace(isTabletUi() ? R.id.entity_list_pane : R.id.main_pane,
                     fragment,
                     TAG_CONTEXT_LIST);
-            fragmentTransaction.commitAllowingStateLoss();
+            fragmentTransaction.commit();
         }
     }
 
@@ -161,7 +165,7 @@ public class FragmentLoader {
             fragmentTransaction.replace(isTabletUi() ? R.id.entity_list_pane : R.id.main_pane,
                     fragment,
                     TAG_PROJECT_LIST);
-            fragmentTransaction.commitAllowingStateLoss();
+            fragmentTransaction.commit();
         }
     }
 

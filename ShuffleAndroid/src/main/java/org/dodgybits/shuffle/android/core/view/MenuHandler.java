@@ -6,23 +6,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
 import com.google.inject.Inject;
-
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdateEvent;
+import org.dodgybits.shuffle.android.core.event.MainViewUpdatingEvent;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.list.event.EditListSettingsEvent;
-import org.dodgybits.shuffle.android.list.event.EditNewContextEvent;
-import org.dodgybits.shuffle.android.list.event.EditNewProjectEvent;
-import org.dodgybits.shuffle.android.list.event.EditTaskEvent;
-import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
-import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
-import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
-
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
@@ -148,13 +139,13 @@ public class MenuHandler {
                 break;
             case android.R.id.home:
                 MainView parentView = mMainView.builderFrom().parentView().build();
-                mEventManager.fire(new MainViewUpdateEvent(parentView));
+                mEventManager.fire(new MainViewUpdatingEvent(parentView));
                 return true;
         }
         return false;
     }
 
-    private void onViewChanged(@Observes MainViewUpdateEvent event) {
+    private void onViewChanged(@Observes MainViewUpdatingEvent event) {
         mMainView = event.getMainView();
         mTaskListContext = TaskListContext.create(mMainView);
     }
