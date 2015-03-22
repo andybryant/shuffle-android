@@ -47,5 +47,14 @@ Need to communicate to each fragment to let it know if it's activated.
 #### Cons
 
 * Potentially slower
-* Need to create separate activities for each view, although these could be lightweight subclasses
+* Need to create separate activities for each view, although these could be lightweight subclasses (or could just reload same activity with different intents)
 * May make supporting phone and tablet more tricky
+
+#### How to implement
+
+* Make `MainActivity` abstract
+* Add subclasses for each screen or simply load activity with appropriate intent on navigation. If use separate subclasses, can handle searching projects and contexts correctly, and use parent activty settings in manifest.
+* On tablet if both views visible, clicking on list shouldn't reload full page
+* Events
+*  **Mainsfsaf** sasfas
+*  * bss 
