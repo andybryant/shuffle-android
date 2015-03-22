@@ -66,7 +66,7 @@ public class FragmentLoader {
         return tabletUi;
     }
 
-    private void onViewChanging(@Observes MainViewUpdatingEvent event) {
+    private void onViewUpdated(@Observes ViewUpdatedEvent event) {
         mMainView = event.getMainView();
     }
 
@@ -86,21 +86,21 @@ public class FragmentLoader {
                 Log.w(TAG, "Unexpected view mode " + mMainView.getViewMode());
                 break;
         }
-        mEventManager.fire(new MainViewUpdatedEvent(mMainView));
+        mEventManager.fire(new ViewUpdatedEvent(mMainView));
     }
 
     private void onContextListCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
         if (mMainView.getViewMode() == ViewMode.CONTEXT_LIST) {
             addContextList();
         }
-        mEventManager.fire(new MainViewUpdatedEvent(mMainView));
+        mEventManager.fire(new ViewUpdatedEvent(mMainView));
     }
 
     private void onProjectListCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
         if (mMainView.getViewMode() == ViewMode.PROJECT_LIST) {
             addProjectList();
         }
-        mEventManager.fire(new MainViewUpdatedEvent(mMainView));
+        mEventManager.fire(new ViewUpdatedEvent(mMainView));
     }
 
     private void addTaskList(TaskListContext listContext) {

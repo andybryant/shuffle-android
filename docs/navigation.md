@@ -54,7 +54,12 @@ Need to communicate to each fragment to let it know if it's activated.
 
 * Make `MainActivity` abstract
 * Add subclasses for each screen or simply load activity with appropriate intent on navigation. If use separate subclasses, can handle searching projects and contexts correctly, and use parent activty settings in manifest.
-* On tablet if both views visible, clicking on list shouldn't reload full page
 * Events
-*  **Mainsfsaf** sasfas
-*  * bss 
+*  * `NavigationRequestEvent` - user has requested to navigate to the given MainView
+*  * `ViewUpdatedEvent` - new view now showing
+* Change all references for `MainViewUpdatingEvent` and `MainViewUpdatedEvent` to one of new events
+* Add NavigationController that listens on  NavigationRequestEvent and takes appropriate action depending on current view. 
+* Add util method to determine if task view currently showing for list views and use everywhere
+*  * On tablet if both views visible, clicking on list shouldn't reload full page
+
+

@@ -15,7 +15,8 @@
  */
 package org.dodgybits.shuffle.android.core.listener;
 
-import org.dodgybits.shuffle.android.core.event.MainViewUpdatingEvent;
+import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
+import org.dodgybits.shuffle.android.core.event.ViewUpdatedEvent;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
@@ -24,7 +25,7 @@ import roboguice.inject.ContextSingleton;
 public class MainViewProvider {
     private MainView mMainView;
 
-    private void onViewChanged(@Observes MainViewUpdatingEvent event) {
+    private void onViewChanged(@Observes ViewUpdatedEvent event) {
         mMainView = event.getMainView();
     }
 

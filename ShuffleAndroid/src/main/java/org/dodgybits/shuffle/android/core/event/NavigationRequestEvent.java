@@ -17,10 +17,10 @@ package org.dodgybits.shuffle.android.core.event;
 
 import org.dodgybits.shuffle.android.core.view.MainView;
 
-public class MainViewUpdatedEvent {
+public class NavigationRequestEvent {
     private final MainView mMainView;
 
-    public MainViewUpdatedEvent(MainView mainView) {
+    public NavigationRequestEvent(MainView mainView) {
         mMainView = mainView;
     }
 
@@ -30,7 +30,7 @@ public class MainViewUpdatedEvent {
 
     @Override
     public String toString() {
-        return "MainViewUpdatedEvent{" +
+        return "NavigationRequestEvent{" +
                 "mMainView=" + mMainView +
                 '}';
     }

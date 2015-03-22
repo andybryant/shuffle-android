@@ -3,7 +3,8 @@ package org.dodgybits.shuffle.android.core.listener;
 import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import com.google.inject.Inject;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdatingEvent;
+import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
+import org.dodgybits.shuffle.android.core.event.ViewUpdatedEvent;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
@@ -29,7 +30,7 @@ public class TitleUpdater {
         mActivity = (ActionBarActivity) activity;
     }
 
-    private void onViewChanged(@Observes MainViewUpdatingEvent event) {
+    private void onViewChanged(@Observes ViewUpdatedEvent event) {
         MainView mainView = event.getMainView();
         if (mainView == null || mainView.getViewMode() == null) {
             return;

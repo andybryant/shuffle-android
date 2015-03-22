@@ -8,7 +8,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdatingEvent;
+import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
+import org.dodgybits.shuffle.android.core.event.ViewUpdatedEvent;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
@@ -139,13 +140,13 @@ public class MenuHandler {
                 break;
             case android.R.id.home:
                 MainView parentView = mMainView.builderFrom().parentView().build();
-                mEventManager.fire(new MainViewUpdatingEvent(parentView));
+                mEventManager.fire(new NavigationRequestEvent(parentView));
                 return true;
         }
         return false;
     }
 
-    private void onViewChanged(@Observes MainViewUpdatingEvent event) {
+    private void onViewChanged(@Observes ViewUpdatedEvent event) {
         mMainView = event.getMainView();
         mTaskListContext = TaskListContext.create(mMainView);
     }

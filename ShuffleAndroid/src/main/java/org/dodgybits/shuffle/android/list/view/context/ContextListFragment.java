@@ -111,7 +111,7 @@ public class ContextListFragment extends RoboListFragment {
                 .setListQuery(ListQuery.context)
                 .setEntityId(Id.create(id))
                 .build();
-        mEventManager.fire(new MainViewUpdatingEvent(mainView));
+        mEventManager.fire(new NavigationRequestEvent(mainView));
     }
 
     @Override
@@ -157,7 +157,7 @@ public class ContextListFragment extends RoboListFragment {
         return super.onContextItemSelected(item);
     }
 
-    private void onViewLoaded(@Observes MainViewUpdatedEvent event) {
+    private void onViewLoaded(@Observes ViewUpdatedEvent event) {
         updateCursor();
     }
 

@@ -122,7 +122,7 @@ public class ProjectListFragment extends RoboListFragment {
                 .setListQuery(ListQuery.project)
                 .setEntityId(Id.create(id))
                 .build();
-        mEventManager.fire(new MainViewUpdatingEvent(mainView));
+        mEventManager.fire(new NavigationRequestEvent(mainView));
     }
 
     @Override
@@ -168,7 +168,7 @@ public class ProjectListFragment extends RoboListFragment {
         return super.onContextItemSelected(item);
     }
 
-    private void onViewLoaded(@Observes MainViewUpdatedEvent event) {
+    private void onViewLoaded(@Observes ViewUpdatedEvent event) {
         updateCursor();
     }
 

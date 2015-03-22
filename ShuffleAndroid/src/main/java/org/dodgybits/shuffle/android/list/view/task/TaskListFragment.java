@@ -14,8 +14,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdatedEvent;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdatingEvent;
+import org.dodgybits.shuffle.android.core.event.ViewUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -207,7 +207,7 @@ public class TaskListFragment extends RoboListFragment
         } else {
             MainView mainView = mMainView.builderFrom()
                     .setSelectedIndex(position).build();
-            mEventManager.fire(new MainViewUpdatingEvent(mainView));
+            mEventManager.fire(new NavigationRequestEvent(mainView));
         }
     }
 
@@ -221,7 +221,7 @@ public class TaskListFragment extends RoboListFragment
         updateSelectionMode();
     }
 
-    public void onViewUpdate(@Observes MainViewUpdatedEvent event) {
+    public void onViewUpdate(@Observes ViewUpdatedEvent event) {
         onViewUpdate(event.getMainView());
     }
 

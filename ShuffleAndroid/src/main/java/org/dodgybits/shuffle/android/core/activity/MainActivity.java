@@ -12,8 +12,9 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdatingEvent;
+import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.event.OnCreatedEvent;
+import org.dodgybits.shuffle.android.core.event.ViewUpdatedEvent;
 import org.dodgybits.shuffle.android.core.listener.FragmentLoader;
 import org.dodgybits.shuffle.android.core.listener.MainListeners;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
@@ -145,7 +146,7 @@ public class MainActivity extends RoboActionBarActivity {
         return mMenuHandler.onOptionsItemSelected(item);
     }
 
-    private void onViewChanged(@Observes MainViewUpdatingEvent event) {
+    private void onViewChanged(@Observes ViewUpdatedEvent event) {
         mMainView = event.getMainView();
     }
 

@@ -26,8 +26,9 @@ import android.widget.FrameLayout;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.EntityListVisibilityChangeEvent;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdatingEvent;
+import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.event.TaskVisibilityChangeEvent;
+import org.dodgybits.shuffle.android.core.event.ViewUpdatedEvent;
 import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import roboguice.RoboGuice;
@@ -320,7 +321,7 @@ public class TwoPaneLayout extends FrameLayout {
         return !ViewMode.isListMode(mCurrentView.getViewMode()) && mListCollapsible;
     }
 
-    private void onViewChanged(@Observes MainViewUpdatingEvent event) {
+    private void onViewChanged(@Observes ViewUpdatedEvent event) {
         MainView newView = event.getMainView();
         onViewChanged(newView);
     }

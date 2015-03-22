@@ -26,7 +26,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.core.activity.MainActivity;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdatingEvent;
+import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
@@ -71,7 +71,7 @@ public class RequestParser {
         } else {
             MainView mainView = MainView.newBuilder().build();
             Log.d(TAG, "IN onCreate - no saved state or intent. defaulting to=" + mainView);
-            mEventManager.fire(new MainViewUpdatingEvent(mainView));
+            mEventManager.fire(new NavigationRequestEvent(mainView));
         }
     }
 
@@ -87,7 +87,7 @@ public class RequestParser {
 
         MainView mainView = inState.getParcelable(MainActivity.MAIN_VIEW_KEY);
         Log.d(TAG, "IN handleRestore. mainView=" + mainView);
-        mEventManager.fire(new MainViewUpdatingEvent(mainView));
+        mEventManager.fire(new NavigationRequestEvent(mainView));
     }
 
 
@@ -136,7 +136,7 @@ public class RequestParser {
             Log.e(TAG, "Unexpected intent" + intent);
         }
 
-        mEventManager.fire(new MainViewUpdatingEvent(builder.build()));
+        mEventManager.fire(new NavigationRequestEvent(builder.build()));
     }
 
 }

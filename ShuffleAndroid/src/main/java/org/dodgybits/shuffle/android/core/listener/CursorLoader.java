@@ -65,7 +65,7 @@ public class CursorLoader {
         mEventManager = eventManager;
     }
 
-    private void onViewUpdated(@Observes MainViewUpdatingEvent event) {
+    private void onViewUpdated(@Observes ViewUpdatedEvent event) {
         Log.d(TAG, "Received view update event " + event);
         mMainView = event.getMainView();
         mTaskListContext = TaskListContext.create(mMainView);

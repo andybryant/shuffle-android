@@ -27,8 +27,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdatedEvent;
-import org.dodgybits.shuffle.android.core.event.MainViewUpdatingEvent;
+import org.dodgybits.shuffle.android.core.event.ViewUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
@@ -93,7 +93,7 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
         updateCursor();
     }
 
-    private void onViewUpdated(@Observes MainViewUpdatedEvent event) {
+    private void onViewUpdated(@Observes ViewUpdatedEvent event) {
         mMainView = event.getMainView();
         updateCursor();
     }
@@ -131,7 +131,7 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
         if (mMainView.getSelectedIndex() != newIndex) {
             Log.d(TAG, "View changed from " + mMainView.getSelectedIndex() + " to " + newIndex);
             MainView newView = mMainView.builderFrom().setSelectedIndex(newIndex).build();
-            mEventManager.fire(new MainViewUpdatingEvent(newView));
+            mEventManager.fire(new NavigationRequestEvent(newView));
         }
     }
 

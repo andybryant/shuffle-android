@@ -77,7 +77,7 @@ public class NavigationDrawerFragment extends RoboFragment {
 
     private MainView mMainView;
 
-    private void onViewChange(@Observes MainViewUpdatingEvent event) {
+    private void onViewChange(@Observes NavigationRequestEvent event) {
         mMainView = event.getMainView();
         updateSelection();
     }
@@ -343,7 +343,7 @@ public class NavigationDrawerFragment extends RoboFragment {
                 if (mDrawerLayout != null) {
                     mDrawerLayout.closeDrawer(mFragmentContainerView);
                 }
-                mEventManager.fire(new MainViewUpdatingEvent(mainView));
+                mEventManager.fire(new NavigationRequestEvent(mainView));
             }
         });
     }
