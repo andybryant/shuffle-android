@@ -13,7 +13,7 @@ The Android application now uses Gradle as its build and dependency management t
 
 ## Prerequisites
 
-	1.	Gradle 1.10 or Android Studio or IntelliJ 12+
+	1.	Gradle 2.2+ or Android Studio 1.1+ or IntelliJ 14+
 	2.	Android SDK 
 	3.	Java 7.0.x
 

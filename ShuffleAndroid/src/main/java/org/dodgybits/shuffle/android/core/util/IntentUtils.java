@@ -5,8 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import org.dodgybits.shuffle.android.core.activity.MainActivity;
-import org.dodgybits.shuffle.android.core.controller.AbstractActivityController;
+import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.core.view.MainView;
@@ -14,7 +13,7 @@ import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
-import org.dodgybits.shuffle.android.view.activity.TaskPagerActivity;
+import org.dodgybits.shuffle.android.view.activity.deleteme.TaskPagerActivity;
 
 public class IntentUtils {
     private static final String TAG = "IntentUtils";
@@ -52,7 +51,7 @@ public class IntentUtils {
                 return createContextViewIntent(id);
         }
 
-        Intent intent = new Intent(context, MainActivity.class);
+        Intent intent = new Intent(context, AbstractMainActivity.class);
         intent.putExtra(MainView.QUERY_NAME, listContext.getListQuery().name());
 
         Uri.Builder builder = TaskProvider.Tasks.LIST_CONTENT_URI.buildUpon();

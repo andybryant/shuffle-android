@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.ListView;
 
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
 import org.dodgybits.shuffle.android.core.activity.LauncherShortcutActivity;
-import org.dodgybits.shuffle.android.core.activity.MainActivity;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.util.IntentUtils;
 import org.dodgybits.shuffle.android.core.view.IconNameCountListAdaptor;
@@ -128,7 +128,7 @@ public class LaunchListFragment extends RoboListFragment {
         }
 
         private Intent getIntent(Activity activity) {
-            Intent intent = new Intent(activity, MainActivity.class);
+            Intent intent = new Intent(activity, AbstractMainActivity.class);
             intent.setAction(Intent.ACTION_VIEW);
             intent.putExtra(MainView.QUERY_NAME, mListQuery.name());
             return intent;

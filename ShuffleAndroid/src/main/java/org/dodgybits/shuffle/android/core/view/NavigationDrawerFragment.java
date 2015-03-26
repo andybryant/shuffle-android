@@ -250,8 +250,8 @@ public class NavigationDrawerFragment extends RoboFragment {
                 int[] cachedCounts = Preferences.getTopLevelCounts(getActivity());
 
                 addTaskItem(getInitialCount(cachedCounts, 0), ListIcons.INBOX, ListQuery.inbox);
-                addTaskItem(getInitialCount(cachedCounts, 1), ListIcons.DUE_NEXT_MONTH, ListQuery.dueNextMonth);
                 addTaskItem(getInitialCount(cachedCounts, 2), ListIcons.NEXT_TASKS, ListQuery.nextTasks);
+                addTaskItem(getInitialCount(cachedCounts, 1), ListIcons.DUE_NEXT_MONTH, ListQuery.dueNextMonth);
                 addTaskItem(getInitialCount(cachedCounts, 5), ListIcons.CUSTOM, ListQuery.custom);
                 addTaskItem(getInitialCount(cachedCounts, 6), ListIcons.TICKLER, ListQuery.tickler);
                 addSeparator(mDrawerItemsListContainer);

@@ -25,7 +25,7 @@ import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 
-public class MainActivity extends RoboActionBarActivity {
+public abstract class AbstractMainActivity extends RoboActionBarActivity {
     private static final String TAG = "MainActivity";
 
     private static final int WHATS_NEW_DIALOG = 5000;

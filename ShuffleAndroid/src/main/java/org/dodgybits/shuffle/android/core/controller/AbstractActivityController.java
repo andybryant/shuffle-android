@@ -16,56 +16,6 @@
 package org.dodgybits.shuffle.android.core.controller;
 
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.SearchManager;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.database.Cursor;
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.WindowManager;
-import com.google.inject.Inject;
-import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.activity.MainActivity;
-import org.dodgybits.shuffle.android.core.util.PackageUtils;
-import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
-import org.dodgybits.shuffle.android.core.view.TaskSelectionSet;
-import org.dodgybits.shuffle.android.core.view.ViewMode;
-import org.dodgybits.shuffle.android.list.event.ListSettingsUpdatedEvent;
-import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
-import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
-import org.dodgybits.shuffle.android.core.listener.NavigationListener;
-import org.dodgybits.shuffle.android.list.model.ListQuery;
-import org.dodgybits.shuffle.android.list.view.context.ContextListFragment;
-import org.dodgybits.shuffle.android.list.view.project.ProjectListFragment;
-import org.dodgybits.shuffle.android.list.view.task.TaskListAdaptor;
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
-import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
-import org.dodgybits.shuffle.android.preference.model.Preferences;
-import org.dodgybits.shuffle.android.server.gcm.GcmRegister;
-import org.dodgybits.shuffle.android.server.gcm.event.RegisterGcmEvent;
-import org.dodgybits.shuffle.android.server.sync.AuthTokenRetriever;
-import org.dodgybits.shuffle.android.server.sync.SyncAlarmService;
-import roboguice.RoboGuice;
-import roboguice.event.EventManager;
-import roboguice.event.Observes;
-import roboguice.inject.ContextScopedProvider;
-
-import java.util.Map;
-
 /**
  * This is an abstract implementation of the Activity Controller. This class
  * knows how to respond to menu items, state changes, layout changes, etc. It

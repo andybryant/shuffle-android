@@ -1,4 +1,4 @@
-package org.dodgybits.shuffle.android.list.activity;
+package org.dodgybits.shuffle.android.list.activity.deleteme;
 
 import android.content.ContentUris;
 import android.content.Intent;
@@ -17,14 +17,13 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.activity.MainActivity;
+import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.core.listener.NavigationListener;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.view.MainView;
 import org.dodgybits.shuffle.android.list.content.ProjectCursorLoader;
-import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
@@ -33,7 +32,7 @@ import roboguice.event.EventManager;
 import roboguice.inject.ContextScopedProvider;
 
 public class ProjectTaskListsActivity extends RoboActionBarActivity {
-    public static final String TAG = "ProjectTaskListsActivity";
+    public static final String TAG = "ProjectTaskListsAct";
     public static final String INITIAL_POSITION = "initialPosition";
     public static final String INITIAL_ID = "initialId";
 
@@ -80,7 +79,7 @@ public class ProjectTaskListsActivity extends RoboActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent intent = new Intent(this, MainActivity.class);
+                Intent intent = new Intent(this, AbstractMainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra(MainView.QUERY_NAME, ListQuery.project.name());
                 startActivity(intent);

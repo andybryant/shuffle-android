@@ -1,4 +1,4 @@
-package org.dodgybits.shuffle.android.view.activity;
+package org.dodgybits.shuffle.android.view.activity.deleteme;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +16,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.activity.MainActivity;
+import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.core.listener.NavigationListener;
 import org.dodgybits.shuffle.android.core.model.Task;
@@ -98,7 +98,7 @@ public class TaskPagerActivity extends RoboActionBarActivity {
                         mEventManager.fire(new ViewTaskSearchResultsEvent(getListContext().getSearchQuery()));
                         break;
                     default:
-                        Intent intent = new Intent(this, MainActivity.class);
+                        Intent intent = new Intent(this, AbstractMainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra(MainView.QUERY_NAME, listQuery.name());
                         startActivity(intent);

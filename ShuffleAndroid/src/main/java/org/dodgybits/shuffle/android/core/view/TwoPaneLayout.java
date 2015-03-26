@@ -26,7 +26,6 @@ import android.widget.FrameLayout;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.EntityListVisibilityChangeEvent;
-import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.event.TaskVisibilityChangeEvent;
 import org.dodgybits.shuffle.android.core.event.ViewUpdatedEvent;
 import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
@@ -40,7 +39,7 @@ import roboguice.event.Observes;
  * activity, and the transitions between them.
  *
  * This is not intended to be a generic layout; it is specific to the {@code Fragment}s
- * available in {@link org.dodgybits.shuffle.android.core.activity.MainActivity}
+ * available in {@link org.dodgybits.shuffle.android.core.activity.AbstractMainActivity}
  * and assumes their existence. It merely configures them
  * according to the specific <i>modes</i> the {@link android.app.Activity} can be in.
  *

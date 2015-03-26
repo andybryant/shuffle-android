@@ -26,19 +26,16 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.activity.MainActivity;
-import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
+import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.core.listener.NavigationListener;
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
 import org.dodgybits.shuffle.android.view.activity.TaskViewActivity;
-import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
 import roboguice.inject.ContextScopedProvider;
 
-public class TaskSearchResultsActivity extends RoboActionBarActivity {
-    public static final String TAG = "TaskSearchResultsActivity";
+public class TaskSearchResultsActivity extends AbstractMainActivity {
+    public static final String TAG = "TaskSearchResultsAct";
 
     @Inject
     ContextScopedProvider<TaskListFragment> mTaskListFragmentProvider;
@@ -53,7 +50,7 @@ public class TaskSearchResultsActivity extends RoboActionBarActivity {
     private EntityUpdateListener mEntityUpdateListener;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_entity_list);
 
@@ -71,7 +68,7 @@ public class TaskSearchResultsActivity extends RoboActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent intent = new Intent(this, MainActivity.class);
+                Intent intent = new Intent(this, AbstractMainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();

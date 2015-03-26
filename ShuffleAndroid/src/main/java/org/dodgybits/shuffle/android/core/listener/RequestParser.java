@@ -25,7 +25,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import com.google.inject.Inject;
-import org.dodgybits.shuffle.android.core.activity.MainActivity;
+import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.view.MainView;
@@ -85,7 +85,7 @@ public class RequestParser {
             return;
         }
 
-        MainView mainView = inState.getParcelable(MainActivity.MAIN_VIEW_KEY);
+        MainView mainView = inState.getParcelable(AbstractMainActivity.MAIN_VIEW_KEY);
         Log.d(TAG, "IN handleRestore. mainView=" + mainView);
         mEventManager.fire(new NavigationRequestEvent(mainView));
     }

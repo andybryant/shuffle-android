@@ -64,7 +64,7 @@ public class WelcomeActivity extends RoboActionBarActivity {
             @Override
             public void handleMessage(Message msg) {
             	updateFirstTimePref(false);
-                startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
+                startActivity(new Intent(WelcomeActivity.this, AbstractMainActivity.class));
             	finish();
             }
         };

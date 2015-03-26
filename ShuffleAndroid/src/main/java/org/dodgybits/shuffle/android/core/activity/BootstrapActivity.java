@@ -37,7 +37,7 @@ public class BootstrapActivity extends RoboActivity {
 			Log.i(TAG, "First time using Shuffle. Show intro screen");
 			activityClass = WelcomeActivity.class;
 		} else {
-        	activityClass = MainActivity.class;
+        	activityClass = AbstractMainActivity.class;
 		}
         
         startActivity(new Intent(this, activityClass));
