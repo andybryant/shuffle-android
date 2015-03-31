@@ -50,18 +50,22 @@ Need to communicate to each fragment to let it know if it's activated.
 * Need to create separate activities for each view, although these could be lightweight subclasses (or could just reload same activity with different intents)
 * May make supporting phone and tablet more tricky
 
-#### How to implement
+#### Implementation
 
-* Update manifest with subclass activities.
-* Screens -> activities
-* * Task View -> TaskViewActivity
-* * Inbox, Due, Next, Custom, Tickler -> TaskListActivity
-* * Projects -> ProjectListActivity
-* * Project Tasks -> TaskListActivity
-* * Tags -> ContextListActivity
-* * Tag tasks -> TaskListActivity
-* Add NavigationController that listens on  NavigationRequestEvent and takes appropriate action depending on current view. 
-* Add util method to determine if task view currently showing for list views and use everywhere
-*  * On tablet if both views visible, clicking on list shouldn't reload full page
+![Navigation State Diagram](navigation-state-diagram.png)
+
+1. **Created** - The activity callback into the `onCreate` method is the entry point. Here each activity loads its layout and kicks off the process of parsing the `Intent` or `Bundle` passed into the activity. Once parsed into a `Location` object it's dispatched with a `LocationUpdatedEvent`
+1. **LocationDefined** - The data specific to this view is loaded from the datastore using one or more loaders. Once complete each loader dispatches a cursor update event.
+1. **DataReady** - Initialize fragments with data loaded from cursors.
+1. **Started** - All data has been loaded and the view has been successfully loaded. To exit this state, the user navigates to a different location. This is initiated by dispatching a `NavigationRequestEvent` contained a desired location.
+1. **Transit** - The `NavigationController` determines if the new location is handled by the current activity or requires a new activity. For the former, it dispatches a `LocationUpdateEvent` shifting back into the **LocationDefined** state. For the later, it generates an `Intent` from the location using the `LocationParser` and starts a new activity for the new location.
+
+##### Key classes
+
+* `Location` - uniquely identifies a view in Shuffle. This takes place of old `MainView` class. Implements `Parcelable` so that it can be converted to and from a `Bundle`. Also contains `LocationActivity` indicating what activity services the given location. Possible values are: ProjectList, ContextList, TaskList (includes task view), Help, Edit Task, Edit Project, Edit Context and Preferences.
+* `LocationUpdatedEvent` - Indicates a new location for the current activity has been defined.
+* `NavigationRequestEvent` - single mechanism used throughout the application for navigating from one location to another. Contains many static factory methods to generate all possible locations.
+* `NavigationController` - listens for `NavigationRequestEvent` events, and either loads a new activity to display the location or triggers the current activity to update itself.
+* `LocationParser` - able to convert a `Location` into an `Intent` and visa versa.
 
 
