@@ -15,7 +15,7 @@ import org.dodgybits.shuffle.android.core.util.IntentUtils;
 import org.dodgybits.shuffle.android.core.view.IconNameCountListAdaptor;
 import org.dodgybits.shuffle.android.core.view.IconNameCountListAdaptor.ListItem;
 import org.dodgybits.shuffle.android.core.view.ListIcons;
-import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 
 import roboguice.fragment.RoboListFragment;
@@ -35,9 +35,7 @@ public class LaunchListFragment extends RoboListFragment {
             sListItems = new ListItem[] {
                     createAddTaskListItem(R.drawable.ic_menu_compose_holo_light, getString(R.string.title_new_task)),
                     createTaskListItem(ListIcons.INBOX, ListQuery.inbox, perspectives[0]),
-                    createTaskListItem(ListIcons.DUE_TODAY, ListQuery.dueToday, getString(R.string.title_due_today)),
-                    createTaskListItem(ListIcons.DUE_NEXT_WEEK, ListQuery.dueNextWeek, getString(R.string.title_due_next_week)),
-                    createTaskListItem(ListIcons.DUE_NEXT_MONTH, ListQuery.dueNextMonth, getString(R.string.title_due_next_month)),
+                    createTaskListItem(ListIcons.DUE_TASKS, ListQuery.dueTasks, getString(R.string.title_due_tasks)),
                     createTaskListItem(ListIcons.NEXT_TASKS, ListQuery.nextTasks, perspectives[2]),
                     createDialogListItem(ListIcons.PROJECTS, perspectives[3], LauncherShortcutActivity.PROJECT_PICKER_DIALOG),
                     createDialogListItem(ListIcons.CONTEXTS, perspectives[4], LauncherShortcutActivity.CONTEXT_PICKER_DIALOG),
@@ -130,7 +128,7 @@ public class LaunchListFragment extends RoboListFragment {
         private Intent getIntent(Activity activity) {
             Intent intent = new Intent(activity, AbstractMainActivity.class);
             intent.setAction(Intent.ACTION_VIEW);
-            intent.putExtra(MainView.QUERY_NAME, mListQuery.name());
+            intent.putExtra(Location.QUERY_NAME, mListQuery.name());
             return intent;
         }
 

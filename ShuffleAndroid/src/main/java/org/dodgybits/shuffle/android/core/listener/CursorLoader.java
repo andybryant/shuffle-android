@@ -27,7 +27,7 @@ import android.util.Log;
 import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.core.event.*;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
-import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.content.ContextCursorLoader;
 import org.dodgybits.shuffle.android.list.content.ProjectCursorLoader;
@@ -55,7 +55,7 @@ public class CursorLoader {
 
     private EventManager mEventManager;
 
-    private MainView mMainView;
+    private Location mLocation;
 
     private TaskListContext mTaskListContext;
 
@@ -65,19 +65,19 @@ public class CursorLoader {
         mEventManager = eventManager;
     }
 
-    private void onViewUpdated(@Observes ViewUpdatedEvent event) {
+    private void onViewUpdated(@Observes LocationUpdatedEvent event) {
         Log.d(TAG, "Received view update event " + event);
-        mMainView = event.getMainView();
-        mTaskListContext = TaskListContext.create(mMainView);
-        restartListLoading(mMainView.getViewMode());
-        restartCountLoading(mMainView.getViewMode());
+        mLocation = event.getLocation();
+        mTaskListContext = TaskListContext.create(mLocation);
+        restartListLoading(mLocation.getViewMode());
+        restartCountLoading(mLocation.getViewMode());
     }
 
     private void onListSettingsUpdated(@Observes ListSettingsUpdatedEvent event) {
-        if (event.getListQuery().equals(mMainView.getListQuery())) {
+        if (event.getListQuery().equals(mLocation.getListQuery())) {
             // our list settings changed - reload list (even if this list isn't currently visible)
-            restartListLoading(mMainView.getViewMode());
-            restartCountLoading(mMainView.getViewMode());
+            restartListLoading(mLocation.getViewMode());
+            restartCountLoading(mLocation.getViewMode());
         }
     }
 

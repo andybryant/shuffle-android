@@ -12,28 +12,29 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
+import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.OnCreatedEvent;
-import org.dodgybits.shuffle.android.core.event.ViewUpdatedEvent;
 import org.dodgybits.shuffle.android.core.listener.FragmentLoader;
+import org.dodgybits.shuffle.android.core.listener.LocationParser;
 import org.dodgybits.shuffle.android.core.listener.MainListeners;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
-import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.MenuHandler;
 import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 
-public abstract class AbstractMainActivity extends RoboActionBarActivity {
-    private static final String TAG = "MainActivity";
+public abstract class AbstractMainActivity extends RoboActionBarActivity
+        implements ShuffleActionBarActivity {
+    private static final String TAG = "AbstractMainActivity";
 
     private static final int WHATS_NEW_DIALOG = 5000;
 
-    public static final String MAIN_VIEW_KEY = "MainActivity.mainView";
+    private static final String LOCATION_KEY = "AbstractMainActivity.location";
 
 
-    private MainView mMainView;
+    private Location mLocation;
 
     @Inject
     private MainListeners mListeners;
@@ -46,6 +47,9 @@ public abstract class AbstractMainActivity extends RoboActionBarActivity {
 
     @Inject
     private MenuHandler mMenuHandler;
+
+    @Inject
+    private LocationParser mLocationParser;
 
     // Primary toolbar and drawer toggle
     private Toolbar mActionBarToolbar;
@@ -91,7 +95,7 @@ public abstract class AbstractMainActivity extends RoboActionBarActivity {
 
         final boolean tabletUi = UiUtilities.useTabletUI(this.getResources());
         Log.d(TAG, "Using tablet layout? " + tabletUi);
-        setContentView(tabletUi ? R.layout.two_pane_activity : R.layout.one_pane_activity);
+        setContentView(contentView(tabletUi));
 
         mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         if (mActionBarToolbar != null) {
@@ -110,9 +114,25 @@ public abstract class AbstractMainActivity extends RoboActionBarActivity {
                 R.id.navigation_drawer,
                 drawerLayout);
 
+        mLocationParser.setLocationActivity(getLocationActivity());
+        parseLocation(savedState);
+
         mEventManager.fire(new OnCreatedEvent());
     }
 
+    protected int contentView(boolean isTablet) {
+        return isTablet ? R.layout.two_pane_activity : R.layout.one_pane_activity;
+    }
+
+    private void parseLocation(Bundle savedState) {
+        Location location;
+        if (savedState != null) {
+            location = savedState.getParcelable(LOCATION_KEY);
+        } else {
+            location = mLocationParser.parseIntent(getIntent());
+        }
+        mEventManager.fire(new LocationUpdatedEvent(location));
+    }
 
     @Override
     public Dialog onCreateDialog(int id, Bundle bundle) {
@@ -146,13 +166,13 @@ public abstract class AbstractMainActivity extends RoboActionBarActivity {
         return mMenuHandler.onOptionsItemSelected(item);
     }
 
-    private void onViewChanged(@Observes ViewUpdatedEvent event) {
-        mMainView = event.getMainView();
+    private void onViewChanged(@Observes LocationUpdatedEvent event) {
+        mLocation = event.getLocation();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(MAIN_VIEW_KEY, mMainView);
+        outState.putParcelable(LOCATION_KEY, mLocation);
 
         super.onSaveInstanceState(outState);
     }

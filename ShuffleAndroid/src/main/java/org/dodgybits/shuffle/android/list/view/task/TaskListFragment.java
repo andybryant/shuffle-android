@@ -14,16 +14,16 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.ViewUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
-import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
+import org.dodgybits.shuffle.android.core.listener.LocationProvider;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
-import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.list.event.MoveTasksEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
@@ -79,9 +79,9 @@ public class TaskListFragment extends RoboListFragment
     private CursorProvider mCursorProvider;
 
     @Inject
-    private MainViewProvider mMainViewProvider;
+    private LocationProvider mLocationProvider;
 
-    private MainView mMainView;
+    private Location mLocation;
 
     private TaskListContext mListContext;
 
@@ -143,7 +143,7 @@ public class TaskListFragment extends RoboListFragment
 
         mResumed = true;
 
-        onViewUpdate(mMainViewProvider.getMainView());
+        onViewUpdate(mLocationProvider.getLocation());
         updateCursor();
 
         onVisibilityChange();
@@ -205,9 +205,9 @@ public class TaskListFragment extends RoboListFragment
             intent.putExtras(bundle);
             getActivity().setResult(Activity.RESULT_OK, intent);
         } else {
-            MainView mainView = mMainView.builderFrom()
+            Location location = mLocation.builderFrom()
                     .setSelectedIndex(position).build();
-            mEventManager.fire(new NavigationRequestEvent(mainView));
+            mEventManager.fire(new NavigationRequestEvent(location));
         }
     }
 
@@ -221,17 +221,17 @@ public class TaskListFragment extends RoboListFragment
         updateSelectionMode();
     }
 
-    public void onViewUpdate(@Observes ViewUpdatedEvent event) {
-        onViewUpdate(event.getMainView());
+    public void onViewUpdate(@Observes LocationUpdatedEvent event) {
+        onViewUpdate(event.getLocation());
     }
 
-    private void onViewUpdate(MainView mainView) {
-        if (!ObjectUtils.equals(mainView, mMainView)) {
-            mMainView = mainView;
-            mListContext = TaskListContext.create(mMainView);
+    private void onViewUpdate(Location location) {
+        if (!ObjectUtils.equals(location, mLocation)) {
+            mLocation = location;
+            mListContext = TaskListContext.create(mLocation);
 
             mShowMoveActions = mListContext.showMoveActions();
-            mSelectedTaskId = mMainView.getSelectedIndex();
+            mSelectedTaskId = mLocation.getSelectedIndex();
             mListAdapter.setProjectNameVisible(mListContext.isProjectNameVisible());
             updateCursor();
         }

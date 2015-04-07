@@ -26,9 +26,9 @@ import android.widget.FrameLayout;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.EntityListVisibilityChangeEvent;
+import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.TaskVisibilityChangeEvent;
-import org.dodgybits.shuffle.android.core.event.ViewUpdatedEvent;
-import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
+import org.dodgybits.shuffle.android.core.listener.LocationProvider;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import roboguice.RoboGuice;
 import roboguice.event.EventManager;
@@ -65,13 +65,13 @@ public class TwoPaneLayout extends FrameLayout {
     /**
      * The current view that the tablet layout is in.
      */
-    private MainView mCurrentView = MainView.newBuilder().build();
+    private Location mCurrentView = Location.newBuilder().build();
 
     /**
      * This mode represents the current positions of the three panes. This is split out from the
      * current mode to give context to state transitions.
      */
-    private MainView mPositionedView = MainView.newBuilder().build();
+    private Location mPositionedView = Location.newBuilder().build();
 
     private boolean mIsSearchResult;
 
@@ -92,7 +92,7 @@ public class TwoPaneLayout extends FrameLayout {
     protected EventManager mEventManager;
 
     @Inject
-    private MainViewProvider mMainViewProvider;
+    private LocationProvider mLocationProvider;
 
     public TwoPaneLayout(Context context) {
         this(context, null);
@@ -125,13 +125,13 @@ public class TwoPaneLayout extends FrameLayout {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // all panes start GONE in initial UNKNOWN mode to avoid drawing misplaced panes
-        mCurrentView = MainView.newBuilder().build();
+        mCurrentView = Location.newBuilder().build();
         mListView.setVisibility(GONE);
         mTaskView.setVisibility(GONE);
 
         Log.d(TAG, "Injecting dependencies");
         RoboGuice.getInjector(getContext()).injectMembersWithoutViews(this);
-        onViewChanged(mMainViewProvider.getMainView());
+        onViewChanged(mLocationProvider.getLocation());
     }
 
     @Override
@@ -320,12 +320,12 @@ public class TwoPaneLayout extends FrameLayout {
         return !ViewMode.isListMode(mCurrentView.getViewMode()) && mListCollapsible;
     }
 
-    private void onViewChanged(@Observes ViewUpdatedEvent event) {
-        MainView newView = event.getMainView();
+    private void onViewChanged(@Observes LocationUpdatedEvent event) {
+        Location newView = event.getLocation();
         onViewChanged(newView);
     }
 
-    private void onViewChanged(MainView newView) {
+    private void onViewChanged(Location newView) {
         // make all initially GONE panes visible only when the view mode is first determined
         ViewMode currentMode = mCurrentView.getViewMode();
 

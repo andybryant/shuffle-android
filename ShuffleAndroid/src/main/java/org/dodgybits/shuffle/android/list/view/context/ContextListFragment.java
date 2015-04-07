@@ -14,7 +14,7 @@ import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
-import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.EditContextEvent;
 import org.dodgybits.shuffle.android.list.event.EditNewContextEvent;
@@ -107,11 +107,11 @@ public class ContextListFragment extends RoboListFragment {
      */
     @Override
     public void onListItemClick(ListView parent, View view, int position, long id) {
-        MainView mainView = MainView.newBuilder()
+        Location location = Location.newBuilder()
                 .setListQuery(ListQuery.context)
                 .setEntityId(Id.create(id))
                 .build();
-        mEventManager.fire(new NavigationRequestEvent(mainView));
+        mEventManager.fire(new NavigationRequestEvent(location));
     }
 
     @Override
@@ -157,7 +157,7 @@ public class ContextListFragment extends RoboListFragment {
         return super.onContextItemSelected(item);
     }
 
-    private void onViewLoaded(@Observes ViewUpdatedEvent event) {
+    private void onViewLoaded(@Observes LocationUpdatedEvent event) {
         updateCursor();
     }
 

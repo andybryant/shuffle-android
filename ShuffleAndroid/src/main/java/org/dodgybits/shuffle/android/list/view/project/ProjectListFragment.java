@@ -15,7 +15,7 @@ import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
-import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.EditNewProjectEvent;
 import org.dodgybits.shuffle.android.list.event.EditProjectEvent;
@@ -118,11 +118,11 @@ public class ProjectListFragment extends RoboListFragment {
      */
     @Override
     public void onListItemClick(ListView parent, View view, int position, long id) {
-        MainView mainView = MainView.newBuilder()
+        Location location = Location.newBuilder()
                 .setListQuery(ListQuery.project)
                 .setEntityId(Id.create(id))
                 .build();
-        mEventManager.fire(new NavigationRequestEvent(mainView));
+        mEventManager.fire(new NavigationRequestEvent(location));
     }
 
     @Override
@@ -168,7 +168,7 @@ public class ProjectListFragment extends RoboListFragment {
         return super.onContextItemSelected(item);
     }
 
-    private void onViewLoaded(@Observes ViewUpdatedEvent event) {
+    private void onViewLoaded(@Observes LocationUpdatedEvent event) {
         updateCursor();
     }
 

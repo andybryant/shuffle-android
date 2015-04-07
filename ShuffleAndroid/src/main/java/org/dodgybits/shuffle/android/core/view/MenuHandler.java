@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
-import org.dodgybits.shuffle.android.core.event.ViewUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
@@ -28,7 +28,7 @@ public class MenuHandler {
 
     private ActionBarActivity mActivity;
 
-    private MainView mMainView;
+    private Location mLocation;
 
     private TaskListContext mTaskListContext;
 
@@ -47,11 +47,11 @@ public class MenuHandler {
     }
 
     public boolean onCreateOptionsMenu(Menu menu, MenuInflater inflater, boolean drawerOpen) {
-        if (mMainView == null) {
+        if (mLocation == null) {
             return false;
         }
 
-        switch (mMainView.getViewMode()) {
+        switch (mLocation.getViewMode()) {
             case CONTEXT_LIST:
                 inflater.inflate(R.menu.list_menu, menu);
                 break;
@@ -73,17 +73,17 @@ public class MenuHandler {
     }
 
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (mMainView == null) {
+        if (mLocation == null) {
             return false;
         }
 
-        switch (mMainView.getViewMode()) {
+        switch (mLocation.getViewMode()) {
             case CONTEXT_LIST:
                 break;
             case PROJECT_LIST:
                 break;
             case TASK_LIST:
-                TaskListContext listContext = TaskListContext.create(mMainView);
+                TaskListContext listContext = TaskListContext.create(mLocation);
                 if (listContext == null) {
                     return false;
                 }
@@ -119,9 +119,9 @@ public class MenuHandler {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
     //            case R.id.action_add:
-    //                if (mMainView.getViewMode() == ViewMode.CONTEXT_LIST) {
+    //                if (mLocation.getViewMode() == ViewMode.CONTEXT_LIST) {
     //                    mEventManager.fire(new EditNewContextEvent());
-    //                } else if (mMainView.getViewMode() == ViewMode.PROJECT_LIST) {
+    //                } else if (mLocation.getViewMode() == ViewMode.PROJECT_LIST) {
     //                    mEventManager.fire(new EditNewProjectEvent());
     //                } else {
     //                    mEventManager.fire(mTaskListContext.createEditNewTaskEvent());
@@ -130,25 +130,25 @@ public class MenuHandler {
             case R.id.action_view_settings:
                 Log.d(TAG, "Bringing up view settings");
                 mEventManager.fire(
-                        new EditListSettingsEvent(mMainView.getListQuery(), mActivity, FILTER_CONFIG));
+                        new EditListSettingsEvent(mLocation.getListQuery(), mActivity, FILTER_CONFIG));
                 return true;
             case R.id.action_edit:
-                if (mMainView.getViewMode() != ViewMode.TASK) {
+                if (mLocation.getViewMode() != ViewMode.TASK) {
                     mEventManager.fire(mTaskListContext.createEditEvent());
                     return true;
                 }
                 break;
             case android.R.id.home:
-                MainView parentView = mMainView.builderFrom().parentView().build();
+                Location parentView = mLocation.builderFrom().parentView().build();
                 mEventManager.fire(new NavigationRequestEvent(parentView));
                 return true;
         }
         return false;
     }
 
-    private void onViewChanged(@Observes ViewUpdatedEvent event) {
-        mMainView = event.getMainView();
-        mTaskListContext = TaskListContext.create(mMainView);
+    private void onViewChanged(@Observes LocationUpdatedEvent event) {
+        mLocation = event.getLocation();
+        mTaskListContext = TaskListContext.create(mLocation);
     }
 
     private String getString(int id) {

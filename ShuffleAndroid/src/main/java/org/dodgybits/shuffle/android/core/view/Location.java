@@ -21,15 +21,130 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
+import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
+
+import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.ContextList;
+import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.EditContext;
+import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.EditProject;
+import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.EditTask;
+import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.Help;
+import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.Preferences;
+import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.ProjectList;
+import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.TaskList;
+import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.TaskSearch;
 
 /**
  * Immutable description of the current view of the main activity.
  */
-public class MainView implements Parcelable {
-    private static final String TAG = "MainView";
+public class Location implements Parcelable {
+    private static final String TAG = "Location";
 
     public static final String QUERY_NAME = "queryName";
+    public static final String SELECTED_INDEX = "selectedIndex";
 
+    public static Location searchTasks(String searchQuery) {
+        Location.Builder builder = Location.newBuilder();
+        builder.setLocationActivity(TaskSearch);
+        builder.setSearchQuery(searchQuery);
+        Location location = builder.build();
+        return location;
+    }
+
+    public static Location newTaskWithContext(Id entityId) {
+        Location.Builder builder = Location.newBuilder();
+        builder.setLocationActivity(EditTask);
+        builder.setListQuery(ListQuery.context);
+        builder.setEntityId(entityId);
+        Location location = builder.build();
+        return location;
+    }
+
+    public static Location newTaskWithProject(Id entityId) {
+        Location.Builder builder = Location.newBuilder();
+        builder.setLocationActivity(EditTask);
+        builder.setListQuery(ListQuery.project);
+        builder.setEntityId(entityId);
+        Location location = builder.build();
+        return location;
+    }
+
+    public static Location newTask() {
+        Location.Builder builder = Location.newBuilder();
+        builder.setLocationActivity(EditTask);
+        Location location = builder.build();
+        return location;
+    }
+
+    public static Location editTask(Id entityId) {
+        return editEntity(entityId, EditTask);
+    }
+
+    public static Location editContext(Id entityId) {
+        return editEntity(entityId, EditContext);
+    }
+
+    public static Location editProject(Id entityId) {
+        return editEntity(entityId, EditProject);
+    }
+
+    public static Location viewTask(ListQuery listQuery, int selectedIndex) {
+        return viewTask(listQuery, Id.NONE, selectedIndex);
+    }
+
+    public static Location viewTask(ListQuery listQuery, Id entityId, int selectedIndex) {
+        Location.Builder builder = Location.newBuilder();
+        builder.setLocationActivity(TaskList);
+        builder.setListQuery(listQuery);
+        builder.setSelectedIndex(selectedIndex);
+        builder.setEntityId(entityId);
+        Location location = builder.build();
+        return location;
+    }
+
+    public static Location viewContextList() {
+        Location.Builder builder = Location.newBuilder();
+        builder.setLocationActivity(ContextList);
+        builder.setListQuery(ListQuery.context);
+        Location location = builder.build();
+        return location;
+    }
+
+    public static Location viewProjectList() {
+        Location.Builder builder = Location.newBuilder();
+        builder.setLocationActivity(ProjectList);
+        builder.setListQuery(ListQuery.project);
+        Location location = builder.build();
+        return location;
+    }
+
+    public static Location viewHelp() {
+        return viewHelp(null);
+    }
+
+    public static Location viewHelp(ListQuery listQuery) {
+        Location.Builder builder = Location.newBuilder();
+        builder.setLocationActivity(Help);
+        builder.setListQuery(listQuery);
+        Location location = builder.build();
+        return location;
+    }
+
+    public static Location viewSettings() {
+        Location.Builder builder = Location.newBuilder();
+        builder.setLocationActivity(Preferences);
+        Location location = builder.build();
+        return location;
+    }
+
+    private static Location editEntity(Id entityId, LocationActivity locationActivity) {
+        Location.Builder builder = Location.newBuilder();
+        builder.setLocationActivity(locationActivity);
+        builder.setEntityId(entityId);
+        Location location = builder.build();
+        return location;
+    }
+    
+    
     @NonNull
     private ViewMode mViewMode = ViewMode.TASK_LIST;
 
@@ -43,6 +158,9 @@ public class MainView implements Parcelable {
 
     private int mSelectedIndex = -1;
 
+    @NonNull
+    private LocationActivity mLocationActivity;
+
     @Override
     public int describeContents() {
         return 0;
@@ -55,35 +173,38 @@ public class MainView implements Parcelable {
         dest.writeLong(mEntityId.getId());
         dest.writeString(mSearchQuery);
         dest.writeInt(mSelectedIndex);
+        dest.writeString(mLocationActivity.name());
     }
 
-    public static final Parcelable.Creator<MainView> CREATOR
-            = new Parcelable.Creator<MainView>() {
+    public static final Parcelable.Creator<Location> CREATOR
+            = new Parcelable.Creator<Location>() {
 
         @Override
-        public MainView createFromParcel(Parcel source) {
+        public Location createFromParcel(Parcel source) {
             ViewMode viewMode = ViewMode.valueOf(source.readString());
             ListQuery listQuery = ListQuery.valueOf(source.readString());
             Id entityId = Id.create(source.readLong());
             String searchQuery = source.readString();
             int selectedIndex = source.readInt();
-            MainView.Builder builder = MainView.newBuilder()
+            LocationActivity locationActivity = LocationActivity.valueOf(source.readString());
+            Location.Builder builder = Location.newBuilder()
                     .setViewMode(viewMode)
                     .setListQuery(listQuery)
                     .setEntityId(entityId)
                     .setSearchQuery(searchQuery)
-                    .setSelectedIndex(selectedIndex);
+                    .setSelectedIndex(selectedIndex)
+                    .setLocationActivity(locationActivity);
 
             return builder.build();
         }
 
         @Override
-        public MainView[] newArray(int size) {
-            return new MainView[size];
+        public Location[] newArray(int size) {
+            return new Location[size];
         }
     };
 
-    private MainView() {
+    private Location() {
     }
 
     public ViewMode getViewMode() {
@@ -106,6 +227,11 @@ public class MainView implements Parcelable {
         return mSearchQuery;
     }
 
+    @NonNull
+    public LocationActivity getLocationActivity() {
+        return mLocationActivity;
+    }
+
     public boolean isListView() {
         return mViewMode.isListMode();
     }
@@ -114,14 +240,20 @@ public class MainView implements Parcelable {
         return mSelectedIndex >= 0 || mEntityId.isInitialised();
     }
 
+    public boolean isSameActivity(Location location) {
+        if (location == null) return false;
+        return location.mLocationActivity == mLocationActivity;
+    }
+
     @Override
     public String toString() {
-        return "MainView{" +
+        return "Location{" +
                 "mViewMode=" + mViewMode +
                 ", mListQuery=" + mListQuery +
                 ", mEntityId=" + mEntityId +
                 ", mSearchQuery='" + mSearchQuery + '\'' +
                 ", mSelectedIndex=" + mSelectedIndex +
+                ", mLocationActivity=" + mLocationActivity +
                 '}';
     }
 
@@ -130,14 +262,15 @@ public class MainView implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        MainView mainView = (MainView) o;
+        Location location = (Location) o;
 
-        if (!mEntityId.equals(mainView.mEntityId)) return false;
-        if (mSelectedIndex != mainView.mSelectedIndex) return false;
-        if (mListQuery != mainView.mListQuery) return false;
-        if (mSearchQuery != null ? !mSearchQuery.equals(mainView.mSearchQuery) : mainView.mSearchQuery != null)
+        if (!mEntityId.equals(location.mEntityId)) return false;
+        if (mSelectedIndex != location.mSelectedIndex) return false;
+        if (mListQuery != location.mListQuery) return false;
+        if (mLocationActivity != location.mLocationActivity) return false;
+        if (mSearchQuery != null ? !mSearchQuery.equals(location.mSearchQuery) : location.mSearchQuery != null)
             return false;
-        if (mViewMode != mainView.mViewMode) return false;
+        if (mViewMode != location.mViewMode) return false;
 
         return true;
     }
@@ -149,6 +282,7 @@ public class MainView implements Parcelable {
         result = 31 * result + mEntityId.hashCode();
         result = 31 * result + (mSearchQuery != null ? mSearchQuery.hashCode() : 0);
         result = 31 * result + mSelectedIndex;
+        result = 31 * result + mLocationActivity.hashCode();
         return result;
     }
 
@@ -161,14 +295,14 @@ public class MainView implements Parcelable {
     }
 
     public static class Builder {
-        private MainView mResult;
+        private Location mResult;
 
         private Builder() {
         }
 
         private static Builder create() {
             Builder builder = new Builder();
-            builder.mResult = new MainView();
+            builder.mResult = new Location();
             return builder;
         }
 
@@ -217,6 +351,15 @@ public class MainView implements Parcelable {
             return this;
         }
 
+        public LocationActivity getLocationActivity() {
+            return mResult.mLocationActivity;
+        }
+
+        public Builder setLocationActivity(LocationActivity locationActivity) {
+            mResult.mLocationActivity = locationActivity;
+            return this;
+        }
+
         private Builder deriveViewMode() {
             ViewMode mode;
             boolean itemView = mResult.mSelectedIndex >= 0;
@@ -246,12 +389,13 @@ public class MainView implements Parcelable {
             return this;
         }
 
-        public Builder mergeFrom(MainView mainView) {
-            setViewMode(mainView.mViewMode);
-            setListQuery(mainView.mListQuery);
-            setEntityId(mainView.mEntityId);
-            setSearchQuery(mainView.mSearchQuery);
-            setSelectedIndex(mainView.mSelectedIndex);
+        public Builder mergeFrom(Location location) {
+            setViewMode(location.mViewMode);
+            setListQuery(location.mListQuery);
+            setEntityId(location.mEntityId);
+            setSearchQuery(location.mSearchQuery);
+            setSelectedIndex(location.mSelectedIndex);
+            setLocationActivity(location.mLocationActivity);
 
             return this;
         }
@@ -270,13 +414,13 @@ public class MainView implements Parcelable {
             return this;
         }
 
-        public MainView build() {
+        public Location build() {
             if (mResult == null) {
                 throw new IllegalStateException(
                         "build() has already been called on this Builder.");
             }
             deriveViewMode();
-            MainView returnMe = mResult;
+            Location returnMe = mResult;
             mResult = null;
 
             if (Log.isLoggable(TAG, Log.DEBUG)) {
@@ -286,6 +430,12 @@ public class MainView implements Parcelable {
             return returnMe;
         }
 
+    }
+
+    public static enum LocationActivity {
+        TaskSearch, TaskList, ProjectList, ContextList,
+        Help, Preferences,
+        EditTask, EditProject, EditContext
     }
 
 }

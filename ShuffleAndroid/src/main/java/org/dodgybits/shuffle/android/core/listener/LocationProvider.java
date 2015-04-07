@@ -15,21 +15,20 @@
  */
 package org.dodgybits.shuffle.android.core.listener;
 
-import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
-import org.dodgybits.shuffle.android.core.event.ViewUpdatedEvent;
-import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
+import org.dodgybits.shuffle.android.core.view.Location;
 import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
 
 @ContextSingleton
-public class MainViewProvider {
-    private MainView mMainView;
+public class LocationProvider {
+    private Location mLocation;
 
-    private void onViewChanged(@Observes ViewUpdatedEvent event) {
-        mMainView = event.getMainView();
+    private void onViewChanged(@Observes LocationUpdatedEvent event) {
+        mLocation = event.getLocation();
     }
 
-    public MainView getMainView() {
-        return mMainView;
+    public Location getLocation() {
+        return mLocation;
     }
 }

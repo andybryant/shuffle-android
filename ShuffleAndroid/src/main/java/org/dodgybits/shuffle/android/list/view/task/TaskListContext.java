@@ -11,7 +11,7 @@ import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
-import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.list.event.*;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
@@ -58,14 +58,14 @@ public class TaskListContext implements Parcelable {
         return create(selector);
     }
 
-    public static final TaskListContext create(MainView mainView) {
+    public static final TaskListContext create(Location location) {
         TaskSelector.Builder builder = TaskSelector.newBuilder()
-                .setListQuery(mainView.getListQuery())
-                .setSearchQuery(mainView.getSearchQuery());
-        if (mainView.getListQuery() == ListQuery.project) {
-            builder.setProjectId(mainView.getEntityId());
-        } else if (mainView.getListQuery() == ListQuery.context) {
-            builder.setContextId(mainView.getEntityId());
+                .setListQuery(location.getListQuery())
+                .setSearchQuery(location.getSearchQuery());
+        if (location.getListQuery() == ListQuery.project) {
+            builder.setProjectId(location.getEntityId());
+        } else if (location.getListQuery() == ListQuery.context) {
+            builder.setContextId(location.getEntityId());
         }
         return create(builder.build());
     }
@@ -178,12 +178,17 @@ public class TaskListContext implements Parcelable {
         }
     }
 
-    public EditNewTaskEvent createEditNewTaskEvent() {
-        return new EditNewTaskEvent(mSelector.getContextId(), mSelector.getProjectId());
-    }
-
-    public NewTaskEvent createNewTaskEventWithDescription(String description) {
-        return new NewTaskEvent(description, mSelector.getContextId(), mSelector.getProjectId());
+    public Location toLocation() {
+        Location.Builder builder = Location.newBuilder();
+        builder.setLocationActivity(Location.LocationActivity.TaskList);
+        ListQuery listQuery = getListQuery();
+        builder.setListQuery(listQuery);
+        if (listQuery == ListQuery.project) {
+            builder.setEntityId(mSelector.getProjectId());
+        } else if (listQuery == ListQuery.context) {
+            builder.setEntityId(mSelector.getContextId());
+        }
+        return builder.build();
     }
 
     @Override
@@ -241,23 +246,6 @@ public class TaskListContext implements Parcelable {
         }
 
         return isDeleted;
-    }
-    
-    public Object createEditEvent() {
-        Object event;
-        switch (getListQuery()) {
-            case context:
-                event = new EditContextEvent(mSelector.getContextId());
-                break;
-
-            case project:
-                event = new EditProjectEvent(mSelector.getProjectId());
-                break;
-
-            default:
-                throw new UnsupportedOperationException("Cannot create edit event for listContext " + this);
-        }
-        return event;
     }
 
     public Object createDeleteEvent(boolean delete) {

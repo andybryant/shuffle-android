@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2012 Android Shuffle Open Source Project
+/**
+ * Copyright (C) 2014 Android Shuffle Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dodgybits.shuffle.android.list.event;
+package org.dodgybits.shuffle.android.core.event;
 
-public class ViewTaskSearchResultsEvent {
-    private String mSearchQuery;
+import org.dodgybits.shuffle.android.core.view.Location;
 
-    public ViewTaskSearchResultsEvent(String mSearchQuery) {
-        this.mSearchQuery = mSearchQuery;
+public class LocationUpdatedEvent {
+    private final Location mLocation;
+
+    public LocationUpdatedEvent(Location location) {
+        mLocation = location;
     }
 
-    public String getSearchQuery() {
-        return mSearchQuery;
+    public Location getLocation() {
+        return mLocation;
+    }
+
+    @Override
+    public String toString() {
+        return "LocationUpdatedEvent{" +
+                "mLocation=" + mLocation +
+                '}';
     }
 }

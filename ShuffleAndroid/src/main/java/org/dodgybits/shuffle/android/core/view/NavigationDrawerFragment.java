@@ -17,14 +17,12 @@ import android.view.*;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.*;
-import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
+import org.dodgybits.shuffle.android.core.listener.LocationProvider;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.ContextSelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.EntitySelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.ProjectSelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
-import org.dodgybits.shuffle.android.list.event.ViewHelpEvent;
-import org.dodgybits.shuffle.android.list.event.ViewPreferencesEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
@@ -56,7 +54,7 @@ public class NavigationDrawerFragment extends RoboFragment {
     private EventManager mEventManager;
 
     @Inject
-    private MainViewProvider mMainViewProvider;
+    private LocationProvider mLocationProvider;
 
     private DrawerLayout mDrawerLayout;
     private View mFragmentContainerView;
@@ -70,15 +68,15 @@ public class NavigationDrawerFragment extends RoboFragment {
     private Cursor mProjectCursor;
     private Cursor mProjectCountCursor;
 
-    private Map<MainView,NavDrawerEntry> mDrawerEntryMap;
+    private Map<Location,NavDrawerEntry> mDrawerEntryMap;
 
 
     private AsyncTask<?, ?, ?> mTask;
 
-    private MainView mMainView;
+    private Location mLocation;
 
     private void onViewChange(@Observes NavigationRequestEvent event) {
-        mMainView = event.getMainView();
+        mLocation = event.getLocation();
         updateSelection();
     }
 
@@ -86,7 +84,7 @@ public class NavigationDrawerFragment extends RoboFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMainView = mMainViewProvider.getMainView();
+        mLocation = mLocationProvider.getLocation();
 
         // Read in the flag indicating whether or not the user has demonstrated awareness of the
         // drawer. See PREF_USER_LEARNED_DRAWER for details.
@@ -251,7 +249,7 @@ public class NavigationDrawerFragment extends RoboFragment {
 
                 addTaskItem(getInitialCount(cachedCounts, 0), ListIcons.INBOX, ListQuery.inbox);
                 addTaskItem(getInitialCount(cachedCounts, 2), ListIcons.NEXT_TASKS, ListQuery.nextTasks);
-                addTaskItem(getInitialCount(cachedCounts, 1), ListIcons.DUE_NEXT_MONTH, ListQuery.dueNextMonth);
+                addTaskItem(getInitialCount(cachedCounts, 1), ListIcons.DUE_TASKS, ListQuery.dueTasks);
                 addTaskItem(getInitialCount(cachedCounts, 5), ListIcons.CUSTOM, ListQuery.custom);
                 addTaskItem(getInitialCount(cachedCounts, 6), ListIcons.TICKLER, ListQuery.tickler);
                 addSeparator(mDrawerItemsListContainer);
@@ -282,21 +280,21 @@ public class NavigationDrawerFragment extends RoboFragment {
 
     private void addTaskItem(Integer count, int iconResId, ListQuery listQuery) {
         String name = UiUtilities.getTitle(getResources(), listQuery);
-        final MainView mainView = MainView.newBuilder().setListQuery(listQuery).build();
+        final Location location = Location.newBuilder().setListQuery(listQuery).build();
         final TaskSelector selector = TaskSelector.newBuilder().setListQuery(listQuery).build();
-        addEntityItem(count, iconResId, name, mainView, selector);
+        addEntityItem(count, iconResId, name, location, selector);
     }
 
     private void addProjectListItem(Integer count, int iconResId) {
         String name = UiUtilities.getTitle(getResources(), ListQuery.project);
-        final MainView mainView = MainView.newBuilder().setListQuery(ListQuery.project).build();
-        addEntityItem(count, iconResId, name, mainView, ProjectSelector.newBuilder().build());
+        final Location location = Location.newBuilder().setListQuery(ListQuery.project).build();
+        addEntityItem(count, iconResId, name, location, ProjectSelector.newBuilder().build());
     }
 
     private void addContextListItem(Integer count, int iconResId) {
         String name = UiUtilities.getTitle(getResources(), ListQuery.context);
-        final MainView mainView = MainView.newBuilder().setListQuery(ListQuery.context).build();
-        addEntityItem(count, iconResId, name, mainView, ContextSelector.newBuilder().build());
+        final Location location = Location.newBuilder().setListQuery(ListQuery.context).build();
+        addEntityItem(count, iconResId, name, location, ContextSelector.newBuilder().build());
     }
 
     private void addSettings() {
@@ -309,7 +307,7 @@ public class NavigationDrawerFragment extends RoboFragment {
                 if (mDrawerLayout != null) {
                     mDrawerLayout.closeDrawer(mFragmentContainerView);
                 }
-                mEventManager.fire(new ViewPreferencesEvent());
+                mEventManager.fire(NavigationRequestEvent.viewSettings());
             }
         });
     }
@@ -324,18 +322,19 @@ public class NavigationDrawerFragment extends RoboFragment {
                 if (mDrawerLayout != null) {
                     mDrawerLayout.closeDrawer(mFragmentContainerView);
                 }
-                mEventManager.fire(new ViewHelpEvent(ListQuery.context));
+                // TODO - pick listquery for current location
+                mEventManager.fire(NavigationRequestEvent.viewHelp(ListQuery.context));
             }
         });
     }
 
 
-    private void addEntityItem(Integer count, int iconResId, String name, final MainView mainView,
+    private void addEntityItem(Integer count, int iconResId, String name, final Location location,
                          EntitySelector selector) {
         NavDrawerEntityView view = new NavDrawerEntityView(getActivity());
         view.init(iconResId, name, count);
-        NavDrawerEntry entry = new NavDrawerEntry(count, mainView, selector, view);
-        mDrawerEntryMap.put(entry.getMainView(), entry);
+        NavDrawerEntry entry = new NavDrawerEntry(count, location, selector, view);
+        mDrawerEntryMap.put(entry.getLocation(), entry);
         mNavDrawerItemViews.add(view);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -343,7 +342,7 @@ public class NavigationDrawerFragment extends RoboFragment {
                 if (mDrawerLayout != null) {
                     mDrawerLayout.closeDrawer(mFragmentContainerView);
                 }
-                mEventManager.fire(new NavigationRequestEvent(mainView));
+                mEventManager.fire(new NavigationRequestEvent(location));
             }
         });
     }
@@ -362,8 +361,8 @@ public class NavigationDrawerFragment extends RoboFragment {
     }
 
     private void onContextCountLoaded(@Observes ContextTaskCountCursorLoadedEvent event) {
-        final MainView mainView = MainView.newBuilder().setListQuery(ListQuery.context).build();
-        // TODO iterate through cursor - construct mainView, find entry and update
+        final Location location = Location.newBuilder().setListQuery(ListQuery.context).build();
+        // TODO iterate through cursor - construct location, find entry and update
     }
 
     private void onProjectCountLoaded(@Observes ProjectTaskCountCursorLoadedEvent event) {
@@ -372,12 +371,12 @@ public class NavigationDrawerFragment extends RoboFragment {
     }
 
     private void updateSelection() {
-        if (mMainView == null || mDrawerEntryMap == null) {
+        if (mLocation == null || mDrawerEntryMap == null) {
             return;
         }
 
-        for (Map.Entry<MainView, NavDrawerEntry> entry : mDrawerEntryMap.entrySet()) {
-            entry.getValue().mListener.setViewSelected(entry.getKey().equals(mMainView));
+        for (Map.Entry<Location, NavDrawerEntry> entry : mDrawerEntryMap.entrySet()) {
+            entry.getValue().mListener.setViewSelected(entry.getKey().equals(mLocation));
         }
     }
 
@@ -472,20 +471,20 @@ public class NavigationDrawerFragment extends RoboFragment {
 
     private static class NavDrawerEntry {
         private Integer mCount;
-        final MainView mMainView;
+        final Location mLocation;
         final EntitySelector mSelector;
         final NavDrawerEntityListener mListener;
 
-        private NavDrawerEntry(Integer count, MainView mainView, EntitySelector selector, NavDrawerEntityListener listener) {
+        private NavDrawerEntry(Integer count, Location location, EntitySelector selector, NavDrawerEntityListener listener) {
             mCount = count;
-            mMainView = mainView;
+            mLocation = location;
             mSelector = selector;
             mListener = listener;
         }
 
         public int updateCount(Activity activity) {
             EntitySelector selector = mSelector.builderFrom().applyListPreferences(activity,
-                    ListSettingsCache.findSettings(mMainView.getListQuery())).build();
+                    ListSettingsCache.findSettings(mLocation.getListQuery())).build();
             Cursor cursor = activity.getContentResolver().query(
                     selector.getContentUri(),
                     PROJECTION,
@@ -497,8 +496,8 @@ public class NavigationDrawerFragment extends RoboFragment {
             return count;
         }
 
-        public MainView getMainView() {
-            return mMainView;
+        public Location getLocation() {
+            return mLocation;
         }
 
         public Integer getCount() {

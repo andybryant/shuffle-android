@@ -21,9 +21,6 @@
     <string name="title_context">Tags</string>
     <string name="title_next_tasks">Next Actions</string>
     <string name="title_due_tasks">Due Actions</string>
-    <string name="title_due_today">Due Today</string>
-    <string name="title_due_next_week">Due Next Week</string>
-    <string name="title_due_next_month">Due Next Month</string>
     <string name="title_tickler">Tickler</string>
     <string name="title_custom">Custom</string>
     <string name="title_search">Search results</string>

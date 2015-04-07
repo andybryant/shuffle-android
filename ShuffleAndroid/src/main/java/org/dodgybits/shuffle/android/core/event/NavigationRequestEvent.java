@@ -15,23 +15,23 @@
  */
 package org.dodgybits.shuffle.android.core.event;
 
-import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.Location;
 
 public class NavigationRequestEvent {
-    private final MainView mMainView;
+    private final Location mLocation;
 
-    public NavigationRequestEvent(MainView mainView) {
-        mMainView = mainView;
+    public NavigationRequestEvent(Location location) {
+        mLocation = location;
     }
 
-    public MainView getMainView() {
-        return mMainView;
+    public Location getLocation() {
+        return mLocation;
     }
 
     @Override
     public String toString() {
         return "NavigationRequestEvent{" +
-                "mMainView=" + mMainView +
+                "mLocation=" + mLocation +
                 '}';
     }
 }

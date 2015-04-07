@@ -27,16 +27,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.ViewUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
-import org.dodgybits.shuffle.android.core.listener.MainViewProvider;
-import org.dodgybits.shuffle.android.core.listener.NavigationListener;
+import org.dodgybits.shuffle.android.core.listener.ListSettingsListener;
+import org.dodgybits.shuffle.android.core.listener.LocationProvider;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.encoding.TaskEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
-import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.Location;
+
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
@@ -53,7 +54,7 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
     TaskEncoder mEncoder;
 
     @Inject
-    private NavigationListener mNavigationListener;
+    private ListSettingsListener mListSettingsListener;
 
     @Inject
     private EventManager mEventManager;
@@ -65,7 +66,7 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
     private CursorProvider mCursorProvider;
 
     @Inject
-    private MainViewProvider mMainViewProvider;
+    private LocationProvider mLocationProvider;
 
     Cursor mCursor;
 
@@ -73,7 +74,7 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
 
     ViewPager mPager;
 
-    MainView mMainView;
+    Location mLocation;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -89,12 +90,12 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
         mPager = (ViewPager)getActivity().findViewById(R.id.pager);
         mPager.setOnPageChangeListener(this);
 
-        mMainView = mMainViewProvider.getMainView();
+        mLocation = mLocationProvider.getLocation();
         updateCursor();
     }
 
-    private void onViewUpdated(@Observes ViewUpdatedEvent event) {
-        mMainView = event.getMainView();
+    private void onViewUpdated(@Observes LocationUpdatedEvent event) {
+        mLocation = event.getLocation();
         updateCursor();
     }
 
@@ -114,10 +115,10 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
         Log.d(TAG, "Swapping cursor " + this);
         mCursor = cursor;
 
-        if (mMainView != null) {
+        if (mLocation != null) {
             mAdapter = new MyAdapter(getActivity().getSupportFragmentManager(), cursor);
             mPager.setAdapter(mAdapter);
-            mPager.setCurrentItem(mMainView.getSelectedIndex());
+            mPager.setCurrentItem(mLocation.getSelectedIndex());
         }
     }
 
@@ -128,9 +129,9 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
 
     @Override
     public void onPageSelected(int newIndex) {
-        if (mMainView.getSelectedIndex() != newIndex) {
-            Log.d(TAG, "View changed from " + mMainView.getSelectedIndex() + " to " + newIndex);
-            MainView newView = mMainView.builderFrom().setSelectedIndex(newIndex).build();
+        if (mLocation.getSelectedIndex() != newIndex) {
+            Log.d(TAG, "View changed from " + mLocation.getSelectedIndex() + " to " + newIndex);
+            Location newView = mLocation.builderFrom().setSelectedIndex(newIndex).build();
             mEventManager.fire(new NavigationRequestEvent(newView));
         }
     }

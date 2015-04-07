@@ -16,6 +16,8 @@
 package org.dodgybits.shuffle.android.core.listener;
 
 import com.google.inject.Inject;
+
+import org.dodgybits.shuffle.android.core.view.NavigationController;
 import org.dodgybits.shuffle.android.server.gcm.GcmRegister;
 import roboguice.inject.ContextSingleton;
 
@@ -26,7 +28,10 @@ public class MainListeners {
     private EntityUpdateListener mEntityUpdateListener;
 
     @Inject
-    private NavigationListener mNavigationListener;
+    private NavigationController mNavigationController;
+
+    @Inject
+    private ListSettingsListener mListSettingsListener;
 
     @Inject
     private GcmRegister mGcmRegister;
@@ -41,10 +46,7 @@ public class MainListeners {
     private CursorProvider mCursorProvider;
 
     @Inject
-    private RequestParser mRequestParser;
-
-    @Inject
-    private MainViewProvider mMainViewProvider;
+    private LocationProvider mLocationProvider;
 
     @Inject
     private TitleUpdater mTitleUpdater;

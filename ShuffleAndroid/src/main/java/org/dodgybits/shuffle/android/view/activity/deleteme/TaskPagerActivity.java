@@ -18,12 +18,12 @@ import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
-import org.dodgybits.shuffle.android.core.listener.NavigationListener;
+import org.dodgybits.shuffle.android.core.listener.ListSettingsListener;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.encoding.TaskEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
-import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.list.event.ViewContextEvent;
 import org.dodgybits.shuffle.android.list.event.ViewProjectEvent;
 import org.dodgybits.shuffle.android.list.event.ViewTaskSearchResultsEvent;
@@ -53,7 +53,7 @@ public class TaskPagerActivity extends RoboActionBarActivity {
     TaskEncoder mEncoder;
 
     @Inject
-    private NavigationListener mNavigationListener;
+    private ListSettingsListener mListSettingsListener;
 
     @Inject
     private EventManager mEventManager;
@@ -100,7 +100,7 @@ public class TaskPagerActivity extends RoboActionBarActivity {
                     default:
                         Intent intent = new Intent(this, AbstractMainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(MainView.QUERY_NAME, listQuery.name());
+                        intent.putExtra(Location.QUERY_NAME, listQuery.name());
                         startActivity(intent);
                         break;
                 }

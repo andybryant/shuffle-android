@@ -24,7 +24,7 @@ import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.*;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
-import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.view.context.ContextListFragment;
 import org.dodgybits.shuffle.android.list.view.project.ProjectListFragment;
@@ -45,7 +45,7 @@ public class FragmentLoader {
     public static final String TAG_CONTEXT_LIST = "tag-context-list";
     public static final String TAG_PROJECT_LIST = "tag-project-list";
 
-    private MainView mMainView;
+    private Location mLocation;
 
     private FragmentActivity mActivity;
 
@@ -66,13 +66,13 @@ public class FragmentLoader {
         return tabletUi;
     }
 
-    private void onViewUpdated(@Observes ViewUpdatedEvent event) {
-        mMainView = event.getMainView();
+    private void onViewUpdated(@Observes LocationUpdatedEvent event) {
+        mLocation = event.getLocation();
     }
 
     private void onTaskListCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
         Log.i(TAG, "Task list Cursor loaded - loading fragment now");
-        switch (mMainView.getViewMode()) {
+        switch (mLocation.getViewMode()) {
             case TASK_LIST:
                 addTaskList(event.getTaskListContext());
                 break;
@@ -83,24 +83,24 @@ public class FragmentLoader {
                 addTaskView(event.getTaskListContext());
                 break;
             default:
-                Log.w(TAG, "Unexpected view mode " + mMainView.getViewMode());
+                Log.w(TAG, "Unexpected view mode " + mLocation.getViewMode());
                 break;
         }
-        mEventManager.fire(new ViewUpdatedEvent(mMainView));
+        mEventManager.fire(new LocationUpdatedEvent(mLocation));
     }
 
     private void onContextListCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
-        if (mMainView.getViewMode() == ViewMode.CONTEXT_LIST) {
+        if (mLocation.getViewMode() == ViewMode.CONTEXT_LIST) {
             addContextList();
         }
-        mEventManager.fire(new ViewUpdatedEvent(mMainView));
+        mEventManager.fire(new LocationUpdatedEvent(mLocation));
     }
 
     private void onProjectListCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
-        if (mMainView.getViewMode() == ViewMode.PROJECT_LIST) {
+        if (mLocation.getViewMode() == ViewMode.PROJECT_LIST) {
             addProjectList();
         }
-        mEventManager.fire(new ViewUpdatedEvent(mMainView));
+        mEventManager.fire(new LocationUpdatedEvent(mLocation));
     }
 
     private void addTaskList(TaskListContext listContext) {

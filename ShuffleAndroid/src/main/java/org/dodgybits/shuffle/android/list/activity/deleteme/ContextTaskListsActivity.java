@@ -19,10 +19,10 @@ import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
-import org.dodgybits.shuffle.android.core.listener.NavigationListener;
+import org.dodgybits.shuffle.android.core.listener.ListSettingsListener;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
-import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.list.content.ContextCursorLoader;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
@@ -52,7 +52,7 @@ public class ContextTaskListsActivity extends RoboActionBarActivity {
     private EventManager mEventManager;
 
     @Inject
-    private NavigationListener mNavigationListener;
+    private ListSettingsListener mListSettingsListener;
 
     @Inject
     private EntityUpdateListener mEntityUpdateListener;
@@ -81,7 +81,7 @@ public class ContextTaskListsActivity extends RoboActionBarActivity {
             case android.R.id.home:
                 Intent intent = new Intent(this, AbstractMainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(MainView.QUERY_NAME, ListQuery.context.name());
+                intent.putExtra(Location.QUERY_NAME, ListQuery.context.name());
                 startActivity(intent);
                 finish();
                 return true;

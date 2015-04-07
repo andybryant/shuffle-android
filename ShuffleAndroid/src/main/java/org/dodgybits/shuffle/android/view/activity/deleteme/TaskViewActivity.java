@@ -33,11 +33,11 @@ import android.view.MenuItem;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
+import org.dodgybits.shuffle.android.core.listener.ListSettingsListener;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.encoding.TaskEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
-import org.dodgybits.shuffle.android.core.listener.NavigationListener;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 import org.dodgybits.shuffle.android.view.fragment.TaskViewFragment;
 import roboguice.activity.RoboActionBarActivity;
@@ -56,7 +56,7 @@ public class TaskViewActivity extends RoboActionBarActivity {
     @Inject private TaskEncoder mEncoder;
 
     @Inject
-    private NavigationListener mNavigationListener;
+    private ListSettingsListener mListSettingsListener;
 
     @Inject
     private EntityUpdateListener mEntityUpdateListener;

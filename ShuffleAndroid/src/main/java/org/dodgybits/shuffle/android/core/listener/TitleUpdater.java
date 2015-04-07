@@ -3,13 +3,13 @@ package org.dodgybits.shuffle.android.core.listener;
 import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import com.google.inject.Inject;
-import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
-import org.dodgybits.shuffle.android.core.event.ViewUpdatedEvent;
+
+import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
-import org.dodgybits.shuffle.android.core.view.MainView;
+import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
@@ -30,22 +30,22 @@ public class TitleUpdater {
         mActivity = (ActionBarActivity) activity;
     }
 
-    private void onViewChanged(@Observes ViewUpdatedEvent event) {
-        MainView mainView = event.getMainView();
-        if (mainView == null || mainView.getViewMode() == null) {
+    private void onViewChanged(@Observes LocationUpdatedEvent event) {
+        Location location = event.getLocation();
+        if (location == null || location.getViewMode() == null) {
             return;
         }
         String title = "";
-        ListQuery listQuery = mainView.getListQuery();
-        switch (mainView.getViewMode()) {
+        ListQuery listQuery = location.getListQuery();
+        switch (location.getViewMode()) {
             case TASK:
                 // blank for task view unless in landscape mode on tablet
                 if (!UiUtilities.isListCollapsible(mActivity.getResources())) {
-                    title = getTaskListTitle(mainView);
+                    title = getTaskListTitle(location);
                 }
                 break;
             case TASK_LIST:
-                title = getTaskListTitle(mainView);
+                title = getTaskListTitle(location);
                 break;
             case CONTEXT_LIST:
             case PROJECT_LIST:
@@ -57,16 +57,16 @@ public class TitleUpdater {
         mActivity.setTitle(title);
     }
 
-    private String getTaskListTitle(MainView mainView) {
+    private String getTaskListTitle(Location location) {
         String title = "";
-        ListQuery listQuery = mainView.getListQuery();
+        ListQuery listQuery = location.getListQuery();
         if (listQuery == ListQuery.context) {
-            Context context = mContextCache.findById(mainView.getEntityId());
+            Context context = mContextCache.findById(location.getEntityId());
             if (context != null) {
                 title = context.getName();
             }
         } else if (listQuery == ListQuery.project) {
-            Project project = mProjectCache.findById(mainView.getEntityId());
+            Project project = mProjectCache.findById(location.getEntityId());
             if (project != null) {
                 title = project.getName();
             }
