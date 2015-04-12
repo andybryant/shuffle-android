@@ -131,7 +131,8 @@ public class TaskListFragment extends RoboListFragment
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mEventManager.fire(mListContext.createEditNewTaskEvent());
+                        Location location = Location.newTaskFromTaskListContext(mListContext);
+                        mEventManager.fire(new NavigationRequestEvent(location));
                     }
                 }
         );

@@ -233,9 +233,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
                 result = "(1 == 1)";
                 break;
                 
-            case dueToday:
-            case dueNextWeek:
-            case dueNextMonth:
+            case dueTasks:
                 long startMS = 0L;
                 long endOfToday = getEndDate();
                 long endOfTomorrow = endOfToday + DateUtils.DAY_IN_MILLIS;
@@ -259,15 +257,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         switch (mListQuery) {
-        case dueToday:
-            cal.add(Calendar.DAY_OF_YEAR, 1);
-            endMS = cal.getTimeInMillis();
-            break;
-        case dueNextWeek:
-            cal.add(Calendar.DAY_OF_YEAR, 7);
-            endMS = cal.getTimeInMillis();
-            break;
-        case dueNextMonth:
+        case dueTasks:
             cal.add(Calendar.MONTH, 1);
             endMS = cal.getTimeInMillis();
             break;

@@ -1,4 +1,4 @@
-package org.dodgybits.shuffle.android.core.listener;
+package org.dodgybits.shuffle.android.core.view;
 
 import android.app.SearchManager;
 import android.content.ContentUris;
@@ -81,11 +81,11 @@ public class LocationParser {
             if (match == CONTEXT) {
                 long contextId = ContentUris.parseId(uri);
                 builder.setListQuery(ListQuery.context)
-                        .setEntityId(Id.create(contextId));
+                        .setContextId(Id.create(contextId));
             } else if (match == PROJECT) {
                 long projectId = ContentUris.parseId(uri);
                 builder.setListQuery(ListQuery.project)
-                        .setEntityId(Id.create(projectId));
+                        .setProjectId(Id.create(projectId));
             } else {
                 Log.e(TAG, "Unexpected intent uri" + uri);
             }
@@ -96,7 +96,6 @@ public class LocationParser {
 
     public static Intent createIntent(Context context, Location location) {
         Intent intent = null;
-        Id entityId = location.getEntityId();
         ListQuery listQuery = location.getListQuery();
 
         switch (location.getLocationActivity()) {
@@ -130,15 +129,15 @@ public class LocationParser {
                 break;
 
             case EditTask:
-                createEditTaskIntent(entityId, listQuery);
+                createEditTaskIntent(location);
                 break;
 
             case EditProject:
-                intent = createEditIntent(ProjectProvider.Projects.CONTENT_URI, entityId);
+                intent = createEditIntent(ProjectProvider.Projects.CONTENT_URI, location.getProjectId());
                 break;
 
             case EditContext:
-                intent = createEditIntent(ContextProvider.Contexts.CONTENT_URI, entityId);
+                intent = createEditIntent(ContextProvider.Contexts.CONTENT_URI, location.getContextId());
                 break;
 
             default:
@@ -150,14 +149,15 @@ public class LocationParser {
 
     private static Intent createTaskListIntent(Context context, Location location) {
         Intent intent;
-        Id entityId = location.getEntityId();
         ListQuery listQuery = location.getListQuery();
 
         if (listQuery == ListQuery.project) {
-            Uri url = ContentUris.withAppendedId(ProjectProvider.Projects.CONTENT_URI, entityId.getId());
+            Uri url = ContentUris.withAppendedId(ProjectProvider.Projects.CONTENT_URI,
+                    location.getProjectId().getId());
             intent = new Intent(Intent.ACTION_VIEW, url);
         } else if (listQuery == ListQuery.context) {
-            Uri url = ContentUris.withAppendedId(ContextProvider.Contexts.CONTENT_URI, entityId.getId());
+            Uri url = ContentUris.withAppendedId(ContextProvider.Contexts.CONTENT_URI,
+                    location.getContextId().getId());
             intent = new Intent(Intent.ACTION_VIEW, url);
         } else {
             intent = new Intent(context, TaskViewActivity.class);
@@ -170,20 +170,13 @@ public class LocationParser {
         return intent;
     }
 
-    private static Intent createEditTaskIntent(Id entityId, ListQuery listQuery) {
-        Intent intent;
-        if (entityId.isInitialised()) {
-            if (listQuery == ListQuery.project) {
-                intent = createEditIntent(TaskProvider.Tasks.CONTENT_URI, Id.NONE);
-                intent.putExtra(TaskProvider.Tasks.PROJECT_ID, entityId.getId());
-            } else if (listQuery == ListQuery.context) {
-                intent = createEditIntent(TaskProvider.Tasks.CONTENT_URI, Id.NONE);
-                intent.putExtra(TaskProvider.TaskContexts.CONTEXT_ID, entityId.getId());
-            } else {
-                intent = createEditIntent(TaskProvider.Tasks.CONTENT_URI, entityId);
-            }
-        } else {
-            intent = createEditIntent(TaskProvider.Tasks.CONTENT_URI, entityId);
+    private static Intent createEditTaskIntent(Location location) {
+        Intent intent = createEditIntent(TaskProvider.Tasks.CONTENT_URI, location.getTaskId());
+        if (location.getProjectId().isInitialised()) {
+            intent.putExtra(TaskProvider.Tasks.PROJECT_ID, location.getProjectId().getId());
+        }
+        if (location.getContextId().isInitialised()) {
+            intent.putExtra(TaskProvider.TaskContexts.CONTEXT_ID, location.getContextId().getId());
         }
         return intent;
     }

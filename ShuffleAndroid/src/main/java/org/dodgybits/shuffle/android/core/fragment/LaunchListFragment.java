@@ -10,8 +10,7 @@ import android.widget.ListView;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
 import org.dodgybits.shuffle.android.core.activity.LauncherShortcutActivity;
-import org.dodgybits.shuffle.android.core.model.Id;
-import org.dodgybits.shuffle.android.core.util.IntentUtils;
+import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.core.view.IconNameCountListAdaptor;
 import org.dodgybits.shuffle.android.core.view.IconNameCountListAdaptor.ListItem;
 import org.dodgybits.shuffle.android.core.view.ListIcons;
@@ -110,7 +109,8 @@ public class LaunchListFragment extends RoboListFragment {
         public void onClick(LauncherShortcutActivity activity) {
             Intent.ShortcutIconResource iconResource = Intent.ShortcutIconResource.fromContext(
                     activity, R.mipmap.ic_launcher);
-            Intent intent = IntentUtils.createNewTaskIntent(null, Id.NONE, Id.NONE);
+            Location location = Location.newTask();
+            Intent intent = LocationParser.createIntent(activity, location);
             activity.returnShortcut(intent, mName, iconResource);
         }
     }

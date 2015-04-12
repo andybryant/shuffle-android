@@ -63,9 +63,9 @@ public class TaskListContext implements Parcelable {
                 .setListQuery(location.getListQuery())
                 .setSearchQuery(location.getSearchQuery());
         if (location.getListQuery() == ListQuery.project) {
-            builder.setProjectId(location.getEntityId());
+            builder.setProjectId(location.getProjectId());
         } else if (location.getListQuery() == ListQuery.context) {
-            builder.setContextId(location.getEntityId());
+            builder.setContextId(location.getContextId());
         }
         return create(builder.build());
     }
@@ -116,6 +116,22 @@ public class TaskListContext implements Parcelable {
 
     public boolean isProjectNameVisible() {
         return mProjectNameVisible;
+    }
+
+    public Id getContextId() {
+        Id result = Id.NONE;
+        if (mSelector.getContextId().isInitialised()) {
+            result = mSelector.getContextId();
+        }
+        return result;
+    }
+
+    public Id getProjectId() {
+        Id result = Id.NONE;
+        if (mSelector.getProjectId().isInitialised()) {
+            result = mSelector.getProjectId();
+        }
+        return result;
     }
 
     public Id getEntityId() {
@@ -176,19 +192,6 @@ public class TaskListContext implements Parcelable {
             androidContext.setTitle(mTitleId);
             actionBar.setSubtitle(null);
         }
-    }
-
-    public Location toLocation() {
-        Location.Builder builder = Location.newBuilder();
-        builder.setLocationActivity(Location.LocationActivity.TaskList);
-        ListQuery listQuery = getListQuery();
-        builder.setListQuery(listQuery);
-        if (listQuery == ListQuery.project) {
-            builder.setEntityId(mSelector.getProjectId());
-        } else if (listQuery == ListQuery.context) {
-            builder.setEntityId(mSelector.getContextId());
-        }
-        return builder.build();
     }
 
     @Override

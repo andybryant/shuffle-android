@@ -17,8 +17,6 @@ import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
-import org.dodgybits.shuffle.android.list.event.EditNewProjectEvent;
-import org.dodgybits.shuffle.android.list.event.EditProjectEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import roboguice.activity.RoboActionBarActivity;
@@ -92,7 +90,8 @@ public class ProjectListFragment extends RoboListFragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mEventManager.fire(new EditNewProjectEvent());
+                        Location location = Location.newProject();
+                        mEventManager.fire(new NavigationRequestEvent(location));
                     }
                 }
         );
@@ -118,10 +117,7 @@ public class ProjectListFragment extends RoboListFragment {
      */
     @Override
     public void onListItemClick(ListView parent, View view, int position, long id) {
-        Location location = Location.newBuilder()
-                .setListQuery(ListQuery.project)
-                .setEntityId(Id.create(id))
-                .build();
+        Location location = Location.viewTaskList(ListQuery.context, Id.create(id), Id.NONE);
         mEventManager.fire(new NavigationRequestEvent(location));
     }
 
@@ -153,7 +149,8 @@ public class ProjectListFragment extends RoboListFragment {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case R.id.action_edit:
-                mEventManager.fire(new EditProjectEvent(Id.create(info.id)));
+                Location location = Location.editProject(Id.create(info.id));
+                mEventManager.fire(new NavigationRequestEvent(location));
                 return true;
             case R.id.action_delete:
                 mEventManager.fire(new UpdateProjectDeletedEvent(Id.create(info.id), true));

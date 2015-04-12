@@ -41,7 +41,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.listener.LocationParser;
+import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Task;
@@ -267,8 +267,7 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
 
     private static void openTask(final Context context, final TaskListContext listContext,
                                  final int position) {
-        Location location = listContext.toLocation().
-                builderFrom().setSelectedIndex(position).build();
+        Location location = Location.viewTask(listContext, position);
         Intent intent = LocationParser.createIntent(context, location);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // just in case intent comes without it
         context.startActivity(intent);
@@ -311,14 +310,15 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
             // Show compose icon & task list
             views.setViewVisibility(R.id.widget_compose, View.VISIBLE);
             views.setViewVisibility(R.id.task_list, View.VISIBLE);
-            // Create click intent for "create task" target
-            Location location = Location.newTaskWithContext()
 
-                    
-            intent = IntentUtils.createNewTaskIntent(mContext, mListContext);
+            // Create click intent for "create task" target
+            Location location = Location.newTaskFromTaskListContext(mListContext);
+            intent = LocationParser.createIntent(mContext, location);
             setActivityIntent(views, R.id.widget_compose, intent);
+
             // Create click intent for logo to open inbox
-            intent = IntentUtils.createTaskListIntent(mContext, mListContext);
+            location = Location.viewTaskList(mListContext);
+            intent = LocationParser.createIntent(mContext, location);
             setActivityIntent(views, R.id.widget_logo, intent);
             setActivityIntent(views, R.id.widget_title, intent);
         }

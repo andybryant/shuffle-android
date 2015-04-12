@@ -31,14 +31,8 @@ public class UiUtilities {
             case inbox:
                 title = res.getString(R.string.title_inbox);
                 break;
-            case dueNextMonth:
-                title = res.getString(R.string.title_due_next_month);
-                break;
-            case dueNextWeek:
-                title = res.getString(R.string.title_due_next_week);
-                break;
-            case dueToday:
-                title = res.getString(R.string.title_due_today);
+            case dueTasks:
+                title = res.getString(R.string.title_due_tasks);
                 break;
             case nextTasks:
                 title = res.getString(R.string.title_next_tasks);

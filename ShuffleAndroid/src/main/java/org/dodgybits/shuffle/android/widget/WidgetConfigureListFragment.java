@@ -22,9 +22,7 @@ public class WidgetConfigureListFragment extends RoboListFragment {
             String[] perspectives = getResources().getStringArray(R.array.perspectives).clone();
             sListItems = new ListItem[] {
                     createTaskListItem(ListIcons.INBOX, ListQuery.inbox, perspectives[0]),
-                    createTaskListItem(ListIcons.DUE_TODAY, ListQuery.dueToday, getString(R.string.title_due_today)),
-                    createTaskListItem(ListIcons.DUE_NEXT_WEEK, ListQuery.dueNextWeek, getString(R.string.title_due_next_week)),
-                    createTaskListItem(ListIcons.DUE_NEXT_MONTH, ListQuery.dueNextMonth, getString(R.string.title_due_next_month)),
+                    createTaskListItem(ListIcons.DUE_TASKS, ListQuery.dueTasks, getString(R.string.title_due_tasks)),
                     createTaskListItem(ListIcons.NEXT_TASKS, ListQuery.nextTasks, perspectives[2]),
                     createDialogListItem(ListIcons.PROJECTS, perspectives[3], WidgetConfigure.PROJECT_PICKER_DIALOG),
                     createDialogListItem(ListIcons.CONTEXTS, perspectives[4], WidgetConfigure.CONTEXT_PICKER_DIALOG),

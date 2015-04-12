@@ -16,6 +16,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -25,7 +26,7 @@ import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.CalendarUtils;
 import org.dodgybits.shuffle.android.core.view.ContextIcon;
-import org.dodgybits.shuffle.android.list.event.EditTaskEvent;
+import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
 import org.dodgybits.shuffle.android.list.view.LabelView;
@@ -125,8 +126,8 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
                 return true;
             case R.id.action_edit:
                 Log.d(TAG, "Editing the action");
-                mEventManager.fire(new EditTaskEvent(mTask.getLocalId()));
-                // TODO - add parent view to top of stack
+                Location location = Location.editTask(mTask.getLocalId());
+                mEventManager.fire(new NavigationRequestEvent(location));
                 return true;
             case R.id.action_delete:
             case R.id.action_undelete:

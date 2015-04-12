@@ -30,6 +30,8 @@ import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.TaskVisibilityChangeEvent;
 import org.dodgybits.shuffle.android.core.listener.LocationProvider;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
+import org.dodgybits.shuffle.android.list.model.ListQuery;
+
 import roboguice.RoboGuice;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -65,13 +67,13 @@ public class TwoPaneLayout extends FrameLayout {
     /**
      * The current view that the tablet layout is in.
      */
-    private Location mCurrentView = Location.newBuilder().build();
+    private Location mCurrentView = Location.viewTaskList(ListQuery.inbox);
 
     /**
      * This mode represents the current positions of the three panes. This is split out from the
      * current mode to give context to state transitions.
      */
-    private Location mPositionedView = Location.newBuilder().build();
+    private Location mPositionedView = Location.viewTaskList(ListQuery.inbox);
 
     private boolean mIsSearchResult;
 
@@ -125,7 +127,7 @@ public class TwoPaneLayout extends FrameLayout {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // all panes start GONE in initial UNKNOWN mode to avoid drawing misplaced panes
-        mCurrentView = Location.newBuilder().build();
+        mCurrentView = Location.viewTaskList(ListQuery.inbox);
         mListView.setVisibility(GONE);
         mTaskView.setVisibility(GONE);
 

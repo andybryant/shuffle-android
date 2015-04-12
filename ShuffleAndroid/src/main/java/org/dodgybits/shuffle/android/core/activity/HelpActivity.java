@@ -112,9 +112,7 @@ public class HelpActivity extends RoboActionBarActivity {
         // few magic numbers for good luck...
         mQueryIndex = Maps.newHashMap();
         mQueryIndex.put(ListQuery.inbox, 1);
-        mQueryIndex.put(ListQuery.dueToday, 2);
-        mQueryIndex.put(ListQuery.dueNextWeek, 2);
-        mQueryIndex.put(ListQuery.dueNextMonth, 2);
+        mQueryIndex.put(ListQuery.dueTasks, 2);
         mQueryIndex.put(ListQuery.nextTasks, 3);
         mQueryIndex.put(ListQuery.project, 4);
         mQueryIndex.put(ListQuery.context, 5);

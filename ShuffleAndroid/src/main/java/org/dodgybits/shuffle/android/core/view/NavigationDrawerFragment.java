@@ -247,11 +247,11 @@ public class NavigationDrawerFragment extends RoboFragment {
 
                 int[] cachedCounts = Preferences.getTopLevelCounts(getActivity());
 
-                addTaskItem(getInitialCount(cachedCounts, 0), ListIcons.INBOX, ListQuery.inbox);
-                addTaskItem(getInitialCount(cachedCounts, 2), ListIcons.NEXT_TASKS, ListQuery.nextTasks);
-                addTaskItem(getInitialCount(cachedCounts, 1), ListIcons.DUE_TASKS, ListQuery.dueTasks);
-                addTaskItem(getInitialCount(cachedCounts, 5), ListIcons.CUSTOM, ListQuery.custom);
-                addTaskItem(getInitialCount(cachedCounts, 6), ListIcons.TICKLER, ListQuery.tickler);
+                addTaskListItem(getInitialCount(cachedCounts, 0), ListIcons.INBOX, ListQuery.inbox);
+                addTaskListItem(getInitialCount(cachedCounts, 2), ListIcons.NEXT_TASKS, ListQuery.nextTasks);
+                addTaskListItem(getInitialCount(cachedCounts, 1), ListIcons.DUE_TASKS, ListQuery.dueTasks);
+                addTaskListItem(getInitialCount(cachedCounts, 5), ListIcons.CUSTOM, ListQuery.custom);
+                addTaskListItem(getInitialCount(cachedCounts, 6), ListIcons.TICKLER, ListQuery.tickler);
                 addSeparator(mDrawerItemsListContainer);
                 addProjectListItem(getInitialCount(cachedCounts, 3), ListIcons.PROJECTS);
                 addSeparator(mDrawerItemsListContainer);
@@ -278,22 +278,22 @@ public class NavigationDrawerFragment extends RoboFragment {
 
     }
 
-    private void addTaskItem(Integer count, int iconResId, ListQuery listQuery) {
+    private void addTaskListItem(Integer count, int iconResId, ListQuery listQuery) {
         String name = UiUtilities.getTitle(getResources(), listQuery);
-        final Location location = Location.newBuilder().setListQuery(listQuery).build();
+        final Location location = Location.viewTaskList(listQuery);
         final TaskSelector selector = TaskSelector.newBuilder().setListQuery(listQuery).build();
         addEntityItem(count, iconResId, name, location, selector);
     }
 
     private void addProjectListItem(Integer count, int iconResId) {
         String name = UiUtilities.getTitle(getResources(), ListQuery.project);
-        final Location location = Location.newBuilder().setListQuery(ListQuery.project).build();
+        final Location location = Location.viewProjectList();
         addEntityItem(count, iconResId, name, location, ProjectSelector.newBuilder().build());
     }
 
     private void addContextListItem(Integer count, int iconResId) {
         String name = UiUtilities.getTitle(getResources(), ListQuery.context);
-        final Location location = Location.newBuilder().setListQuery(ListQuery.context).build();
+        final Location location = Location.viewContextList();
         addEntityItem(count, iconResId, name, location, ContextSelector.newBuilder().build());
     }
 
@@ -307,7 +307,8 @@ public class NavigationDrawerFragment extends RoboFragment {
                 if (mDrawerLayout != null) {
                     mDrawerLayout.closeDrawer(mFragmentContainerView);
                 }
-                mEventManager.fire(NavigationRequestEvent.viewSettings());
+                Location location = Location.viewSettings();
+                mEventManager.fire(new NavigationRequestEvent(location));
             }
         });
     }
@@ -322,8 +323,8 @@ public class NavigationDrawerFragment extends RoboFragment {
                 if (mDrawerLayout != null) {
                     mDrawerLayout.closeDrawer(mFragmentContainerView);
                 }
-                // TODO - pick listquery for current location
-                mEventManager.fire(NavigationRequestEvent.viewHelp(ListQuery.context));
+                Location location = Location.viewHelp(mLocation.getListQuery());
+                mEventManager.fire(new NavigationRequestEvent(location));
             }
         });
     }
@@ -361,7 +362,6 @@ public class NavigationDrawerFragment extends RoboFragment {
     }
 
     private void onContextCountLoaded(@Observes ContextTaskCountCursorLoadedEvent event) {
-        final Location location = Location.newBuilder().setListQuery(ListQuery.context).build();
         // TODO iterate through cursor - construct location, find entry and update
     }
 

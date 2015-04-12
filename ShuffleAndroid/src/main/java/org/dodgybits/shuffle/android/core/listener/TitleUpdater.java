@@ -61,12 +61,12 @@ public class TitleUpdater {
         String title = "";
         ListQuery listQuery = location.getListQuery();
         if (listQuery == ListQuery.context) {
-            Context context = mContextCache.findById(location.getEntityId());
+            Context context = mContextCache.findById(location.getContextId());
             if (context != null) {
                 title = context.getName();
             }
         } else if (listQuery == ListQuery.project) {
-            Project project = mProjectCache.findById(location.getEntityId());
+            Project project = mProjectCache.findById(location.getProjectId());
             if (project != null) {
                 title = project.getName();
             }

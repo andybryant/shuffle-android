@@ -17,9 +17,7 @@ public class ListTitles {
         TITLE_ID_MAP.put(ListQuery.custom, R.string.title_custom);
         TITLE_ID_MAP.put(ListQuery.nextTasks, R.string.title_next_tasks);
         TITLE_ID_MAP.put(ListQuery.tickler, R.string.title_tickler);
-        TITLE_ID_MAP.put(ListQuery.dueToday, R.string.title_due_today);
-        TITLE_ID_MAP.put(ListQuery.dueNextWeek, R.string.title_due_next_week);
-        TITLE_ID_MAP.put(ListQuery.dueNextMonth, R.string.title_due_next_month);
+        TITLE_ID_MAP.put(ListQuery.dueTasks, R.string.title_due_tasks);
         TITLE_ID_MAP.put(ListQuery.search, R.string.title_search);
     }
 

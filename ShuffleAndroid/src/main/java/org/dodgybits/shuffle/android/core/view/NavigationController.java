@@ -7,7 +7,6 @@ import com.google.inject.Inject;
 
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
-import org.dodgybits.shuffle.android.core.listener.LocationParser;
 
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -38,7 +37,7 @@ public class NavigationController {
         if (newLocation.isSameActivity(mLocation)) {
            mEventManager.fire(new LocationUpdatedEvent(newLocation));
         } else {
-            Intent intent = mLocationParser.createIntent(newLocation);
+            Intent intent = LocationParser.createIntent(mFragmentActivity, newLocation);
             mFragmentActivity.startActivity(intent);
         }
     }

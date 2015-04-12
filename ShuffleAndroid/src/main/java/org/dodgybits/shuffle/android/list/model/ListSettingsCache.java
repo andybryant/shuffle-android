@@ -43,9 +43,7 @@ public class ListSettingsCache {
     static {
         SPARSE_SETTINGS_MAP.put(ListQuery.inbox, inboxSettings);
         SPARSE_SETTINGS_MAP.put(ListQuery.nextTasks, nextTasksSettings);
-        SPARSE_SETTINGS_MAP.put(ListQuery.dueToday, dueTaskSettings);
-        SPARSE_SETTINGS_MAP.put(ListQuery.dueNextWeek, dueTaskSettings);
-        SPARSE_SETTINGS_MAP.put(ListQuery.dueNextMonth, dueTaskSettings);
+        SPARSE_SETTINGS_MAP.put(ListQuery.dueTasks, dueTaskSettings);
         SPARSE_SETTINGS_MAP.put(ListQuery.context, contextSettings);
         SPARSE_SETTINGS_MAP.put(ListQuery.project, projectSettings);
         SPARSE_SETTINGS_MAP.put(ListQuery.tickler, ticklerSettings);
