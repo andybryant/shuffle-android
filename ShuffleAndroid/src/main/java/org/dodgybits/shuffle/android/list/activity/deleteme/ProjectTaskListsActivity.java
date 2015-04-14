@@ -23,6 +23,7 @@ import org.dodgybits.shuffle.android.core.listener.ListSettingsListener;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.view.Location;
+import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.list.content.ProjectCursorLoader;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
@@ -79,9 +80,9 @@ public class ProjectTaskListsActivity extends RoboActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent intent = new Intent(this, AbstractMainActivity.class);
+                Location location = Location.viewTaskList(ListQuery.context);
+                Intent intent = LocationParser.createIntent(this, location);;
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(Location.QUERY_NAME, ListQuery.project.name());
                 startActivity(intent);
                 finish();
                 return true;

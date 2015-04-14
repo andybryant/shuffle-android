@@ -126,10 +126,7 @@ public class LaunchListFragment extends RoboListFragment {
         }
 
         private Intent getIntent(Activity activity) {
-            Intent intent = new Intent(activity, AbstractMainActivity.class);
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.putExtra(Location.QUERY_NAME, mListQuery.name());
-            return intent;
+            return LocationParser.createIntent(activity, Location.viewTaskList(mListQuery));
         }
 
         @Override

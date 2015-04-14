@@ -30,6 +30,9 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.fragment.HelpListFragment;
+import org.dodgybits.shuffle.android.core.view.Location;
+import org.dodgybits.shuffle.android.core.view.LocationParser;
+import org.dodgybits.shuffle.android.list.activity.TaskListActivity;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.ContextScopedProvider;
@@ -74,7 +77,7 @@ public class HelpActivity extends RoboActionBarActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // app icon in action bar clicked; go home
-                Intent intent = new Intent(this, AbstractMainActivity.class);
+                Intent intent = LocationParser.createIntent(this, Location.home());
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();

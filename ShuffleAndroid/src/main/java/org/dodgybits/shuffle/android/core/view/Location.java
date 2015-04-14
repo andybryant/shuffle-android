@@ -49,6 +49,10 @@ public class Location implements Parcelable {
         return builder.build();
     }
 
+    public static Location home() {
+        return viewTaskList(ListQuery.inbox);
+    }
+
     public static Location newTaskFromTaskListContext(TaskListContext listContext) {
         Location.Builder builder = Location.newBuilder();
         builder.setLocationActivity(EditTask);

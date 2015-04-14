@@ -24,6 +24,7 @@ public class NavigationController {
 
     private FragmentActivity mFragmentActivity;
 
+    @Inject
     public NavigationController(FragmentActivity fragmentActivity) {
         mFragmentActivity = fragmentActivity;
     }

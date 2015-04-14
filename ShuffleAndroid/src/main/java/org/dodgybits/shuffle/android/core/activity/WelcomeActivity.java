@@ -27,6 +27,8 @@ import android.widget.Button;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.persistence.InitialDataGenerator;
+import org.dodgybits.shuffle.android.core.view.Location;
+import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
@@ -64,7 +66,8 @@ public class WelcomeActivity extends RoboActionBarActivity {
             @Override
             public void handleMessage(Message msg) {
             	updateFirstTimePref(false);
-                startActivity(new Intent(WelcomeActivity.this, AbstractMainActivity.class));
+                Intent intent = LocationParser.createIntent(WelcomeActivity.this, Location.home());
+                startActivity(intent);
             	finish();
             }
         };

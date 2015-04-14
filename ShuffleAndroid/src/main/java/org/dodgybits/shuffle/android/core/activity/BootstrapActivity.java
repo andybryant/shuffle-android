@@ -16,12 +16,15 @@
 
 package org.dodgybits.shuffle.android.core.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
 import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
+import org.dodgybits.shuffle.android.core.view.Location;
+import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
+
 import roboguice.activity.RoboActivity;
 
 public class BootstrapActivity extends RoboActivity {
@@ -31,16 +34,15 @@ public class BootstrapActivity extends RoboActivity {
 	protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 
-        Class<? extends Activity> activityClass;
+        Intent intent;
 		boolean firstTime = Preferences.isFirstTime(this);
 		if (firstTime) {
-			Log.i(TAG, "First time using Shuffle. Show intro screen");
-			activityClass = WelcomeActivity.class;
+			Log.i(TAG, "First time using Shuffle. Showing intro screen");
+            intent = new Intent(this, WelcomeActivity.class);
 		} else {
-        	activityClass = AbstractMainActivity.class;
+            intent = LocationParser.createIntent(this, Location.home());
 		}
-        
-        startActivity(new Intent(this, activityClass));
+        startActivity(intent);
 
         finish();
 	}
