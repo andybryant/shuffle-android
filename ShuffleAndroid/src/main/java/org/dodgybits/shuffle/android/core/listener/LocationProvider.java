@@ -22,7 +22,7 @@ import roboguice.inject.ContextSingleton;
 
 @ContextSingleton
 public class LocationProvider {
-    private Location mLocation;
+    private Location mLocation = Location.home();
 
     private void onViewChanged(@Observes LocationUpdatedEvent event) {
         mLocation = event.getLocation();

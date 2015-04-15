@@ -86,21 +86,18 @@ public class FragmentLoader {
                 Log.w(TAG, "Unexpected view mode " + mLocation.getViewMode());
                 break;
         }
-        mEventManager.fire(new LocationUpdatedEvent(mLocation));
     }
 
     private void onContextListCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
         if (mLocation.getViewMode() == ViewMode.CONTEXT_LIST) {
             addContextList();
         }
-        mEventManager.fire(new LocationUpdatedEvent(mLocation));
     }
 
     private void onProjectListCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
         if (mLocation.getViewMode() == ViewMode.PROJECT_LIST) {
             addProjectList();
         }
-        mEventManager.fire(new LocationUpdatedEvent(mLocation));
     }
 
     private void addTaskList(TaskListContext listContext) {
@@ -115,7 +112,7 @@ public class FragmentLoader {
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.replace(isTabletUi() ? R.id.entity_list_pane : R.id.main_pane,
                     fragment, TAG_TASK_LIST);
-            fragmentTransaction.commit();
+            fragmentTransaction.commitAllowingStateLoss();
         }
     }
 
@@ -131,7 +128,7 @@ public class FragmentLoader {
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.replace(isTabletUi() ? R.id.task_pane : R.id.main_pane,
                     fragment, TAG_TASK_ITEM);
-            fragmentTransaction.commit();
+            fragmentTransaction.commitAllowingStateLoss();
         }
     }
 
@@ -148,7 +145,7 @@ public class FragmentLoader {
             fragmentTransaction.replace(isTabletUi() ? R.id.entity_list_pane : R.id.main_pane,
                     fragment,
                     TAG_CONTEXT_LIST);
-            fragmentTransaction.commit();
+            fragmentTransaction.commitAllowingStateLoss();
         }
     }
 
@@ -165,7 +162,7 @@ public class FragmentLoader {
             fragmentTransaction.replace(isTabletUi() ? R.id.entity_list_pane : R.id.main_pane,
                     fragment,
                     TAG_PROJECT_LIST);
-            fragmentTransaction.commit();
+            fragmentTransaction.commitAllowingStateLoss();
         }
     }
 
