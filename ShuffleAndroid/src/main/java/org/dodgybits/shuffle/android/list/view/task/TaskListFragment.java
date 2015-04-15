@@ -14,8 +14,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
+import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.LocationProvider;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -170,6 +172,7 @@ public class TaskListFragment extends RoboListFragment
     public void onPause() {
         super.onPause();
         mResumed = false;
+        mLocation = null;
 
         Log.d(TAG, "onPause with context " + getListContext());
         saveLastScrolledPosition();
@@ -222,7 +225,7 @@ public class TaskListFragment extends RoboListFragment
         updateSelectionMode();
     }
 
-    public void onViewUpdate(@Observes LocationUpdatedEvent event) {
+    private void onViewUpdate(@Observes LocationUpdatedEvent event) {
         onViewUpdate(event.getLocation());
     }
 
@@ -251,6 +254,9 @@ public class TaskListFragment extends RoboListFragment
         updateSelectionMode();
     }
 
+    private void onCursorUpdated(@Observes CursorUpdatedEvent event) {
+        updateCursor();
+    }
 
     private void updateCursor() {
         updateCursor(mCursorProvider.getTaskListCursor());

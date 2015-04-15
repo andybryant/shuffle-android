@@ -168,6 +168,9 @@ public class ProjectListFragment extends RoboListFragment {
     private void onViewLoaded(@Observes LocationUpdatedEvent event) {
         updateCursor();
     }
+    private void onCursorUpdated(@Observes CursorUpdatedEvent event) {
+        updateCursor();
+    }
 
     private void updateCursor() {
         updateCursor(mCursorProvider.getProjectListCursor());

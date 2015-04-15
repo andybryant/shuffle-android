@@ -52,9 +52,6 @@ public class FragmentLoader {
     private Boolean tabletUi;
 
     @Inject
-    private EventManager mEventManager;
-
-    @Inject
     public FragmentLoader(Activity activity) {
         mActivity = (FragmentActivity) activity;
     }

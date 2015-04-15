@@ -17,9 +17,15 @@ package org.dodgybits.shuffle.android.core.listener;
 
 import android.database.Cursor;
 import android.util.Log;
+
+import com.google.inject.Inject;
+
 import org.dodgybits.shuffle.android.core.event.ContextListCursorLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.ProjectListCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
+
+import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
 
@@ -27,6 +33,8 @@ import roboguice.inject.ContextSingleton;
 public class CursorProvider {
     private static final String TAG = "CursorProvider";
 
+    @Inject
+    private EventManager mEventManager;
 
     private Cursor mTaskListCursor;
     private Cursor mContextListCursor;
@@ -36,16 +44,19 @@ public class CursorProvider {
     private void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
         Log.d(TAG, "Updating cursor for context " + event.getTaskListContext());
         mTaskListCursor = event.getCursor();
+        mEventManager.fire(new CursorUpdatedEvent());
     }
 
     private void onCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
         Log.d(TAG, "Updating cursor for context " + event.getCursor());
         mContextListCursor = event.getCursor();
+        mEventManager.fire(new CursorUpdatedEvent());
     }
 
     private void onCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
         Log.d(TAG, "Updating cursor for project " + event.getCursor());
         mProjectListCursor = event.getCursor();
+        mEventManager.fire(new CursorUpdatedEvent());
     }
 
     public Cursor getTaskListCursor() {

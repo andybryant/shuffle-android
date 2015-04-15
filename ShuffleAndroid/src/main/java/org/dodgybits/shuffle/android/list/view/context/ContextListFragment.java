@@ -158,6 +158,10 @@ public class ContextListFragment extends RoboListFragment {
         updateCursor();
     }
 
+    private void onCursorUpdated(@Observes CursorUpdatedEvent event) {
+        updateCursor();
+    }
+
     private void updateCursor() {
         updateCursor(mCursorProvider.getContextListCursor());
     }

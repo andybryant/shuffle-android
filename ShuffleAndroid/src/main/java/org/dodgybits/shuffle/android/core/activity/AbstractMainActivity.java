@@ -93,6 +93,10 @@ public abstract class AbstractMainActivity extends RoboActionBarActivity
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
+        mLocationParser.setLocationActivity(getLocationActivity());
+        Location location = parseLocation(savedState);
+        mEventManager.fire(new LocationUpdatedEvent(location));
+
         final boolean tabletUi = UiUtilities.useTabletUI(this.getResources());
         Log.d(TAG, "Using tablet layout? " + tabletUi);
         setContentView(contentView(tabletUi));
@@ -114,9 +118,6 @@ public abstract class AbstractMainActivity extends RoboActionBarActivity
                 R.id.navigation_drawer,
                 drawerLayout);
 
-        mLocationParser.setLocationActivity(getLocationActivity());
-        parseLocation(savedState);
-
         mEventManager.fire(new OnCreatedEvent());
     }
 
@@ -124,14 +125,14 @@ public abstract class AbstractMainActivity extends RoboActionBarActivity
         return isTablet ? R.layout.two_pane_activity : R.layout.one_pane_activity;
     }
 
-    private void parseLocation(Bundle savedState) {
+    private Location parseLocation(Bundle savedState) {
         Location location;
         if (savedState != null) {
             location = savedState.getParcelable(LOCATION_KEY);
         } else {
             location = mLocationParser.parseIntent(getIntent());
         }
-        mEventManager.fire(new LocationUpdatedEvent(location));
+        return location;
     }
 
     @Override
