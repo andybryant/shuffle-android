@@ -117,7 +117,7 @@ public class ProjectListFragment extends RoboListFragment {
      */
     @Override
     public void onListItemClick(ListView parent, View view, int position, long id) {
-        Location location = Location.viewTaskList(ListQuery.context, Id.create(id), Id.NONE);
+        Location location = Location.viewTaskList(ListQuery.project, Id.create(id), Id.NONE);
         mEventManager.fire(new NavigationRequestEvent(location));
     }
 

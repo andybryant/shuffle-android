@@ -38,7 +38,7 @@ public class LocationParser {
     }
 
     public Location parseIntent(Intent intent) {
-        Log.d(TAG, "IN parseIntent. action=" + intent.getAction() + " data=" + intent.getData());
+        Log.i(TAG, "Parsing intent action=" + intent.getAction() + " data=" + intent.getData());
 
         Location.Builder builder = Location.newBuilder();
         builder.setLocationActivity(mLocationActivity);
@@ -47,6 +47,14 @@ public class LocationParser {
         switch (mLocationActivity) {
             case TaskList:
                 parseTaskListIntent(intent, builder);
+                break;
+
+            case ContextList:
+                builder.setListQuery(ListQuery.context);
+                break;
+
+            case ProjectList:
+                builder.setListQuery(ListQuery.project);
                 break;
 
             case TaskSearch:
@@ -76,7 +84,8 @@ public class LocationParser {
         if (queryName != null) {
             ListQuery query = ListQuery.valueOf(queryName);
             builder.setListQuery(query);
-        } else if (uri != null) {
+        }
+        if (uri != null) {
             int match = URI_MATCHER.match(uri);
             if (match == CONTEXT) {
                 long contextId = ContentUris.parseId(uri);
@@ -87,7 +96,7 @@ public class LocationParser {
                 builder.setListQuery(ListQuery.project)
                         .setProjectId(Id.create(projectId));
             } else {
-                Log.e(TAG, "Unexpected intent uri" + uri);
+                Log.w(TAG, "Unexpected intent uri" + uri);
             }
         } else {
             Log.e(TAG, "Unexpected intent " + intent);

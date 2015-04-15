@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
@@ -96,6 +97,10 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
 
     private void onViewUpdated(@Observes LocationUpdatedEvent event) {
         mLocation = event.getLocation();
+        updateCursor();
+    }
+
+    private void onCursorUpdated(@Observes CursorUpdatedEvent event) {
         updateCursor();
     }
 
