@@ -70,9 +70,9 @@ dependencies {
     compile 'org.roboguice:roboguice:3.0.1'
     provided 'org.roboguice:roboblender:3.0.1'
     compile 'com.google.android.gms:play-services-base:6.5.+'
-    compile 'com.android.support:support-v13:21.+'
-    compile 'com.android.support:appcompat-v7:21.+'
-    compile 'com.android.support:support-annotations:21.+'
+    compile 'com.android.support:support-v13:22.1.0'
+    compile 'com.android.support:appcompat-v7:22.1.0'
+    compile 'com.android.support:support-annotations:22.1.0'
     compile ('org.dodgybits.shuffle:shuffle-dto:2.0.3-SNAPSHOT') {
         exclude group: 'com.google.inject'
     }

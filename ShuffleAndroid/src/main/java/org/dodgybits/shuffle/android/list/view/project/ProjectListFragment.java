@@ -19,7 +19,7 @@ import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
-import roboguice.activity.RoboActionBarActivity;
+import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboListFragment;
@@ -218,8 +218,8 @@ public class ProjectListFragment extends RoboListFragment {
         cursor.close();
     }
 
-    protected RoboActionBarActivity getRoboActionBarActivity() {
-        return (RoboActionBarActivity) getActivity();
+    protected RoboAppCompatActivity getRoboAppCompatActivity() {
+        return (RoboAppCompatActivity) getActivity();
     }
 
     void restoreInstanceState(Bundle savedInstanceState) {

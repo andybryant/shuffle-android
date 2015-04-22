@@ -1,9 +1,8 @@
 package org.dodgybits.shuffle.android.core.listener;
 
 import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import com.google.inject.Inject;
-
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -17,7 +16,7 @@ import roboguice.inject.ContextSingleton;
 @ContextSingleton
 public class TitleUpdater {
 
-    private ActionBarActivity mActivity;
+    private AppCompatActivity mActivity;
 
     @Inject
     EntityCache<Context> mContextCache;
@@ -27,7 +26,7 @@ public class TitleUpdater {
 
     @Inject
     public TitleUpdater(Activity activity) {
-        mActivity = (ActionBarActivity) activity;
+        mActivity = (AppCompatActivity) activity;
     }
 
     private void onViewChanged(@Observes LocationUpdatedEvent event) {

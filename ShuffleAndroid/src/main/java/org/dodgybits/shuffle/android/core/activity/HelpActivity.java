@@ -32,15 +32,14 @@ import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.fragment.HelpListFragment;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.LocationParser;
-import org.dodgybits.shuffle.android.list.activity.TaskListActivity;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
-import roboguice.activity.RoboActionBarActivity;
+import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 import roboguice.inject.ContextScopedProvider;
 
 import java.util.List;
 import java.util.Map;
 
-public class HelpActivity extends RoboActionBarActivity {
+public class HelpActivity extends RoboAppCompatActivity {
     private static final String TAG = "HelpActivity";
     
     public static final String QUERY_NAME = "queryName";

@@ -15,19 +15,19 @@
         shuffle:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_edit"
-        android:icon="@drawable/ic_menu_compose_holo_light"
+        android:icon="@drawable/ic_menu_compose_holo_dark"
         android:title="@string/menu_edit"
         android:visible="false"
         shuffle:showAsAction="never" />
     <item
         android:id="@+id/action_delete"
-        android:icon="@drawable/ic_menu_trash_holo_light"
+        android:icon="@drawable/ic_menu_trash_holo_dark"
         android:title="@string/menu_delete"
         android:visible="false"
         shuffle:showAsAction="never" />
     <item
         android:id="@+id/action_undelete"
-        android:icon="@drawable/ic_menu_trash_holo_light"
+        android:icon="@drawable/ic_menu_trash_holo_dark"
         android:title="@string/menu_undelete"
         android:visible="false"
         shuffle:showAsAction="never" />

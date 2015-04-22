@@ -1,15 +1,15 @@
 package org.dodgybits.shuffle.android.core.view;
 
 import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
@@ -27,7 +27,7 @@ public class MenuHandler {
     // result codes
     private static final int FILTER_CONFIG = 600;
 
-    private ActionBarActivity mActivity;
+    private AppCompatActivity mActivity;
 
     private Location mLocation;
 
@@ -44,7 +44,7 @@ public class MenuHandler {
 
     @Inject
     public MenuHandler(Activity activity) {
-        mActivity = (ActionBarActivity) activity;
+        mActivity = (AppCompatActivity) activity;
     }
 
     public boolean onCreateOptionsMenu(Menu menu, MenuInflater inflater, boolean drawerOpen) {

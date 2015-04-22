@@ -31,11 +31,12 @@
         <item name="colorPrimaryDark">@color/theme_primary_dark</item>
         <!--   theme UI controls like checkboxes and text fields -->
         <item name="colorAccent">@color/theme_accent</item>
-        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="homeAsUpIndicator">@drawable/ic_up</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_up</item>
         <item name="windowActionModeOverlay">true</item>
+
 
     </style>
 

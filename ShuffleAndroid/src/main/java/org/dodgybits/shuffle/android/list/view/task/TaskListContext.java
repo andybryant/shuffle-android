@@ -5,7 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -171,7 +171,7 @@ public class TaskListContext implements Parcelable {
         return title;
     }
 
-    public void updateTitle(ActionBarActivity androidContext,
+    public void updateTitle(AppCompatActivity androidContext,
                               EntityCache<org.dodgybits.shuffle.android.core.model.Context> contextCache,
                               EntityCache<Project> projectCache) {
         String name;

@@ -11,15 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import com.google.inject.Inject;
-
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Entity;
 import org.dodgybits.shuffle.android.core.model.encoding.EntityEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityPersister;
-
-import roboguice.activity.RoboActionBarActivity;
+import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 import roboguice.fragment.RoboFragment;
 
 public abstract class AbstractEditFragment<E extends Entity> extends RoboFragment
@@ -51,7 +48,7 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
         View doneActionView = actionBarButtons.findViewById(R.id.action_done);
         doneActionView.setOnClickListener(this);
 
-        getRoboActionBarActivity().getSupportActionBar().setCustomView(actionBarButtons);
+        getRoboAppCompatActivity().getSupportActionBar().setCustomView(actionBarButtons);
 
         return view;
     }
@@ -84,7 +81,7 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
     public void onDestroyView() {
         super.onDestroyView();
 
-        getRoboActionBarActivity().getSupportActionBar().setCustomView(null);
+        getRoboAppCompatActivity().getSupportActionBar().setCustomView(null);
     }
 
     @Override
@@ -160,8 +157,8 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
         getActivity().finish();
     }
 
-    protected RoboActionBarActivity getRoboActionBarActivity() {
-        return (RoboActionBarActivity) getActivity();
+    protected RoboAppCompatActivity getRoboAppCompatActivity() {
+        return (RoboAppCompatActivity) getActivity();
     }
 
     protected final void showSaveToast() {

@@ -17,7 +17,6 @@ import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
-import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.LocationProvider;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -30,7 +29,7 @@ import org.dodgybits.shuffle.android.list.event.MoveTasksEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
-import roboguice.activity.RoboActionBarActivity;
+import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboListFragment;
@@ -95,8 +94,8 @@ public class TaskListFragment extends RoboListFragment
      */
     private boolean mScrollPositionRestored = false;
 
-    protected RoboActionBarActivity getRoboActionBarActivity() {
-        return (RoboActionBarActivity)getActivity();
+    protected RoboAppCompatActivity getRoboAppCompatActivity() {
+        return (RoboAppCompatActivity)getActivity();
     }
 
     @Override
@@ -386,7 +385,7 @@ public class TaskListFragment extends RoboListFragment
             updateSelectionModeView();
         } else {
             mLastSelectionModeCallback = new SelectionModeCallback();
-            getRoboActionBarActivity().startSupportActionMode(mLastSelectionModeCallback);
+            getRoboAppCompatActivity().startSupportActionMode(mLastSelectionModeCallback);
         }
     }
 

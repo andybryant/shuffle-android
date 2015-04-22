@@ -30,10 +30,10 @@ import org.dodgybits.shuffle.android.core.model.persistence.InitialDataGenerator
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
-import roboguice.activity.RoboActionBarActivity;
+import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 import roboguice.inject.InjectView;
 
-public class WelcomeActivity extends RoboActionBarActivity {
+public class WelcomeActivity extends RoboAppCompatActivity {
     private static final String TAG = "WelcomeActivity";
 	
     @InjectView(R.id.sample_data_button) Button mSampleDataButton;

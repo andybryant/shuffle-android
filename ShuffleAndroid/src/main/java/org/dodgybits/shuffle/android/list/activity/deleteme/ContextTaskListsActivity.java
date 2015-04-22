@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.core.listener.ListSettingsListener;
 import org.dodgybits.shuffle.android.core.model.Id;
@@ -28,11 +27,11 @@ import org.dodgybits.shuffle.android.list.content.ContextCursorLoader;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
-import roboguice.activity.RoboActionBarActivity;
+import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 import roboguice.event.EventManager;
 import roboguice.inject.ContextScopedProvider;
 
-public class ContextTaskListsActivity extends RoboActionBarActivity {
+public class ContextTaskListsActivity extends RoboAppCompatActivity {
     public static final String TAG = "ContextTaskListsAct";
     public static final String INITIAL_POSITION = "initialPosition";
     public static final String INITIAL_ID = "initialId";

@@ -15,18 +15,18 @@ import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.OnCreatedEvent;
 import org.dodgybits.shuffle.android.core.listener.FragmentLoader;
-import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.core.listener.MainListeners;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.Location;
+import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.core.view.MenuHandler;
 import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
-import roboguice.activity.RoboActionBarActivity;
+import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 
-public abstract class AbstractMainActivity extends RoboActionBarActivity
-        implements ShuffleActionBarActivity {
+public abstract class AbstractMainActivity extends RoboAppCompatActivity
+        implements ShuffleAppCompatActivity {
     private static final String TAG = "AbstractMainActivity";
 
     private static final int WHATS_NEW_DIALOG = 5000;

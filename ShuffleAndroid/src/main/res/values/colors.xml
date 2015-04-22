@@ -15,8 +15,10 @@
 
 <resources>
 
-    <color name="theme_primary">#3F51B5</color>
-    <color name="theme_primary_dark">#1A237E</color>
+    <!--<color name="theme_primary">#3F51B5</color>-->
+    <!--<color name="theme_primary_dark">#1A237E</color>-->
+    <color name="theme_primary">#039BE5</color>
+    <color name="theme_primary_dark">#0288D1</color>
     <color name="theme_accent">#A5D6A7</color>
 
     <color name="body_text_1">#de000000</color>
