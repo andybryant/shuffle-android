@@ -23,7 +23,7 @@
         android:layout_height="1px"
         android:layout_weight="1"
         android:fillViewport="true"
-        android:background="@color/list_background_color"
+        android:background="@color/white"
         android:fadingEdge="none"
         android:animateLayoutChanges="true">
 
@@ -33,175 +33,159 @@
             android:layout_height="match_parent"
             android:scrollbars="vertical">
 
-            <RelativeLayout
-                android:id="@+id/title_entry"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/project"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="8dip"
-                android:paddingBottom="8dip"
-                android:paddingRight="?android:attr/scrollbarSize"
-                android:minHeight="50dip"
-                android:background="@color/view_highlight_color">
+                android:layout_marginTop="24dip"
+                android:paddingLeft="72dip"
+                android:maxLines="2"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="34sp"
+                android:ellipsize="end"
+                android:text="xxxxxxxxx" />
 
-                <TextView
-                    android:id="@+id/completed"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:paddingRight="8dip"
-                    android:paddingTop="4dip"
-                    android:textColor="@color/view_status_color"
-                    android:textStyle="bold"
-                    android:textSize="12sp"
-                    style="?android:attr/textAppearanceSmall" />
+            <RelativeLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="80dip">
 
                 <org.dodgybits.shuffle.android.list.view.StatusView
                     android:id="@+id/status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:paddingRight="8dip"
+                    android:layout_marginTop="40dip"
+                    android:paddingRight="16dip"
                     android:paddingTop="4dip"
                     android:singleLine="true"
-                    android:textColor="@color/view_status_color"
                     android:textSize="12sp"
-                    style="?android:attr/textAppearanceSmall" />
-
-
-                <TextView
-                    android:id="@+id/project"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_toLeftOf="@+id/status"
-                    android:paddingTop="2dip"
-                    android:maxLines="2"
-                    android:textStyle="bold"
-                    android:textColor="@color/view_project_color"
-                    android:textSize="24sp"
-                    android:ellipsize="end"
-                    style="?android:attr/textAppearanceLarge" />
+                    android:text="Active"
+                    android:textColor="@color/theme_accent"
+                    android:layout_alignParentBottom="false" />
 
                 <TextView
                     android:id="@+id/description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/project"
                     android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@+id/status"
+                    android:layout_marginLeft="72dip"
+                    android:layout_marginTop="40dip"
                     android:autoLink="all"
-                    android:paddingLeft="5dip"
-                    android:paddingRight="5dip"
-                    android:paddingTop="2dip"
-                    android:paddingBottom="3dip"
                     android:textStyle="bold"
-                    android:textColor="@color/view_description_color"
-                    android:textSize="14sp"
-                    style="?android:attr/textAppearanceLarge" />
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:text="xxxxxxx"
+                    android:layout_alignParentBottom="false" />
 
             </RelativeLayout>
 
-            <org.dodgybits.shuffle.android.core.view.RowLayout
-                android:id="@+id/context_container"
+            <LinearLayout
+                android:id="@+id/context_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/context_add"
-                android:paddingTop="8dip"
-                android:paddingBottom="8dip"
-                android:paddingLeft="8dip"
-                android:paddingRight="?android:attr/scrollbarSize"
-                android:horizontalSpacing="@dimen/context_small_horizontal_spacing"
-                android:verticalSpacing="@dimen/context_small_vertical_spacing" />
+                android:layout_marginTop="24dip"
+                >
 
-            <TextView
-                android:id="@+id/details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:autoLink="all"
-                android:paddingTop="8dip"
-                android:paddingLeft="8dip"
-                android:paddingRight="?android:attr/scrollbarSize"
-                android:textSize="14sp"
-                style="?android:attr/textAppearanceSmall" />
+                <ImageView
+                    android:layout_width="48dip"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_drawer_contexts"
+                    android:layout_marginLeft="16dip"
+                    android:layout_marginRight="16dip"
+                    android:layout_gravity="center_vertical" />
 
-
-            <RelativeLayout
-                android:id="@+id/scheduling_entry"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="8dip"
-                android:paddingRight="?android:attr/scrollbarSize"
-                android:minHeight="50dip">
-
-                <TextView
-                    android:id="@+id/scheduling_label"
+                <org.dodgybits.shuffle.android.core.view.RowLayout
+                    android:id="@+id/context_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="8dip"
-                    android:paddingRight="8dip"
-                    android:layout_marginLeft="8dip"
-                    android:layout_marginRight="8dip"
-                    android:text="@string/scheduling_title"
-                    style="@style/ListSeparatorTextViewStyle" />
+                    android:layout_gravity="center_vertical"
+                    android:paddingTop="8dip"
+                    android:paddingBottom="8dip"
+                    android:paddingRight="?android:attr/scrollbarSize"
+                    android:horizontalSpacing="@dimen/context_small_horizontal_spacing"
+                    android:verticalSpacing="@dimen/context_small_vertical_spacing"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/details_row"
+                android:layout_width="match_parent"
+                android:layout_height="72dip">
+
+                <ImageView
+                    android:layout_width="48dip"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_details"
+                    android:layout_marginLeft="16dip"
+                    android:layout_marginRight="16dip"
+                    android:layout_gravity="center_vertical" />
 
                 <TextView
-                    android:id="@+id/show_from_label"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/details"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/scheduling_label"
-                    android:layout_alignParentLeft="true"
-                    android:paddingLeft="8dip"
-                    android:paddingTop="4dip"
-                    android:text="@string/show_from_title"
-                    style="?android:attr/textAppearanceMedium"
-                    android:textSize="14sp" />
+                    android:layout_gravity="center_vertical"
+                    android:autoLink="all"
+                    android:paddingRight="?android:attr/scrollbarSize"
+                    android:textSize="16sp"
+                    style="?android:attr/textAppearanceSmall" />
 
-                <TextView
-                    android:id="@+id/due_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_below="@+id/show_from_label"
-                    android:paddingLeft="8dip"
-                    android:paddingTop="2dip"
-                    android:paddingBottom="4dip"
-                    android:text="@string/due_title"
-                    style="?android:attr/textAppearanceMedium"
-                    android:textSize="14sp" />
-                />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/show_from_row"
+                android:layout_width="match_parent"
+                android:layout_height="72dip">
+
+                <ImageView
+                    android:layout_width="48dip"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_schedule"
+                    android:layout_marginLeft="16dip"
+                    android:layout_marginRight="16dip"
+                    android:layout_gravity="center_vertical" />
 
                 <TextView
                     android:id="@+id/show_from"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingRight="5dip"
-                    android:paddingTop="4dip"
-                    android:layout_alignTop="@+id/show_from_label"
-                    android:layout_alignParentRight="true"
+                    android:layout_gravity="center_vertical"
                     android:hint="@string/none_empty"
-                    android:textSize="14sp"
-                    style="?android:attr/textAppearanceSmall" />
+                    android:textSize="16sp"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/due_row"
+                android:layout_width="match_parent"
+                android:layout_height="72dip">
+
+                <ImageView
+                    android:layout_width="48dip"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_schedule"
+                    android:layout_marginLeft="16dip"
+                    android:layout_marginRight="16dip"
+                    android:layout_gravity="center_vertical" />
 
                 <TextView
                     android:id="@+id/due"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="2dip"
-                    android:paddingRight="5dip"
-                    android:layout_alignTop="@+id/due_label"
-                    android:layout_alignParentRight="true"
+                    android:layout_gravity="center_vertical"
                     android:hint="@string/none_empty"
-                    android:textSize="14sp"
-                    style="?android:attr/textAppearanceSmall" />
+                    android:textSize="16sp"
+                    />
 
-            </RelativeLayout>
-
+            </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/calendar_entry"
+                android:id="@+id/calendar_row"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="8dip"
@@ -218,55 +202,52 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/extras_entry"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="bottom|right">
-
-                <TextView
-                    android:id="@+id/created"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="8dip"
-                    android:paddingTop="2dip"
-                    android:textColor="@color/view_minimal_text_color"
-                    style="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/modified"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@+id/created"
-                    android:paddingRight="8dip"
-                    android:paddingTop="2dip"
-                    android:paddingBottom="8dip"
-                    android:textSize="14sp"
-                    android:textColor="@color/view_minimal_text_color"
-                    style="?android:attr/textAppearanceSmall" />
-
-            </LinearLayout>
-
         </LinearLayout>
 
 
     </ScrollView>
 
 
-    <LinearLayout
-        android:id="@+id/page_display_entry"
+    <RelativeLayout
+        android:id="@+id/complete_entry"
         android:layout_width="match_parent"
-        android:layout_height="20dip"
-        android:background="@color/pager_background_color"
-        android:gravity="center">
+        android:layout_height="48dip"
+        >
 
         <TextView
-            android:id="@+id/page_display"
+            android:id="@+id/completed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            style="?android:attr/textAppearanceSmall" />
-    </LinearLayout>
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="48dip"
+            android:text="@string/complete"
+            android:textSize="16sp"
+            />
+
+        <Button
+            android:id="@+id/no_complete"
+            android:layout_width="wrap_content"
+            android:layout_height="36dip"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="48dip"
+            android:text="@string/no"
+            style="?android:attr/borderlessButtonStyle"
+            />
+
+        <Button
+            android:id="@+id/yes_complete"
+            android:layout_width="wrap_content"
+            android:layout_height="36dip"
+            android:layout_toLeftOf="@id/no_complete"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="48dip"
+            android:text="@string/yes"
+            style="?android:attr/borderlessButtonStyle"
+            />
+
+
+    </RelativeLayout>
 
 </LinearLayout>

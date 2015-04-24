@@ -186,6 +186,8 @@ allow that, you can turn it off under Settings.</string>
     <string name="created_title">Created</string>
     <string name="modified_title">Last modified</string>
     <string name="view_calendar_entry">View calendar entry</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <!--  edit screens -->
     <string name="menu_done">Save</string>

@@ -3,16 +3,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:shuffle="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_mark_complete"
-        android:icon="@drawable/ic_menu_mark"
-        android:title="@string/complete"
-        shuffle:showAsAction="ifRoom|withText" />
-    <item
-        android:id="@+id/action_mark_incomplete"
-        android:icon="@drawable/ic_menu_mark"
-        android:title="@string/incomplete"
-        shuffle:showAsAction="ifRoom|withText" />
-    <item
         android:id="@+id/action_edit"
         android:icon="@drawable/ic_menu_compose_holo_dark"
         android:title="@string/edit_button_title"
