@@ -92,6 +92,7 @@
     <string name="inactive">Inactive</string>
     <string name="from_context">(via tag)</string>
     <string name="from_project">(via project)</string>
+    <string name="complete_question">Complete?</string>
     <string name="complete">Complete</string>
     <string name="completed">Completed</string>
     <string name="incomplete">Incomplete</string>

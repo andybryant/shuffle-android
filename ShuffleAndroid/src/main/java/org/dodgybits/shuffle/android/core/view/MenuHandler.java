@@ -134,12 +134,13 @@ public class MenuHandler {
                         new EditListSettingsEvent(mLocation.getListQuery(), mActivity, FILTER_CONFIG));
                 return true;
             case R.id.action_edit:
-                if (mLocation.getListQuery() == ListQuery.project) {
-                    mEventManager.fire(Location.editProject(mLocation.getProjectId()));
-                } else if (mLocation.getListQuery() == ListQuery.context) {
-                    mEventManager.fire(Location.editContext(mLocation.getContextId()));
-                } else {
-                    Log.e(TAG, "Don't know what to edit for location " + mLocation);
+                if (mLocation.isListView()) {
+                    Log.d(TAG, "In list mode");
+                    if (mLocation.getListQuery() == ListQuery.project) {
+                        mEventManager.fire(Location.editProject(mLocation.getProjectId()));
+                    } else if (mLocation.getListQuery() == ListQuery.context) {
+                        mEventManager.fire(Location.editContext(mLocation.getContextId()));
+                    }
                 }
                 break;
             case android.R.id.home:
