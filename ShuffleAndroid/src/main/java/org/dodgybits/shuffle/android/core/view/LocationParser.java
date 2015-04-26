@@ -85,6 +85,7 @@ public class LocationParser {
             ListQuery query = ListQuery.valueOf(queryName);
             builder.setListQuery(query);
         }
+        builder.setSelectedIndex(intent.getIntExtra(Location.SELECTED_INDEX, -1));
         if (uri != null) {
             int match = URI_MATCHER.match(uri);
             if (match == CONTEXT) {
