@@ -10,6 +10,7 @@ import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
+import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
@@ -31,7 +32,8 @@ public class MenuHandler {
 
     private Location mLocation;
 
-    private TaskListContext mTaskListContext;
+    @Inject
+    private CursorProvider mCursorProvider;
 
     @Inject
     private EventManager mEventManager;
@@ -77,11 +79,14 @@ public class MenuHandler {
         if (mLocation == null) {
             return false;
         }
+        MenuItem editMenu = menu.findItem(R.id.action_edit);
 
         switch (mLocation.getViewMode()) {
             case CONTEXT_LIST:
+                editMenu.setTitle(getString(R.string.menu_edit, getString(R.string.context_name)));
                 break;
             case PROJECT_LIST:
+                editMenu.setTitle(getString(R.string.menu_edit, getString(R.string.project_name)));
                 break;
             case TASK_LIST:
                 TaskListContext listContext = TaskListContext.create(mLocation);
@@ -89,7 +94,6 @@ public class MenuHandler {
                     return false;
                 }
 
-                MenuItem editMenu = menu.findItem(R.id.action_edit);
                 MenuItem deleteMenu = menu.findItem(R.id.action_delete);
                 MenuItem restoreMenu = menu.findItem(R.id.action_undelete);
                 if (listContext.showEditActions()) {
@@ -119,28 +123,25 @@ public class MenuHandler {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-    //            case R.id.action_add:
-    //                if (mLocation.getViewMode() == ViewMode.CONTEXT_LIST) {
-    //                    mEventManager.fire(new EditNewContextEvent());
-    //                } else if (mLocation.getViewMode() == ViewMode.PROJECT_LIST) {
-    //                    mEventManager.fire(new EditNewProjectEvent());
-    //                } else {
-    //                    mEventManager.fire(mTaskListContext.createEditNewTaskEvent());
-    //                }
-    //                return true;
             case R.id.action_view_settings:
                 Log.d(TAG, "Bringing up view settings");
                 mEventManager.fire(
                         new EditListSettingsEvent(mLocation.getListQuery(), mActivity, FILTER_CONFIG));
                 return true;
             case R.id.action_edit:
-                if (mLocation.isListView()) {
-                    Log.d(TAG, "In list mode");
-                    if (mLocation.getListQuery() == ListQuery.project) {
-                        mEventManager.fire(Location.editProject(mLocation.getProjectId()));
-                    } else if (mLocation.getListQuery() == ListQuery.context) {
-                        mEventManager.fire(Location.editContext(mLocation.getContextId()));
-                    }
+                switch (mLocation.getViewMode()) {
+                    case CONTEXT_LIST:
+                    case PROJECT_LIST:
+                    case TASK_LIST:
+                        if (mLocation.getListQuery() == ListQuery.project) {
+                            mEventManager.fire(Location.editProject(mLocation.getProjectId()));
+                        } else if (mLocation.getListQuery() == ListQuery.context) {
+                            mEventManager.fire(Location.editContext(mLocation.getContextId()));
+                        }
+                        break;
+                    case TASK:
+                        // TODO
+
                 }
                 break;
             case android.R.id.home:
@@ -153,7 +154,6 @@ public class MenuHandler {
 
     private void onViewChanged(@Observes LocationUpdatedEvent event) {
         mLocation = event.getLocation();
-        mTaskListContext = TaskListContext.create(mLocation);
     }
 
     private String getString(int id) {
