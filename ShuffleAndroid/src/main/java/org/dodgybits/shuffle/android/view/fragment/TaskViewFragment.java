@@ -41,13 +41,8 @@ import java.util.List;
 public class TaskViewFragment extends RoboFragment implements View.OnClickListener {
     private static final String TAG = "TaskViewFragment";
 
-    public static final String SELECTED_INDEX = "selectedIndex";
-    public static final String ARG_LIST_CONTEXT = "taskListContext";
-
-    public static final String INDEX = "TaskViewFragment.index";
-    public static final String COUNT = "TaskViewFragment.count";
-
     private ViewGroup mContextContainer;
+    private ViewGroup mContextRow;
 
     private TextView mProjectView;
     private TextView mDescriptionView;
@@ -66,9 +61,6 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
 
     private StatusView mStatusView;
 
-    private Button mNoCompleteButton;
-    private Button mYesCompleteButton;
-
     @Inject private EntityCache<Project> mProjectCache;
     @Inject private EntityCache<Context> mContextCache;
     @Inject private TaskPersister mPersister;
@@ -79,8 +71,6 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     private EventManager mEventManager;
 
     private Task mTask;
-    private int mPosition;
-    private int mTaskCount;
 
     public static TaskViewFragment newInstance(Bundle args) {
         TaskViewFragment fragment = new TaskViewFragment();
@@ -119,36 +109,33 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Location parentLocation = mLocationProvider.getLocation().builderFrom().parentView().build();
         switch (item.getItemId()) {
             case R.id.action_edit:
                 Log.d(TAG, "Editing the action");
                 Location location = Location.editTask(mTask.getLocalId());
                 mEventManager.fire(new NavigationRequestEvent(location));
                 return true;
+            case R.id.action_mark_complete:
+            case R.id.action_mark_incomplete:
+                Log.d(TAG, "Toggling delete on task");
+                mEventManager.fire(new UpdateTasksCompletedEvent(mTask.getLocalId().getId(), !mTask.isComplete()));
+                mEventManager.fire(new NavigationRequestEvent(parentLocation));
+                return true;
             case R.id.action_delete:
             case R.id.action_undelete:
                 Log.d(TAG, "Toggling delete on task");
                 mEventManager.fire(new UpdateTasksDeletedEvent(mTask.getLocalId().getId(), !mTask.isDeleted()));
-                Location parentLocation = mLocationProvider.getLocation().builderFrom().parentView().build();
                 mEventManager.fire(new NavigationRequestEvent(parentLocation));
                 return true;
         }
         return false;
     }
 
-    private void toggleComplete() {
-        Log.d(TAG, "Toggling complete on task");
-        mEventManager.fire(new UpdateTasksCompletedEvent(mTask.getLocalId().getId(), !mTask.isComplete()));
-        Location parentLocation = mLocationProvider.getLocation().builderFrom().parentView().build();
-        mEventManager.fire(new NavigationRequestEvent(parentLocation));
-    }
-
     private void initializeArgCache() {
         if (mTask != null) return;
         Bundle args = getArguments();
         mTask = mEncoder.restore(args);
-        mTaskCount = args.getInt(COUNT, -1);
-        mPosition = args.getInt(INDEX, -1);
     }
 
     private Task getTask() {
@@ -179,6 +166,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     private void findViews() {
         mProjectView = (TextView) getView().findViewById(R.id.project);
         mDescriptionView = (TextView) getView().findViewById(R.id.description);
+        mContextRow = (ViewGroup) getView().findViewById(R.id.context_row);
         mContextContainer = (ViewGroup) getView().findViewById(R.id.context_container);
         mDetailsRow = (ViewGroup) getView().findViewById(R.id.details_row);
         mDetailsView = (TextView) getView().findViewById(R.id.details);
@@ -189,18 +177,6 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         mCalendarRow = (ViewGroup) getView().findViewById(R.id.calendar_row);
         mViewCalendarButton = (Button) getView().findViewById(R.id.view_calendar_button);
         mStatusView = (StatusView) getView().findViewById(R.id.status);
-        mNoCompleteButton = (Button) getView().findViewById(R.id.no_complete);
-        mYesCompleteButton = (Button) getView().findViewById(R.id.yes_complete);
-
-        View.OnClickListener completeListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleComplete();
-            }
-        };
-
-        mNoCompleteButton.setOnClickListener(completeListener);
-        mYesCompleteButton.setOnClickListener(completeListener);
     }
 
     private void updateUIFromItem(Task task) {
@@ -256,8 +232,9 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         }));
 
         if (contexts.isEmpty()) {
-            mContextContainer.setVisibility(View.INVISIBLE);
+            mContextRow.setVisibility(View.GONE);
         } else {
+            mContextRow.setVisibility(View.VISIBLE);
             Collections.sort(contexts);
             // reuse existing views if present
             int viewCount = mContextContainer.getChildCount();
@@ -331,14 +308,6 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     private void updateExtras(Task task, List<Context> contexts, Project project) {
         mStatusView.updateStatus(task, contexts, project, true);
         mStatusView.setVisibility(task.isComplete() ? View.INVISIBLE : View.VISIBLE);
-
-        if (task.isComplete()) {
-            mYesCompleteButton.setTextColor(getResources().getColor(R.color.theme_accent));
-            mNoCompleteButton.setTextColor(getResources().getColor(R.color.black));
-        } else {
-            mYesCompleteButton.setTextColor(getResources().getColor(R.color.black));
-            mNoCompleteButton.setTextColor(getResources().getColor(R.color.theme_accent));
-        }
     }
 
 

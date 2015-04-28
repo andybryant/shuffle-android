@@ -42,7 +42,7 @@
                 android:maxLines="2"
                 android:textStyle="bold"
                 android:textColor="@color/black"
-                android:textSize="34sp"
+                android:textSize="24sp"
                 android:ellipsize="end"
                 android:text="xxxxxxxxx" />
 
@@ -57,7 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_marginTop="40dip"
+                    android:layout_marginTop="20dip"
                     android:paddingRight="16dip"
                     android:paddingTop="4dip"
                     android:singleLine="true"
@@ -73,11 +73,11 @@
                     android:layout_alignParentLeft="true"
                     android:layout_toLeftOf="@+id/status"
                     android:layout_marginLeft="72dip"
-                    android:layout_marginTop="40dip"
+                    android:layout_marginTop="20dip"
                     android:autoLink="all"
                     android:textStyle="bold"
                     android:textColor="@color/black"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:text="xxxxxxx"
                     android:layout_alignParentBottom="false" />
 
@@ -96,13 +96,12 @@
                     android:layout_marginLeft="24dip"
                     android:layout_marginRight="24dip"
                     android:src="@drawable/ic_drawer_contexts"
-                    android:layout_gravity="center_vertical" />
+                    />
 
                 <org.dodgybits.shuffle.android.core.view.RowLayout
                     android:id="@+id/context_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
                     android:paddingTop="8dip"
                     android:paddingBottom="8dip"
                     android:paddingRight="?android:attr/scrollbarSize"
@@ -125,17 +124,17 @@
                     android:layout_marginLeft="24dip"
                     android:layout_marginRight="24dip"
                     android:src="@drawable/ic_details"
-                    android:layout_gravity="center_vertical" />
+                    />
 
                 <TextView
                     android:id="@+id/details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
                     android:autoLink="all"
                     android:paddingRight="?android:attr/scrollbarSize"
                     android:textSize="16sp"
-                    style="?android:attr/textAppearanceSmall" />
+                    style="?android:attr/textAppearanceSmall"
+                    />
 
             </LinearLayout>
 
@@ -151,13 +150,12 @@
                     android:layout_marginLeft="24dip"
                     android:layout_marginRight="24dip"
                     android:src="@drawable/ic_schedule"
-                    android:layout_gravity="center_vertical" />
+                    />
 
                 <TextView
                     android:id="@+id/show_from"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
                     android:hint="@string/none_empty"
                     android:textSize="16sp"
                     />
@@ -176,13 +174,12 @@
                     android:layout_marginLeft="24dip"
                     android:layout_marginRight="24dip"
                     android:src="@drawable/ic_schedule"
-                    android:layout_gravity="center_vertical" />
+                    />
 
                 <TextView
                     android:id="@+id/due"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
                     android:hint="@string/none_empty"
                     android:textSize="16sp"
                     />
@@ -209,50 +206,6 @@
 
         </LinearLayout>
 
-
     </ScrollView>
-
-
-    <RelativeLayout
-        android:id="@+id/complete_entry"
-        android:layout_width="match_parent"
-        android:layout_height="48dip"
-        >
-
-        <TextView
-            android:id="@+id/completed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="48dip"
-            android:text="@string/complete_question"
-            android:textSize="16sp"
-            />
-
-        <Button
-            android:id="@+id/no_complete"
-            android:layout_width="wrap_content"
-            android:layout_height="36dip"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="48dip"
-            android:text="@string/no"
-            style="?android:attr/borderlessButtonStyle"
-            />
-
-        <Button
-            android:id="@+id/yes_complete"
-            android:layout_width="wrap_content"
-            android:layout_height="36dip"
-            android:layout_toLeftOf="@id/no_complete"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="48dip"
-            android:text="@string/yes"
-            style="?android:attr/borderlessButtonStyle"
-            />
-
-
-    </RelativeLayout>
 
 </LinearLayout>

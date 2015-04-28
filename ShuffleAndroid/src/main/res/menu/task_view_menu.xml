@@ -3,6 +3,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:shuffle="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_mark_complete"
+        android:icon="@drawable/ic_menu_complete"
+        android:title="@string/complete"
+        shuffle:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_mark_incomplete"
+        android:icon="@drawable/ic_menu_incomplete"
+        android:title="@string/incomplete"
+        shuffle:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_edit"
         android:icon="@drawable/ic_menu_compose_holo_dark"
         android:title="@string/edit_button_title"
@@ -14,7 +24,7 @@
         shuffle:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_undelete"
-        android:icon="@drawable/ic_menu_trash_holo_dark"
+        android:icon="@drawable/ic_menu_restore_holo_dark"
         android:title="@string/menu_undelete"
         shuffle:showAsAction="ifRoom" />
 </menu>

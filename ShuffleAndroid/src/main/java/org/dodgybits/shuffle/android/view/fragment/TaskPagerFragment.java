@@ -170,8 +170,6 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
                 mCursor.moveToPosition(position);
                 Task task = mPersister.read(mCursor);
                 Bundle args = new Bundle();
-                args.putInt(TaskViewFragment.INDEX, position);
-                args.putInt(TaskViewFragment.COUNT, mCursor.getCount());
                 mEncoder.save(args, task);
                 fragment = TaskViewFragment.newInstance(args);
                 mFragments[position] = fragment;
