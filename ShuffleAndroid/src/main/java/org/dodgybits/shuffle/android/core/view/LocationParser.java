@@ -139,7 +139,7 @@ public class LocationParser {
                 break;
 
             case EditTask:
-                createEditTaskIntent(location);
+                intent = createEditTaskIntent(location);
                 break;
 
             case EditProject:

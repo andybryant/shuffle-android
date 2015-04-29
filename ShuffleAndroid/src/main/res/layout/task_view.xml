@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dip"
-                android:paddingLeft="72dip"
+                android:layout_marginLeft="@dimen/keyline_2"
                 android:maxLines="2"
                 android:textStyle="bold"
                 android:textColor="@color/black"
@@ -72,7 +72,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_toLeftOf="@+id/status"
-                    android:layout_marginLeft="72dip"
+                    android:layout_marginLeft="@dimen/keyline_2"
                     android:layout_marginTop="20dip"
                     android:autoLink="all"
                     android:textStyle="bold"
@@ -93,8 +93,8 @@
                 <ImageView
                     android:layout_width="32dip"
                     android:layout_height="32dip"
-                    android:layout_marginLeft="24dip"
-                    android:layout_marginRight="24dip"
+                    android:layout_marginLeft="@dimen/keyline_1"
+                    android:layout_marginRight="@dimen/keyline_1"
                     android:src="@drawable/ic_drawer_contexts"
                     />
 
@@ -121,8 +121,8 @@
                 <ImageView
                     android:layout_width="32dip"
                     android:layout_height="32dip"
-                    android:layout_marginLeft="24dip"
-                    android:layout_marginRight="24dip"
+                    android:layout_marginLeft="@dimen/keyline_1"
+                    android:layout_marginRight="@dimen/keyline_1"
                     android:src="@drawable/ic_details"
                     />
 
@@ -147,8 +147,8 @@
                 <ImageView
                     android:layout_width="32dip"
                     android:layout_height="32dip"
-                    android:layout_marginLeft="24dip"
-                    android:layout_marginRight="24dip"
+                    android:layout_marginLeft="@dimen/keyline_1"
+                    android:layout_marginRight="@dimen/keyline_1"
                     android:src="@drawable/ic_schedule"
                     />
 
@@ -156,6 +156,7 @@
                     android:id="@+id/show_from"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dip"
                     android:hint="@string/none_empty"
                     android:textSize="16sp"
                     />
@@ -171,8 +172,8 @@
                 <ImageView
                     android:layout_width="32dip"
                     android:layout_height="32dip"
-                    android:layout_marginLeft="24dip"
-                    android:layout_marginRight="24dip"
+                    android:layout_marginLeft="@dimen/keyline_1"
+                    android:layout_marginRight="@dimen/keyline_1"
                     android:src="@drawable/ic_schedule"
                     />
 
@@ -180,6 +181,7 @@
                     android:id="@+id/due"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dip"
                     android:hint="@string/none_empty"
                     android:textSize="16sp"
                     />

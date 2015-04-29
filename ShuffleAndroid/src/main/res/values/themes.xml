@@ -41,6 +41,7 @@
     </style>
 
     <style name="ShuffleTheme.WithActionBar" parent="ShuffleTheme.Base">
+        <item name="windowNoTitle">false</item>
         <item name="windowActionBar">true</item>
     </style>
 
