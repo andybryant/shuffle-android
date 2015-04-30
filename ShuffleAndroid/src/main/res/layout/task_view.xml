@@ -56,14 +56,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="false"
                     android:layout_marginTop="20dip"
+                    android:visibility="gone"
                     android:paddingRight="16dip"
                     android:paddingTop="4dip"
                     android:singleLine="true"
                     android:textSize="12sp"
                     android:text="Active"
                     android:textColor="@color/theme_accent"
-                    android:layout_alignParentBottom="false" />
+                    />
 
                 <TextView
                     android:id="@+id/description"
