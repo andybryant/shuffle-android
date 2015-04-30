@@ -22,7 +22,7 @@ public class UiUtilities {
     }
 
     public static boolean isListCollapsible(Resources res) {
-        return useTabletUI(res) && res.getBoolean(R.bool.list_collapsible);
+        return !useTabletUI(res) || res.getBoolean(R.bool.list_collapsible);
     }
 
     public static String getTitle(Resources res, ListQuery listQuery) {
