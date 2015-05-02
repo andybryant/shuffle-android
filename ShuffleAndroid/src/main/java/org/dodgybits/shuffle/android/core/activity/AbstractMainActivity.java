@@ -34,13 +34,13 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
     private static final String LOCATION_KEY = "AbstractMainActivity.location";
 
 
-    private Location mLocation;
+    protected Location mLocation;
 
     @Inject
     private MainListeners mListeners;
 
     @Inject
-    private EventManager mEventManager;
+    protected EventManager mEventManager;
 
     @Inject
     private FragmentLoader mFragmentLoader;
@@ -114,11 +114,16 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 drawerLayout);
 
         mEventManager.fire(new OnCreatedEvent());
+    }
+
+    protected boolean showHome(Location location) {
+        return false;
     }
 
     protected int contentView(boolean isTablet) {
@@ -150,9 +155,22 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
     }
 
     @Override
+    public void onBackPressed() {
+        if (mNavigationDrawerFragment.isNavDrawerOpen()) {
+            mNavigationDrawerFragment.closeNavDrawer();
+        } else if (!handleBackPress()) {
+            super.onBackPressed();
+        }
+    }
+
+    protected boolean handleBackPress() {
+        return false;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        boolean drawerOpen = mNavigationDrawerFragment.isDrawerOpen();
+        boolean drawerOpen = mNavigationDrawerFragment != null && mNavigationDrawerFragment.isDrawerOpen();
         return mMenuHandler.onCreateOptionsMenu(menu, getMenuInflater(), drawerOpen);
     }
 

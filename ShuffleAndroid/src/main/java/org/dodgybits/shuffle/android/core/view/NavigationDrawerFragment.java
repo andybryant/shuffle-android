@@ -78,6 +78,7 @@ public class NavigationDrawerFragment extends RoboFragment {
     private void onViewChange(@Observes NavigationRequestEvent event) {
         mLocation = event.getLocation();
         updateSelection();
+        updateToolbarIcon();
     }
 
     @Override
@@ -134,11 +135,15 @@ public class NavigationDrawerFragment extends RoboFragment {
 
         Toolbar actionBarToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_actionbar);
         if (actionBarToolbar != null) {
-            actionBarToolbar.setNavigationIcon(R.drawable.ic_drawer);
+            updateToolbarIcon();
             actionBarToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mDrawerLayout.openDrawer(Gravity.START);
+                    if (UiUtilities.showHomeAsUp(getResources(), mLocation)) {
+                        mEventManager.fire(new NavigationRequestEvent(mLocation.parent()));
+                    } else {
+                        mDrawerLayout.openDrawer(Gravity.START);
+                    }
                 }
             });
         }
@@ -189,6 +194,17 @@ public class NavigationDrawerFragment extends RoboFragment {
         // populate the nav drawer with the correct items
         fetchItems();
 
+    }
+
+    private void updateToolbarIcon() {
+        Toolbar actionBarToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_actionbar);
+        if (actionBarToolbar != null) {
+            if (UiUtilities.showHomeAsUp(getResources(), mLocation)) {
+                actionBarToolbar.setNavigationIcon(R.drawable.ic_up);
+            } else {
+                actionBarToolbar.setNavigationIcon(R.drawable.ic_drawer);
+            }
+        }
     }
 
     // Subclasses can override this for custom behavior

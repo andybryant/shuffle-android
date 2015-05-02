@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewParent;
 import android.widget.ListView;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.view.Location;
+import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 
 public class UiUtilities {
@@ -78,6 +80,11 @@ public class UiUtilities {
     @SuppressWarnings("unchecked")
     public static <T extends View> T getView(Activity parent, int viewId) {
         return (T) checkView(parent.findViewById(viewId));
+    }
+
+
+    public static boolean showHomeAsUp(Resources res, Location location) {
+        return (location.getViewMode() == ViewMode.TASK && isListCollapsible(res));
     }
 
     /**

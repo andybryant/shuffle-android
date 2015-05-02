@@ -305,6 +305,10 @@ public class Location implements Parcelable {
         return location.mLocationActivity == mLocationActivity;
     }
 
+    public Location parent() {
+        return builderFrom().parentView().build();
+    }
+
     @Override
     public String toString() {
         return "Location{" +

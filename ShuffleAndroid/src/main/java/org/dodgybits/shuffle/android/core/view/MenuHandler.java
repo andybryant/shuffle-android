@@ -145,8 +145,7 @@ public class MenuHandler {
                 }
                 break;
             case android.R.id.home:
-                Location parentView = mLocation.builderFrom().parentView().build();
-                mEventManager.fire(new NavigationRequestEvent(parentView));
+                mEventManager.fire(new NavigationRequestEvent(mLocation.parent()));
                 return true;
         }
         return false;
