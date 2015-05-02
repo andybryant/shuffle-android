@@ -39,6 +39,7 @@
                 android:orientation="vertical"
                 android:paddingTop="24dip"
                 android:paddingBottom="10dip"
+                android:elevation="8dip"
                 android:background="@color/theme_primary"
                 >
 
@@ -96,7 +97,7 @@
                 android:id="@+id/edit_fab"
                 android:layout_width="@dimen/fab_size"
                 android:layout_height="@dimen/fab_size"
-                android:layout_marginLeft="24dip"
+                android:layout_marginLeft="16dip"
                 android:layout_marginTop="-28dip"
                 android:elevation="@dimen/fab_elevation"
                 android:background="@color/details"
