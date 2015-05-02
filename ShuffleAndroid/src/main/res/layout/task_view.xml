@@ -33,61 +33,89 @@
             android:layout_height="match_parent"
             android:scrollbars="vertical">
 
-            <TextView
-                android:id="@+id/project"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dip"
-                android:layout_marginLeft="@dimen/keyline_2"
-                android:maxLines="2"
-                android:textColor="@color/black"
-                android:textSize="24sp"
-                android:ellipsize="end"
-                android:text="xxxxxxxxx" />
-
-            <RelativeLayout
-                android:orientation="horizontal"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="80dip">
-
-                <org.dodgybits.shuffle.android.list.view.StatusView
-                    android:id="@+id/status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="false"
-                    android:layout_marginTop="20dip"
-                    android:visibility="gone"
-                    android:paddingRight="16dip"
-                    android:paddingTop="4dip"
-                    android:singleLine="true"
-                    android:textSize="12sp"
-                    android:text="Active"
-                    android:textColor="@color/theme_accent"
-                    />
+                android:orientation="vertical"
+                android:paddingTop="24dip"
+                android:paddingBottom="10dip"
+                android:background="@color/theme_primary"
+                >
 
                 <TextView
-                    android:id="@+id/description"
+                    android:id="@+id/project"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_toLeftOf="@+id/status"
+                    android:layout_marginBottom="20dip"
                     android:layout_marginLeft="@dimen/keyline_2"
-                    android:layout_marginTop="20dip"
-                    android:autoLink="all"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:text="xxxxxxx"
-                    android:layout_alignParentBottom="false" />
+                    android:maxLines="2"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:ellipsize="end"
+                    android:text="xxxxxxxxx" />
 
-            </RelativeLayout>
+                <RelativeLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="72dip">
+
+                    <org.dodgybits.shuffle.android.list.view.StatusView
+                        android:id="@+id/status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentBottom="false"
+                        android:visibility="gone"
+                        android:paddingRight="16dip"
+                        android:paddingTop="4dip"
+                        android:singleLine="true"
+                        android:textSize="12sp"
+                        android:text="Active"
+                        android:textColor="@color/theme_accent"
+                        />
+
+                    <TextView
+                        android:id="@+id/description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_toLeftOf="@+id/status"
+                        android:layout_marginLeft="@dimen/keyline_2"
+                        android:autoLink="all"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:text="xxxxxxx"
+                        android:layout_alignParentBottom="false" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <org.dodgybits.shuffle.android.core.view.FloatingActionButton
+                android:id="@+id/edit_fab"
+                android:layout_width="@dimen/fab_size"
+                android:layout_height="@dimen/fab_size"
+                android:layout_marginLeft="24dip"
+                android:layout_marginTop="-28dip"
+                android:elevation="@dimen/fab_elevation"
+                android:background="@color/details"
+                >
+                <ImageView
+                    android:layout_width="@dimen/fab_icon_size"
+                    android:layout_height="@dimen/fab_icon_size"
+                    android:src="@drawable/ic_menu_compose_holo_dark"
+                    android:layout_gravity="center"
+                    android:duplicateParentState="true"/>
+            </org.dodgybits.shuffle.android.core.view.FloatingActionButton>
+
 
             <LinearLayout
                 android:id="@+id/context_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dip"
+                android:paddingTop="20dip"
+                android:paddingBottom="20dip"
                 android:minHeight="72dip"
                 >
 
@@ -115,7 +143,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="72dip"
-                >
+                android:paddingBottom="20dip">
 
                 <ImageView
                     android:layout_width="24dip"
@@ -141,6 +169,7 @@
                 android:id="@+id/show_from_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="20dip"
                 android:minHeight="72dip">
 
                 <ImageView
@@ -166,6 +195,7 @@
                 android:id="@+id/due_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="20dip"
                 android:minHeight="72dip">
 
                 <ImageView

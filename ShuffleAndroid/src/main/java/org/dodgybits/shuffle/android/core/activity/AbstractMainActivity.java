@@ -52,7 +52,7 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
     private LocationParser mLocationParser;
 
     // Primary toolbar and drawer toggle
-    private Toolbar mActionBarToolbar;
+    protected Toolbar mActionBarToolbar;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.

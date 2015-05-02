@@ -100,6 +100,15 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         updateUIFromItem(getTask());
 
         mViewCalendarButton.setOnClickListener(this);
+
+        getActivity().findViewById(R.id.edit_fab).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        editTask();
+                    }
+                }
+        );
     }
 
     @Override
@@ -112,9 +121,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         Location parentLocation = mLocationProvider.getLocation().builderFrom().parentView().build();
         switch (item.getItemId()) {
             case R.id.action_edit:
-                Log.d(TAG, "Editing the action");
-                Location location = Location.editTask(mTask.getLocalId());
-                mEventManager.fire(new NavigationRequestEvent(location));
+                editTask();
                 return true;
             case R.id.action_mark_complete:
             case R.id.action_mark_incomplete:
@@ -130,6 +137,12 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
                 return true;
         }
         return false;
+    }
+
+    private void editTask() {
+        Log.d(TAG, "Editing the action");
+        Location location = Location.editTask(mTask.getLocalId());
+        mEventManager.fire(new NavigationRequestEvent(location));
     }
 
     private void initializeArgCache() {
@@ -177,6 +190,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         mCalendarRow = (ViewGroup) getView().findViewById(R.id.calendar_row);
         mViewCalendarButton = (Button) getView().findViewById(R.id.view_calendar_button);
         mStatusView = (StatusView) getView().findViewById(R.id.status);
+
     }
 
     private void updateUIFromItem(Task task) {

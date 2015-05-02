@@ -13,11 +13,6 @@
         android:title="@string/incomplete"
         shuffle:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_edit"
-        android:icon="@drawable/ic_menu_compose_holo_dark"
-        android:title="@string/edit_button_title"
-        shuffle:showAsAction="ifRoom" />
-    <item
         android:id="@+id/action_delete"
         android:icon="@drawable/ic_menu_trash_holo_dark"
         android:title="@string/menu_delete"
