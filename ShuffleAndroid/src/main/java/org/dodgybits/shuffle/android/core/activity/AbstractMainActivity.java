@@ -127,7 +127,7 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
     }
 
     protected int contentView(boolean isTablet) {
-        return isTablet ? R.layout.two_pane_activity : R.layout.one_pane_activity;
+        return R.layout.two_pane_activity;
     }
 
     private Location parseLocation(Bundle savedState) {

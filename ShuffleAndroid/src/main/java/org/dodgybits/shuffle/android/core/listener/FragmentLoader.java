@@ -107,7 +107,7 @@ public class FragmentLoader {
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.replace(isTabletUi() ? R.id.entity_list_pane : R.id.main_pane,
+            fragmentTransaction.replace(R.id.entity_list_pane,
                     fragment, TAG_TASK_LIST);
             fragmentTransaction.commitAllowingStateLoss();
         }
@@ -123,8 +123,7 @@ public class FragmentLoader {
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.replace(isTabletUi() ? R.id.task_pane : R.id.main_pane,
-                    fragment, TAG_TASK_ITEM);
+            fragmentTransaction.replace(R.id.task_pane, fragment, TAG_TASK_ITEM);
             fragmentTransaction.commitAllowingStateLoss();
         }
     }
@@ -139,9 +138,7 @@ public class FragmentLoader {
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.replace(isTabletUi() ? R.id.entity_list_pane : R.id.main_pane,
-                    fragment,
-                    TAG_CONTEXT_LIST);
+            fragmentTransaction.replace(R.id.entity_list_pane, fragment, TAG_CONTEXT_LIST);
             fragmentTransaction.commitAllowingStateLoss();
         }
     }
@@ -156,9 +153,7 @@ public class FragmentLoader {
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.replace(isTabletUi() ? R.id.entity_list_pane : R.id.main_pane,
-                    fragment,
-                    TAG_PROJECT_LIST);
+            fragmentTransaction.replace(R.id.entity_list_pane, fragment, TAG_PROJECT_LIST);
             fragmentTransaction.commitAllowingStateLoss();
         }
     }
