@@ -86,8 +86,8 @@ public class FloatingActionButton extends FrameLayout  {
         Log.d(TAG, "size changed");
 
         if (OSUtils.atLeastLollipop()) {
-            // As we have changed size, we should invalidate the outline so that is the the
-            // correct size
+            // As we have changed size, we should invalidate the outline so that
+            // it resizes to correct size
             invalidateOutline();
         }
     }

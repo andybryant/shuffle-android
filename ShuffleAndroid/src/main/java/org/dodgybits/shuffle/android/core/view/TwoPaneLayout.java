@@ -327,14 +327,6 @@ public class TwoPaneLayout extends FrameLayout {
     }
 
     private void onViewChanged(Location newView) {
-        // make all initially GONE panes visible only when the view mode is first determined
-        ViewMode currentMode = mCurrentLocation.getViewMode();
-
-        // detach the pager immediately from its data source (to prevent processing updates)
-        if (ViewMode.isTaskMode(currentMode)) {
-//            mController.disablePagerUpdates();
-        }
-
         mListView.setVisibility(VISIBLE);
         mTaskView.setVisibility(VISIBLE);
 

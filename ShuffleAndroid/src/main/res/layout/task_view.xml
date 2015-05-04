@@ -85,6 +85,7 @@
                         android:layout_marginLeft="@dimen/keyline_2"
                         android:autoLink="all"
                         android:textColor="@color/white"
+                        android:textColorLink="@color/button_material_light"
                         android:textSize="20sp"
                         android:text="xxxxxxx"
                         android:layout_alignParentBottom="false" />
@@ -94,18 +95,21 @@
             </LinearLayout>
 
             <org.dodgybits.shuffle.android.core.view.FloatingActionButton
-                android:id="@+id/edit_fab"
+                android:id="@+id/complete_fab"
                 android:layout_width="@dimen/fab_size"
                 android:layout_height="@dimen/fab_size"
                 android:layout_marginLeft="16dip"
                 android:layout_marginTop="-28dip"
                 android:elevation="@dimen/fab_elevation"
-                android:background="@color/details"
+                android:background="@drawable/fab_background"
+                android:backgroundTint="@color/details"
+                android:clickable="true"
                 >
                 <ImageView
+                    android:id="@+id/complete_fab_icon"
                     android:layout_width="@dimen/fab_icon_size"
                     android:layout_height="@dimen/fab_icon_size"
-                    android:src="@drawable/ic_menu_compose_holo_dark"
+                    android:src="@drawable/ic_menu_complete"
                     android:layout_gravity="center"
                     android:duplicateParentState="true"/>
             </org.dodgybits.shuffle.android.core.view.FloatingActionButton>

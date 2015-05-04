@@ -10,6 +10,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.*;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -49,6 +50,8 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
 
     private ViewGroup mDetailsRow;
     private TextView mDetailsView;
+
+    private ImageView mCompleteFabIcon;
 
     private ViewGroup mShowFromRow;
     private TextView mShowFromView;
@@ -101,11 +104,11 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
 
         mViewCalendarButton.setOnClickListener(this);
 
-        getActivity().findViewById(R.id.edit_fab).setOnClickListener(
+        getActivity().findViewById(R.id.complete_fab).setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        editTask();
+                        toggleComplete();
                     }
                 }
         );
@@ -118,22 +121,19 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Location parentLocation = mLocationProvider.getLocation().builderFrom().parentView().build();
         switch (item.getItemId()) {
             case R.id.action_edit:
                 editTask();
                 return true;
             case R.id.action_mark_complete:
             case R.id.action_mark_incomplete:
-                Log.d(TAG, "Toggling delete on task");
-                mEventManager.fire(new UpdateTasksCompletedEvent(mTask.getLocalId().getId(), !mTask.isComplete()));
-                mEventManager.fire(new NavigationRequestEvent(parentLocation));
+                toggleComplete();
                 return true;
             case R.id.action_delete:
             case R.id.action_undelete:
                 Log.d(TAG, "Toggling delete on task");
                 mEventManager.fire(new UpdateTasksDeletedEvent(mTask.getLocalId().getId(), !mTask.isDeleted()));
-                mEventManager.fire(new NavigationRequestEvent(parentLocation));
+                mEventManager.fire(new NavigationRequestEvent(mLocationProvider.getLocation().parent()));
                 return true;
         }
         return false;
@@ -143,6 +143,12 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         Log.d(TAG, "Editing the action");
         Location location = Location.editTask(mTask.getLocalId());
         mEventManager.fire(new NavigationRequestEvent(location));
+    }
+
+    private void toggleComplete() {
+        Log.d(TAG, "Toggling complete on task");
+        mEventManager.fire(new UpdateTasksCompletedEvent(mTask.getLocalId().getId(), !mTask.isComplete()));
+        mEventManager.fire(new NavigationRequestEvent(mLocationProvider.getLocation().parent()));
     }
 
     private void initializeArgCache() {
@@ -190,7 +196,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         mCalendarRow = (ViewGroup) getView().findViewById(R.id.calendar_row);
         mViewCalendarButton = (Button) getView().findViewById(R.id.view_calendar_button);
         mStatusView = (StatusView) getView().findViewById(R.id.status);
-
+        mCompleteFabIcon = (ImageView) getView().findViewById(R.id.complete_fab_icon);
     }
 
     private void updateUIFromItem(Task task) {
@@ -204,6 +210,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         updateScheduling(task.getStartDate(), task.getDueDate(), task.isAllDay());
         updateCalendar(task.getCalendarEventId());
         updateExtras(task, contexts, project);
+        updateCompleteFab(task.isComplete());
     }
 
     @Override
@@ -322,6 +329,10 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     private void updateExtras(Task task, List<Context> contexts, Project project) {
         mStatusView.updateStatus(task, contexts, project, true);
         mStatusView.setVisibility(task.isComplete() ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    private void updateCompleteFab(boolean isComplete) {
+        mCompleteFabIcon.setImageResource(isComplete ? R.drawable.ic_menu_incomplete: R.drawable.ic_menu_complete);
     }
 
 
