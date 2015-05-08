@@ -38,11 +38,9 @@ import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.encoding.TaskEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.view.Location;
-
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
-
 
 
 public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageChangeListener {
@@ -117,12 +115,13 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
             return;
         }
 
-        Log.d(TAG, "Swapping cursor " + this);
+        Log.d(TAG, "Swapping cursor " + this + " location=" + mLocation);
         mCursor = cursor;
 
         if (mLocation != null) {
             mAdapter = new MyAdapter(getActivity().getSupportFragmentManager(), cursor);
             mPager.setAdapter(mAdapter);
+            mAdapter.notifyDataSetChanged();
             mPager.setCurrentItem(mLocation.getSelectedIndex());
         }
     }
@@ -135,7 +134,6 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
     @Override
     public void onPageSelected(int newIndex) {
         if (mLocation.getSelectedIndex() != newIndex) {
-            Log.d(TAG, "View changed from " + mLocation.getSelectedIndex() + " to " + newIndex);
             Location newView = mLocation.builderFrom().setSelectedIndex(newIndex).build();
             mEventManager.fire(new NavigationRequestEvent(newView));
         }
@@ -154,6 +152,7 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
             super(fm);
             mCursor = c;
             mFragments = new TaskViewFragment[getCount()];
+            Log.d(TAG, "Created new adapter " + this);
         }
 
         @Override
@@ -161,12 +160,17 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
             return mCursor.getCount();
         }
 
+        @Override
+        public long getItemId(int position) {
+            mCursor.moveToPosition(position);
+            long taskId = mCursor.getLong(0);
+            return taskId;
+        }
 
         @Override
         public Fragment getItem(int position) {
             TaskViewFragment fragment = mFragments[position];
             if (fragment == null) {
-                Log.d(TAG, "Creating fragment item " + position);
                 mCursor.moveToPosition(position);
                 Task task = mPersister.read(mCursor);
                 Bundle args = new Bundle();
@@ -175,6 +179,20 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
                 mFragments[position] = fragment;
             }
             return fragment;
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            int result = POSITION_NONE;
+            if (object instanceof TaskViewFragment) {
+                for (int i = 0; i < mFragments.length; i++) {
+                    if (object == mFragments[i]) {
+                        result = i;
+                        break;
+                    }
+                }
+            }
+            return result;
         }
     }
 

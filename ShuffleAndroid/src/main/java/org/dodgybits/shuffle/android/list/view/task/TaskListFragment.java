@@ -7,9 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.internal.widget.DrawableUtils;
 import android.support.v7.view.ActionMode;
 import android.util.Log;
 import android.view.*;
@@ -131,7 +128,7 @@ public class TaskListFragment extends RoboListFragment
 
 //        setEmptyText(getString(R.string.no_tasks));
 
-        getActivity().findViewById(R.id.fab).setOnClickListener(
+        getView().findViewById(R.id.fab).setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

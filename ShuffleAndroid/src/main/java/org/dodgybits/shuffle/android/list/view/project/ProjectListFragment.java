@@ -86,7 +86,7 @@ public class ProjectListFragment extends RoboListFragment {
         updateCursor();
         Log.d(TAG, "-onActivityCreated");
 
-        getActivity().findViewById(R.id.fab).setOnClickListener(
+        getView().findViewById(R.id.fab).setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

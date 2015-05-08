@@ -104,7 +104,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
 
         mViewCalendarButton.setOnClickListener(this);
 
-        getActivity().findViewById(R.id.complete_fab).setOnClickListener(
+        getView().findViewById(R.id.complete_fab).setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -139,6 +139,10 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         return false;
     }
 
+    public long getTaskId() {
+        return mTask.getLocalId().getId();
+    }
+
     private void editTask() {
         Log.d(TAG, "Editing the action");
         Location location = Location.editTask(mTask.getLocalId());
@@ -146,8 +150,9 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     }
 
     private void toggleComplete() {
-        Log.d(TAG, "Toggling complete on task");
-        mEventManager.fire(new UpdateTasksCompletedEvent(mTask.getLocalId().getId(), !mTask.isComplete()));
+        long taskId = mTask.getLocalId().getId();
+        Log.d(TAG, "Toggling complete on task " + mTask.getDescription() + " id=" + taskId + " tag=" + getTag());
+        mEventManager.fire(new UpdateTasksCompletedEvent(taskId, !mTask.isComplete()));
         mEventManager.fire(new NavigationRequestEvent(mLocationProvider.getLocation().parent()));
     }
 
