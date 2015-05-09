@@ -98,9 +98,9 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "+onActivityCreated");
 
         findViews();
-        updateUIFromItem(getTask());
 
         mViewCalendarButton.setOnClickListener(this);
 
@@ -112,6 +112,22 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
                     }
                 }
         );
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Log.d(TAG, "+onResume");
+        updateUIFromItem(getTask());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Log.d(TAG, "+onPause");
+        mTask = null;
     }
 
     @Override
