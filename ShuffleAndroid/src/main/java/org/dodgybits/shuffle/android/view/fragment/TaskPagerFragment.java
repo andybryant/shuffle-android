@@ -47,12 +47,6 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
     private static final String TAG = "TaskPagerFragment";
 
     @Inject
-    TaskPersister mPersister;
-
-    @Inject
-    TaskEncoder mEncoder;
-
-    @Inject
     private ListSettingsListener mListSettingsListener;
 
     @Inject
@@ -172,9 +166,8 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
             TaskViewFragment fragment = mFragments[position];
             if (fragment == null) {
                 mCursor.moveToPosition(position);
-                Task task = mPersister.read(mCursor);
                 Bundle args = new Bundle();
-                mEncoder.save(args, task);
+                args.putInt(TaskViewFragment.POSITION, position);
                 fragment = TaskViewFragment.newInstance(args);
                 mFragments[position] = fragment;
             }

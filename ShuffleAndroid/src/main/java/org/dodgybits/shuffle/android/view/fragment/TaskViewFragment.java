@@ -2,6 +2,7 @@ package org.dodgybits.shuffle.android.view.fragment;
 
 import android.content.ContentUris;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,7 +18,9 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
+import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.LocationProvider;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
@@ -34,13 +37,18 @@ import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
 import org.dodgybits.shuffle.android.list.view.LabelView;
 import org.dodgybits.shuffle.android.list.view.StatusView;
 import roboguice.event.EventManager;
+import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
 
 import java.util.Collections;
 import java.util.List;
+import static android.provider.BaseColumns._ID;
 
 public class TaskViewFragment extends RoboFragment implements View.OnClickListener {
     private static final String TAG = "TaskViewFragment";
+
+    public static final String POSITION = "position";
+
 
     private ViewGroup mContextContainer;
     private ViewGroup mContextRow;
@@ -67,13 +75,14 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     @Inject private EntityCache<Project> mProjectCache;
     @Inject private EntityCache<Context> mContextCache;
     @Inject private TaskPersister mPersister;
-    @Inject private TaskEncoder mEncoder;
     @Inject private LocationProvider mLocationProvider;
+    @Inject private CursorProvider mCursorProvider;
 
     @Inject
     private EventManager mEventManager;
 
     private Task mTask;
+    Cursor mCursor;
 
     public static TaskViewFragment newInstance(Bundle args) {
         TaskViewFragment fragment = new TaskViewFragment();
@@ -117,9 +126,28 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
-
         Log.d(TAG, "+onResume");
-        updateUIFromItem(getTask());
+
+        updateCursor();
+    }
+
+    private void onCursorUpdated(@Observes CursorUpdatedEvent event) {
+        updateCursor();
+    }
+
+    private void updateCursor() {
+        updateCursor(mCursorProvider.getTaskListCursor());
+    }
+
+    private void updateCursor(Cursor cursor) {
+        if (cursor == null || mCursor == cursor) {
+            Log.d(TAG, "Cursor " + cursor);
+            return;
+        }
+        mCursor = cursor;
+
+        getTask();
+        updateUIFromItem();
     }
 
     @Override
@@ -175,7 +203,10 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     private void initializeArgCache() {
         if (mTask != null) return;
         Bundle args = getArguments();
-        mTask = mEncoder.restore(args);
+        int position = args.getInt(POSITION);
+        mCursor.moveToPosition(position);
+        mTask = mPersister.read(mCursor);
+        Log.d(TAG, "Read task from cursor at position " + position);
     }
 
     private Task getTask() {
@@ -186,11 +217,11 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     }
 
     private void updateMenuVisibility(Menu menu) {
-        if (getTask() != null) {
-            final boolean isComplete = getTask().isComplete();
+        if (mTask != null) {
+            final boolean isComplete = mTask.isComplete();
             setVisible(menu, R.id.action_mark_complete, !isComplete);
             setVisible(menu, R.id.action_mark_incomplete, isComplete);
-            final boolean isDeleted = getTask().isDeleted();
+            final boolean isDeleted = mTask.isDeleted();
             setVisible(menu, R.id.action_delete, !isDeleted);
             setVisible(menu, R.id.action_undelete, isDeleted);
         }
@@ -220,18 +251,19 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         mCompleteFabIcon = (ImageView) getView().findViewById(R.id.complete_fab_icon);
     }
 
-    private void updateUIFromItem(Task task) {
-        List<Context> contexts = mContextCache.findById(task.getContextIds());
-        Project project = mProjectCache.findById(task.getProjectId());
+    private void updateUIFromItem() {
+        if (mTask == null) return;
+        List<Context> contexts = mContextCache.findById(mTask.getContextIds());
+        Project project = mProjectCache.findById(mTask.getProjectId());
 
         updateProject(project);
-        updateDescription(task.getDescription());
+        updateDescription(mTask.getDescription());
         updateContexts(contexts);
-        updateDetails(task.getDetails());
-        updateScheduling(task.getStartDate(), task.getDueDate(), task.isAllDay());
-        updateCalendar(task.getCalendarEventId());
-        updateExtras(task, contexts, project);
-        updateCompleteFab(task.isComplete());
+        updateDetails(mTask.getDetails());
+        updateScheduling(mTask.getStartDate(), mTask.getDueDate(), mTask.isAllDay());
+        updateCalendar(mTask.getCalendarEventId());
+        updateExtras(mTask, contexts, project);
+        updateCompleteFab(mTask.isComplete());
     }
 
     @Override
@@ -240,7 +272,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
             case R.id.view_calendar_button: {
                 Uri eventUri = ContentUris.appendId(
                         CalendarUtils.getEventContentUri().buildUpon(),
-                        getTask().getCalendarEventId().getId()).build();
+                        mTask.getCalendarEventId().getId()).build();
                 Intent viewCalendarEntry = new Intent(Intent.ACTION_VIEW, eventUri);
                 viewCalendarEntry.putExtra(CalendarUtils.EVENT_BEGIN_TIME, mTask.getStartDate());
                 viewCalendarEntry.putExtra(CalendarUtils.EVENT_END_TIME, mTask.getDueDate());
@@ -353,7 +385,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     }
 
     private void updateCompleteFab(boolean isComplete) {
-        mCompleteFabIcon.setImageResource(isComplete ? R.drawable.ic_menu_incomplete: R.drawable.ic_menu_complete);
+        mCompleteFabIcon.setImageResource(isComplete ? R.drawable.ic_menu_incomplete : R.drawable.ic_menu_complete);
     }
 
 
