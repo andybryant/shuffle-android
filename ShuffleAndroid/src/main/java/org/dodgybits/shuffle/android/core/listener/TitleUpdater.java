@@ -39,7 +39,8 @@ public class TitleUpdater {
         switch (location.getViewMode()) {
             case TASK:
                 // blank for task view unless in landscape mode on tablet
-                if (!UiUtilities.isListCollapsible(mActivity.getResources())) {
+                // also don't show in project task list view as project already shown in task view
+                if (!UiUtilities.isListCollapsible(mActivity.getResources()) && listQuery != ListQuery.project) {
                     title = getTaskListTitle(location);
                 }
                 break;
