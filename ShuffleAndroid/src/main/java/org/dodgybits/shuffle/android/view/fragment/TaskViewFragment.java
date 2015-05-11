@@ -26,7 +26,6 @@ import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Task;
-import org.dodgybits.shuffle.android.core.model.encoding.TaskEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.CalendarUtils;
@@ -43,7 +42,6 @@ import roboguice.fragment.RoboFragment;
 
 import java.util.Collections;
 import java.util.List;
-import static android.provider.BaseColumns._ID;
 
 public class TaskViewFragment extends RoboFragment implements View.OnClickListener {
     private static final String TAG = "TaskViewFragment";
@@ -62,11 +60,8 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
 
     private ImageView mCompleteFabIcon;
 
-    private ViewGroup mShowFromRow;
-    private TextView mShowFromView;
-
-    private ViewGroup mDueRow;
-    private TextView mDueView;
+    private ViewGroup mTemporalRow;
+    private TextView mTemporalView;
 
     private ViewGroup mCalendarRow;
     private Button mViewCalendarButton;
@@ -244,10 +239,8 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         mContextContainer = (ViewGroup) getView().findViewById(R.id.context_container);
         mDetailsRow = (ViewGroup) getView().findViewById(R.id.details_row);
         mDetailsView = (TextView) getView().findViewById(R.id.details);
-        mShowFromRow = (ViewGroup) getView().findViewById(R.id.show_from_row);
-        mShowFromView = (TextView) getView().findViewById(R.id.show_from);
-        mDueRow = (ViewGroup) getView().findViewById(R.id.due_row);
-        mDueView = (TextView) getView().findViewById(R.id.due);
+        mTemporalRow = (ViewGroup) getView().findViewById(R.id.temporal_row);
+        mTemporalView = (TextView) getView().findViewById(R.id.temporal);
         mCalendarRow = (ViewGroup) getView().findViewById(R.id.calendar_row);
         mViewCalendarButton = (Button) getView().findViewById(R.id.view_calendar_button);
         mStatusView = (StatusView) getView().findViewById(R.id.status);
@@ -263,7 +256,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         updateDescription(mTask.getDescription());
         updateContexts(contexts);
         updateDetails(mTask.getDetails());
-        updateScheduling(mTask.getStartDate(), mTask.getDueDate(), mTask.isAllDay());
+        updateTemporal(mTask.getStartDate(), mTask.getDueDate(), mTask.isAllDay());
         updateCalendar(mTask.getCalendarEventId());
         updateExtras(mTask, contexts, project);
         updateCompleteFab(mTask.isComplete());
@@ -349,19 +342,22 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         }
     }
 
-    private void updateScheduling(long showFromMillis, long dueMillis, boolean allDay) {
-        if (showFromMillis == 0L) {
-            mShowFromRow.setVisibility(View.GONE);
+    private void updateTemporal(long deferUntilMillis, long dueMillis, boolean allDay) {
+        boolean deferInPast = deferUntilMillis < System.currentTimeMillis();
+        boolean dueIsSet = dueMillis > 0L;
+        if (deferInPast && !dueIsSet) {
+            mTemporalRow.setVisibility(View.GONE);
         } else {
-            mShowFromRow.setVisibility(View.VISIBLE);
-            mShowFromView.setText(formatDateTime(showFromMillis, false));
-        }
-
-        if (dueMillis == 0L) {
-            mDueRow.setVisibility(View.GONE);
-        } else {
-            mDueRow.setVisibility(View.VISIBLE);
-            mDueView.setText(formatDateTime(dueMillis, false));
+            mTemporalRow.setVisibility(View.VISIBLE);
+            StringBuilder text = new StringBuilder();
+            if (!deferInPast) {
+                text.append(getResources().getString(R.string.deferred_until_phrase, formatDateTime(deferUntilMillis, false)));
+                text.append(". ");
+            }
+            if (dueIsSet) {
+                text.append(getResources().getString(R.string.due_phrase, formatDateTime(dueMillis, false)));
+            }
+            mTemporalView.setText(text);
         }
     }
 

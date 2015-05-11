@@ -173,7 +173,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/show_from_row"
+                android:id="@+id/temporal_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="20dip"
@@ -188,37 +188,9 @@
                     />
 
                 <TextView
-                    android:id="@+id/show_from"
+                    android:id="@+id/temporal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dip"
-                    android:tag="regular"
-                    android:hint="@string/none_empty"
-                    android:textSize="18sp"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/due_row"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="20dip"
-                android:minHeight="72dip">
-
-                <ImageView
-                    android:layout_width="24dip"
-                    android:layout_height="24dip"
-                    android:layout_marginLeft="@dimen/keyline_1"
-                    android:layout_marginRight="32dip"
-                    android:src="@drawable/ic_schedule"
-                    />
-
-                <TextView
-                    android:id="@+id/due"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dip"
                     android:tag="regular"
                     android:hint="@string/none_empty"
                     android:textSize="18sp"
