@@ -209,7 +209,6 @@ public class NavigationDrawerFragment extends RoboFragment {
 
     // Subclasses can override this for custom behavior
     protected void onNavDrawerStateChanged(boolean isOpen, boolean isAnimating) {
-        // TODO - auto hide of action bar
     }
 
     protected void onNavDrawerSlide(float offset) {}
