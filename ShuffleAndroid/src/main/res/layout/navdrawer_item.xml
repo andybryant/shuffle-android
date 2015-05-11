@@ -37,7 +37,8 @@
         android:layout_centerVertical="true"
         android:textColor="@color/navdrawer_text_color"
         android:tag="bold"
-        android:textSize="18sp" />
+        android:textSize="20sp"
+        />
 
     <TextView
         android:id="@+id/count"
@@ -45,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:tag="regular"
         android:textColor="@color/view_minimal_text_color"
         android:shadowColor="@color/white"

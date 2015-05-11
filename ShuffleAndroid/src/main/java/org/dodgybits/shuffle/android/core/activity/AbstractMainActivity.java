@@ -16,6 +16,7 @@ import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.OnCreatedEvent;
 import org.dodgybits.shuffle.android.core.listener.FragmentLoader;
 import org.dodgybits.shuffle.android.core.listener.MainListeners;
+import org.dodgybits.shuffle.android.core.util.FontUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.LocationParser;
@@ -104,6 +105,7 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
         mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         if (mActionBarToolbar != null) {
             setSupportActionBar(mActionBarToolbar);
+            FontUtils.setCustomFont(mActionBarToolbar, getAssets());
         }
 
         ActionBar ab = getSupportActionBar();

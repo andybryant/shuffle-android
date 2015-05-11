@@ -10,10 +10,13 @@ import android.widget.TextView;
 import java.util.Objects;
 
 public class FontUtils {
+    public static final String BOLD = "bold";
+    public static final String REGULAR = "regular";
+    public static final String ALL_CAPS = "allcaps";
+
+
     private static Typeface regular;
-
     private static Typeface bold;
-
     private static Typeface allcaps;
 
     private static void processsViewGroup(ViewGroup v, final int len) {
@@ -31,11 +34,11 @@ public class FontUtils {
     private static void setCustomFont(TextView view) {
         Object tag = view.getTag();
         if (tag instanceof String) {
-            if (((String) tag).contains("bold")) {
+            if (((String) tag).contains(BOLD)) {
                 view.setTypeface(bold);
                 return;
             }
-            if (((String) tag).contains("allcaps")) {
+            if (((String) tag).contains(ALL_CAPS)) {
                 view.setTypeface(allcaps);
                 return;
             }
@@ -45,9 +48,9 @@ public class FontUtils {
 
     public static void setCustomFont(TextPaint textPaint, AssetManager assetsManager, String style) {
         initTypefaces(assetsManager);
-        if ("bold".equals(style)) {
+        if (BOLD.equals(style)) {
             textPaint.setTypeface(bold);
-        } else if ("allcaps".equals(style)) {
+        } else if (ALL_CAPS.equals(style)) {
             textPaint.setTypeface(allcaps);
         } else {
             textPaint.setTypeface(regular);

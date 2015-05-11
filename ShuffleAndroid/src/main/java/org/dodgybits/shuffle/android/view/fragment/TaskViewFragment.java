@@ -30,6 +30,7 @@ import org.dodgybits.shuffle.android.core.model.encoding.TaskEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.CalendarUtils;
+import org.dodgybits.shuffle.android.core.util.FontUtils;
 import org.dodgybits.shuffle.android.core.view.ContextIcon;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
@@ -101,13 +102,22 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.task_view, container, false);
+        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.task_view, container, false);
+        FontUtils.setCustomFont(view, getActivity().getAssets());
+
+        return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, "+onActivityCreated");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "+onResume");
 
         findViews();
 
@@ -121,12 +131,6 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
                     }
                 }
         );
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "+onResume");
 
         updateCursor();
     }
@@ -140,8 +144,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     }
 
     private void updateCursor(Cursor cursor) {
-        if (cursor == null || mCursor == cursor) {
-            Log.d(TAG, "Cursor " + cursor);
+        if (cursor == null) {
             return;
         }
         mCursor = cursor;
@@ -315,6 +318,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
             int contextCount = contexts.size();
             while (viewCount < contextCount) {
                 LabelView contextView = new LabelView(getActivity());
+                contextView.setTag(FontUtils.ALL_CAPS);
                 mContextContainer.addView(contextView);
                 viewCount++;
             }
@@ -332,6 +336,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
                 Drawable icon = contextIcon == null ? null : getResources().getDrawable(contextIcon.smallIconId);
                 contextView.setIcon(icon);
             }
+            FontUtils.setCustomFont(mContextContainer, getActivity().getAssets());
         }
     }
 

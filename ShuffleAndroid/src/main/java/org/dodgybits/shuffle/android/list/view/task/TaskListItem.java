@@ -139,14 +139,14 @@ public class TaskListItem extends View {
             sItemHeight =
                     r.getDimensionPixelSize(R.dimen.list_item_height);
 
-            FontUtils.setCustomFont(sDefaultPaint, context.getAssets(), "regular");
+            FontUtils.setCustomFont(sDefaultPaint, context.getAssets(), FontUtils.REGULAR);
             sDefaultPaint.setAntiAlias(true);
-            FontUtils.setCustomFont(sDatePaint, context.getAssets(), "regular");
+            FontUtils.setCustomFont(sDatePaint, context.getAssets(), FontUtils.REGULAR);
             sDatePaint.setAntiAlias(true);
-            FontUtils.setCustomFont(sAllCapsPaint, context.getAssets(), "allcaps");
+            FontUtils.setCustomFont(sAllCapsPaint, context.getAssets(), FontUtils.REGULAR);
             sAllCapsPaint.setAntiAlias(true);
             sAllCapsPaint.setShadowLayer(0f, 1.0f, 1.0f, R.color.white);
-            FontUtils.setCustomFont(sContextPaint, context.getAssets(), "regular");
+            FontUtils.setCustomFont(sContextPaint, context.getAssets(), FontUtils.ALL_CAPS);
             sContextPaint.setAntiAlias(true);
 
             sContextHorizontalPadding = r.getDimensionPixelSize(R.dimen.context_small_horizontal_padding);

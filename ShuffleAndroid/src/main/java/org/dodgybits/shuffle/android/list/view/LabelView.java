@@ -16,6 +16,7 @@
 
 package org.dodgybits.shuffle.android.list.view;
 
+import android.graphics.drawable.ColorDrawable;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.view.TextColours;
 import org.dodgybits.shuffle.android.core.view.DrawableUtils;
@@ -64,7 +65,7 @@ public class LabelView extends TextView {
     	mTextColour = mTextColours.getTextColour(colourIndex);
     	mBgColour = mTextColours.getBackgroundColour(colourIndex);
 		setTextColor(mTextColour);
-		GradientDrawable drawable = DrawableUtils.createGradient(mBgColour, Orientation.TOP_BOTTOM);
+		GradientDrawable drawable = DrawableUtils.createGradient(mBgColour, Orientation.TOP_BOTTOM, 1f, 1f);
         int radius = getResources().getDimensionPixelSize(R.dimen.context_small_corner_radius);
     	drawable.setCornerRadius(radius);
     	setBackgroundDrawable(drawable);
