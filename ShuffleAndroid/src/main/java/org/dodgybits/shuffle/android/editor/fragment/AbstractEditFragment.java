@@ -16,6 +16,7 @@ import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Entity;
 import org.dodgybits.shuffle.android.core.model.encoding.EntityEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityPersister;
+import org.dodgybits.shuffle.android.core.util.FontUtils;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 import roboguice.fragment.RoboFragment;
 
@@ -41,7 +42,7 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
 
         View view = inflater.inflate(getContentViewResId(), null);
 
-        View actionBarButtons = inflater.inflate(R.layout.edit_custom_actionbar,
+        ViewGroup actionBarButtons = (ViewGroup) inflater.inflate(R.layout.edit_custom_actionbar,
                 new LinearLayout(getActivity()), false);
         View cancelActionView = actionBarButtons.findViewById(R.id.action_cancel);
         cancelActionView.setOnClickListener(this);
@@ -49,6 +50,7 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
         doneActionView.setOnClickListener(this);
 
         getRoboAppCompatActivity().getSupportActionBar().setCustomView(actionBarButtons);
+        FontUtils.setCustomFont(actionBarButtons, getActivity().getAssets());
 
         return view;
     }

@@ -13,28 +13,57 @@
      limitations under the License.
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:background="@color/theme_primary"
+    >
 
-    <!-- id must match corresponding menu item id -->
-    <Button
+    <ImageButton
         android:id="@+id/action_cancel"
-        android:layout_width="0dip"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:drawableLeft="@drawable/ic_close_wht_24dp"
-        android:text="@string/cancel_button_title" />
+        android:src="@drawable/ic_menu_cancel_holo_dark"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="8dp"
+        android:layout_height="36dp"
+        android:layout_width="36dp"
+        android:gravity="center_vertical|left"
+        android:layout_centerVertical="true"
+        android:background="@color/theme_primary"
+        style="?android:attr/borderlessButtonStyle"
+        />
 
-    <!-- id must match corresponding menu item id -->
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="48dp"
+        android:layout_centerVertical="true"
+        android:gravity="center_vertical"
+        android:text="@string/title_edit_task"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:tag="regular"
+        />
+
+
     <Button
         android:id="@+id/action_done"
-        android:layout_width="0dip"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:drawableLeft="@drawable/ic_check_wht_24dp"
-        android:text="@string/save_button_title" />
+        android:layout_height="36dp"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="8dp"
+        android:paddingRight="16dp"
+        android:gravity="center_vertical|right"
+        android:layout_centerVertical="true"
+        android:text="@string/save_button_title"
+        android:textColor="@color/white"
+        android:tag="allcaps"
+        android:textSize="14sp"
+        android:background="@color/theme_primary"
+        android:clickable="false"
+        style="?android:attr/borderlessButtonStyle"
+        />
 
 
-</LinearLayout>
+</RelativeLayout>
