@@ -40,7 +40,7 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView+");
 
-        View view = inflater.inflate(getContentViewResId(), null);
+        ViewGroup view = (ViewGroup) inflater.inflate(getContentViewResId(), null);
 
         ViewGroup actionBarButtons = (ViewGroup) inflater.inflate(R.layout.edit_custom_actionbar,
                 new LinearLayout(getActivity()), false);
@@ -51,6 +51,7 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
 
         getRoboAppCompatActivity().getSupportActionBar().setCustomView(actionBarButtons);
         FontUtils.setCustomFont(actionBarButtons, getActivity().getAssets());
+        FontUtils.setCustomFont(view, getActivity().getAssets());
 
         return view;
     }
