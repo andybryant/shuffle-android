@@ -42,7 +42,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="72dip"
-                android:paddingBottom="20dip">
+                android:paddingBottom="20dip"
+                android:orientation="horizontal"
+                >
 
                 <ImageView
                     android:layout_width="24dip"
@@ -53,8 +55,9 @@
                     />
 
                 <RelativeLayout
-                    android:layout_width="fill_parent"
+                    android:layout_width="1px"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:paddingRight="?android:attr/scrollbarSize"
                     android:background="@drawable/list_selector_background">
 
@@ -65,7 +68,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="4dip"
-                        android:src="@drawable/ic_menu_compose_holo_dark"
+                        android:src="@drawable/ic_menu_add_field_holo_light"
                         android:background="@drawable/blank" />
 
                     <Spinner
@@ -79,6 +82,13 @@
                 </RelativeLayout>
 
             </LinearLayout>
+
+            <View
+                android:id="@+id/deleted_divider"
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:layout_marginLeft="72dp"
+                android:background="@android:drawable/divider_horizontal_bright" />
 
             <LinearLayout
                 android:id="@+id/description_row"
@@ -99,12 +109,11 @@
                     android:id="@+id/description"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dip"
-                    android:layout_marginBottom="8dip"
                     android:hint="@string/description_title"
                     android:tag="regular"
                     android:capitalize="sentences"
                     android:autoText="true"
+                    android:background="@null"
                     android:maxLength="450"
                     android:inputType="textMultiLine|textAutoCorrect|textCapSentences">
 
@@ -114,7 +123,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/details_row"
+                android:id="@+id/context_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="72dip"
@@ -125,36 +134,8 @@
                     android:layout_height="24dip"
                     android:layout_marginLeft="@dimen/keyline_1"
                     android:layout_marginRight="32dip"
-                    android:src="@drawable/ic_details"
+                    android:src="@drawable/ic_drawer_contexts"
                     />
-
-                <EditText
-                    android:id="@+id/details"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/details_title"
-                    android:tag="regular"
-                    android:capitalize="sentences"
-                    android:autoText="true"
-                    android:inputType="textMultiLine|textAutoCorrect|textCapSentences"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:padding="4dip"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="5dip"
-                    android:paddingRight="5dip"
-                    android:text="@string/title_context"
-                    style="@style/LabelTextViewStyle" />
 
                 <RelativeLayout
                     android:layout_width="fill_parent"
@@ -180,7 +161,6 @@
                         android:layout_alignParentLeft="true"
                         android:layout_toLeftOf="@+id/context_add"
                         android:background="@drawable/list_selector_background"
-                        android:padding="8dp"
                         android:horizontalSpacing="@dimen/context_small_horizontal_spacing"
                         android:verticalSpacing="@dimen/context_small_vertical_spacing"
                         android:focusable="true"
@@ -191,7 +171,6 @@
                             android:layout_width="fill_parent"
                             android:layout_height="30dp"
                             android:textSize="18sp"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
                             android:gravity="left"
                             android:duplicateParentState="true"
                             android:hint="@string/title_contexts_picker" />
@@ -199,6 +178,44 @@
                     </org.dodgybits.shuffle.android.core.view.RowLayout>
 
                 </RelativeLayout>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/details_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="72dip"
+                android:paddingBottom="20dip">
+
+                <ImageView
+                    android:layout_width="24dip"
+                    android:layout_height="24dip"
+                    android:layout_marginLeft="@dimen/keyline_1"
+                    android:layout_marginRight="32dip"
+                    android:src="@drawable/ic_details"
+                    />
+
+                <EditText
+                    android:id="@+id/details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/details_title"
+                    android:tag="regular"
+                    android:capitalize="sentences"
+                    android:autoText="true"
+                    android:background="@null"
+                    android:inputType="textMultiLine|textAutoCorrect|textCapSentences"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:padding="4dip"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/scheduling_section"
@@ -327,54 +344,6 @@
 
                 </LinearLayout>
 
-                <View
-                    android:id="@+id/deleted_divider"
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dip"
-                    android:background="@android:drawable/divider_horizontal_bright" />
-
-                <LinearLayout
-                    android:id="@+id/deleted_entry"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="?android:attr/scrollbarSize"
-                    android:minHeight="?android:attr/listPreferredItemHeight"
-                    android:background="@drawable/list_selector_background"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:focusable="true"
-                    android:clickable="true">
-
-                    <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dip"
-                        android:layout_marginTop="6dip"
-                        android:layout_marginBottom="6dip"
-                        android:layout_weight="1"
-                        android:duplicateParentState="true">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:singleLine="true"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:textColor="@color/label_color"
-                            android:ellipsize="marquee"
-                            android:fadingEdge="horizontal"
-                            android:duplicateParentState="true"
-                            android:text="@string/deleted_title" />
-
-                    </RelativeLayout>
-
-                    <CheckBox
-                        android:id="@+id/deleted_entry_checkbox"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:focusable="false"
-                        android:clickable="false" />
-
-                </LinearLayout>
 
             </LinearLayout>
 
@@ -382,21 +351,15 @@
 
     </ScrollView>
 
-    <LinearLayout
+
+    <Button
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:orientation="horizontal"
+        android:tag="allcaps"
         android:layout_gravity="center"
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:tag="allcaps"
-            android:layout_gravity="center"
-            android:text="Deletee"
-            android:textSize="14sp"
-            />
-    </LinearLayout>
+        android:text="Delete"
+        android:textSize="14sp"
+        style="?android:attr/borderlessButtonStyle"
+        />
 
 </LinearLayout>
