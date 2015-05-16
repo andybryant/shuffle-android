@@ -42,83 +42,92 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="72dip"
-                android:paddingBottom="20dip"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 >
 
-                <ImageView
-                    android:layout_width="24dip"
-                    android:layout_height="24dip"
-                    android:layout_marginLeft="@dimen/keyline_1"
-                    android:layout_marginRight="32dip"
-                    android:src="@drawable/ic_details"
-                    />
-
-                <RelativeLayout
-                    android:layout_width="1px"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingRight="?android:attr/scrollbarSize"
-                    android:background="@drawable/list_selector_background">
+                    android:orientation="horizontal"
+                    >
 
-                    <ImageButton
-                        android:id="@+id/project_add"
-                        android:layout_width="wrap_content"
+                    <ImageView
+                        android:src="@drawable/ic_details"
+                        style="@style/EditEntryIcon"
+                        />
+
+                    <RelativeLayout
+                        android:layout_width="1px"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="4dip"
-                        android:src="@drawable/ic_menu_add_field_holo_light"
-                        android:background="@drawable/blank" />
+                        android:layout_weight="1"
+                        android:paddingRight="?android:attr/scrollbarSize"
+                        android:background="@drawable/list_selector_background">
 
-                    <Spinner
-                        android:id="@+id/project"
-                        android:layout_width="wrap_content"
-                        android:layout_height="48dip"
-                        android:layout_alignParentLeft="true"
-                        android:layout_toLeftOf="@+id/project_add"
-                        android:drawSelectorOnTop="true" />
+                        <ImageButton
+                            android:id="@+id/project_add"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="4dip"
+                            android:layout_marginRight="16dip"
+                            android:src="@drawable/ic_menu_add_field_holo_light"
+                            android:background="@drawable/blank" />
 
-                </RelativeLayout>
+                        <Spinner
+                            android:id="@+id/project"
+                            android:layout_width="wrap_content"
+                            android:layout_height="48dip"
+                            android:layout_alignParentLeft="true"
+                            android:layout_toLeftOf="@+id/project_add"
+                            android:drawSelectorOnTop="true" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <View style="@style/EditDivider" />
 
             </LinearLayout>
-
-            <View
-                android:id="@+id/deleted_divider"
-                android:layout_width="fill_parent"
-                android:layout_height="1dip"
-                android:layout_marginLeft="72dp"
-                android:background="@android:drawable/divider_horizontal_bright" />
 
             <LinearLayout
                 android:id="@+id/description_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="72dip"
-                android:paddingBottom="20dip">
+                android:orientation="vertical"
+                >
 
-                <ImageView
-                    android:layout_width="24dip"
-                    android:layout_height="24dip"
-                    android:layout_marginLeft="@dimen/keyline_1"
-                    android:layout_marginRight="32dip"
-                    android:src="@drawable/ic_details"
-                    />
-
-                <EditText
-                    android:id="@+id/description"
-                    android:layout_width="fill_parent"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/description_title"
-                    android:tag="regular"
-                    android:capitalize="sentences"
-                    android:autoText="true"
-                    android:background="@null"
-                    android:maxLength="450"
-                    android:inputType="textMultiLine|textAutoCorrect|textCapSentences">
+                    android:orientation="horizontal"
+                    >
 
-                    <requestFocus />
-                </EditText>
+                    <ImageView
+                        android:src="@drawable/ic_details"
+                        style="@style/EditEntryIcon"
+                        />
+
+                    <EditText
+                        android:id="@+id/description"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="16dp"
+                        android:hint="@string/description_title"
+                        android:tag="regular"
+                        android:capitalize="sentences"
+                        android:autoText="true"
+                        android:background="@null"
+                        android:maxLength="450"
+                        android:inputType="textMultiLine|textAutoCorrect|textCapSentences">
+
+                        <requestFocus />
+                    </EditText>
+
+                </LinearLayout>
+
+                <View style="@style/EditDivider" />
 
             </LinearLayout>
 
@@ -127,87 +136,102 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="72dip"
-                android:paddingBottom="20dip">
+                android:orientation="vertical"
+                >
 
-                <ImageView
-                    android:layout_width="24dip"
-                    android:layout_height="24dip"
-                    android:layout_marginLeft="@dimen/keyline_1"
-                    android:layout_marginRight="32dip"
-                    android:src="@drawable/ic_drawer_contexts"
-                    />
-
-                <RelativeLayout
-                    android:layout_width="fill_parent"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingRight="?android:attr/scrollbarSize"
-                    android:background="@drawable/list_selector_background">
+                    android:orientation="horizontal"
+                    >
 
-                    <ImageButton
-                        android:id="@+id/context_add"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginLeft="4dip"
-                        android:src="@drawable/ic_menu_add_field_holo_light"
-                        android:background="@drawable/blank" />
+                    <ImageView
+                        android:src="@drawable/ic_drawer_contexts"
+                        style="@style/EditEntryIcon"
+                        />
 
-                    <org.dodgybits.shuffle.android.core.view.RowLayout
-                        android:id="@+id/context_items_container"
+                    <RelativeLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:layout_alignParentLeft="true"
-                        android:layout_toLeftOf="@+id/context_add"
-                        android:background="@drawable/list_selector_background"
-                        android:horizontalSpacing="@dimen/context_small_horizontal_spacing"
-                        android:verticalSpacing="@dimen/context_small_vertical_spacing"
-                        android:focusable="true"
-                        android:clickable="true">
+                        android:paddingRight="?android:attr/scrollbarSize"
+                        android:background="@drawable/list_selector_background">
 
-                        <TextView
-                            android:id="@+id/no_contexts"
+                        <ImageButton
+                            android:id="@+id/context_add"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginLeft="4dip"
+                            android:src="@drawable/ic_menu_add_field_holo_light"
+                            android:background="@drawable/blank" />
+
+                        <org.dodgybits.shuffle.android.core.view.RowLayout
+                            android:id="@+id/context_items_container"
                             android:layout_width="fill_parent"
-                            android:layout_height="30dp"
-                            android:textSize="18sp"
-                            android:gravity="left"
-                            android:duplicateParentState="true"
-                            android:hint="@string/title_contexts_picker" />
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="left"
+                            android:layout_alignParentLeft="true"
+                            android:layout_toLeftOf="@+id/context_add"
+                            android:background="@drawable/list_selector_background"
+                            android:horizontalSpacing="@dimen/context_small_horizontal_spacing"
+                            android:verticalSpacing="@dimen/context_small_vertical_spacing"
+                            android:focusable="true"
+                            android:clickable="true">
 
-                    </org.dodgybits.shuffle.android.core.view.RowLayout>
+                            <TextView
+                                android:id="@+id/no_contexts"
+                                android:layout_width="fill_parent"
+                                android:layout_height="30dp"
+                                android:textSize="18sp"
+                                android:gravity="left"
+                                android:duplicateParentState="true"
+                                android:hint="@string/title_contexts_picker" />
 
-                </RelativeLayout>
+                        </org.dodgybits.shuffle.android.core.view.RowLayout>
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <View style="@style/EditDivider" />
 
             </LinearLayout>
-
 
             <LinearLayout
                 android:id="@+id/details_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="72dip"
-                android:paddingBottom="20dip">
+                android:orientation="vertical"
+                >
 
-                <ImageView
-                    android:layout_width="24dip"
-                    android:layout_height="24dip"
-                    android:layout_marginLeft="@dimen/keyline_1"
-                    android:layout_marginRight="32dip"
-                    android:src="@drawable/ic_details"
-                    />
-
-                <EditText
-                    android:id="@+id/details"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/details_title"
-                    android:tag="regular"
-                    android:capitalize="sentences"
-                    android:autoText="true"
-                    android:background="@null"
-                    android:inputType="textMultiLine|textAutoCorrect|textCapSentences"
-                    />
+                    android:orientation="horizontal"
+                    >
+
+                    <ImageView
+                        android:src="@drawable/ic_details"
+                        style="@style/EditEntryIcon"
+                        />
+
+                    <EditText
+                        android:id="@+id/details"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/details_title"
+                        android:tag="regular"
+                        android:capitalize="sentences"
+                        android:autoText="true"
+                        android:background="@null"
+                        android:inputType="textMultiLine|textAutoCorrect|textCapSentences"
+                        />
+
+                </LinearLayout>
+
+                <View style="@style/EditDivider" />
 
             </LinearLayout>
 
@@ -353,11 +377,11 @@
 
 
     <Button
+        android:id="@+id/delete_button"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:tag="allcaps"
         android:layout_gravity="center"
-        android:text="Delete"
         android:textSize="14sp"
         style="?android:attr/borderlessButtonStyle"
         />

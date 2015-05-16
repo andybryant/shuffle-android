@@ -94,9 +94,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     private View mCompleteEntry;
     private CheckBox mCompletedCheckBox;
 
-    private View mDeletedEntry;
-    private View mDeletedDivider;
-    private CheckBox mDeletedCheckBox;
+    private Button mDeleteButton;
 
     private View mUpdateCalendarEntry;
     private CheckBox mUpdateCalendarCheckBox;
@@ -175,9 +173,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         }
 
         mCompleteEntry.setVisibility(View.GONE);
-        mDeletedEntry.setVisibility(View.GONE);
-        mDeletedDivider.setVisibility(View.GONE);
-        mDeletedCheckBox.setChecked(false);
+        mDeleteButton.setVisibility(View.GONE);
 
         populateWhen();
 
@@ -248,9 +244,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
         mCompletedCheckBox.setChecked(task.isComplete());
 
-        mDeletedEntry.setVisibility(task.isDeleted() ? View.VISIBLE : View.GONE);
-        mDeletedDivider.setVisibility(task.isDeleted() ? View.VISIBLE : View.GONE);
-        mDeletedCheckBox.setChecked(task.isDeleted());
+        mDeleteButton.setText(task.isDeleted() ? R.string.restore_button_title : R.string.delete_completed_button_title);
 
         updateCalendarPanel();
     }
@@ -269,7 +263,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         final Id projectId = getSpinnerSelectedId(mProjectSpinner, mProjectIds);
         final boolean allDay = mAllDayCheckBox.isChecked();
         final boolean complete = mCompletedCheckBox.isChecked();
-        final boolean deleted = mDeletedCheckBox.isChecked();
         final boolean active = true;
 
         TaskChangeSet changeSet = builder.getChangeSet();
@@ -296,11 +289,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         if (complete != builder.isComplete()) {
             builder.setComplete(complete);
             changeSet.completeChanged();
-            changed = true;
-        }
-        if (deleted != builder.isDeleted()) {
-            builder.setDeleted(deleted);
-            changeSet.deleteChanged();
             changed = true;
         }
         if (active != builder.isActive()) {
@@ -581,8 +569,8 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 break;
             }
 
-            case R.id.deleted_entry: {
-                mDeletedCheckBox.toggle();
+            case R.id.delete_button: {
+                // TODO - toggle delete save and exit
                 break;
             }
 
@@ -655,9 +643,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         mAllDayCheckBox = (CheckBox) getView().findViewById(R.id.is_all_day);
 
         mCompleteEntry = getView().findViewById(R.id.completed_entry);
-        mDeletedEntry = getView().findViewById(R.id.deleted_entry);
-        mDeletedDivider = getView().findViewById(R.id.deleted_divider);
-        mDeletedCheckBox = (CheckBox) getView().findViewById(R.id.deleted_entry_checkbox);
+        mDeleteButton = (Button) getView().findViewById(R.id.delete_button);
         mUpdateCalendarEntry = getView().findViewById(R.id.gcal_entry);
 
         mContextContainer = (ViewGroup) getView().findViewById(R.id.context_items_container);
@@ -688,8 +674,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         mCompleteEntry.setOnFocusChangeListener(this);
         mCompletedCheckBox = (CheckBox) mCompleteEntry.findViewById(R.id.completed_entry_checkbox);
 
-        mDeletedEntry.setOnClickListener(this);
-        mDeletedEntry.setOnFocusChangeListener(this);
+        mDeleteButton.setOnClickListener(this);
 
         mUpdateCalendarEntry.setOnClickListener(this);
         mUpdateCalendarEntry.setOnFocusChangeListener(this);
