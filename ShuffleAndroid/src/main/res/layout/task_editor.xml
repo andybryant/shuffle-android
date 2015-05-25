@@ -52,7 +52,7 @@
                     >
 
                     <ImageView
-                        android:src="@drawable/ic_details"
+                        android:src="@drawable/ic_drawer_folder"
                         style="@style/EditEntryIcon"
                         />
 
@@ -98,36 +98,27 @@
                 android:orientation="vertical"
                 >
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+
+                <EditText
+                    android:id="@+id/description"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
+                    android:layout_marginLeft="@dimen/keyline_1"
+                    android:layout_marginRight="16dp"
+                    android:hint="@string/description_title"
+                    android:tag="bold"
+                    android:capitalize="sentences"
+                    android:autoText="true"
+                    android:background="@null"
+                    android:maxLength="450"
+                    android:inputType="textMultiLine|textAutoCorrect|textCapSentences">
 
-                    <ImageView
-                        android:src="@drawable/ic_details"
-                        style="@style/EditEntryIcon"
-                        />
+                    <requestFocus />
+                </EditText>
 
-                    <EditText
-                        android:id="@+id/description"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="16dp"
-                        android:hint="@string/description_title"
-                        android:tag="regular"
-                        android:capitalize="sentences"
-                        android:autoText="true"
-                        android:background="@null"
-                        android:maxLength="450"
-                        android:inputType="textMultiLine|textAutoCorrect|textCapSentences">
-
-                        <requestFocus />
-                    </EditText>
-
-                </LinearLayout>
-
-                <View style="@style/EditDivider" />
+                <View style="@style/EditDivider"
+                    android:layout_marginLeft="0dp"
+                    />
 
             </LinearLayout>
 
@@ -163,6 +154,7 @@
                             android:layout_centerVertical="true"
                             android:layout_alignParentRight="true"
                             android:layout_marginLeft="4dip"
+                            android:layout_marginRight="16dip"
                             android:src="@drawable/ic_menu_add_field_holo_light"
                             android:background="@drawable/blank" />
 
@@ -236,138 +228,197 @@
             </LinearLayout>
 
             <LinearLayout
-                android:padding="4dip"
+                android:id="@+id/defer_row"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/keyline_1"
+                android:minHeight="72dip"
+                android:orientation="horizontal"
+                android:background="@android:color/holo_orange_dark"
+                >
+
+                <Button
+                    android:id="@+id/defer"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:tag="regular"
+                    android:text="@string/not_deferred"
+                    android:textColor="@color/white"
+                    style="?android:attr/borderlessButtonStyle"
+                    />
+
+                <ImageButton
+                    android:id="@+id/clear_defer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dip"
+                    android:src="@drawable/ic_menu_remove_field_holo_light"
+                    android:background="@drawable/blank" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/due_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="72dip"
+                android:orientation="vertical"
+                >
 
                 <LinearLayout
-                    android:id="@+id/scheduling_section"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="3dip"
-                    android:orientation="vertical">
+                    android:orientation="horizontal"
+                    >
+
+                    <ImageView
+                        android:src="@drawable/ic_schedule"
+                        style="@style/EditEntryIcon"
+                        />
 
                     <LinearLayout
-                        android:id="@+id/scheduling_entry"
-                        android:layout_width="fill_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingRight="?android:attr/scrollbarSize"
-                        android:minHeight="?android:attr/listPreferredItemHeight"
-                        android:background="@drawable/list_selector_background"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:focusable="true"
-                        android:clickable="true">
+                        android:orientation="vertical">
 
-                        <RelativeLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="14dip"
-                            android:layout_marginTop="6dip"
-                            android:layout_marginBottom="6dip"
-                            android:layout_weight="1"
-                            android:duplicateParentState="true">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
-                            <TextView
-                                android:id="@+id/scheduling_label"
+                            <Button
+                                android:id="@+id/due_date"
+                                android:layout_width="0dp"
+                                android:layout_weight="7"
+                                android:layout_height="wrap_content"
+                                android:tag="regular"
+                                android:text="@string/not_due"
+                                style="?android:attr/borderlessButtonStyle"
+                                />
+
+                            <Button
+                                android:id="@+id/due_time"
+                                android:layout_width="0dp"
+                                android:layout_weight="4"
+                                android:layout_height="wrap_content"
+                                android:tag="regular"
+                                style="?android:attr/borderlessButtonStyle"
+                                />
+
+                            <ImageButton
+                                android:id="@+id/clear_due"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:duplicateParentState="true"
-                                android:text="@string/scheduling_title"
-                                android:paddingLeft="0dp"
-                                style="@style/LabelTextViewStyle" />
+                                android:layout_marginLeft="4dip"
+                                android:src="@drawable/ic_menu_remove_field_holo_light"
+                                android:background="@drawable/blank" />
 
-                            <TextView
-                                android:id="@+id/scheduling_detail"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/scheduling_label"
-                                android:layout_alignLeft="@+id/scheduling_label"
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:textColor="@color/label_color"
-                                android:maxLines="2"
-                                android:duplicateParentState="true" />
-
-                        </RelativeLayout>
-
-                        <ImageButton
-                            android:id="@+id/expand"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:duplicateParentState="true"
-                            android:src="@drawable/ic_expand_large_holo_light"
-                            android:background="@drawable/blank" />
-
-                        <ImageButton
-                            android:id="@+id/collapse"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:duplicateParentState="true"
-                            android:visibility="gone"
-                            android:src="@drawable/ic_collapse_large_holo_light"
-                            android:background="@drawable/blank" />
+                        </LinearLayout>
 
                     </LinearLayout>
 
-                    <include
-                        android:id="@+id/scheduling_extra"
-                        layout="@layout/task_editor_scheduling"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
-
                 </LinearLayout>
 
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dip"
-                    android:background="@android:drawable/divider_horizontal_bright" />
+                <View style="@style/EditDivider" />
 
-                <LinearLayout
-                    android:id="@+id/completed_entry"
-                    android:layout_width="fill_parent"
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/gcal_entry"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="?android:attr/scrollbarSize"
+                android:minHeight="?android:attr/listPreferredItemHeight"
+                android:background="@drawable/list_selector_background"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:focusable="true"
+                android:clickable="true">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingRight="?android:attr/scrollbarSize"
-                    android:minHeight="?android:attr/listPreferredItemHeight"
-                    android:background="@drawable/list_selector_background"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:focusable="true"
-                    android:clickable="true">
+                    android:layout_marginLeft="8dip"
+                    android:layout_marginTop="6dip"
+                    android:layout_marginBottom="6dip"
+                    android:layout_weight="1"
+                    android:duplicateParentState="true">
 
-                    <RelativeLayout
+                    <TextView
+                        android:id="@+id/gcal_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dip"
-                        android:layout_marginTop="6dip"
-                        android:layout_marginBottom="6dip"
-                        android:layout_weight="1"
-                        android:duplicateParentState="true">
+                        android:singleLine="true"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/label_color"
+                        android:ellipsize="marquee"
+                        android:fadingEdge="horizontal"
+                        android:duplicateParentState="true"
+                        android:text="@string/add_to_gcal_title" />
 
-                        <TextView
-                            android:id="@+id/label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:singleLine="true"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:textColor="@color/label_color"
-                            android:ellipsize="marquee"
-                            android:fadingEdge="horizontal"
-                            android:duplicateParentState="true"
-                            android:text="@string/completed_title" />
+                    <TextView
+                        android:id="@+id/gcal_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/gcal_label"
+                        android:layout_alignLeft="@+id/gcal_label"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/label_color"
+                        android:maxLines="2"
+                        android:duplicateParentState="true"
+                        android:text="@string/add_to_gcal_detail" />
 
-                    </RelativeLayout>
+                </RelativeLayout>
 
-                    <CheckBox
+                <CheckBox
+                    android:id="@+id/update_calendar_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:focusable="false"
+                    android:clickable="false" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/completed_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="72dip"
+                android:orientation="vertical"
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+
+                    <ImageView
+                        android:src="@drawable/ic_menu_incomplete"
+                        style="@style/EditEntryIcon"
+                        android:layout_alignParentLeft="true"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginLeft="72dp"
+                        android:tag="regular"
+                        android:text="@string/complete"
+                        />
+
+                    <android.support.v7.widget.SwitchCompat
                         android:id="@+id/completed_entry_checkbox"
                         android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:focusable="false"
-                        android:clickable="false" />
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="16dp"
+                        />
 
-                </LinearLayout>
+                </RelativeLayout>
 
+                <View style="@style/EditDivider" />
 
             </LinearLayout>
 

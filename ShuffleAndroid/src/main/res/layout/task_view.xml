@@ -69,6 +69,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_toLeftOf="@+id/status"
                 android:layout_marginLeft="@dimen/keyline_2"
+                android:layout_marginBottom="20dip"
                 android:tag="regular"
                 android:autoLink="all"
                 android:textColor="@color/white"

@@ -96,6 +96,7 @@
     <string name="completed">Completed</string>
     <string name="incomplete">Incomplete</string>
     <string name="none_empty">None</string>
+    <string name="no_project">No project</string>
     <string name="undefined">None</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
@@ -199,6 +200,8 @@ allow that, you can turn it off under Settings.</string>
     <string name="show_from_title">On hold until</string>
     <string name="due_date_title">Due</string>
     <string name="due_title">Due</string>
+    <string name="not_deferred">Not on hold</string>
+    <string name="not_due">No due date</string>
     <string name="all_day_title">All day</string>
     <string name="reminders_title">Reminders</string>
     <string name="add_to_gcal_title">Add to Calendar</string>

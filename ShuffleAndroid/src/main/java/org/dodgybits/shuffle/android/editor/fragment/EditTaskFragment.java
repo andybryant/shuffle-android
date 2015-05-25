@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -74,25 +75,18 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     private String[] mProjectNames;
     private long[] mProjectIds;
 
-    private boolean mSchedulingExpanded;
-    private TextView mShowFromDateButton;
-    private TextView mShowFromTimeButton;
-    private TextView mDueDateButton;
-    private TextView mDueTimeButton;
-    private CheckBox mAllDayCheckBox;
+    private View mDeferredRow;
+    private Button mDeferredEditButton;
+    private ImageButton mDeferredClearButton;
+    private Button mDueEditDateButton;
+    private Button mDueEditTimeButton;
+    private ImageButton mDueClearButton;
 
-    private boolean mShowFromDateVisible;
-    private Time mShowFromTime;
-    private boolean mDueDateVisible;
+    private Time mDeferredTime;
     private Time mDueTime;
 
-    private View mSchedulingExtra;
-    private TextView mSchedulingDetail;
-    private View mExpandButton;
-    private View mCollapseButton;
-
     private View mCompleteEntry;
-    private CheckBox mCompletedCheckBox;
+    private CompoundButton mCompletedCheckBox;
 
     private Button mDeleteButton;
 
@@ -109,7 +103,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        mShowFromTime = new Time();
+        mDeferredTime = new Time();
         mDueTime = new Time();
 
         super.onActivityCreated(savedInstanceState);
@@ -176,11 +170,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         mDeleteButton.setVisibility(View.GONE);
 
         populateWhen();
-
-        setSchedulingVisibility(false);
-
-        mShowFromTimeButton.setVisibility(View.VISIBLE);
-        mDueTimeButton.setVisibility(View.VISIBLE);
         updateCalendarPanel();
     }
 
@@ -210,15 +199,15 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
         boolean allDay = task.isAllDay();
         if (allDay && task.getStartDate() != 0L) {
-            String tz = mShowFromTime.timezone;
-            mShowFromTime.timezone = Time.TIMEZONE_UTC;
-            mShowFromTime.set(task.getStartDate());
-            mShowFromTime.timezone = tz;
+            String tz = mDeferredTime.timezone;
+            mDeferredTime.timezone = Time.TIMEZONE_UTC;
+            mDeferredTime.set(task.getStartDate());
+            mDeferredTime.timezone = tz;
 
             // Calling normalize to calculate isDst
-            mShowFromTime.normalize(true);
+            mDeferredTime.normalize(true);
         } else {
-            mShowFromTime.set(task.getStartDate());
+            mDeferredTime.set(task.getStartDate());
         }
 
         if (allDay && task.getDueDate() != 0L) {
@@ -234,18 +223,8 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         }
 
         populateWhen();
-
-        // show scheduling section if either start or due date are set
-        mSchedulingExpanded = mShowFromDateVisible || mDueDateVisible;
-        setSchedulingVisibility(mSchedulingExpanded);
-
-        mAllDayCheckBox.setChecked(allDay);
-        updateTimeVisibility(!allDay);
-
         mCompletedCheckBox.setChecked(task.isComplete());
-
         mDeleteButton.setText(task.isDeleted() ? R.string.restore_button_title : R.string.delete_completed_button_title);
-
         updateCalendarPanel();
     }
 
@@ -261,7 +240,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         final long modified = System.currentTimeMillis();
         final String details = mDetailsWidget.getText().toString();
         final Id projectId = getSpinnerSelectedId(mProjectSpinner, mProjectIds);
-        final boolean allDay = mAllDayCheckBox.isChecked();
         final boolean complete = mCompletedCheckBox.isChecked();
         final boolean active = true;
 
@@ -279,11 +257,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         if (!ObjectUtils.equals(projectId, builder.getProjectId())) {
             builder.setProjectId(projectId);
             changeSet.projectChanged();
-            changed = true;
-        }
-        if (allDay != builder.isAllDay()) {
-            builder.setAllDay(allDay);
-            changeSet.allDayChanged();
             changed = true;
         }
         if (complete != builder.isComplete()) {
@@ -328,36 +301,14 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             }
         }
 
-        if (allDay) {
-            // Reset start and end time, increment the monthDay by 1, and set
-            // the timezone to UTC, as required for all-day events.
-            if (mShowFromDateVisible) {
-                timezone = Time.TIMEZONE_UTC;
-                mShowFromTime.timezone = timezone;
-                mShowFromTime.hour = 0;
-                mShowFromTime.minute = 0;
-                mShowFromTime.second = 0;
-                showFromMillis = mShowFromTime.toMillis(true);
-            }
+        if (!Time.isEpoch(mDeferredTime)) {
+            mDeferredTime.timezone = timezone;
+            showFromMillis = mDeferredTime.toMillis(true);
+        }
 
-            if (mDueDateVisible) {
-                timezone = Time.TIMEZONE_UTC;
-                mDueTime.timezone = timezone;
-                mDueTime.hour = 0;
-                mDueTime.minute = 0;
-                mDueTime.second = 0;
-                dueMillis = mDueTime.toMillis(true);
-            }
-        } else {
-            if (mShowFromDateVisible && !Time.isEpoch(mShowFromTime)) {
-                mShowFromTime.timezone = timezone;
-                showFromMillis = mShowFromTime.toMillis(true);
-            }
-
-            if (mDueDateVisible && !Time.isEpoch(mDueTime)) {
-                mDueTime.timezone = timezone;
-                dueMillis = mDueTime.toMillis(true);
-            }
+        if (!Time.isEpoch(mDueTime)) {
+            mDueTime.timezone = timezone;
+            dueMillis = mDueTime.toMillis(true);
         }
 
         final int order;
@@ -394,21 +345,14 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             long startMillis = showFromMillis > 0L ? showFromMillis : dueMillis;
             long endMillis = dueMillis > 0L ? dueMillis : showFromMillis;
 
-            if (allDay) {
-                if (endMillis < startMillis) {
-                    endMillis = startMillis;
-                }
-                endMillis += DateUtils.DAY_IN_MILLIS;
-            } else {
-                if (endMillis < startMillis + DateUtils.HOUR_IN_MILLIS) {
-                    endMillis = startMillis + DateUtils.HOUR_IN_MILLIS;
-                }
+            if (endMillis < startMillis + DateUtils.HOUR_IN_MILLIS) {
+                endMillis = startMillis + DateUtils.HOUR_IN_MILLIS;
             }
 
             Uri calEntryUri = addOrUpdateCalendarEvent(
                     eventId, description, details,
                     projectId, timezone, startMillis,
-                    endMillis, allDay);
+                    endMillis, mOriginalItem != null && mOriginalItem.isAllDay());
             if (calEntryUri != null) {
                 eventId = Id.create(ContentUris.parseId(calEntryUri));
                 mNextIntent = new Intent(Intent.ACTION_EDIT, calEntryUri);
@@ -540,6 +484,12 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     }
 
     @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        // TODO clear buttons clicked
+        Log.d(TAG, "Button " + buttonView + " checked: " + isChecked);
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.context_add: {
@@ -559,12 +509,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 break;
             }
 
-            case R.id.scheduling_entry: {
-                toggleSchedulingSection();
-                break;
-            }
-
-            case R.id.completed_entry: {
+            case R.id.completed_entry_checkbox: {
                 mCompletedCheckBox.toggle();
                 break;
             }
@@ -580,16 +525,14 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 break;
             }
 
-            case R.id.clear_from_date: {
-                mAllDayCheckBox.setChecked(false);
-                mShowFromTime.set(0L);
+            case R.id.clear_defer: {
+                mDeferredTime.set(0L);
                 populateWhen();
                 updateCalendarPanel();
                 break;
             }
 
-            case R.id.clear_due_date: {
-                mAllDayCheckBox.setChecked(false);
+            case R.id.clear_due: {
                 mDueTime.set(0L);
                 populateWhen();
                 updateCalendarPanel();
@@ -599,20 +542,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             default:
                 super.onClick(v);
                 break;
-        }
-    }
-
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        updateTimeVisibility(!isChecked);
-    }
-
-    private void updateTimeVisibility(boolean showTime) {
-        if (showTime) {
-            mShowFromTimeButton.setVisibility(View.VISIBLE);
-            mDueTimeButton.setVisibility(View.VISIBLE);
-        } else {
-            mShowFromTimeButton.setVisibility(View.GONE);
-            mDueTimeButton.setVisibility(View.GONE);
         }
     }
 
@@ -636,13 +565,14 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         mProjectSpinner = (Spinner) getView().findViewById(R.id.project);
         mDetailsWidget = (EditText) getView().findViewById(R.id.details);
 
-        mShowFromDateButton = (TextView) getView().findViewById(R.id.show_from_date);
-        mShowFromTimeButton = (TextView) getView().findViewById(R.id.show_from_time);
-        mDueDateButton = (TextView) getView().findViewById(R.id.due_date);
-        mDueTimeButton = (TextView) getView().findViewById(R.id.due_time);
-        mAllDayCheckBox = (CheckBox) getView().findViewById(R.id.is_all_day);
+        mDeferredRow = getView().findViewById(R.id.defer_row);
+        mDeferredEditButton = (Button) getView().findViewById(R.id.defer);
+        mDeferredClearButton = (ImageButton) getView().findViewById(R.id.clear_defer);
+        mDueEditDateButton = (Button) getView().findViewById(R.id.due_date);
+        mDueEditTimeButton = (Button) getView().findViewById(R.id.due_time);
+        mDueClearButton = (ImageButton) getView().findViewById(R.id.clear_due);
 
-        mCompleteEntry = getView().findViewById(R.id.completed_entry);
+        mCompleteEntry = getView().findViewById(R.id.completed_entry_checkbox);
         mDeleteButton = (Button) getView().findViewById(R.id.delete_button);
         mUpdateCalendarEntry = getView().findViewById(R.id.gcal_entry);
 
@@ -672,7 +602,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
         mCompleteEntry.setOnClickListener(this);
         mCompleteEntry.setOnFocusChangeListener(this);
-        mCompletedCheckBox = (CheckBox) mCompleteEntry.findViewById(R.id.completed_entry_checkbox);
+        mCompletedCheckBox = (SwitchCompat) mCompleteEntry.findViewById(R.id.completed_entry_checkbox);
 
         mDeleteButton.setOnClickListener(this);
 
@@ -682,29 +612,12 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         mCalendarLabel = (TextView) mUpdateCalendarEntry.findViewById(R.id.gcal_label);
         mCalendarDetail = (TextView) mUpdateCalendarEntry.findViewById(R.id.gcal_detail);
 
-        mShowFromDateButton.setOnClickListener(new DateClickListener(mShowFromTime));
-        mShowFromTimeButton.setOnClickListener(new TimeClickListener(mShowFromTime));
-        View clearShowFromButton = getView().findViewById(R.id.clear_from_date);
-        clearShowFromButton.setOnClickListener(this);
+        mDeferredEditButton.setOnClickListener(new DateClickListener(mDeferredTime));
+        mDeferredClearButton.setOnClickListener(this);
 
-        mDueDateButton.setOnClickListener(new DateClickListener(mDueTime));
-        mDueTimeButton.setOnClickListener(new TimeClickListener(mDueTime));
-        View clearDueButton = getView().findViewById(R.id.clear_due_date);
-        clearDueButton.setOnClickListener(this);
-
-        mAllDayCheckBox.setOnCheckedChangeListener(this);
-
-        ViewGroup schedulingSection = (ViewGroup) getView().findViewById(R.id.scheduling_section);
-        View schedulingEntry = getView().findViewById(R.id.scheduling_entry);
-        schedulingEntry.setOnClickListener(this);
-        schedulingEntry.setOnFocusChangeListener(this);
-
-        mSchedulingExtra = schedulingSection.findViewById(R.id.scheduling_extra);
-        mExpandButton = schedulingEntry.findViewById(R.id.expand);
-        mCollapseButton = schedulingEntry.findViewById(R.id.collapse);
-        mSchedulingDetail = (TextView) schedulingEntry.findViewById(R.id.scheduling_detail);
-        mSchedulingExpanded = mSchedulingExtra.getVisibility() == View.VISIBLE;
-
+        mDueEditDateButton.setOnClickListener(new DateClickListener(mDueTime));
+        mDueEditTimeButton.setOnClickListener(new TimeClickListener(mDueTime));
+        mDueClearButton.setOnClickListener(this);
     }
 
     private void addNewContext(Id contextId) {
@@ -782,7 +695,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         mProjectIds = new long[arraySize];
         mProjectIds[0] = 0;
         mProjectNames = new String[arraySize];
-        mProjectNames[0] = getText(R.string.none_empty).toString();
+        mProjectNames[0] = getText(R.string.no_project).toString();
         for (int i = 1; i < arraySize; i++) {
             projectCursor.moveToNext();
             mProjectIds[i] = projectCursor.getLong(0);
@@ -830,65 +743,37 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         return name;
     }
 
-    private void toggleSchedulingSection() {
-        mSchedulingExpanded = !mSchedulingExpanded;
-        setSchedulingVisibility(mSchedulingExpanded);
-    }
-
-    private void setSchedulingVisibility(boolean visible) {
-        if (visible) {
-            mSchedulingExtra.setVisibility(View.VISIBLE);
-            mExpandButton.setVisibility(View.GONE);
-            mCollapseButton.setVisibility(View.VISIBLE);
-            mSchedulingDetail.setText(R.string.scheduling_expanded);
-        } else {
-            mSchedulingExtra.setVisibility(View.GONE);
-            mExpandButton.setVisibility(View.VISIBLE);
-            mCollapseButton.setVisibility(View.GONE);
-            mSchedulingDetail.setText(R.string.scheduling_collapsed);
-        }
-    }
-
     private void populateWhen() {
-        mShowFromDateVisible = !Time.isEpoch(mShowFromTime);
-        mDueDateVisible = !Time.isEpoch(mDueTime);
+        boolean showDeferred = !Time.isEpoch(mDeferredTime);
+        long deferredMillis = mDeferredTime.toMillis(false /* use isDst */);
+        if (showDeferred) {
+            mDeferredRow.setVisibility(View.VISIBLE);
+            // TODO - format properly
+            mDeferredEditButton.setText("Due " + formatDate(deferredMillis) +
+                    " " + formatTime(deferredMillis));
+        } else {
+            mDeferredRow.setVisibility(View.GONE);
+        }
 
-        long showFromMillis = mShowFromTime.toMillis(false /* use isDst */);
         long dueMillis = mDueTime.toMillis(false /* use isDst */);
-        setDate(mShowFromDateButton, showFromMillis, mShowFromDateVisible);
-        setDate(mDueDateButton, dueMillis, mDueDateVisible);
-
-        setTime(mShowFromTimeButton, showFromMillis, mShowFromDateVisible);
-        setTime(mDueTimeButton, dueMillis, mDueDateVisible);
+        mDueEditDateButton.setText(formatDate(dueMillis));
+        mDueEditTimeButton.setText(formatTime(dueMillis));
     }
 
-    private void setDate(TextView view, long millis, boolean showValue) {
-        CharSequence value;
-        if (showValue) {
-            int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR |
-                    DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_ABBREV_MONTH |
-                    DateUtils.FORMAT_ABBREV_WEEKDAY;
-            value = DateUtils.formatDateTime(getActivity(), millis, flags);
-        } else {
-            value = "";
+    private CharSequence formatDate(long millis) {
+        int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR |
+                DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_ABBREV_MONTH |
+                DateUtils.FORMAT_ABBREV_WEEKDAY;
+        return DateUtils.formatDateTime(getActivity(), millis, flags);
+    }
+
+    private CharSequence formatTime(long millis) {
+        int flags = DateUtils.FORMAT_SHOW_TIME;
+        if (DateFormat.is24HourFormat(getActivity())) {
+            flags |= DateUtils.FORMAT_24HOUR;
         }
-        view.setText(value);
+        return DateUtils.formatDateTime(getActivity(), millis, flags);
     }
-
-    private void setTime(TextView view, long millis, boolean showValue) {
-        CharSequence value;
-        if (showValue) {
-            int flags = DateUtils.FORMAT_SHOW_TIME;
-            if (DateFormat.is24HourFormat(getActivity())) {
-                flags |= DateUtils.FORMAT_24HOUR;
-            }
-            value = DateUtils.formatDateTime(getActivity(), millis, flags);
-        } else {
-            value = "";
-        }
-        view.setText(value);
-    }
-
 
     private void updateCalendarPanel() {
         boolean enabled = true;
@@ -896,7 +781,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 mOriginalItem.getCalendarEventId().isInitialised()) {
             mCalendarLabel.setText(getString(R.string.update_gcal_title));
             mCalendarDetail.setText(getString(R.string.update_gcal_detail));
-        } else if (mDueDateVisible || mShowFromDateVisible) {
+        } else if (!Time.isEpoch(mDueTime)) {
             mCalendarLabel.setText(getString(R.string.add_to_gcal_title));
             mCalendarDetail.setText(getString(R.string.add_to_gcal_detail));
         } else {
@@ -931,7 +816,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             // Cache the member variables locally to avoid inner class overhead.
-            Time showFromTime = mShowFromTime;
+            Time showFromTime = mDeferredTime;
             Time dueTime = mDueTime;
 
             // Cache the start and due millis so that we limit the number
@@ -939,29 +824,29 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             // expensive.
             long showFromMillis;
             long dueMillis;
-            if (mView == mShowFromTimeButton) {
-                // The show from time was changed.
-
-                if (Time.isEpoch(showFromTime)) {
-                    // time wasn't set - set to default to pick up default date values
-                    updateToDefault(showFromTime);
-                }
-
-                int hourDuration = dueTime.hour - showFromTime.hour;
-                int minuteDuration = dueTime.minute - showFromTime.minute;
-
-                showFromTime.hour = hourOfDay;
-                showFromTime.minute = minute;
-                showFromMillis = showFromTime.normalize(true);
-                mShowFromDateVisible = true;
-
-                if (mDueDateVisible) {
-                    // Also update the due time to keep the duration constant.
-                    dueTime.hour = hourOfDay + hourDuration;
-                    dueTime.minute = minute + minuteDuration;
-                }
-                dueMillis = dueTime.normalize(true);
-            } else {
+//            if (mView == mShowFromTimeButton) {
+//                // The show from time was changed.
+//
+//                if (Time.isEpoch(showFromTime)) {
+//                    // time wasn't set - set to default to pick up default date values
+//                    updateToDefault(showFromTime);
+//                }
+//
+//                int hourDuration = dueTime.hour - showFromTime.hour;
+//                int minuteDuration = dueTime.minute - showFromTime.minute;
+//
+//                showFromTime.hour = hourOfDay;
+//                showFromTime.minute = minute;
+//                showFromMillis = showFromTime.normalize(true);
+//                mShowFromDateVisible = true;
+//
+//                if (mDueDateVisible) {
+//                    // Also update the due time to keep the duration constant.
+//                    dueTime.hour = hourOfDay + hourDuration;
+//                    dueTime.minute = minute + minuteDuration;
+//                }
+//                dueMillis = dueTime.normalize(true);
+//            } else {
                 // The due time was changed.
 
                 if (Time.isEpoch(dueTime)) {
@@ -973,23 +858,19 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 dueTime.hour = hourOfDay;
                 dueTime.minute = minute;
                 dueMillis = dueTime.normalize(true);
-                mDueDateVisible = true;
 
-                if (mShowFromDateVisible) {
-                    // Do not allow an event to have a due time before the show from time.
-                    if (dueTime.before(showFromTime)) {
-                        // set show from to a day before the due date
-                        showFromMillis = dueMillis - DateUtils.DAY_IN_MILLIS;
-                        showFromTime.set(showFromMillis);
-                    }
-                }
-            }
+//                if (mShowFromDateVisible) {
+//                    // Do not allow an event to have a due time before the show from time.
+//                    if (dueTime.before(showFromTime)) {
+//                        // set show from to a day before the due date
+//                        showFromMillis = dueMillis - DateUtils.DAY_IN_MILLIS;
+//                        showFromTime.set(showFromMillis);
+//                    }
+//                }
+//            }
 
-            // update all 4 buttons in case visibility has changed
-            setDate(mShowFromDateButton, showFromMillis, mShowFromDateVisible);
-            setTime(mShowFromTimeButton, showFromMillis, mShowFromDateVisible);
-            setDate(mDueDateButton, dueMillis, mDueDateVisible);
-            setTime(mDueTimeButton, dueMillis, mDueDateVisible);
+            mDueEditDateButton.setText(formatDate(dueMillis));
+            mDueEditTimeButton.setTag(formatTime(dueMillis));
             updateCalendarPanel();
         }
 
@@ -1026,7 +907,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
         public void onDateSet(DatePicker view, int year, int month, int monthDay) {
             // Cache the member variables locally to avoid inner class overhead.
-            Time showFromTime = mShowFromTime;
+            Time showFromTime = mDeferredTime;
             Time dueTime = mDueTime;
 
             // Cache the show from and due millis so that we limit the number
@@ -1034,32 +915,32 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             // expensive.
             long showFromMillis;
             long dueMillis;
-            if (mView == mShowFromDateButton) {
-                // The show from date was changed.
-
-                if (Time.isEpoch(showFromTime)) {
-                    // time wasn't set - set to default to pick up default time values
-                    updateToDefault(showFromTime);
-                }
-
-                int yearDuration = dueTime.year - showFromTime.year;
-                int monthDuration = dueTime.month - showFromTime.month;
-                int monthDayDuration = dueTime.monthDay - showFromTime.monthDay;
-
-                showFromTime.year = year;
-                showFromTime.month = month;
-                showFromTime.monthDay = monthDay;
-                showFromMillis = showFromTime.normalize(true);
-                mShowFromDateVisible = true;
-
-                if (mDueDateVisible) {
-                    // Also update the end date to keep the duration constant.
-                    dueTime.year = year + yearDuration;
-                    dueTime.month = month + monthDuration;
-                    dueTime.monthDay = monthDay + monthDayDuration;
-                }
-                dueMillis = dueTime.normalize(true);
-            } else {
+//            if (mView == mShowFromDateButton) {
+//                // The show from date was changed.
+//
+//                if (Time.isEpoch(showFromTime)) {
+//                    // time wasn't set - set to default to pick up default time values
+//                    updateToDefault(showFromTime);
+//                }
+//
+//                int yearDuration = dueTime.year - showFromTime.year;
+//                int monthDuration = dueTime.month - showFromTime.month;
+//                int monthDayDuration = dueTime.monthDay - showFromTime.monthDay;
+//
+//                showFromTime.year = year;
+//                showFromTime.month = month;
+//                showFromTime.monthDay = monthDay;
+//                showFromMillis = showFromTime.normalize(true);
+//                mShowFromDateVisible = true;
+//
+//                if (mDueDateVisible) {
+//                    // Also update the end date to keep the duration constant.
+//                    dueTime.year = year + yearDuration;
+//                    dueTime.month = month + monthDuration;
+//                    dueTime.monthDay = monthDay + monthDayDuration;
+//                }
+//                dueMillis = dueTime.normalize(true);
+//            } else {
                 // The due date was changed.
 
                 if (Time.isEpoch(dueTime)) {
@@ -1072,23 +953,19 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 dueTime.month = month;
                 dueTime.monthDay = monthDay;
                 dueMillis = dueTime.normalize(true);
-                mDueDateVisible = true;
 
-                if (mShowFromDateVisible) {
-                    // Do not allow an event to have a due time before the show from time.
-                    if (dueTime.before(showFromTime)) {
-                        // set show from to a day before the due date
-                        showFromMillis = dueMillis - DateUtils.DAY_IN_MILLIS;
-                        showFromTime.set(showFromMillis);
-                    }
-                }
-            }
+//                if (mShowFromDateVisible) {
+//                    // Do not allow an event to have a due time before the show from time.
+//                    if (dueTime.before(showFromTime)) {
+//                        // set show from to a day before the due date
+//                        showFromMillis = dueMillis - DateUtils.DAY_IN_MILLIS;
+//                        showFromTime.set(showFromMillis);
+//                    }
+//                }
+//            }
 
-            // update all 4 buttons in case visibility has changed
-            setDate(mShowFromDateButton, showFromMillis, mShowFromDateVisible);
-            setTime(mShowFromTimeButton, showFromMillis, mShowFromDateVisible);
-            setDate(mDueDateButton, dueMillis, mDueDateVisible);
-            setTime(mDueTimeButton, dueMillis, mDueDateVisible);
+            mDueEditDateButton.setText(formatDate(dueMillis));
+            mDueEditTimeButton.setTag(formatTime(dueMillis));
             updateCalendarPanel();
         }
 
