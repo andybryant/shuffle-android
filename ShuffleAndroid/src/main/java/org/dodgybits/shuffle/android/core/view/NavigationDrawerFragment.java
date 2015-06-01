@@ -39,6 +39,8 @@ import java.util.Map;
  * Fragment used for managing interactions for and presentation of a navigation drawer.
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
+ *
+ * @deprecated no longer used - delete
  */
 public class NavigationDrawerFragment extends RoboFragment {
     private static final String TAG = "NavDrawerFragment";
@@ -93,12 +95,6 @@ public class NavigationDrawerFragment extends RoboFragment {
         mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        return inflater.inflate(
-                R.layout.fragment_navigation_drawer, container, false);
-    }
 
     @Override
     public void onPause() {
@@ -125,13 +121,6 @@ public class NavigationDrawerFragment extends RoboFragment {
 
         mDrawerLayout.setStatusBarBackgroundColor(
                 getResources().getColor(R.color.theme_primary_dark));
-
-        ScrimInsetsScrollView navDrawer = (ScrimInsetsScrollView)
-                mDrawerLayout.findViewById(R.id.navdrawer);
-
-        if (navDrawer != null) {
-            // TODO setup account view
-        }
 
         Toolbar actionBarToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_actionbar);
         if (actionBarToolbar != null) {
@@ -248,7 +237,6 @@ public class NavigationDrawerFragment extends RoboFragment {
 
         Log.d(TAG, "Populating nav drawer");
 
-        mDrawerItemsListContainer = (ViewGroup) getView().findViewById(R.id.navdrawer_items_list);
         if (mDrawerItemsListContainer == null) {
             return;
         }

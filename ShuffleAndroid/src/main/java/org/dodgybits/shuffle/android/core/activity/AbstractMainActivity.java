@@ -3,6 +3,7 @@ package org.dodgybits.shuffle.android.core.activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -21,7 +22,6 @@ import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.core.view.MenuHandler;
-import org.dodgybits.shuffle.android.core.view.NavigationDrawerFragment;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -55,10 +55,8 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
     // Primary toolbar and drawer toggle
     protected Toolbar mActionBarToolbar;
 
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-     */
-    private NavigationDrawerFragment mNavigationDrawerFragment;
+    private DrawerLayout mDrawerLayout;
+    private NavigationView mNavigationView;
 
     /**
      * The application can be started from the following entry points:
@@ -113,19 +111,18 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                drawerLayout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_drawer);
+        mNavigationView.setNavigationItemSelectedListener(mMenuHandler);
 
         mEventManager.fire(new OnCreatedEvent());
     }
 
-    protected boolean showHome(Location location) {
-        return false;
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        updateHomeIcon();
     }
 
     protected int contentView(boolean isTablet) {
@@ -158,8 +155,8 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (mNavigationDrawerFragment.isNavDrawerOpen()) {
-            mNavigationDrawerFragment.closeNavDrawer();
+        if (mDrawerLayout.isDrawerOpen(mNavigationView)) {
+            mDrawerLayout.closeDrawer(mNavigationView);
         } else if (!handleBackPress()) {
             super.onBackPressed();
         }
@@ -172,8 +169,7 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        boolean drawerOpen = mNavigationDrawerFragment != null && mNavigationDrawerFragment.isDrawerOpen();
-        return mMenuHandler.onCreateOptionsMenu(menu, getMenuInflater(), drawerOpen);
+        return mMenuHandler.onCreateOptionsMenu(menu, getMenuInflater());
     }
 
     @Override
@@ -184,11 +180,28 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home && !UiUtilities.showHomeAsUp(getResources(), mLocation)) {
+            mDrawerLayout.openDrawer(mNavigationView);
+            return true;
+        }
+
         return mMenuHandler.onOptionsItemSelected(item);
     }
 
     private void onViewChanged(@Observes LocationUpdatedEvent event) {
         mLocation = event.getLocation();
+        updateHomeIcon();
+    }
+
+    private void updateHomeIcon() {
+        Toolbar actionBarToolbar = (Toolbar)findViewById(R.id.toolbar_actionbar);
+        if (actionBarToolbar != null) {
+            if (UiUtilities.showHomeAsUp(getResources(), mLocation)) {
+                actionBarToolbar.setNavigationIcon(R.drawable.ic_up);
+            } else {
+                actionBarToolbar.setNavigationIcon(R.drawable.ic_drawer);
+            }
+        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.dodgybits.shuffle.android.core.view;
 
 import android.app.Activity;
+import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -22,7 +23,7 @@ import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
 
 @ContextSingleton
-public class MenuHandler {
+public class MenuHandler implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "MenuHandler";
 
     // result codes
@@ -49,7 +50,7 @@ public class MenuHandler {
         mActivity = (AppCompatActivity) activity;
     }
 
-    public boolean onCreateOptionsMenu(Menu menu, MenuInflater inflater, boolean drawerOpen) {
+    public boolean onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if (mLocation == null) {
             return false;
         }
@@ -134,9 +135,9 @@ public class MenuHandler {
                     case PROJECT_LIST:
                     case TASK_LIST:
                         if (mLocation.getListQuery() == ListQuery.project) {
-                            mEventManager.fire(Location.editProject(mLocation.getProjectId()));
+                            go(Location.editProject(mLocation.getProjectId()));
                         } else if (mLocation.getListQuery() == ListQuery.context) {
-                            mEventManager.fire(Location.editContext(mLocation.getContextId()));
+                            go(Location.editContext(mLocation.getContextId()));
                         }
                         break;
                     case TASK:
@@ -161,5 +162,45 @@ public class MenuHandler {
 
     private String getString(int id, String arg) {
         return mActivity.getString(id, arg);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem menuItem) {
+        Log.d(TAG, "Nav item selected" + menuItem);
+        switch (menuItem.getItemId()) {
+            case R.id.nav_inbox:
+                go(Location.viewTaskList(ListQuery.inbox));
+                return true;
+            case R.id.nav_next_tasks:
+                go(Location.viewTaskList(ListQuery.nextTasks));
+                return true;
+            case R.id.nav_due_tasks:
+                go(Location.viewTaskList(ListQuery.dueTasks));
+                return true;
+            case R.id.nav_custom:
+                go(Location.viewTaskList(ListQuery.custom));
+                return true;
+            case R.id.nav_tickler:
+                go(Location.viewTaskList(ListQuery.tickler));
+                return true;
+            case R.id.nav_projects:
+                go(Location.viewProjectList());
+                return true;
+            case R.id.nav_contexts:
+                go(Location.viewContextList());
+                return true;
+            case R.id.nav_settings:
+                go(Location.viewSettings());
+                return true;
+            case R.id.nav_help:
+                go(Location.viewHelp());
+                return true;
+        }
+        return false;
+    }
+
+    private void go(Location location) {
+        mEventManager.fire(new NavigationRequestEvent(location));
+
     }
 }
