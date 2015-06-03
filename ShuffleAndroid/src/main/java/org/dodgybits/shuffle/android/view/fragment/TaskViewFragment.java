@@ -244,7 +244,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         mCalendarRow = (ViewGroup) getView().findViewById(R.id.calendar_row);
         mViewCalendarButton = (Button) getView().findViewById(R.id.view_calendar_button);
         mStatusView = (StatusView) getView().findViewById(R.id.status);
-        mCompleteFabIcon = (ImageView) getView().findViewById(R.id.complete_fab_icon);
+        mCompleteFabIcon = (ImageView) getView().findViewById(R.id.complete_fab);
     }
 
     private void updateUIFromItem() {
