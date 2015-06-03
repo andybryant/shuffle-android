@@ -47,7 +47,7 @@ public class AlertUtils {
 			}
 		};
 		Builder builder = new Builder(context);
-		builder.setTitle(title).setIcon(R.drawable.ic_dialog_alert_holo_light)
+		builder.setTitle(title).setIcon(R.drawable.ic_warning_black_24dp)
 			.setMessage(message)
 			.setNegativeButton(cancelButtonText, buttonListener)
 			.setPositiveButton(deleteButtonText, buttonListener)
@@ -59,7 +59,7 @@ public class AlertUtils {
 		CharSequence title = context.getString(R.string.warning_title);
 		CharSequence buttonText = context.getString(R.string.ok_button_title);
 		Builder builder = new Builder(context);
-		builder.setTitle(title).setIcon(R.drawable.ic_dialog_alert_holo_light)
+		builder.setTitle(title).setIcon(R.drawable.ic_warning_black_24dp)
 			.setMessage(message)
 			.setPositiveButton(buttonText, null);
 		builder.create().show();
@@ -73,7 +73,7 @@ public class AlertUtils {
 		CharSequence cancelButtonText = context.getString(R.string.cancel_button_title);
 
 		Builder builder = new Builder(context);
-		builder.setTitle(title).setIcon(R.drawable.ic_dialog_alert_holo_light)
+		builder.setTitle(title).setIcon(R.drawable.ic_warning_black_24dp)
 			.setMessage(message)
 			.setNegativeButton(cancelButtonText, buttonListener)
 			.setPositiveButton(replaceButtonText, buttonListener)

@@ -156,16 +156,16 @@ public class TaskListItem extends View {
             sContextCornerRadius = r.getDimensionPixelSize(R.dimen.context_small_corner_radius);
             
             sSelectedIconOff =
-                    BitmapFactory.decodeResource(r, R.drawable.btn_check_off_normal_holo_light);
+                    BitmapFactory.decodeResource(r, R.drawable.ic_check_box_outline_blank_black_24dp);
             sSelectedIconOn =
-                    BitmapFactory.decodeResource(r, R.drawable.btn_check_on_normal_holo_light);
+                    BitmapFactory.decodeResource(r, R.drawable.ic_check_box_black_24dp);
 
             sStateInactive =
-                    BitmapFactory.decodeResource(r, R.drawable.ic_badge_inactive);
+                    BitmapFactory.decodeResource(r, R.drawable.ic_pause_circle_filled_black_24dp);
             sStateDeleted =
-                    BitmapFactory.decodeResource(r, R.drawable.ic_badge_delete);
+                    BitmapFactory.decodeResource(r, R.drawable.ic_delete_black_24dp);
             sStateCompleted =
-                    BitmapFactory.decodeResource(r, R.drawable.ic_badge_complete);
+                    BitmapFactory.decodeResource(r, R.drawable.ic_done_black_24dp);
 
             mContextIconMap = Maps.newHashMap();        
     

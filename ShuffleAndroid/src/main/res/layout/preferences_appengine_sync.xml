@@ -65,7 +65,7 @@
         android:layout_below="@+id/logout"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
-        android:drawableLeft="@drawable/ic_menu_refresh_holo_light"
+        android:drawableLeft="@drawable/ic_sync_black_24dp"
         android:drawablePadding="8dp"
         android:onClick="onSyncNowClicked"
         android:text="@string/sync_now_button_title" />

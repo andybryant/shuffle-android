@@ -21,7 +21,7 @@
 
     <ImageButton
         android:id="@+id/action_cancel"
-        android:src="@drawable/ic_menu_cancel_holo_dark"
+        android:src="@drawable/ic_close_white_24dp"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="8dp"
         android:layout_height="36dp"

@@ -52,7 +52,7 @@
                     >
 
                     <ImageView
-                        android:src="@drawable/ic_drawer_folder"
+                        android:src="@drawable/ic_folder_black_24dp"
                         style="@style/EditEntryIcon"
                         />
 
@@ -71,7 +71,7 @@
                             android:layout_centerVertical="true"
                             android:layout_marginLeft="4dip"
                             android:layout_marginRight="16dip"
-                            android:src="@drawable/ic_menu_add_field_holo_light"
+                            android:src="@drawable/ic_add_circle_outline_black_24dp"
                             android:background="@drawable/blank" />
 
                         <Spinner
@@ -137,7 +137,7 @@
                     >
 
                     <ImageView
-                        android:src="@drawable/ic_drawer_contexts"
+                        android:src="@drawable/ic_label_black_24dp"
                         style="@style/EditEntryIcon"
                         />
 
@@ -155,7 +155,7 @@
                             android:layout_alignParentRight="true"
                             android:layout_marginLeft="4dip"
                             android:layout_marginRight="16dip"
-                            android:src="@drawable/ic_menu_add_field_holo_light"
+                            android:src="@drawable/ic_add_circle_outline_black_24dp"
                             android:background="@drawable/blank" />
 
                         <org.dodgybits.shuffle.android.core.view.RowLayout
@@ -205,7 +205,7 @@
                     >
 
                     <ImageView
-                        android:src="@drawable/ic_details"
+                        android:src="@drawable/ic_subject_black_24dp"
                         style="@style/EditEntryIcon"
                         />
 
@@ -253,7 +253,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dip"
-                    android:src="@drawable/ic_menu_remove_field_holo_light"
+                    android:src="@drawable/ic_remove_black_24dp"
                     android:background="@drawable/blank" />
 
             </LinearLayout>
@@ -273,7 +273,7 @@
                     >
 
                     <ImageView
-                        android:src="@drawable/ic_schedule"
+                        android:src="@drawable/ic_schedule_black_24dp"
                         style="@style/EditEntryIcon"
                         />
 
@@ -310,7 +310,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="4dip"
-                                android:src="@drawable/ic_menu_remove_field_holo_light"
+                                android:src="@drawable/ic_remove_black_24dp"
                                 android:background="@drawable/blank" />
 
                         </LinearLayout>

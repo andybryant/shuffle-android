@@ -197,9 +197,9 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
         Toolbar actionBarToolbar = (Toolbar)findViewById(R.id.toolbar_actionbar);
         if (actionBarToolbar != null) {
             if (UiUtilities.showHomeAsUp(getResources(), mLocation)) {
-                actionBarToolbar.setNavigationIcon(R.drawable.ic_up);
+                actionBarToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
             } else {
-                actionBarToolbar.setNavigationIcon(R.drawable.ic_drawer);
+                actionBarToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
             }
         }
     }

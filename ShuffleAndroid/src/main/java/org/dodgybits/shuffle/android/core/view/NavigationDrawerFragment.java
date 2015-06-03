@@ -189,9 +189,9 @@ public class NavigationDrawerFragment extends RoboFragment {
         Toolbar actionBarToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_actionbar);
         if (actionBarToolbar != null) {
             if (UiUtilities.showHomeAsUp(getResources(), mLocation)) {
-                actionBarToolbar.setNavigationIcon(R.drawable.ic_up);
+                actionBarToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
             } else {
-                actionBarToolbar.setNavigationIcon(R.drawable.ic_drawer);
+                actionBarToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
             }
         }
     }
@@ -302,7 +302,7 @@ public class NavigationDrawerFragment extends RoboFragment {
 
     private void addSettings() {
         NavDrawerEntityView view = new NavDrawerEntityView(getActivity());
-        view.init(R.drawable.ic_drawer_settings, getString(R.string.menu_preferences), null);
+        view.init(R.drawable.ic_settings_black_24dp, getString(R.string.menu_preferences), null);
         mNavDrawerItemViews.add(view);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -318,7 +318,7 @@ public class NavigationDrawerFragment extends RoboFragment {
 
     private void addHelp() {
         NavDrawerEntityView view = new NavDrawerEntityView(getActivity());
-        view.init(R.drawable.ic_drawer_help, getString(R.string.menu_help), null);
+        view.init(R.drawable.ic_help_black_24dp, getString(R.string.menu_help), null);
         mNavDrawerItemViews.add(view);
         view.setOnClickListener(new View.OnClickListener() {
             @Override

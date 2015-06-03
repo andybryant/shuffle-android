@@ -96,7 +96,7 @@
             android:id="@+id/complete_fab_icon"
             android:layout_width="@dimen/fab_icon_size"
             android:layout_height="@dimen/fab_icon_size"
-            android:src="@drawable/ic_menu_complete"
+            android:src="@drawable/ic_done_white_24dp"
             android:layout_gravity="center"
             android:duplicateParentState="true"/>
     </org.dodgybits.shuffle.android.core.view.FloatingActionButton>
@@ -126,7 +126,7 @@
                 >
 
                 <ImageView
-                    android:src="@drawable/ic_drawer_contexts"
+                    android:src="@drawable/ic_label_black_24dp"
                     style="@style/EditEntryIcon"
                     />
 
@@ -150,7 +150,7 @@
                 android:paddingBottom="20dip">
 
                 <ImageView
-                    android:src="@drawable/ic_details"
+                    android:src="@drawable/ic_subject_black_24dp"
                     style="@style/EditEntryIcon"
                     />
 
@@ -174,7 +174,7 @@
                 android:minHeight="72dip">
 
                 <ImageView
-                    android:src="@drawable/ic_schedule"
+                    android:src="@drawable/ic_schedule_black_24dp"
                     style="@style/EditEntryIcon"
                     />
 

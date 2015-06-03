@@ -4,48 +4,48 @@
         <item
             android:id="@+id/nav_inbox"
             android:checked="true"
-            android:icon="@drawable/ic_drawer_inbox"
+            android:icon="@drawable/ic_inbox_black_24dp"
             android:title="@string/title_inbox"/>
         <item
             android:id="@+id/nav_next_tasks"
             android:checked="false"
-            android:icon="@drawable/ic_drawer_next_actions"
+            android:icon="@drawable/ic_assignment_black_24dp"
             android:title="@string/title_next_tasks"/>
         <item
             android:id="@+id/nav_due_tasks"
             android:checked="false"
-            android:icon="@drawable/ic_drawer_due"
+            android:icon="@drawable/ic_today_black_24dp"
             android:title="@string/title_due_tasks"/>
         <item
             android:id="@+id/nav_custom"
             android:checked="false"
-            android:icon="@drawable/ic_drawer_custom"
+            android:icon="@drawable/ic_developer_board_black_24dp"
             android:title="@string/title_custom"
             />
         <item
             android:id="@+id/nav_tickler"
             android:checked="false"
-            android:icon="@drawable/ic_drawer_tickler"
+            android:icon="@drawable/ic_timer_black_24dp"
             android:title="@string/title_tickler"/>
         <item
             android:id="@+id/nav_projects"
             android:checked="false"
-            android:icon="@drawable/ic_drawer_folder"
+            android:icon="@drawable/ic_folder_black_24dp"
             android:title="@string/title_project"/>
         <item
             android:id="@+id/nav_contexts"
             android:checked="false"
-            android:icon="@drawable/ic_drawer_contexts"
+            android:icon="@drawable/ic_label_black_24dp"
             android:title="@string/title_context"/>
         <item
             android:id="@+id/nav_settings"
             android:checked="false"
-            android:icon="@drawable/ic_drawer_settings"
+            android:icon="@drawable/ic_settings_black_24dp"
             android:title="@string/menu_preferences"/>
         <item
             android:id="@+id/nav_help"
             android:checked="false"
-            android:icon="@drawable/ic_drawer_help"
+            android:icon="@drawable/ic_help_black_24dp"
             android:title="@string/menu_help"/>
     </group>
 </menu>

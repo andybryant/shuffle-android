@@ -58,7 +58,7 @@
             android:id="@+id/widget_compose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_menu_add_field_holo_light" />
+            android:src="@drawable/ic_add_circle_outline_black_24dp" />
     </LinearLayout>
 
     <ListView

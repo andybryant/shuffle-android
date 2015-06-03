@@ -32,7 +32,7 @@ public class LaunchListFragment extends RoboListFragment {
         if (sListItems == null) {
             String[] perspectives = getResources().getStringArray(R.array.perspectives).clone();
             sListItems = new ListItem[] {
-                    createAddTaskListItem(R.drawable.ic_menu_compose_holo_light, getString(R.string.title_new_task)),
+                    createAddTaskListItem(R.drawable.ic_edit_black_24dp, getString(R.string.title_new_task)),
                     createTaskListItem(ListIcons.INBOX, ListQuery.inbox, perspectives[0]),
                     createTaskListItem(ListIcons.DUE_TASKS, ListQuery.dueTasks, getString(R.string.title_due_tasks)),
                     createTaskListItem(ListIcons.NEXT_TASKS, ListQuery.nextTasks, perspectives[2]),
