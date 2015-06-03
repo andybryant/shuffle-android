@@ -111,10 +111,7 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mNavigationView = (NavigationView) findViewById(R.id.navigation_drawer);
-        mNavigationView.setNavigationItemSelectedListener(mMenuHandler);
-
+        setupNavDrawer();
         mEventManager.fire(new OnCreatedEvent());
     }
 
@@ -123,6 +120,39 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
         super.onResume();
 
         updateHomeIcon();
+    }
+
+    private void setupNavDrawer() {
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_drawer);
+        mNavigationView.setNavigationItemSelectedListener(mMenuHandler);
+        switch (mLocation.getListQuery()) {
+            case inbox:
+                checkNavMenu(R.id.nav_inbox);
+                break;
+            case nextTasks:
+                checkNavMenu(R.id.nav_next_tasks);
+                break;
+            case dueTasks:
+                checkNavMenu(R.id.nav_due_tasks);
+                break;
+            case custom:
+                checkNavMenu(R.id.nav_custom);
+                break;
+            case tickler:
+                checkNavMenu(R.id.nav_tickler);
+                break;
+            case project:
+                checkNavMenu(R.id.nav_projects);
+                break;
+            case context:
+                checkNavMenu(R.id.nav_contexts);
+                break;
+        }
+    }
+
+    private void checkNavMenu(int id) {
+        mNavigationView.getMenu().findItem(id).setChecked(true);
     }
 
     protected int contentView(boolean isTablet) {
