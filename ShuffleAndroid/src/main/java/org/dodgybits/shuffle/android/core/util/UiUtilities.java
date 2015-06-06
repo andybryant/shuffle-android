@@ -7,10 +7,13 @@ import android.os.Handler;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.ListView;
+import com.google.common.collect.Sets;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
+
+import java.util.Set;
 
 public class UiUtilities {
     private UiUtilities() {
@@ -83,8 +86,11 @@ public class UiUtilities {
     }
 
 
+    private static Set<ListQuery> sEntityListQueries = Sets.newHashSet(ListQuery.project, ListQuery.context);
+
     public static boolean showHomeAsUp(Resources res, Location location) {
-        return (location.getViewMode() == ViewMode.TASK && isListCollapsible(res));
+        return (location.getViewMode() == ViewMode.TASK && isListCollapsible(res)) ||
+                (location.getViewMode() == ViewMode.TASK_LIST && (sEntityListQueries.contains(location.getListQuery())));
     }
 
     /**
