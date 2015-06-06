@@ -1,8 +1,10 @@
 package org.dodgybits.shuffle.android.core.listener;
 
 import android.app.Activity;
+import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -168,12 +170,14 @@ public class EntityUpdateListener {
         String text = mActivity.getResources().getString(
                 isDeleted ? R.string.itemDeletedToast : R.string.itemUndeletedToast,
                 entityName);
-        Toast.makeText(mActivity, text, Toast.LENGTH_SHORT).show();
+        View topView = mActivity.findViewById(android.R.id.content);
+        Snackbar.make(topView, text, Snackbar.LENGTH_SHORT).show();
     }
     
     private void showSavedToast(String entityName) {
         String text = mActivity.getString(R.string.itemSavedToast, entityName);
-        Toast.makeText(mActivity, text, Toast.LENGTH_SHORT).show();
+        View topView = mActivity.findViewById(android.R.id.content);
+        Snackbar.make(topView, text, Snackbar.LENGTH_SHORT).show();
     }
     
 }

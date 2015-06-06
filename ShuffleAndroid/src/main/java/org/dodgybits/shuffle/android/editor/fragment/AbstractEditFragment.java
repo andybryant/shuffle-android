@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -173,7 +174,8 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
             text = getResources().getString(R.string.itemSavedToast,
                     getItemName());
         }
-        Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+        Snackbar.make(
+                getView(), text, Snackbar.LENGTH_SHORT).show();
     }
 
     protected abstract boolean isValid();
