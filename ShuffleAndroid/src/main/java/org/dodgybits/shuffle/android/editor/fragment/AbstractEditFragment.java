@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
@@ -42,18 +43,7 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
         Log.d(TAG, "onCreateView+");
 
         ViewGroup view = (ViewGroup) inflater.inflate(getContentViewResId(), null);
-
-        ViewGroup actionBarButtons = (ViewGroup) inflater.inflate(R.layout.edit_custom_actionbar,
-                new LinearLayout(getActivity()), false);
-        View cancelActionView = actionBarButtons.findViewById(R.id.action_cancel);
-        cancelActionView.setOnClickListener(this);
-        View doneActionView = actionBarButtons.findViewById(R.id.action_done);
-        doneActionView.setOnClickListener(this);
-
-        getRoboAppCompatActivity().getSupportActionBar().setCustomView(actionBarButtons);
-        FontUtils.setCustomFont(actionBarButtons, getActivity().getAssets());
         FontUtils.setCustomFont(view, getActivity().getAssets());
-
         return view;
     }
 
@@ -79,6 +69,8 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
             // Fragment doesn't have this method.  Call it manually.
             restoreInstanceState(savedInstanceState);
         }
+
+        setupCustomActionBar();
     }
 
     @Override
@@ -117,6 +109,20 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
 
     public Intent getNextIntent() {
         return mNextIntent;
+    }
+
+    private void setupCustomActionBar() {
+        ViewGroup actionBarButtons = (ViewGroup) getActivity().getLayoutInflater().inflate(R.layout.edit_custom_actionbar,
+                new LinearLayout(getActivity()), false);
+        View cancelActionView = actionBarButtons.findViewById(R.id.action_cancel);
+        cancelActionView.setOnClickListener(this);
+        View doneActionView = actionBarButtons.findViewById(R.id.action_done);
+        doneActionView.setOnClickListener(this);
+        TextView editLabel = (TextView) actionBarButtons.findViewById(R.id.edit_label);
+        editLabel.setText(getResources().getString(mIsNewEntity ? R.string.menu_insert : R.string.menu_edit, getItemName()));
+
+        getRoboAppCompatActivity().getSupportActionBar().setCustomView(actionBarButtons);
+        FontUtils.setCustomFont(actionBarButtons, getActivity().getAssets());
     }
 
 

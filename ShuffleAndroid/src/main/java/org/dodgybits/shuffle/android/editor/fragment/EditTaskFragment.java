@@ -77,10 +77,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
     private View mDeferredRow;
     private Button mDeferredEditButton;
-    private ImageButton mDeferredClearButton;
-    private Button mDueEditDateButton;
-    private Button mDueEditTimeButton;
-    private ImageButton mDueClearButton;
+    private Button mDueEditButton;
 
     private Time mDeferredTime;
     private Time mDueTime;
@@ -91,7 +88,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     private Button mDeleteButton;
 
     private View mUpdateCalendarEntry;
-    private CheckBox mUpdateCalendarCheckBox;
+    private CompoundButton mUpdateCalendarCheckBox;
     private TextView mCalendarLabel;
     private TextView mCalendarDetail;
 
@@ -525,19 +522,19 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 break;
             }
 
-            case R.id.clear_defer: {
-                mDeferredTime.set(0L);
-                populateWhen();
-                updateCalendarPanel();
-                break;
-            }
-
-            case R.id.clear_due: {
-                mDueTime.set(0L);
-                populateWhen();
-                updateCalendarPanel();
-                break;
-            }
+//            case R.id.clear_defer: {
+//                mDeferredTime.set(0L);
+//                populateWhen();
+//                updateCalendarPanel();
+//                break;
+//            }
+//
+//            case R.id.clear_due: {
+//                mDueTime.set(0L);
+//                populateWhen();
+//                updateCalendarPanel();
+//                break;
+//            }
 
             default:
                 super.onClick(v);
@@ -567,10 +564,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
         mDeferredRow = getView().findViewById(R.id.defer_row);
         mDeferredEditButton = (Button) getView().findViewById(R.id.defer);
-        mDeferredClearButton = (ImageButton) getView().findViewById(R.id.clear_defer);
-        mDueEditDateButton = (Button) getView().findViewById(R.id.due_date);
-        mDueEditTimeButton = (Button) getView().findViewById(R.id.due_time);
-        mDueClearButton = (ImageButton) getView().findViewById(R.id.clear_due);
+        mDueEditButton = (Button) getView().findViewById(R.id.due);
 
         mCompleteEntry = getView().findViewById(R.id.completed_entry_checkbox);
         mDeleteButton = (Button) getView().findViewById(R.id.delete_button);
@@ -608,16 +602,14 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
         mUpdateCalendarEntry.setOnClickListener(this);
         mUpdateCalendarEntry.setOnFocusChangeListener(this);
-        mUpdateCalendarCheckBox = (CheckBox) mUpdateCalendarEntry.findViewById(R.id.update_calendar_checkbox);
+        mUpdateCalendarCheckBox = (CompoundButton) mUpdateCalendarEntry.findViewById(R.id.update_calendar_checkbox);
         mCalendarLabel = (TextView) mUpdateCalendarEntry.findViewById(R.id.gcal_label);
         mCalendarDetail = (TextView) mUpdateCalendarEntry.findViewById(R.id.gcal_detail);
 
         mDeferredEditButton.setOnClickListener(new DateClickListener(mDeferredTime));
-        mDeferredClearButton.setOnClickListener(this);
 
-        mDueEditDateButton.setOnClickListener(new DateClickListener(mDueTime));
-        mDueEditTimeButton.setOnClickListener(new TimeClickListener(mDueTime));
-        mDueClearButton.setOnClickListener(this);
+//        mDueEditDateButton.setOnClickListener(new DateClickListener(mDueTime));
+//        mDueEditTimeButton.setOnClickListener(new TimeClickListener(mDueTime));
     }
 
     private void addNewContext(Id contextId) {
@@ -749,15 +741,15 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         if (showDeferred) {
             mDeferredRow.setVisibility(View.VISIBLE);
             // TODO - format properly
-            mDeferredEditButton.setText("Due " + formatDate(deferredMillis) +
+            mDeferredEditButton.setText("Deferred until " + formatDate(deferredMillis) +
                     " " + formatTime(deferredMillis));
         } else {
             mDeferredRow.setVisibility(View.GONE);
         }
 
         long dueMillis = mDueTime.toMillis(false /* use isDst */);
-        mDueEditDateButton.setText(formatDate(dueMillis));
-        mDueEditTimeButton.setText(formatTime(dueMillis));
+        // TODO - format properly
+        mDueEditButton.setText(formatDate(dueMillis) + " " + formatTime(dueMillis));
     }
 
     private CharSequence formatDate(long millis) {
@@ -869,8 +861,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 //                }
 //            }
 
-            mDueEditDateButton.setText(formatDate(dueMillis));
-            mDueEditTimeButton.setTag(formatTime(dueMillis));
+            mDueEditButton.setText(formatDate(dueMillis) + " " + formatTime(dueMillis));
             updateCalendarPanel();
         }
 
@@ -964,8 +955,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 //                }
 //            }
 
-            mDueEditDateButton.setText(formatDate(dueMillis));
-            mDueEditTimeButton.setTag(formatTime(dueMillis));
+            mDueEditButton.setText(formatDate(dueMillis) + " " + formatTime(dueMillis));
             updateCalendarPanel();
         }
 

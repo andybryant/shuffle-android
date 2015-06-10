@@ -85,6 +85,7 @@
     <style name="EditEntryIcon">
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
         <item name="android:layout_marginLeft">@dimen/keyline_1</item>
         <item name="android:layout_marginRight">32dip</item>
         <item name="android:alpha">0.54</item>
@@ -93,8 +94,6 @@
     <style name="EditDivider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
-        <item name="android:layout_marginTop">16dp</item>
-        <item name="android:layout_marginBottom">16dp</item>
         <item name="android:layout_marginLeft">72dp</item>
         <item name="android:background">@android:drawable/divider_horizontal_bright</item>
     </style>

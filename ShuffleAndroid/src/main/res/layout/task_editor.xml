@@ -34,204 +34,12 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="20dip"
             android:scrollbars="vertical">
-
-            <LinearLayout
-                android:id="@+id/project_row"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="72dip"
-                android:orientation="vertical"
-                >
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
-
-                    <ImageView
-                        android:src="@drawable/ic_folder_black_24dp"
-                        style="@style/EditEntryIcon"
-                        />
-
-                    <RelativeLayout
-                        android:layout_width="1px"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingRight="?android:attr/scrollbarSize"
-                        android:background="@drawable/list_selector_background">
-
-                        <ImageButton
-                            android:id="@+id/project_add"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="4dip"
-                            android:layout_marginRight="16dip"
-                            android:src="@drawable/ic_add_circle_outline_black_24dp"
-                            android:background="@drawable/blank" />
-
-                        <Spinner
-                            android:id="@+id/project"
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dip"
-                            android:layout_alignParentLeft="true"
-                            android:layout_toLeftOf="@+id/project_add"
-                            android:drawSelectorOnTop="true" />
-
-                    </RelativeLayout>
-
-                </LinearLayout>
-
-                <View style="@style/EditDivider" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/description_row"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="72dip"
-                android:orientation="vertical"
-                >
-
-
-                <EditText
-                    android:id="@+id/description"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/keyline_1"
-                    android:layout_marginRight="16dp"
-                    android:hint="@string/description_title"
-                    android:tag="bold"
-                    android:capitalize="sentences"
-                    android:autoText="true"
-                    android:background="@null"
-                    android:maxLength="450"
-                    android:inputType="textMultiLine|textAutoCorrect|textCapSentences">
-
-                    <requestFocus />
-                </EditText>
-
-                <View style="@style/EditDivider"
-                    android:layout_marginLeft="0dp"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/context_row"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="72dip"
-                android:orientation="vertical"
-                >
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
-
-                    <ImageView
-                        android:src="@drawable/ic_label_black_24dp"
-                        style="@style/EditEntryIcon"
-                        />
-
-                    <RelativeLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingRight="?android:attr/scrollbarSize"
-                        android:background="@drawable/list_selector_background">
-
-                        <ImageButton
-                            android:id="@+id/context_add"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginLeft="4dip"
-                            android:layout_marginRight="16dip"
-                            android:src="@drawable/ic_add_circle_outline_black_24dp"
-                            android:background="@drawable/blank" />
-
-                        <org.dodgybits.shuffle.android.core.view.RowLayout
-                            android:id="@+id/context_items_container"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="left"
-                            android:layout_alignParentLeft="true"
-                            android:layout_toLeftOf="@+id/context_add"
-                            android:background="@drawable/list_selector_background"
-                            android:horizontalSpacing="@dimen/context_small_horizontal_spacing"
-                            android:verticalSpacing="@dimen/context_small_vertical_spacing"
-                            android:focusable="true"
-                            android:clickable="true">
-
-                            <TextView
-                                android:id="@+id/no_contexts"
-                                android:layout_width="fill_parent"
-                                android:layout_height="30dp"
-                                android:textSize="18sp"
-                                android:gravity="left"
-                                android:duplicateParentState="true"
-                                android:hint="@string/title_contexts_picker" />
-
-                        </org.dodgybits.shuffle.android.core.view.RowLayout>
-
-                    </RelativeLayout>
-
-                </LinearLayout>
-
-                <View style="@style/EditDivider" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/details_row"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="72dip"
-                android:orientation="vertical"
-                >
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
-
-                    <ImageView
-                        android:src="@drawable/ic_subject_black_24dp"
-                        style="@style/EditEntryIcon"
-                        />
-
-                    <EditText
-                        android:id="@+id/details"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/details_title"
-                        android:tag="regular"
-                        android:capitalize="sentences"
-                        android:autoText="true"
-                        android:background="@null"
-                        android:inputType="textMultiLine|textAutoCorrect|textCapSentences"
-                        />
-
-                </LinearLayout>
-
-                <View style="@style/EditDivider" />
-
-            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/defer_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/keyline_1"
                 android:minHeight="72dip"
                 android:orientation="horizontal"
                 android:background="@android:color/holo_orange_dark"
@@ -239,96 +47,210 @@
 
                 <Button
                     android:id="@+id/defer"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:tag="regular"
                     android:text="@string/not_deferred"
                     android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textAllCaps="false"
+                    android:gravity="left|center_vertical"
                     style="?android:attr/borderlessButtonStyle"
                     />
 
-                <ImageButton
-                    android:id="@+id/clear_defer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dip"
-                    android:src="@drawable/ic_remove_black_24dp"
-                    android:background="@drawable/blank" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/project_row"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:src="@drawable/ic_folder_black_24dp"
+                    style="@style/EditEntryIcon"
+                    />
+
+                <RelativeLayout
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:paddingRight="?android:attr/scrollbarSize"
+                    android:background="@drawable/list_selector_background">
+
+                    <ImageButton
+                        android:id="@+id/project_add"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="4dip"
+                        android:layout_marginRight="16dip"
+                        android:src="@drawable/ic_add_circle_outline_black_24dp"
+                        android:background="@drawable/blank" />
+
+                    <Spinner
+                        android:id="@+id/project"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dip"
+                        android:layout_alignParentLeft="true"
+                        android:layout_toLeftOf="@+id/project_add"
+                        android:drawSelectorOnTop="true" />
+
+                </RelativeLayout>
 
             </LinearLayout>
+
+            <View
+                style="@style/EditDivider"
+                />
+
+            <EditText
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:minHeight="72dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/keyline_1"
+                android:layout_marginRight="16dp"
+                android:hint="@string/description_title"
+                android:tag="bold"
+                android:capitalize="sentences"
+                android:autoText="true"
+                android:background="@null"
+                android:maxLength="450"
+                android:inputType="textMultiLine|textAutoCorrect|textCapSentences">
+
+                <requestFocus />
+            </EditText>
+
+            <View style="@style/EditDivider"
+                android:layout_marginLeft="0dp"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="72dp"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:src="@drawable/ic_label_black_24dp"
+                    style="@style/EditEntryIcon"
+                    />
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingRight="?android:attr/scrollbarSize"
+                    android:background="@drawable/list_selector_background">
+
+                    <ImageButton
+                        android:id="@+id/context_add"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginLeft="4dip"
+                        android:layout_marginRight="16dip"
+                        android:src="@drawable/ic_add_circle_outline_black_24dp"
+                        android:background="@drawable/blank" />
+
+                    <org.dodgybits.shuffle.android.core.view.RowLayout
+                        android:id="@+id/context_items_container"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:layout_alignParentLeft="true"
+                        android:layout_toLeftOf="@+id/context_add"
+                        android:background="@drawable/list_selector_background"
+                        android:horizontalSpacing="@dimen/context_small_horizontal_spacing"
+                        android:verticalSpacing="@dimen/context_small_vertical_spacing"
+                        android:focusable="true"
+                        android:clickable="true">
+
+                        <TextView
+                            android:id="@+id/no_contexts"
+                            android:layout_width="fill_parent"
+                            android:layout_height="30dp"
+                            android:textSize="18sp"
+                            android:gravity="left"
+                            android:duplicateParentState="true"
+                            android:hint="@string/title_contexts_picker" />
+
+                    </org.dodgybits.shuffle.android.core.view.RowLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <View style="@style/EditDivider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="72dp"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:src="@drawable/ic_subject_black_24dp"
+                    style="@style/EditEntryIcon"
+                    />
+
+                <EditText
+                    android:id="@+id/details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:hint="@string/details_title"
+                    android:tag="regular"
+                    android:capitalize="sentences"
+                    android:autoText="true"
+                    android:background="@null"
+                    android:inputType="textMultiLine|textAutoCorrect|textCapSentences"
+                    />
+
+            </LinearLayout>
+
+            <View style="@style/EditDivider" />
 
             <LinearLayout
                 android:id="@+id/due_row"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="72dip"
-                android:orientation="vertical"
+                android:layout_height="72dp"
+                android:orientation="horizontal"
                 >
 
-                <LinearLayout
+                <ImageView
+                    android:src="@drawable/ic_schedule_black_24dp"
+                    style="@style/EditEntryIcon"
+                    />
+
+                <Button
+                    android:id="@+id/due"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
-
-                    <ImageView
-                        android:src="@drawable/ic_schedule_black_24dp"
-                        style="@style/EditEntryIcon"
-                        />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <Button
-                                android:id="@+id/due_date"
-                                android:layout_width="0dp"
-                                android:layout_weight="7"
-                                android:layout_height="wrap_content"
-                                android:tag="regular"
-                                android:text="@string/not_due"
-                                style="?android:attr/borderlessButtonStyle"
-                                />
-
-                            <Button
-                                android:id="@+id/due_time"
-                                android:layout_width="0dp"
-                                android:layout_weight="4"
-                                android:layout_height="wrap_content"
-                                android:tag="regular"
-                                style="?android:attr/borderlessButtonStyle"
-                                />
-
-                            <ImageButton
-                                android:id="@+id/clear_due"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="4dip"
-                                android:src="@drawable/ic_remove_black_24dp"
-                                android:background="@drawable/blank" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <View style="@style/EditDivider" />
+                    android:layout_height="match_parent"
+                    android:tag="regular"
+                    android:text="@string/not_due"
+                    android:textSize="18sp"
+                    android:textAllCaps="false"
+                    android:gravity="left|center_vertical"
+                    style="?android:attr/borderlessButtonStyle"
+                    />
 
             </LinearLayout>
+
+            <View style="@style/EditDivider" />
 
             <LinearLayout
                 android:id="@+id/gcal_entry"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingRight="?android:attr/scrollbarSize"
-                android:minHeight="?android:attr/listPreferredItemHeight"
+                android:layout_height="72dp"
                 android:background="@drawable/list_selector_background"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
@@ -338,7 +260,7 @@
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dip"
+                    android:layout_marginLeft="@dimen/keyline_1"
                     android:layout_marginTop="6dip"
                     android:layout_marginBottom="6dip"
                     android:layout_weight="1"
@@ -370,62 +292,57 @@
 
                 </RelativeLayout>
 
-                <CheckBox
+                <android.support.v7.widget.SwitchCompat
                     android:id="@+id/update_calendar_checkbox"
                     android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="16dp"
                     android:focusable="false"
-                    android:clickable="false" />
+                    android:clickable="false"
+                    />
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/completed_row"
+            <View style="@style/EditDivider" />
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="72dip"
-                android:orientation="vertical"
+                android:layout_height="72dp"
                 >
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:src="@drawable/ic_menu_incomplete"
+                    style="@style/EditEntryIcon"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="72dp"
+                    android:tag="regular"
+                    android:text="@string/complete"
+                    android:layout_centerVertical="true" />
 
-                    <ImageView
-                        android:src="@drawable/ic_menu_incomplete"
-                        style="@style/EditEntryIcon"
-                        android:layout_alignParentLeft="true"
-                        />
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/completed_entry_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerVertical="true" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginLeft="72dp"
-                        android:tag="regular"
-                        android:text="@string/complete"
-                        />
+            </RelativeLayout>
 
-                    <android.support.v7.widget.SwitchCompat
-                        android:id="@+id/completed_entry_checkbox"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginRight="16dp"
-                        />
-
-                </RelativeLayout>
-
-                <View style="@style/EditDivider" />
-
-            </LinearLayout>
+            <View style="@style/EditDivider" />
 
         </LinearLayout>
 
     </ScrollView>
 
+    <View style="@style/EditDivider" />
 
     <Button
         android:id="@+id/delete_button"
@@ -434,6 +351,7 @@
         android:tag="allcaps"
         android:layout_gravity="center"
         android:textSize="14sp"
+        android:text="@string/delete_completed_button_title"
         style="?android:attr/borderlessButtonStyle"
         />
 
