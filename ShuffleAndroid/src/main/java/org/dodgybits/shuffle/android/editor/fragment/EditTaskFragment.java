@@ -566,7 +566,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         mDeferredEditButton = (Button) getView().findViewById(R.id.defer);
         mDueEditButton = (Button) getView().findViewById(R.id.due);
 
-        mCompleteEntry = getView().findViewById(R.id.completed_entry_checkbox);
+        mCompleteEntry = getView().findViewById(R.id.completed_row);
         mDeleteButton = (Button) getView().findViewById(R.id.delete_button);
         mUpdateCalendarEntry = getView().findViewById(R.id.gcal_entry);
 

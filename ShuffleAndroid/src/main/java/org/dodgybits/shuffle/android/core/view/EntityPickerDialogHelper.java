@@ -127,11 +127,11 @@ public class EntityPickerDialogHelper {
         }
     }
 
-    public static interface OnEntitySelected {
+    public interface OnEntitySelected {
         void onSelected(long id);
     }
 
-    public static interface OnEntitiesSelected {
+    public interface OnEntitiesSelected {
         void onSelected(List<Id> ids);
         void onCancel();
     }
