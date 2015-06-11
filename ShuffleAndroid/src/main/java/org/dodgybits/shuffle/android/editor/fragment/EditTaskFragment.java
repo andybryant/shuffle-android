@@ -34,7 +34,6 @@ import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.CalendarUtils;
 import org.dodgybits.shuffle.android.core.util.EntityUtils;
-import org.dodgybits.shuffle.android.core.util.OSUtils;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.view.ContextIcon;
 import org.dodgybits.shuffle.android.editor.activity.EditTaskActivity;
@@ -55,12 +54,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         implements CompoundButton.OnCheckedChangeListener {
     private static final String TAG = "EditTaskFragment";
 
-
-    private static final String[] PROJECT_PROJECTION = new String[] {
-            ProjectProvider.Projects._ID,
-            ProjectProvider.Projects.NAME
-    };
-
     private static final int NEW_CONTEXT_CODE = 100;
     private static final int NEW_PROJECT_CODE = 101;
 
@@ -70,10 +63,10 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     private ViewGroup mContextContainer;
     private List<Id> mSelectedContextIds = Lists.newArrayList();
     private TextView mNoContexts;
-    
-    private Spinner mProjectSpinner;
-    private String[] mProjectNames;
-    private long[] mProjectIds;
+    private Button mAddContextButton;
+
+    private Id mSelectedProjectId = Id.NONE;
+    private Button mEditProjectButton;
 
     private View mDeferredRow;
     private Button mDeferredEditButton;
@@ -122,9 +115,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             case NEW_PROJECT_CODE:
                 if (resultCode == Activity.RESULT_OK) {
                     if (data != null) {
-                        long newProjectId = ContentUris.parseId(data.getData());
-                        setupProjectSpinner();
-                        setSpinnerSelection(mProjectSpinner, mProjectIds, newProjectId);
+                        setSelectedProject(Id.create(ContentUris.parseId(data.getData())));
                     }
                 }
                 break;
@@ -143,6 +134,11 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         updateContextPanel();
     }
 
+    public void setSelectedProject(Id projectId) {
+        mSelectedProjectId = projectId;
+        updateProjectButton();
+    }
+
     @Override
     protected boolean isValid() {
         String description = mDescriptionWidget.getText().toString();
@@ -158,8 +154,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             }
 
             long projectId = extras.getLong(TaskProvider.Tasks.PROJECT_ID, 0L);
-            setSpinnerSelection(mProjectSpinner, mProjectIds, projectId);
-            
+            setSelectedProject(Id.create(projectId));
             applyDefaultContext();
         }
 
@@ -189,10 +184,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         mSelectedContextIds = task.getContextIds();
         updateContextPanel();
 
-        final Id projectId = task.getProjectId();
-        if (projectId.isInitialised()) {
-            setSpinnerSelection(mProjectSpinner, mProjectIds, projectId.getId());
-        }
+        setSelectedProject(task.getProjectId());
 
         boolean allDay = task.isAllDay();
         if (allDay && task.getStartDate() != 0L) {
@@ -236,7 +228,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         final String description = mDescriptionWidget.getText().toString();
         final long modified = System.currentTimeMillis();
         final String details = mDetailsWidget.getText().toString();
-        final Id projectId = getSpinnerSelectedId(mProjectSpinner, mProjectIds);
         final boolean complete = mCompletedCheckBox.isChecked();
         final boolean active = true;
 
@@ -251,8 +242,8 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             changeSet.detailsChanged();
             changed = true;
         }
-        if (!ObjectUtils.equals(projectId, builder.getProjectId())) {
-            builder.setProjectId(projectId);
+        if (!ObjectUtils.equals(mSelectedProjectId, builder.getProjectId())) {
+            builder.setProjectId(mSelectedProjectId);
             changeSet.projectChanged();
             changed = true;
         }
@@ -310,7 +301,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
         final int order;
         if (commitValues) {
-            order = ((TaskPersister)mPersister).calculateTaskOrder(mOriginalItem, projectId);
+            order = ((TaskPersister)mPersister).calculateTaskOrder(mOriginalItem, mSelectedProjectId);
         } else if (mOriginalItem == null) {
             order = 0;
         } else {
@@ -348,7 +339,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
             Uri calEntryUri = addOrUpdateCalendarEvent(
                     eventId, description, details,
-                    projectId, timezone, startMillis,
+                    mSelectedProjectId, timezone, startMillis,
                     endMillis, mOriginalItem != null && mOriginalItem.isAllDay());
             if (calEntryUri != null) {
                 eventId = Id.create(ContentUris.parseId(calEntryUri));
@@ -373,7 +364,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
      * to the project default.
      */
     private void applyDefaultContext() {
-        Id projectId = getSpinnerSelectedId(mProjectSpinner, mProjectIds);
+        Id projectId = mSelectedProjectId;
         if (projectId.isInitialised() && mSelectedContextIds.isEmpty()) {
             Project project = mProjectCache.findById(projectId);
             if (project != null) {
@@ -384,7 +375,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             }
         }
     }
-
 
     private Uri addOrUpdateCalendarEvent(
             Id calEventId, String title, String description,
@@ -486,22 +476,30 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         Log.d(TAG, "Button " + buttonView + " checked: " + isChecked);
     }
 
+    public void triggerAddProject() {
+        Intent addProjectIntent = new Intent(Intent.ACTION_INSERT,
+                ProjectProvider.Projects.CONTENT_URI);
+        startActivityForResult(addProjectIntent, NEW_PROJECT_CODE);
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.context_add: {
-                Intent addContextIntent = new Intent(Intent.ACTION_INSERT, ContextProvider.Contexts.CONTENT_URI);
+                Intent addContextIntent = new Intent(Intent.ACTION_INSERT,
+                        ContextProvider.Contexts.CONTENT_URI);
                 startActivityForResult(addContextIntent, NEW_CONTEXT_CODE);
                 break;
             }
 
             case R.id.context_items_container: {
-                getActivity().showDialog(EditTaskActivity.CONTEXT_PICKER_DIALOG);
+                showContextPicker();
                 break;
             }
 
             case R.id.project_add: {
-                Intent addProjectIntent = new Intent(Intent.ACTION_INSERT, ProjectProvider.Projects.CONTENT_URI);
+                Intent addProjectIntent = new Intent(Intent.ACTION_INSERT,
+                        ProjectProvider.Projects.CONTENT_URI);
                 startActivityForResult(addProjectIntent, NEW_PROJECT_CODE);
                 break;
             }
@@ -542,6 +540,10 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         }
     }
 
+    private void showContextPicker() {
+        ((EditTaskActivity)getActivity()).showContextPicker();
+    }
+
     @Override
     protected void loadCursor() {
         // Get the task if we're editing
@@ -559,7 +561,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     @Override
     protected void findViewsAndAddListeners() {
         mDescriptionWidget = (EditText) getView().findViewById(R.id.description);
-        mProjectSpinner = (Spinner) getView().findViewById(R.id.project);
+        mEditProjectButton = (Button) getView().findViewById(R.id.project);
         mDetailsWidget = (EditText) getView().findViewById(R.id.details);
 
         mDeferredRow = getView().findViewById(R.id.defer_row);
@@ -578,21 +580,10 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         addContextButton.setOnClickListener(this);
         addContextButton.setOnFocusChangeListener(this);
 
-        setupProjectSpinner();
+        updateProjectButton();
         View addProjectButton = getView().findViewById(R.id.project_add);
         addProjectButton.setOnClickListener(this);
         addProjectButton.setOnFocusChangeListener(this);
-
-        mProjectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                applyDefaultContext();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
 
         mCompleteEntry.setOnClickListener(this);
         mCompleteEntry.setOnFocusChangeListener(this);
@@ -679,58 +670,22 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         }
     }   
     
-    private void setupProjectSpinner() {
-        Cursor projectCursor = getActivity().getContentResolver().query(
-                ProjectProvider.Projects.CONTENT_URI, PROJECT_PROJECTION,
-                ProjectProvider.Projects.DELETED + " = 0", null, ProjectProvider.Projects.NAME + " ASC");
-        int arraySize = projectCursor.getCount() + 1;
-        mProjectIds = new long[arraySize];
-        mProjectIds[0] = 0;
-        mProjectNames = new String[arraySize];
-        mProjectNames[0] = getText(R.string.no_project).toString();
-        for (int i = 1; i < arraySize; i++) {
-            projectCursor.moveToNext();
-            mProjectIds[i] = projectCursor.getLong(0);
-            mProjectNames[i] = projectCursor.getString(1);
-        }
-        projectCursor.close();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                getActivity(), android.R.layout.simple_list_item_1, mProjectNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mProjectSpinner.setAdapter(adapter);
-    }
-
-    private Id getSpinnerSelectedId(Spinner spinner, long[] ids) {
-        Id id = Id.NONE;
-        int selectedItemPosition = spinner.getSelectedItemPosition();
-        if (selectedItemPosition > 0) {
-            id = Id.create(ids[selectedItemPosition]);
-        }
-        return id;
-    }
-
-    private void setSpinnerSelection(Spinner spinner, long[] ids, long id) {
-        if (id == 0L) {
-            spinner.setSelection(0);
+    private void updateProjectButton() {
+        String name = getProjectName(mSelectedProjectId);
+        if (name.isEmpty()) {
+            // TODO set text color to grey
+            mEditProjectButton.setText(getString(R.string.project_name));
         } else {
-            for (int i = 1; i < ids.length; i++) {
-                if (ids[i] == id) {
-                    spinner.setSelection(i);
-                    break;
-                }
-            }
+            // TODO set text color to blackish
+            mEditProjectButton.setText(name);
         }
     }
 
     private String getProjectName(Id projectId) {
         String name = "";
-        final long id = projectId.getId();
-        for(int i = 0; i < mProjectIds.length; i++) {
-            long currentId = mProjectIds[i];
-            if (currentId == id) {
-                name = mProjectNames[i];
-                break;
-            }
+        Project project = mProjectCache.findById(mSelectedProjectId);
+        if (project != null) {
+            name = project.getName();
         }
         return name;
     }
