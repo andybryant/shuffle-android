@@ -70,13 +70,14 @@
     <string name="menu_help">Help</string>
 
     <!--  general purpose -->
+    <string name="new_title">New…</string>
     <string name="project_title">Project</string>
     <string name="context_title">Tag</string>
     <string name="details_title">Details</string>
     <string name="set_button_title">Set</string>
     <string name="clear_button_title">Clear</string>
     <string name="edit_button_title">Edit</string>
-    <string name="extras_button_title">Extra details...</string>
+    <string name="extras_button_title">Extra details…</string>
     <string name="save_button_title">Save</string>
     <string name="ok_button_title">OK</string>
     <string name="cancel_button_title">Cancel</string>
@@ -192,6 +193,7 @@ allow that, you can turn it off under Settings.</string>
     <string name="menu_doNotSave">Discard changes</string>
 
     <!--  task edit screen -->
+    <string name="add_project">Add project</string>
     <string name="description_title">Description</string>
     <string name="scheduling_title">Scheduling</string>
     <string name="scheduling_collapsed">Click to reveal scheduling options</string>

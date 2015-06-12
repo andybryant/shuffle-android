@@ -73,36 +73,17 @@
                     style="@style/EditEntryIcon"
                     />
 
-                <RelativeLayout
+                <Button
+                    android:id="@+id/project"
                     android:layout_width="1px"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_gravity="center_vertical"
-                    android:paddingRight="?android:attr/scrollbarSize"
-                    android:background="@drawable/list_selector_background">
-
-                    <ImageButton
-                        android:id="@+id/project_add"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="4dip"
-                        android:layout_marginRight="16dip"
-                        android:src="@drawable/ic_add_circle_outline_black_24dp"
-                        android:background="@drawable/blank" />
-
-                    <Button
-                        android:id="@+id/project"
-                        android:layout_width="wrap_content"
-                        android:layout_height="48dip"
-                        android:layout_alignParentLeft="true"
-                        android:layout_toLeftOf="@+id/project_add"
-                        android:textAllCaps="false"
-                        android:textSize="14sp"
-                        android:drawSelectorOnTop="true" />
-
-                </RelativeLayout>
+                    android:drawSelectorOnTop="true"
+                    android:textAllCaps="false"
+                    android:textSize="18sp"
+                    android:gravity="left|center_vertical"
+                    style="?android:attr/borderlessButtonStyle"
+                    />
 
             </LinearLayout>
 

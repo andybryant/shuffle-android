@@ -20,17 +20,32 @@ public class EntityPickerDialogHelper {
     public static final long NONE_ID = 0L;
     public static final long ADD_NEW_ID = -1L;
 
+
     public static Dialog createSingleSelectProjectPickerDialog(Activity activity,
         boolean noneItem, boolean addNewItem) {
+        final OnEntitySelected listener = (OnEntitySelected) activity;
+        return createSingleSelectProjectPickerDialog(activity, listener, noneItem, addNewItem);
+    }
+
+    public static Dialog createSingleSelectProjectPickerDialog(
+            Activity activity, OnEntitySelected listener,
+            boolean noneItem, boolean addNewItem) {
         String title = activity.getString(R.string.title_project_picker);
-        String addNewTitle = activity.getString(R.string.title_new_project);
-        return createSingleSelectDialog(activity, createProjectCursor(activity), title,
+        String addNewTitle = activity.getString(R.string.new_title);
+        return createSingleSelectDialog(activity, listener,
+                createProjectCursor(activity), title,
                 addNewTitle, noneItem, addNewItem);
     }
 
     public static Dialog createSingleSelectContextPickerDialog(Activity activity) {
+        final OnEntitySelected listener = (OnEntitySelected) activity;
+        return createSingleSelectContextPickerDialog(activity, listener);
+    }
+
+    public static Dialog createSingleSelectContextPickerDialog(
+            Activity activity, OnEntitySelected listener) {
         String title = activity.getString(R.string.title_context_picker);
-        return createSingleSelectDialog(activity, createContextCursor(activity), title,
+        return createSingleSelectDialog(activity, listener, createContextCursor(activity), title,
                 null, false, false);
     }
 
@@ -55,10 +70,10 @@ public class EntityPickerDialogHelper {
     }
 
     private static Dialog createSingleSelectDialog(
-            Activity activity, Cursor cursor, String title,
+            Activity activity, final OnEntitySelected listener,
+            Cursor cursor, String title,
             String addNewTitle, boolean noneItem, boolean addNewItem) {
-        Dialog dialog = null;
-        final OnEntitySelected listener = (OnEntitySelected) activity;
+        Dialog dialog;
         int count = cursor.getCount();
         if (addNewItem) count++;
         if (noneItem) count++;

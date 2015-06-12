@@ -502,13 +502,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 break;
             }
 
-            case R.id.project_add: {
-                Intent addProjectIntent = new Intent(Intent.ACTION_INSERT,
-                        ProjectProvider.Projects.CONTENT_URI);
-                startActivityForResult(addProjectIntent, NEW_PROJECT_CODE);
-                break;
-            }
-
             case R.id.completed_entry_checkbox: {
                 mCompletedCheckBox.toggle();
                 break;
@@ -591,9 +584,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         addContextButton.setOnFocusChangeListener(this);
 
         updateProjectButton();
-        View addProjectButton = getView().findViewById(R.id.project_add);
-        addProjectButton.setOnClickListener(this);
-        addProjectButton.setOnFocusChangeListener(this);
 
         mCompleteEntry.setOnClickListener(this);
         mCompleteEntry.setOnFocusChangeListener(this);
@@ -683,10 +673,10 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     private void updateProjectButton() {
         String name = getProjectName(mSelectedProjectId);
         if (name.isEmpty()) {
-            // TODO set text color to grey
-            mEditProjectButton.setText(getString(R.string.project_name));
+            mEditProjectButton.setTextColor(getResources().getColor(R.color.mid_gray));
+            mEditProjectButton.setText(getString(R.string.add_project));
         } else {
-            // TODO set text color to blackish
+            mEditProjectButton.setTextColor(getResources().getColor(R.color.dark_gray));
             mEditProjectButton.setText(name);
         }
     }
