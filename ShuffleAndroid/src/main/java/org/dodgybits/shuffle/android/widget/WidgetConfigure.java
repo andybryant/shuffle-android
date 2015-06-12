@@ -79,7 +79,7 @@ public class WidgetConfigure extends RoboFragmentActivity {
                         confirmSelection();
                     }
                 };
-                dialog = EntityPickerDialogHelper.createSingleSelectContentPickerDialog(WidgetConfigure.this, listener);
+                dialog = EntityPickerDialogHelper.createSingleSelectContextPickerDialog(WidgetConfigure.this, listener);
                 break;
             case PROJECT_PICKER_DIALOG:
                 listener = new EntityPickerDialogHelper.OnEntitySelected() {

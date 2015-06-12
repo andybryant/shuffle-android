@@ -87,7 +87,7 @@ public class LauncherShortcutActivity extends RoboFragmentActivity {
                         returnShortcut(shortcutIntent, name, iconResource);
                     }
                 };
-                dialog = EntityPickerDialogHelper.createSingleSelectContentPickerDialog(LauncherShortcutActivity.this, listener);
+                dialog = EntityPickerDialogHelper.createSingleSelectContextPickerDialog(LauncherShortcutActivity.this, listener);
                 break;
             case PROJECT_PICKER_DIALOG:
                 listener = new EntityPickerDialogHelper.OnEntitySelected() {

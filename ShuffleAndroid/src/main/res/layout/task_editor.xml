@@ -98,6 +98,8 @@
                         android:layout_height="48dip"
                         android:layout_alignParentLeft="true"
                         android:layout_toLeftOf="@+id/project_add"
+                        android:textAllCaps="false"
+                        android:textSize="14sp"
                         android:drawSelectorOnTop="true" />
 
                 </RelativeLayout>

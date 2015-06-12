@@ -15,9 +15,7 @@ import java.util.List;
 public class EditTaskActivity extends AbstractEditActivity
         implements EntityPickerDialogHelper.OnEntitiesSelected, EntityPickerDialogHelper.OnEntitySelected {
     private static final String TAG = "EditTaskActivity";
-
-    public static final int CONTEXT_PICKER_DIALOG = 1;
-
+    
     @Inject
     private EditTaskFragment mEditFragment;
 
@@ -32,25 +30,16 @@ public class EditTaskActivity extends AbstractEditActivity
     }
 
     public void showContextPicker() {
-        final EditTaskActivity self = this;
-        new DialogFragment() {
-            @Override
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                return EntityPickerDialogHelper.createMultiSelectContextPickerDialog(
-                        self, mEditFragment.getSelectedContextIds(), self);
-            }
-        }.show(getSupportFragmentManager(), "contexts");
+        new ContextPickerDialog().show(getSupportFragmentManager(), "contexts");
     }
 
     public void showProjectPicker() {
-        final EditTaskActivity self = this;
-        new DialogFragment() {
-            @Override
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                return EntityPickerDialogHelper.createSingleSelectProjectPickerDialog(
-                        self, self, true, true);
-            }
-        }.show(getSupportFragmentManager(), "project");
+        new ProjectPickerDialog().show(getSupportFragmentManager(), "project");
+    }
+
+    @Override
+    public List<Id> getInitialSelection() {
+        return mEditFragment.getSelectedContextIds();
     }
 
     @Override
@@ -72,45 +61,19 @@ public class EditTaskActivity extends AbstractEditActivity
         }
     }
 
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        Dialog dialog = null;
-        EntityPickerDialogHelper.OnEntitiesSelected listener;
 
-        switch(id) {
-            case CONTEXT_PICKER_DIALOG:
-                listener = new EntityPickerDialogHelper.OnEntitiesSelected() {
-                    @Override
-                    public void onSelected(List<Id> ids) {
-                        mEditFragment.setSelectedContextIds(ids);
-                        // throw it away each time as need to reset checked items
-                        removeDialog(CONTEXT_PICKER_DIALOG);
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        // throw it away each time as need to reset checked items
-                        // should probably use DialogFragment instead
-                        removeDialog(CONTEXT_PICKER_DIALOG);
-                    }
-                };
-                dialog = EntityPickerDialogHelper.createMultiSelectContextPickerDialog(
-                        this, mEditFragment.getSelectedContextIds(), listener);
-                break;
-
-            default:
-                dialog = super.onCreateDialog(id);
-                break;
+    public static class ContextPickerDialog extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return EntityPickerDialogHelper.createMultiSelectContextPickerDialog(getActivity());
         }
-        return dialog;
     }
 
-    @Override
-    protected void onPrepareDialog(int id, Dialog dialog, Bundle args) {
-        super.onPrepareDialog(id, dialog, args);
-
-
-
+    public static class ProjectPickerDialog extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return EntityPickerDialogHelper.createSingleSelectProjectPickerDialog(getActivity(), true, true);
+        }
 
     }
 }

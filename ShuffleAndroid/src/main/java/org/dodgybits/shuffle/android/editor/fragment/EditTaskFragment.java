@@ -497,6 +497,11 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 break;
             }
 
+            case R.id.project: {
+                showProjectPicker();
+                break;
+            }
+
             case R.id.project_add: {
                 Intent addProjectIntent = new Intent(Intent.ACTION_INSERT,
                         ProjectProvider.Projects.CONTENT_URI);
@@ -544,6 +549,10 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         ((EditTaskActivity)getActivity()).showContextPicker();
     }
 
+    private void showProjectPicker() {
+        ((EditTaskActivity)getActivity()).showProjectPicker();
+    }
+
     @Override
     protected void loadCursor() {
         // Get the task if we're editing
@@ -562,6 +571,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     protected void findViewsAndAddListeners() {
         mDescriptionWidget = (EditText) getView().findViewById(R.id.description);
         mEditProjectButton = (Button) getView().findViewById(R.id.project);
+        mEditProjectButton.setOnClickListener(this);
         mDetailsWidget = (EditText) getView().findViewById(R.id.details);
 
         mDeferredRow = getView().findViewById(R.id.defer_row);
