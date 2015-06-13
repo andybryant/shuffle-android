@@ -15,7 +15,7 @@ import java.util.List;
 public class EditTaskActivity extends AbstractEditActivity
         implements EntityPickerDialogHelper.OnEntitiesSelected, EntityPickerDialogHelper.OnEntitySelected {
     private static final String TAG = "EditTaskActivity";
-    
+
     @Inject
     private EditTaskFragment mEditFragment;
 

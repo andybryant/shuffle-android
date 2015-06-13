@@ -85,7 +85,7 @@
     <color name="widget_title_color">#333333</color>
     <color name="widget_unread_color">#777777</color>
 
-    <color name="label_color">#777777</color>
+    <color name="label_color">@color/body_text_2</color>
     <color name="small_label">#0099cc</color>
 
     <!--<color name="fab_color_1">#ff5252</color>-->

@@ -575,13 +575,13 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         mDeleteButton = (Button) getView().findViewById(R.id.delete_button);
         mUpdateCalendarEntry = getView().findViewById(R.id.gcal_entry);
 
+        mAddContextButton = (Button) getView().findViewById(R.id.context_add);
+        mAddContextButton.setOnClickListener(this);
+        mAddContextButton.setOnFocusChangeListener(this);
         mContextContainer = (ViewGroup) getView().findViewById(R.id.context_items_container);
         mContextContainer.setOnClickListener(this);
         mNoContexts = (TextView) getView().findViewById(R.id.no_contexts);
 
-        View addContextButton = getView().findViewById(R.id.context_add);
-        addContextButton.setOnClickListener(this);
-        addContextButton.setOnFocusChangeListener(this);
 
         updateProjectButton();
 
@@ -673,10 +673,10 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     private void updateProjectButton() {
         String name = getProjectName(mSelectedProjectId);
         if (name.isEmpty()) {
-            mEditProjectButton.setTextColor(getResources().getColor(R.color.mid_gray));
+            mEditProjectButton.setTextColor(getResources().getColor(R.color.body_text_2));
             mEditProjectButton.setText(getString(R.string.add_project));
         } else {
-            mEditProjectButton.setTextColor(getResources().getColor(R.color.dark_gray));
+            mEditProjectButton.setTextColor(getResources().getColor(R.color.body_text_1));
             mEditProjectButton.setText(name);
         }
     }
