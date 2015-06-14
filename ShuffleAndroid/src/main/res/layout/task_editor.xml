@@ -133,7 +133,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
                         android:layout_alignParentLeft="true"
-                        android:paddingTop="8dp"
+                        android:paddingTop="12dp"
                         android:background="@drawable/list_selector_background"
                         android:horizontalSpacing="@dimen/context_small_horizontal_spacing"
                         android:verticalSpacing="@dimen/context_small_vertical_spacing"
@@ -188,6 +188,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:hint="@string/details_title"
                     android:tag="regular"
                     android:capitalize="sentences"
@@ -293,7 +295,7 @@
                 <ImageView
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/ic_menu_incomplete"
+                    android:src="@drawable/ic_done_black_24dp"
                     style="@style/EditEntryIcon"
                     />
 
