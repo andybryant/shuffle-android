@@ -8,6 +8,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -674,16 +675,18 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         String name = getProjectName(mSelectedProjectId);
         if (name.isEmpty()) {
             mEditProjectButton.setTextColor(getResources().getColor(R.color.body_text_2));
-            mEditProjectButton.setText(getString(R.string.add_project));
+            mEditProjectButton.setTypeface(null, Typeface.NORMAL);
+            mEditProjectButton.setText(getString(R.string.title_project_picker));
         } else {
             mEditProjectButton.setTextColor(getResources().getColor(R.color.body_text_1));
+            mEditProjectButton.setTypeface(null, Typeface.BOLD);
             mEditProjectButton.setText(name);
         }
     }
 
     private String getProjectName(Id projectId) {
         String name = "";
-        Project project = mProjectCache.findById(mSelectedProjectId);
+        Project project = mProjectCache.findById(projectId);
         if (project != null) {
             name = project.getName();
         }

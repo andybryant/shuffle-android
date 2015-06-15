@@ -76,7 +76,7 @@
                     android:layout_weight="1"
                     android:paddingLeft="0dp"
                     android:drawSelectorOnTop="true"
-                    android:text="@string/add_project"
+                    android:text="@string/title_project_picker"
                     style="@style/EditButton"
                     />
 
@@ -84,6 +84,7 @@
 
             <View
                 style="@style/EditDivider"
+                android:layout_marginLeft="0dp"
                 />
 
             <EditText
@@ -94,7 +95,7 @@
                 android:layout_marginLeft="@dimen/keyline_1"
                 android:layout_marginRight="16dp"
                 android:hint="@string/description_title"
-                android:tag="bold"
+                android:tag="regular"
                 android:capitalize="sentences"
                 android:autoText="true"
                 android:background="@null"
