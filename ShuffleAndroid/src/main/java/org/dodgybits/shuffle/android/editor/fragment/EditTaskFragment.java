@@ -35,6 +35,7 @@ import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.CalendarUtils;
 import org.dodgybits.shuffle.android.core.util.EntityUtils;
+import org.dodgybits.shuffle.android.core.util.FontUtils;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.view.ContextIcon;
 import org.dodgybits.shuffle.android.editor.activity.EditTaskActivity;
@@ -675,13 +676,14 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         String name = getProjectName(mSelectedProjectId);
         if (name.isEmpty()) {
             mEditProjectButton.setTextColor(getResources().getColor(R.color.body_text_2));
-            mEditProjectButton.setTypeface(null, Typeface.NORMAL);
+            mEditProjectButton.setTag("regular");
             mEditProjectButton.setText(getString(R.string.title_project_picker));
         } else {
             mEditProjectButton.setTextColor(getResources().getColor(R.color.body_text_1));
-            mEditProjectButton.setTypeface(null, Typeface.BOLD);
+            mEditProjectButton.setTag("bold");
             mEditProjectButton.setText(name);
         }
+        FontUtils.setCustomFont(mEditProjectButton, getActivity().getAssets());
     }
 
     private String getProjectName(Id projectId) {
