@@ -81,7 +81,7 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
         super.onActivityCreated(savedInstanceState);
 
         mPager = (ViewPager)getActivity().findViewById(R.id.pager);
-        mPager.setOnPageChangeListener(this);
+        mPager.addOnPageChangeListener(this);
 
         mLocation = mLocationProvider.getLocation();
         updateCursor();
@@ -165,9 +165,8 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
         public Fragment getItem(int position) {
             TaskViewFragment fragment = mFragments[position];
             if (fragment == null) {
-                mCursor.moveToPosition(position);
                 Bundle args = new Bundle();
-                args.putInt(TaskViewFragment.POSITION, position);
+                args.putLong(TaskViewFragment.ID, getItemId(position));
                 fragment = TaskViewFragment.newInstance(args);
                 mFragments[position] = fragment;
             }

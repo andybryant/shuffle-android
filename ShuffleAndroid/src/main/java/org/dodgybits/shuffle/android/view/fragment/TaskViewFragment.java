@@ -46,7 +46,7 @@ import java.util.List;
 public class TaskViewFragment extends RoboFragment implements View.OnClickListener {
     private static final String TAG = "TaskViewFragment";
 
-    public static final String POSITION = "position";
+    public static final String ID = "id";
 
 
     private ViewGroup mContextContainer;
@@ -201,10 +201,24 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     private void initializeArgCache() {
         if (mTask != null) return;
         Bundle args = getArguments();
-        int position = args.getInt(POSITION);
+        long id = args.getLong(ID);
+        int position = findPosition(id);
         mCursor.moveToPosition(position);
         mTask = mPersister.read(mCursor);
         Log.d(TAG, "Read task from cursor at position " + position);
+    }
+
+    private int findPosition(long id) {
+        int position = 0;
+        int length = mCursor.getCount();
+        for (int i = 0; i < length; i++) {
+            mCursor.moveToPosition(i);
+            if (mCursor.getLong(0) == id) {
+                position = i;
+                break;
+            }
+        }
+        return position;
     }
 
     private Task getTask() {
