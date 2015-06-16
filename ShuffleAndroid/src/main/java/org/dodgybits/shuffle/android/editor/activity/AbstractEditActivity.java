@@ -4,12 +4,19 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
+
+import com.google.inject.Inject;
+
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.editor.fragment.AbstractEditFragment;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 
 public abstract class AbstractEditActivity extends RoboAppCompatActivity {
     private static final String TAG = "AbstractEditActivity";
+
+    @Inject
+    private EntityUpdateListener mEntityUpdateListener;
 
     @Override
     protected void onCreate(Bundle icicle) {

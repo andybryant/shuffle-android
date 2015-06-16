@@ -78,7 +78,7 @@ public class EntityUpdateListener {
         mTaskPersister.moveTasksWithinProject(event.getTaskIds(), event.getCursor(), event.isMoveUp());
     }
 
-    private void onToggleTasksDeleted(@Observes UpdateTasksDeletedEvent event) {
+    private void onUpdateTasksDeleted(@Observes UpdateTasksDeletedEvent event) {
         Set<Long> taskIds = event.getTaskIds();
         for (Long taskId : taskIds) {
             Id id = Id.create(taskId);
@@ -90,7 +90,7 @@ public class EntityUpdateListener {
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
-    private void onToggleTaskCompleted(@Observes UpdateTasksCompletedEvent event) {
+    private void onUpdateTaskCompleted(@Observes UpdateTasksCompletedEvent event) {
         Set<Long> taskIds = event.getTaskIds();
         for (Long taskId : taskIds) {
             Id id = Id.create(taskId);

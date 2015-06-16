@@ -39,6 +39,7 @@ import org.dodgybits.shuffle.android.core.util.FontUtils;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.view.ContextIcon;
 import org.dodgybits.shuffle.android.editor.activity.EditTaskActivity;
+import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
 import org.dodgybits.shuffle.android.list.view.LabelView;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
@@ -49,6 +50,8 @@ import org.dodgybits.shuffle.sync.model.TaskChangeSet;
 
 import java.util.List;
 import java.util.TimeZone;
+
+import roboguice.event.EventManager;
 
 import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.LOCAL_CHANGE_SOURCE;
 
@@ -92,7 +95,10 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
     @Inject
     private EntityCache<Context> mContextCache;
-    
+
+    @Inject
+    protected EventManager mEventManager;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         mDeferredTime = new Time();
@@ -510,7 +516,9 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             }
 
             case R.id.delete_button: {
-                // TODO - toggle delete save and exit
+                mEventManager.fire(new UpdateTasksDeletedEvent(
+                        mOriginalItem.getLocalId().getId(), !mOriginalItem.isDeleted()));
+                getActivity().finish();
                 break;
             }
 
@@ -564,18 +572,16 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
     @Override
     protected void findViewsAndAddListeners() {
-        mDescriptionWidget = (EditText) getView().findViewById(R.id.description);
-        mEditProjectButton = (Button) getView().findViewById(R.id.project);
-        mEditProjectButton.setOnClickListener(this);
-        mDetailsWidget = (EditText) getView().findViewById(R.id.details);
-
         mDeferredRow = getView().findViewById(R.id.defer_row);
         mDeferredEditButton = (Button) getView().findViewById(R.id.defer);
-        mDueEditButton = (Button) getView().findViewById(R.id.due);
+        mDeferredEditButton.setOnClickListener(new DateClickListener(mDeferredTime));
+
+        mEditProjectButton = (Button) getView().findViewById(R.id.project);
+        mEditProjectButton.setOnClickListener(this);
+        mDescriptionWidget = (EditText) getView().findViewById(R.id.description);
+        mDetailsWidget = (EditText) getView().findViewById(R.id.details);
 
         mCompleteEntry = getView().findViewById(R.id.completed_row);
-        mDeleteButton = (Button) getView().findViewById(R.id.delete_button);
-        mUpdateCalendarEntry = getView().findViewById(R.id.gcal_entry);
 
         mAddContextButton = (Button) getView().findViewById(R.id.context_add);
         mAddContextButton.setOnClickListener(this);
@@ -584,25 +590,27 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         mContextContainer.setOnClickListener(this);
         mNoContexts = (TextView) getView().findViewById(R.id.no_contexts);
 
-
         updateProjectButton();
 
         mCompleteEntry.setOnClickListener(this);
         mCompleteEntry.setOnFocusChangeListener(this);
         mCompletedCheckBox = (SwitchCompat) mCompleteEntry.findViewById(R.id.completed_entry_checkbox);
 
-        mDeleteButton.setOnClickListener(this);
+        mDueEditButton = (Button) getView().findViewById(R.id.due);
 
+        mUpdateCalendarEntry = getView().findViewById(R.id.gcal_entry);
         mUpdateCalendarEntry.setOnClickListener(this);
         mUpdateCalendarEntry.setOnFocusChangeListener(this);
         mUpdateCalendarCheckBox = (CompoundButton) mUpdateCalendarEntry.findViewById(R.id.update_calendar_checkbox);
         mCalendarLabel = (TextView) mUpdateCalendarEntry.findViewById(R.id.gcal_label);
         mCalendarDetail = (TextView) mUpdateCalendarEntry.findViewById(R.id.gcal_detail);
 
-        mDeferredEditButton.setOnClickListener(new DateClickListener(mDeferredTime));
 
 //        mDueEditDateButton.setOnClickListener(new DateClickListener(mDueTime));
 //        mDueEditTimeButton.setOnClickListener(new TimeClickListener(mDueTime));
+
+        mDeleteButton = (Button) getView().findViewById(R.id.delete_button);
+        mDeleteButton.setOnClickListener(this);
     }
 
     private void addNewContext(Id contextId) {
