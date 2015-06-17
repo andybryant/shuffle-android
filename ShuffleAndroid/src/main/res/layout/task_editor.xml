@@ -37,27 +37,6 @@
             android:scrollbars="vertical">
 
             <LinearLayout
-                android:id="@+id/defer_row"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="72dip"
-                android:orientation="horizontal"
-                android:background="@android:color/holo_orange_dark"
-                >
-
-                <Button
-                    android:id="@+id/defer"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/not_deferred"
-                    android:textColor="@color/white"
-                    style="@style/EditButton"
-                    />
-
-            </LinearLayout>
-
-
-            <LinearLayout
                 android:id="@+id/project_row"
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
@@ -126,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:paddingRight="?android:attr/scrollbarSize"
-                    android:background="@drawable/list_selector_background">
+                    >
 
                     <org.dodgybits.shuffle.android.core.view.RowLayout
                         android:id="@+id/context_items_container"
@@ -135,7 +114,6 @@
                         android:layout_gravity="left"
                         android:layout_alignParentLeft="true"
                         android:paddingTop="12dp"
-                        android:background="@drawable/list_selector_background"
                         android:horizontalSpacing="@dimen/context_small_horizontal_spacing"
                         android:verticalSpacing="@dimen/context_small_vertical_spacing"
                         android:focusable="true"
@@ -203,9 +181,9 @@
             <View style="@style/EditDivider" />
 
             <LinearLayout
-                android:id="@+id/due_row"
+                android:id="@+id/scheduling_row"
                 android:layout_width="match_parent"
-                android:layout_height="72dp"
+                android:layout_height="96dp"
                 android:orientation="horizontal"
                 >
 
@@ -214,15 +192,34 @@
                     style="@style/EditEntryIcon"
                     />
 
-                <Button
-                    android:id="@+id/due"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/not_due"
-                    android:textColor="@color/label_color"
-                    android:paddingLeft="0dp"
-                    style="@style/EditButton"
-                    />
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/defer"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="@string/not_deferred"
+                        android:textColor="@android:color/holo_orange_dark"
+                        android:tag="bold"
+                        android:paddingLeft="0dp"
+                        style="@style/EditButton"
+                        />
+
+                    <Button
+                        android:id="@+id/due"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="@string/not_due"
+                        android:textColor="@color/label_color"
+                        android:paddingLeft="0dp"
+                        style="@style/EditButton"
+                        />
+
+                </LinearLayout>
+
 
             </LinearLayout>
 

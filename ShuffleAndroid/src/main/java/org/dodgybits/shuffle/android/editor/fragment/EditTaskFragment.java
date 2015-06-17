@@ -338,12 +338,8 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         final boolean updateCalendar = mUpdateCalendarCheckBox.isChecked();
 
         if (commitValues && updateCalendar) {
-            long startMillis = showFromMillis > 0L ? showFromMillis : dueMillis;
-            long endMillis = dueMillis > 0L ? dueMillis : showFromMillis;
-
-            if (endMillis < startMillis + DateUtils.HOUR_IN_MILLIS) {
-                endMillis = startMillis + DateUtils.HOUR_IN_MILLIS;
-            }
+            long startMillis = dueMillis - DateUtils.DAY_IN_MILLIS;
+            long endMillis = dueMillis;
 
             Uri calEntryUri = addOrUpdateCalendarEvent(
                     eventId, description, details,
@@ -527,6 +523,8 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 checkBox.toggle();
                 break;
             }
+
+
 
 //            case R.id.clear_defer: {
 //                mDeferredTime.set(0L);
