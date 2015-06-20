@@ -73,7 +73,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     private Id mSelectedProjectId = Id.NONE;
     private Button mEditProjectButton;
 
-    private View mDeferredRow;
     private Button mDeferredEditButton;
     private Button mDueEditButton;
 
@@ -570,10 +569,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
     @Override
     protected void findViewsAndAddListeners() {
-        mDeferredRow = getView().findViewById(R.id.defer_row);
-        mDeferredEditButton = (Button) getView().findViewById(R.id.defer);
-        mDeferredEditButton.setOnClickListener(new DateClickListener(mDeferredTime));
-
         mEditProjectButton = (Button) getView().findViewById(R.id.project);
         mEditProjectButton.setOnClickListener(this);
         mDescriptionWidget = (EditText) getView().findViewById(R.id.description);
@@ -594,6 +589,8 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         mCompleteEntry.setOnFocusChangeListener(this);
         mCompletedCheckBox = (SwitchCompat) mCompleteEntry.findViewById(R.id.completed_entry_checkbox);
 
+        mDeferredEditButton = (Button) getView().findViewById(R.id.defer);
+        mDeferredEditButton.setOnClickListener(new DateClickListener(mDeferredTime));
         mDueEditButton = (Button) getView().findViewById(R.id.due);
 
         mUpdateCalendarEntry = getView().findViewById(R.id.gcal_entry);
@@ -702,20 +699,39 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     }
 
     private void populateWhen() {
-        boolean showDeferred = !Time.isEpoch(mDeferredTime);
+        boolean deferredSet = !Time.isEpoch(mDeferredTime);
         long deferredMillis = mDeferredTime.toMillis(false /* use isDst */);
-        if (showDeferred) {
-            mDeferredRow.setVisibility(View.VISIBLE);
-            // TODO - format properly
-            mDeferredEditButton.setText("Deferred until " + formatDate(deferredMillis) +
-                    " " + formatTime(deferredMillis));
+        if (deferredSet) {
+            mDeferredEditButton.setTextColor(getResources().getColor(R.color.deferred));
+            mDeferredEditButton.setTag("bold");
+            mDeferredEditButton.setText(getString(R.string.deferred_until_phrase ,
+                    formatDateTime(deferredMillis, false)));
         } else {
-            mDeferredRow.setVisibility(View.GONE);
+            mDeferredEditButton.setTextColor(getResources().getColor(R.color.black));
+            mDeferredEditButton.setTag("regular");
+            mDeferredEditButton.setText(R.string.not_deferred);
+        }
+        FontUtils.setCustomFont(mDeferredEditButton, getActivity().getAssets());
+
+        boolean dueSet = !Time.isEpoch(mDeferredTime);
+        long dueMillis = mDueTime.toMillis(false /* use isDst */);
+        if (dueSet) {
+            mDueEditButton.setText(getString(R.string.due_phrase,
+                    formatDateTime(dueMillis, true)));
+        } else {
+            mDueEditButton.setText(R.string.not_due);
+        }
+    }
+
+    private CharSequence formatDateTime(long millis, boolean withPreposition) {
+        CharSequence value;
+        if (millis > 0L) {
+            value = DateUtils.getRelativeTimeSpanString(getActivity(), millis, withPreposition);
+        } else {
+            value = "";
         }
 
-        long dueMillis = mDueTime.toMillis(false /* use isDst */);
-        // TODO - format properly
-        mDueEditButton.setText(formatDate(dueMillis) + " " + formatTime(dueMillis));
+        return value;
     }
 
     private CharSequence formatDate(long millis) {

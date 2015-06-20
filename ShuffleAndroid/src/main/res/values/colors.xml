@@ -87,6 +87,7 @@
 
     <color name="label_color">@color/body_text_2</color>
     <color name="small_label">#0099cc</color>
+    <color name="deferred">#ffff8800</color>
 
     <!--<color name="fab_color_1">#ff5252</color>-->
     <color name="fab_color_1">@color/theme_primary_dark</color>

@@ -227,20 +227,23 @@
 
             <LinearLayout
                 android:id="@+id/gcal_entry"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="72dp"
                 android:background="@drawable/list_selector_background"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:focusable="true"
-                android:clickable="true">
+                android:clickable="true"
+                >
+
+                <ImageView
+                    android:src="@drawable/office_calendar"
+                    style="@style/EditEntryIcon"
+                    />
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/keyline_1"
-                    android:layout_marginTop="6dip"
-                    android:layout_marginBottom="6dip"
                     android:layout_weight="1"
                     android:duplicateParentState="true">
 
@@ -262,7 +265,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/gcal_label"
                         android:layout_alignLeft="@+id/gcal_label"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="16sp"
                         android:textColor="@color/label_color"
                         android:maxLines="2"
                         android:duplicateParentState="true"
