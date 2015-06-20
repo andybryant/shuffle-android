@@ -22,14 +22,15 @@ import roboguice.inject.InjectView;
 
 public class DateTimePickerActivity extends RoboActivity {
 
-    private TextView tomorrow;
-    private TextView tomorrowDateTime;
-    private TextView nextWeek;
-    private TextView nextWeekDateTime;
-    private TextView nextMonth;
-    private TextView nextMonthDateTime;
-    private TextView last;
-    private TextView lastDateTime;
+    @InjectView(R.id.tomorrow) TextView tomorrow;
+    @InjectView(R.id.tomorrow_datetime) private TextView tomorrowDateTime;
+    @InjectView(R.id.next_week) private TextView nextWeek;
+    @InjectView(R.id.next_week_datetime) private TextView nextWeekDateTime;
+    @InjectView(R.id.next_month) private TextView nextMonth;
+    @InjectView(R.id.next_month_datetime) private TextView nextMonthDateTime;
+    @InjectView(R.id.last_row) private View lastRow;
+    @InjectView(R.id.last) private TextView last;
+    @InjectView(R.id.last_datetime) private TextView lastDateTime;
 
 
     @Override

@@ -19,161 +19,90 @@
         />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:clickable="true"
-        android:orientation="horizontal"
+        style="@style/EditTimeRow"
         >
         <TextView
             android:id="@+id/tomorrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/keyline_1"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
             android:text="Tomorrow"
-            android:textSize="18sp"
-            android:textColor="@color/body_text_1"
+            style="@style/EditTimeEntry"
         />
         <TextView
             android:id="@+id/tomorrow_datetime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/keyline_1"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:gravity="right"
             android:text="Sat 10:00 pm"
-            android:textSize="18sp"
-            android:textColor="@color/body_text_2"
+            style="@style/EditTimeExample"
             />
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:clickable="true"
-        android:orientation="horizontal"
+        style="@style/EditTimeRow"
         >
         <TextView
             android:id="@+id/next_week"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/keyline_1"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
             android:text="Next week"
-            android:textSize="18sp"
-            android:textColor="@color/body_text_1"
+            style="@style/EditTimeEntry"
         />
         <TextView
             android:id="@+id/next_week_datetime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/keyline_1"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:gravity="right"
             android:text="Fri 25 June 10:00 pm"
-            android:textSize="18sp"
-            android:textColor="@color/body_text_2"
+            style="@style/EditTimeExample"
             />
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:clickable="true"
-        android:orientation="horizontal"
+        style="@style/EditTimeRow"
         >
         <TextView
             android:id="@+id/next_month"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/keyline_1"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
             android:text="Next month"
-            android:textSize="18sp"
-            android:textColor="@color/body_text_1"
+            style="@style/EditTimeEntry"
         />
         <TextView
             android:id="@+id/next_month_datetime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/keyline_1"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:gravity="right"
             android:text="Fri 24 July 10:00 pm"
-            android:textSize="18sp"
-            android:textColor="@color/body_text_2"
+            style="@style/EditTimeExample"
             />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/last_row"
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:clickable="true"
-        android:orientation="horizontal"
         android:background="@color/dialog_background"
+        style="@style/EditTimeRow"
         >
 
         <ImageView
-            android:src="@drawable/ic_schedule_black_24dp"
+            android:src="@drawable/ic_refresh_black_24dp"
             style="@style/EditEntryIcon"
             />
 
         <TextView
             android:id="@+id/last"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="0dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
             android:text="Last"
-            android:textSize="18sp"
-            android:textColor="@color/body_text_1"
+            android:layout_marginLeft="0dp"
+            style="@style/EditTimeEntry"
             />
         <TextView
             android:id="@+id/last_datetime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/keyline_1"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:gravity="right"
             android:text="Fri 24 July 10:00 pm"
-            android:textSize="18sp"
-            android:textColor="@color/body_text_2"
+            style="@style/EditTimeExample"
             />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/pick_row"
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:clickable="true"
-        android:orientation="horizontal"
         android:background="@color/dialog_background"
+        style="@style/EditTimeRow"
         >
 
         <ImageView
-            android:src="@drawable/ic_schedule_black_24dp"
+            android:src="@drawable/ic_today_black_24dp"
             style="@style/EditEntryIcon"
             />
 
         <TextView
             android:id="@+id/pick"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="0dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
             android:text="Pick date &amp; time"
-            android:textSize="18sp"
-            android:textColor="@color/body_text_1"
+            android:layout_marginLeft="0dp"
+            style="@style/EditTimeEntry"
             />
     </LinearLayout>
 
