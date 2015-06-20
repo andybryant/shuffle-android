@@ -17,6 +17,7 @@ import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.OnCreatedEvent;
 import org.dodgybits.shuffle.android.core.listener.FragmentLoader;
 import org.dodgybits.shuffle.android.core.listener.MainListeners;
+import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import org.dodgybits.shuffle.android.core.util.FontUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.Location;
@@ -120,6 +121,18 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
         super.onResume();
 
         updateHomeIcon();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AnalyticsUtils.activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AnalyticsUtils.activityStop(this);
     }
 
     private void setupNavDrawer() {

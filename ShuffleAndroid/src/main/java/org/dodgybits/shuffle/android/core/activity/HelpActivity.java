@@ -30,6 +30,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.fragment.HelpListFragment;
+import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
@@ -69,6 +70,18 @@ public class HelpActivity extends RoboAppCompatActivity {
 
         int position = getRequestedPosition(getIntent());
         mPager.setCurrentItem(position);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AnalyticsUtils.activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AnalyticsUtils.activityStop(this);
     }
 
     @Override

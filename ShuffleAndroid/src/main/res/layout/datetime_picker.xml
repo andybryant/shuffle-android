@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    >
 
     <TextView
         android:id="@+id/title"
@@ -115,6 +117,7 @@
         android:layout_height="72dp"
         android:clickable="true"
         android:orientation="horizontal"
+        android:background="@color/dialog_background"
         >
 
         <ImageView
@@ -144,6 +147,33 @@
             android:text="Fri 24 July 10:00 pm"
             android:textSize="18sp"
             android:textColor="@color/body_text_2"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/pick_row"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:background="@color/dialog_background"
+        >
+
+        <ImageView
+            android:src="@drawable/ic_schedule_black_24dp"
+            style="@style/EditEntryIcon"
+            />
+
+        <TextView
+            android:id="@+id/pick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:text="Pick date &amp; time"
+            android:textSize="18sp"
+            android:textColor="@color/body_text_1"
             />
     </LinearLayout>
 

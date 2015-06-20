@@ -37,6 +37,7 @@
 
     <color name="white">#ffffff</color>
     <color name="red">#ff0000</color>
+    <color name="dialog_background">#f6f6f6</color>
     <color name="light_gray">#e7e3e7</color>
     <color name="dark_brown">#312f28</color>
     <color name="light_brown">#dadabe</color>
