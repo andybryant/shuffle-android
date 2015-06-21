@@ -3,26 +3,27 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="24dp"
     android:background="@color/white"
     >
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="On hold until..."
-        android:tag="bold"
-        android:textSize="24sp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
-        android:layout_marginLeft="@dimen/keyline_1"
-        />
+    <!--<TextView-->
+        <!--android:id="@+id/title"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="24dp"-->
+        <!--android:layout_marginBottom="24dp"-->
+        <!--android:layout_marginLeft="@dimen/keyline_1"-->
+        <!--android:text="On hold until..."-->
+        <!--android:tag="bold"-->
+        <!--android:textSize="24sp"-->
+        <!--/>-->
 
     <LinearLayout
+        android:id="@+id/tomorrow_row"
         style="@style/EditTimeRow"
         >
         <TextView
-            android:id="@+id/tomorrow"
             android:text="Tomorrow"
             style="@style/EditTimeEntry"
         />
@@ -34,10 +35,10 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/next_week_row"
         style="@style/EditTimeRow"
         >
         <TextView
-            android:id="@+id/next_week"
             android:text="Next week"
             style="@style/EditTimeEntry"
         />
@@ -49,10 +50,10 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/next_month_row"
         style="@style/EditTimeRow"
         >
         <TextView
-            android:id="@+id/next_month"
             android:text="Next month"
             style="@style/EditTimeEntry"
         />
@@ -75,14 +76,15 @@
             />
 
         <TextView
-            android:id="@+id/last"
             android:text="Last"
             android:layout_marginLeft="0dp"
+            android:background="@color/dialog_background"
             style="@style/EditTimeEntry"
             />
         <TextView
             android:id="@+id/last_datetime"
             android:text="Fri 24 July 10:00 pm"
+            android:background="@color/dialog_background"
             style="@style/EditTimeExample"
             />
     </LinearLayout>
@@ -99,9 +101,28 @@
             />
 
         <TextView
-            android:id="@+id/pick"
             android:text="Pick date &amp; time"
             android:layout_marginLeft="0dp"
+            android:background="@color/dialog_background"
+            style="@style/EditTimeEntry"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/none_row"
+        android:background="@color/dialog_background"
+        style="@style/EditTimeRow"
+        >
+
+        <ImageView
+            android:src="@drawable/ic_clear_black_24dp"
+            style="@style/EditEntryIcon"
+            />
+
+        <TextView
+            android:text="@string/clear_button_title"
+            android:layout_marginLeft="0dp"
+            android:background="@color/dialog_background"
             style="@style/EditTimeEntry"
             />
     </LinearLayout>

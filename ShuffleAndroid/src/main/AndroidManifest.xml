@@ -281,6 +281,18 @@
 		</activity>
 
 		<activity
+			android:name="org.dodgybits.shuffle.android.editor.activity.DateTimePickerActivity"
+			android:label="@string/title_deferred_picker" android:theme="@style/ShuffleDialogTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
+                <action android:name="android.intent.action.PICK" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.dodgybits.datetime" />
+            </intent-filter>
+		</activity>
+
+		<activity
 			android:name="org.dodgybits.shuffle.android.editor.activity.ColourPickerActivity"
 			android:label="@string/title_colour_picker" android:theme="@style/ShuffleDialogTheme">
 			<!--  android:theme="@android:style/Theme.Dialog" -->

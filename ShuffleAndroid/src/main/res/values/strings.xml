@@ -39,6 +39,8 @@
     <string name="title_preferences_create_backup">Create backup</string>
     <string name="title_preferences_restore_backup">Restore from backup</string>
     <string name="title_help">Help</string>
+    <string name="title_deferred_picker">On hold until...</string>
+    <string name="title_due_picker">Due on...</string>
     <string name="title_icon_picker">Choose icon</string>
     <string name="title_colour_picker">Choose color</string>
     <string name="title_calendar">Actions due %s</string>

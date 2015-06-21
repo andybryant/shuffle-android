@@ -38,6 +38,7 @@ import org.dodgybits.shuffle.android.core.util.EntityUtils;
 import org.dodgybits.shuffle.android.core.util.FontUtils;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.view.ContextIcon;
+import org.dodgybits.shuffle.android.editor.activity.DateTimePickerActivity;
 import org.dodgybits.shuffle.android.editor.activity.EditTaskActivity;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
 import org.dodgybits.shuffle.android.list.view.LabelView;
@@ -61,6 +62,8 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
     private static final int NEW_CONTEXT_CODE = 100;
     private static final int NEW_PROJECT_CODE = 101;
+    private static final int DEFERRED_CODE = 102;
+    private static final int DUE_CODE = 103;
 
     private EditText mDescriptionWidget;
     private EditText mDetailsWidget;
@@ -126,7 +129,27 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                     }
                 }
                 break;
-            
+
+            case DEFERRED_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data != null) {
+                        mDeferredTime.set(data.getLongExtra(DateTimePickerActivity.DATETIME_VALUE, 0L));
+                        populateWhen();
+                        updateCalendarPanel();
+                    }
+                }
+                break;
+
+            case DUE_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data != null) {
+                        mDueTime.set(data.getLongExtra(DateTimePickerActivity.DATETIME_VALUE, 0L));
+                        populateWhen();
+                        updateCalendarPanel();
+                    }
+                }
+                break;
+
             default:
                 Log.e(TAG, "Unknown requestCode: " + requestCode);
         }
@@ -523,7 +546,15 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 break;
             }
 
+            case R.id.defer: {
+                showDeferredPicker();
+                break;
+            }
 
+            case R.id.due: {
+                showDuePicker();
+                break;
+            }
 
 //            case R.id.clear_defer: {
 //                mDeferredTime.set(0L);
@@ -551,6 +582,24 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
     private void showProjectPicker() {
         ((EditTaskActivity)getActivity()).showProjectPicker();
+    }
+
+    private void showDeferredPicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(DateTimePickerActivity.TYPE);
+        long deferredMillis = mDeferredTime.toMillis(false /* use isDst */);
+        intent.putExtra(DateTimePickerActivity.DATETIME_VALUE, deferredMillis);
+        intent.putExtra(DateTimePickerActivity.TITLE, getString(R.string.title_deferred_picker));
+        startActivityForResult(intent, DEFERRED_CODE);
+    }
+
+    private void showDuePicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(DateTimePickerActivity.TYPE);
+        long dueMillis = mDueTime.toMillis(false /* use isDst */);
+        intent.putExtra(DateTimePickerActivity.DATETIME_VALUE, dueMillis);
+        intent.putExtra(DateTimePickerActivity.TITLE, getString(R.string.title_due_picker));
+        startActivityForResult(intent, DUE_CODE);
     }
 
     @Override
@@ -590,8 +639,9 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         mCompletedCheckBox = (SwitchCompat) mCompleteEntry.findViewById(R.id.completed_entry_checkbox);
 
         mDeferredEditButton = (Button) getView().findViewById(R.id.defer);
-        mDeferredEditButton.setOnClickListener(new DateClickListener(mDeferredTime));
+        mDeferredEditButton.setOnClickListener(this);
         mDueEditButton = (Button) getView().findViewById(R.id.due);
+        mDueEditButton.setOnClickListener(this);
 
         mUpdateCalendarEntry = getView().findViewById(R.id.gcal_entry);
         mUpdateCalendarEntry.setOnClickListener(this);
@@ -673,6 +723,8 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 contextView.setIcon(icon);
             }
         }
+
+        FontUtils.setCustomFont(mContextContainer, getActivity().getAssets());
     }   
     
     private void updateProjectButton() {
@@ -707,7 +759,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             mDeferredEditButton.setText(getString(R.string.deferred_until_phrase ,
                     formatDateTime(deferredMillis, false)));
         } else {
-            mDeferredEditButton.setTextColor(getResources().getColor(R.color.black));
+            mDeferredEditButton.setTextColor(getResources().getColor(R.color.label_color));
             mDeferredEditButton.setTag("regular");
             mDeferredEditButton.setText(R.string.not_deferred);
         }

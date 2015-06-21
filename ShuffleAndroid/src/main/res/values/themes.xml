@@ -103,6 +103,7 @@
         <item name="android:layout_height">72dp</item>
         <item name="android:clickable">true</item>
         <item name="android:orientation">horizontal</item>
+        <item name="android:background">@drawable/button_background</item>
     </style>
 
     <style name="EditTimeEntry">
@@ -111,8 +112,10 @@
         <item name="android:layout_marginLeft">@dimen/keyline_1</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:duplicateParentState">true</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/body_text_1</item>
+        <item name="android:background">@drawable/button_background</item>
     </style>
 
     <style name="EditTimeExample">
@@ -121,9 +124,11 @@
         <item name="android:layout_marginRight">@dimen/keyline_1</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:duplicateParentState">true</item>
         <item name="android:gravity">right</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/body_text_2</item>
+        <item name="android:background">@drawable/button_background</item>
     </style>
 
 </resources>
