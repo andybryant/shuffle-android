@@ -51,4 +51,50 @@
         <item name="android:textColor">@color/label_color</item>
     </style>
 
+    <style name="EditEntryIcon">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginLeft">@dimen/keyline_1</item>
+        <item name="android:layout_marginRight">32dip</item>
+        <item name="android:alpha">0.54</item>
+    </style>
+
+    <style name="EditDivider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginLeft">72dp</item>
+        <item name="android:background">@android:drawable/divider_horizontal_bright</item>
+    </style>
+
+    <style name="EditTimeRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">72dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">@drawable/button_white_background</item>
+    </style>
+
+    <style name="EditTimeEntry">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/keyline_1</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:duplicateParentState">true</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/body_text_1</item>
+    </style>
+
+    <style name="EditTimeExample">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginRight">@dimen/keyline_1</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:duplicateParentState">true</item>
+        <item name="android:gravity">right</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/body_text_2</item>
+    </style>
 </resources>

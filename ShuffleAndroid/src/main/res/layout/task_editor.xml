@@ -326,7 +326,9 @@
 
     </ScrollView>
 
-    <View style="@style/EditDivider" />
+    <View style="@style/EditDivider"
+        android:layout_marginLeft="0dp"
+        />
 
     <Button
         android:id="@+id/delete_button"
@@ -336,6 +338,7 @@
         android:layout_gravity="center"
         android:textSize="14sp"
         android:text="@string/delete_completed_button_title"
+        android:textColor="@color/label_color"
         style="?android:attr/borderlessButtonStyle"
         />
 

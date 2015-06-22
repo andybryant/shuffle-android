@@ -541,7 +541,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             }
 
             case R.id.gcal_entry: {
-                CheckBox checkBox = (CheckBox) v.findViewById(R.id.update_calendar_checkbox);
+                CompoundButton checkBox = (CompoundButton) v.findViewById(R.id.update_calendar_checkbox);
                 checkBox.toggle();
                 break;
             }
@@ -555,20 +555,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 showDuePicker();
                 break;
             }
-
-//            case R.id.clear_defer: {
-//                mDeferredTime.set(0L);
-//                populateWhen();
-//                updateCalendarPanel();
-//                break;
-//            }
-//
-//            case R.id.clear_due: {
-//                mDueTime.set(0L);
-//                populateWhen();
-//                updateCalendarPanel();
-//                break;
-//            }
 
             default:
                 super.onClick(v);
@@ -716,6 +702,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             for (int i = 0; i < contextCount; i++) {
                 LabelView contextView = (LabelView) mContextContainer.getChildAt(i + 1); // skip no contexts view
                 Context context = contexts.get(i);
+                contextView.setTag(FontUtils.ALL_CAPS);
                 contextView.setText(context.getName());
                 contextView.setColourIndex(context.getColourIndex());
                 ContextIcon contextIcon = ContextIcon.createIcon(context.getIconName(), getResources(), true);

@@ -66,7 +66,7 @@
 
     <LinearLayout
         android:id="@+id/last_row"
-        android:background="@color/dialog_background"
+        android:background="@drawable/button_background"
         style="@style/EditTimeRow"
         >
 
@@ -78,20 +78,18 @@
         <TextView
             android:text="Last"
             android:layout_marginLeft="0dp"
-            android:background="@color/dialog_background"
             style="@style/EditTimeEntry"
             />
         <TextView
             android:id="@+id/last_datetime"
             android:text="Fri 24 July 10:00 pm"
-            android:background="@color/dialog_background"
             style="@style/EditTimeExample"
             />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/pick_row"
-        android:background="@color/dialog_background"
+        android:background="@drawable/button_background"
         style="@style/EditTimeRow"
         >
 
@@ -103,14 +101,13 @@
         <TextView
             android:text="Pick date &amp; time"
             android:layout_marginLeft="0dp"
-            android:background="@color/dialog_background"
             style="@style/EditTimeEntry"
             />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/none_row"
-        android:background="@color/dialog_background"
+        android:background="@drawable/button_background"
         style="@style/EditTimeRow"
         >
 
@@ -122,7 +119,6 @@
         <TextView
             android:text="@string/clear_button_title"
             android:layout_marginLeft="0dp"
-            android:background="@color/dialog_background"
             style="@style/EditTimeEntry"
             />
     </LinearLayout>

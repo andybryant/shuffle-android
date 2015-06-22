@@ -48,8 +48,9 @@ public class DateTimePickerActivity extends RoboActivity implements View.OnClick
         View topView = findViewById(android.R.id.content);
         FontUtils.setCustomFont(topView, getAssets());
 
-        title = icicle == null ? null : icicle.getString(TITLE, null);
-        lastMillis = icicle == null ? 0L : icicle.getLong(DATETIME_VALUE, 0L);
+        Bundle extras = getIntent().getExtras();
+        title = extras == null ? null : extras.getString(TITLE, null);
+        lastMillis = extras == null ? 0L : extras.getLong(DATETIME_VALUE, 0L);
         tomorrowMillis = System.currentTimeMillis() + DateUtils.DAY_IN_MILLIS;
         nextWeekMillis = System.currentTimeMillis() + DateUtils.WEEK_IN_MILLIS;
         nextMonthMillis = System.currentTimeMillis() + (31L *  DateUtils.DAY_IN_MILLIS);
