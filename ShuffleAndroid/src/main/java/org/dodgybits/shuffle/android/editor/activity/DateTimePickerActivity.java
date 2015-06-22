@@ -23,7 +23,7 @@ public class DateTimePickerActivity extends RoboActivity implements View.OnClick
     public static final String DATETIME_VALUE = "dateTimeValue";
     public static final String TITLE = "title";
 
-//    @InjectView(R.id.title) TextView titleView;
+    @InjectView(R.id.title) TextView titleView;
     @InjectView(R.id.tomorrow_row) View tomorrowRow;
     @InjectView(R.id.tomorrow_datetime) private TextView tomorrowDateTime;
     @InjectView(R.id.next_week_row) private View nextWeekRow;
@@ -78,7 +78,7 @@ public class DateTimePickerActivity extends RoboActivity implements View.OnClick
 
     private void setupView() {
         if (title != null) {
-            setTitle(title);
+            titleView.setText(title);
         }
         int flags = DateUtils.FORMAT_SHOW_TIME |
                 DateUtils.FORMAT_SHOW_WEEKDAY  |

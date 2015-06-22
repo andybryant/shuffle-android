@@ -7,17 +7,17 @@
     android:background="@color/white"
     >
 
-    <!--<TextView-->
-        <!--android:id="@+id/title"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginTop="24dp"-->
-        <!--android:layout_marginBottom="24dp"-->
-        <!--android:layout_marginLeft="@dimen/keyline_1"-->
-        <!--android:text="On hold until..."-->
-        <!--android:tag="bold"-->
-        <!--android:textSize="24sp"-->
-        <!--/>-->
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginLeft="@dimen/keyline_1"
+        android:text="On hold until..."
+        android:tag="bold"
+        android:textSize="24sp"
+        />
 
     <LinearLayout
         android:id="@+id/tomorrow_row"
