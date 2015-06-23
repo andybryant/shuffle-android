@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
+    android:minWidth="300dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="24dp"
@@ -10,117 +11,136 @@
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
         android:layout_marginLeft="@dimen/keyline_1"
         android:text="On hold until..."
+        android:textColor="@color/black"
         android:tag="bold"
         android:textSize="24sp"
         />
 
-    <LinearLayout
-        android:id="@+id/tomorrow_row"
-        style="@style/EditTimeRow"
-        >
-        <TextView
-            android:text="Tomorrow"
-            style="@style/EditTimeEntry"
-        />
-        <TextView
-            android:id="@+id/tomorrow_datetime"
-            android:text="Sat 10:00 pm"
-            style="@style/EditTimeExample"
-            />
-    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:background="@color/white"
+        android:fadingEdge="none"
+        android:animateLayoutChanges="true">
 
-    <LinearLayout
-        android:id="@+id/next_week_row"
-        style="@style/EditTimeRow"
-        >
-        <TextView
-            android:text="Next week"
-            style="@style/EditTimeEntry"
-        />
-        <TextView
-            android:id="@+id/next_week_datetime"
-            android:text="Fri 25 June 10:00 pm"
-            style="@style/EditTimeExample"
-            />
-    </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical">
 
-    <LinearLayout
-        android:id="@+id/next_month_row"
-        style="@style/EditTimeRow"
-        >
-        <TextView
-            android:text="Next month"
-            style="@style/EditTimeEntry"
-        />
-        <TextView
-            android:id="@+id/next_month_datetime"
-            android:text="Fri 24 July 10:00 pm"
-            style="@style/EditTimeExample"
-            />
-    </LinearLayout>
+            <LinearLayout
+            android:id="@+id/tomorrow_row"
+            style="@style/EditTimeRow"
+            >
+                <TextView
+                    android:text="Tomorrow"
+                    style="@style/EditTimeEntry"
+                />
+                <TextView
+                    android:id="@+id/tomorrow_datetime"
+                    android:text="Sat 10:00 pm"
+                    style="@style/EditTimeExample"
+                    />
+            </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/last_row"
-        android:background="@drawable/button_background"
-        style="@style/EditTimeRow"
-        >
+            <LinearLayout
+                android:id="@+id/next_week_row"
+                style="@style/EditTimeRow"
+                >
+                <TextView
+                    android:text="Next week"
+                    style="@style/EditTimeEntry"
+                />
+                <TextView
+                    android:id="@+id/next_week_datetime"
+                    android:text="Fri 25 June 10:00 pm"
+                    style="@style/EditTimeExample"
+                    />
+            </LinearLayout>
 
-        <ImageView
-            android:src="@drawable/ic_refresh_black_24dp"
-            style="@style/EditEntryIcon"
-            />
+            <LinearLayout
+                android:id="@+id/next_month_row"
+                style="@style/EditTimeRow"
+                >
+                <TextView
+                    android:text="Next month"
+                    style="@style/EditTimeEntry"
+                />
+                <TextView
+                    android:id="@+id/next_month_datetime"
+                    android:text="Fri 24 July 10:00 pm"
+                    style="@style/EditTimeExample"
+                    />
+            </LinearLayout>
 
-        <TextView
-            android:text="Last"
-            android:layout_marginLeft="0dp"
-            style="@style/EditTimeEntry"
-            />
-        <TextView
-            android:id="@+id/last_datetime"
-            android:text="Fri 24 July 10:00 pm"
-            style="@style/EditTimeExample"
-            />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/last_row"
+                android:background="@drawable/button_gray_background"
+                style="@style/EditTimeRow"
+                >
 
-    <LinearLayout
-        android:id="@+id/pick_row"
-        android:background="@drawable/button_background"
-        style="@style/EditTimeRow"
-        >
+                <ImageView
+                    android:src="@drawable/ic_refresh_black_24dp"
+                    style="@style/EditEntryIcon"
+                    />
 
-        <ImageView
-            android:src="@drawable/ic_today_black_24dp"
-            style="@style/EditEntryIcon"
-            />
+                <TextView
+                    android:text="Last"
+                    android:layout_marginLeft="0dp"
+                    style="@style/EditTimeEntry"
+                    />
+                <TextView
+                    android:id="@+id/last_datetime"
+                    android:text="Fri 24 July 10:00 pm"
+                    style="@style/EditTimeExample"
+                    />
+            </LinearLayout>
 
-        <TextView
-            android:text="Pick date &amp; time"
-            android:layout_marginLeft="0dp"
-            style="@style/EditTimeEntry"
-            />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/pick_row"
+                android:background="@drawable/button_gray_background"
+                style="@style/EditTimeRow"
+                >
 
-    <LinearLayout
-        android:id="@+id/none_row"
-        android:background="@drawable/button_background"
-        style="@style/EditTimeRow"
-        >
+                <ImageView
+                    android:src="@drawable/ic_today_black_24dp"
+                    style="@style/EditEntryIcon"
+                    />
 
-        <ImageView
-            android:src="@drawable/ic_clear_black_24dp"
-            style="@style/EditEntryIcon"
-            />
+                <TextView
+                    android:text="Pick date &amp; time"
+                    android:layout_marginLeft="0dp"
+                    style="@style/EditTimeEntry"
+                    />
+            </LinearLayout>
 
-        <TextView
-            android:text="@string/clear_button_title"
-            android:layout_marginLeft="0dp"
-            style="@style/EditTimeEntry"
-            />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/none_row"
+                android:background="@drawable/button_gray_background"
+                style="@style/EditTimeRow"
+                >
+
+                <ImageView
+                    android:src="@drawable/ic_clear_black_24dp"
+                    style="@style/EditEntryIcon"
+                    />
+
+                <TextView
+                    android:text="@string/clear_button_title"
+                    android:layout_marginLeft="0dp"
+                    style="@style/EditTimeEntry"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

@@ -284,8 +284,6 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
                         CalendarUtils.getEventContentUri().buildUpon(),
                         mTask.getCalendarEventId().getId()).build();
                 Intent viewCalendarEntry = new Intent(Intent.ACTION_VIEW, eventUri);
-                viewCalendarEntry.putExtra(CalendarUtils.EVENT_BEGIN_TIME, mTask.getStartDate());
-                viewCalendarEntry.putExtra(CalendarUtils.EVENT_END_TIME, mTask.getDueDate());
                 startActivity(viewCalendarEntry);
                 break;
             }
@@ -359,6 +357,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     private void updateTemporal(long deferUntilMillis, long dueMillis, boolean allDay) {
         boolean deferInPast = deferUntilMillis < System.currentTimeMillis();
         boolean dueIsSet = dueMillis > 0L;
+        boolean dueInPast = dueMillis < System.currentTimeMillis();
         if (deferInPast && !dueIsSet) {
             mTemporalRow.setVisibility(View.GONE);
         } else {
@@ -366,11 +365,13 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
             StringBuilder text = new StringBuilder();
             if (!deferInPast) {
                 text.append(getResources().getString(R.string.deferred_until_phrase, formatDateTime(deferUntilMillis, false)));
-                text.append(". ");
+                text.append(".\n");
             }
             if (dueIsSet) {
                 text.append(getResources().getString(R.string.due_phrase, formatDateTime(dueMillis, false)));
             }
+            mTemporalView.setTextColor(getResources().getColor(
+                    dueIsSet && dueInPast ? R.color.theme_primary_dark : R.color.label_color));
             mTemporalView.setText(text);
         }
     }
@@ -400,7 +401,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     }
 
     private void updateCompleteFab(boolean isComplete) {
-        mCompleteFabIcon.setImageResource(isComplete ? R.drawable.ic_menu_incomplete : R.drawable.ic_menu_complete);
+        mCompleteFabIcon.setImageResource(isComplete ? R.drawable.ic_menu_incomplete : R.drawable.ic_menu_complete_white);
     }
 
 

@@ -1,21 +1,26 @@
 package org.dodgybits.shuffle.android.editor.activity;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.TextView;
-
+import android.widget.TimePicker;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import org.dodgybits.shuffle.android.core.util.FontUtils;
-
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
 
-public class DateTimePickerActivity extends RoboActivity implements View.OnClickListener {
+public class DateTimePickerActivity extends RoboActivity implements View.OnClickListener,
+        DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     private static final String TAG = "DateTimePickerActivity";
 
     public static final String TYPE = "vnd.android.cursor.dir/vnd.dodgybits.datetime";
@@ -32,6 +37,7 @@ public class DateTimePickerActivity extends RoboActivity implements View.OnClick
     @InjectView(R.id.next_month_datetime) private TextView nextMonthDateTime;
     @InjectView(R.id.last_row) private View lastRow;
     @InjectView(R.id.last_datetime) private TextView lastDateTime;
+    @InjectView(R.id.pick_row) private View pickRow;
     @InjectView(R.id.none_row) private View noneRow;
 
     private String title;
@@ -39,6 +45,7 @@ public class DateTimePickerActivity extends RoboActivity implements View.OnClick
     private long nextWeekMillis;
     private long nextMonthMillis;
     private long lastMillis;
+    private Time pickedTime;
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -100,6 +107,7 @@ public class DateTimePickerActivity extends RoboActivity implements View.OnClick
         } else {
             lastRow.setVisibility(View.GONE);
         }
+        pickRow.setOnClickListener(this);
         noneRow.setOnClickListener(this);
     }
 
@@ -119,7 +127,13 @@ public class DateTimePickerActivity extends RoboActivity implements View.OnClick
                 returnResult(lastMillis);
                 break;
             case R.id.pick_row:
-                // TODO;
+                pickedTime = new Time();
+                pickedTime.set(lastMillis);
+                if (Time.isEpoch(pickedTime)) {
+                    updateToDefault(pickedTime);
+                }
+                new DatePickerDialog(this, this, pickedTime.year,
+                        pickedTime.month, pickedTime.monthDay).show();
                 break;
             case R.id.none_row:
                 returnResult(0L);
@@ -137,4 +151,34 @@ public class DateTimePickerActivity extends RoboActivity implements View.OnClick
         setResult(RESULT_OK, mIntent);
         finish();
     }
+
+    private void updateToDefault(Time displayTime) {
+        displayTime.setToNow();
+        displayTime.second = 0;
+        int minute = displayTime.minute;
+        if (minute > 0 && minute <= 30) {
+            displayTime.minute = 30;
+        } else {
+            displayTime.minute = 0;
+            displayTime.hour += 1;
+        }
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        pickedTime.year = year;
+        pickedTime.month = monthOfYear;
+        pickedTime.monthDay = dayOfMonth;
+        new TimePickerDialog(this, this,
+                pickedTime.hour, pickedTime.minute,
+                DateFormat.is24HourFormat(this)).show();
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        pickedTime.hour = hourOfDay;
+        pickedTime.minute = minute;
+        returnResult(pickedTime.normalize(true));
+    }
+
 }

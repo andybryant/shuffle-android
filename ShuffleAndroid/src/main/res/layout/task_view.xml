@@ -126,6 +126,7 @@
                     android:id="@+id/context_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:paddingRight="?android:attr/scrollbarSize"
                     android:horizontalSpacing="@dimen/context_small_horizontal_spacing"
                     android:verticalSpacing="@dimen/context_small_vertical_spacing"
@@ -150,6 +151,7 @@
                     android:id="@+id/details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:tag="regular"
                     android:autoLink="all"
                     android:paddingRight="?android:attr/scrollbarSize"
@@ -174,6 +176,7 @@
                     android:id="@+id/temporal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:tag="regular"
                     android:hint="@string/none_empty"
                     android:textSize="18sp"
@@ -195,7 +198,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/office_calendar"
-                    android:text="@string/view_calendar_entry" />
+                    android:text="@string/view_calendar_entry"
+                    android:tag="allcaps"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_primary_background"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    />
 
             </LinearLayout>
 

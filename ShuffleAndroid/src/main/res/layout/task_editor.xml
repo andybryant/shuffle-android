@@ -291,9 +291,13 @@
                 android:id="@+id/completed_row"
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
+                android:background="@drawable/list_selector_background"
+                android:focusable="true"
+                android:clickable="true"
                 >
 
                 <ImageView
+                    android:id="@+id/completed_icon"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_done_black_24dp"
@@ -306,6 +310,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_marginLeft="72dp"
                     android:layout_centerVertical="true"
+                    android:duplicateParentState="true"
                     android:text="@string/complete"
                     style="@style/EditLabel"
                     />
@@ -316,7 +321,9 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="16dp"
-                    android:layout_centerVertical="true" />
+                    android:layout_centerVertical="true"
+                    android:duplicateParentState="true"
+                    />
 
             </RelativeLayout>
 
