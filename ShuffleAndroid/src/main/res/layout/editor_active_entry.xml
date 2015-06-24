@@ -1,44 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/active_divider"
-    android:paddingRight="?android:attr/scrollbarSize"
-    android:minHeight="?android:attr/listPreferredItemHeight"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/active_row"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
     android:background="@drawable/list_selector_background"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
     android:focusable="true"
     android:clickable="true">
 
-    <RelativeLayout
+    <ImageView
+        android:id="@+id/active_icon"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_visibility_black_24dp"
+        style="@style/EditEntryIcon" />
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dip"
-        android:layout_marginTop="6dip"
-        android:layout_marginBottom="6dip"
-        android:layout_weight="1"
-        android:duplicateParentState="true">
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="72dp"
+        android:layout_centerVertical="true"
+        android:duplicateParentState="true"
+        android:text="@string/active_title"
+        style="@style/EditLabel" />
 
-        <TextView
-            android:id="@+id/label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textColor="@color/label_color"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:ellipsize="marquee"
-            android:fadingEdge="horizontal"
-            android:duplicateParentState="true"
-            android:text="@string/active_title" />
-
-    </RelativeLayout>
-
-    <CheckBox
+    <android.support.v7.widget.SwitchCompat
         android:id="@+id/active_entry_checkbox"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:focusable="false"
-        android:clickable="false" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:layout_centerVertical="true"
+        android:duplicateParentState="true" />
 
-</LinearLayout>
+</RelativeLayout>

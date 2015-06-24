@@ -13,14 +13,34 @@
      limitations under the License.
 -->
 
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/iconGrid"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layoutAnimation="@anim/layout_grid_fade"
-    android:padding="20dip"
-    android:verticalSpacing="20dip"
-    android:horizontalSpacing="20dip"
-    android:numColumns="auto_fit"
-    android:columnWidth="40dip"
-    android:gravity="center" />
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/none_button"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="@string/none_empty"
+        android:gravity="center"
+        android:tag="allcaps"
+        style="@style/EditButton"
+        />
+
+    <GridView
+        android:id="@+id/icon_grid"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layoutAnimation="@anim/layout_grid_fade"
+        android:layout_weight="1"
+        android:padding="20dip"
+        android:verticalSpacing="20dip"
+        android:horizontalSpacing="20dip"
+        android:numColumns="auto_fit"
+        android:columnWidth="40dip"
+        android:gravity="center" />
+
+
+</LinearLayout>

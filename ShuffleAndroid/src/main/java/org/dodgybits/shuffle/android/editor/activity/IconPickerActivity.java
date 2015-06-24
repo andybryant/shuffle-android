@@ -21,24 +21,26 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
+import org.dodgybits.shuffle.android.core.util.FontUtils;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
-public class IconPickerActivity extends RoboActivity implements OnItemClickListener {
+public class IconPickerActivity extends RoboActivity implements OnItemClickListener, View.OnClickListener {
 
     @SuppressWarnings("unused")
 	private static final String cTag = "IconPickerActivity";
 
     public static final String TYPE = "vnd.android.cursor.dir/vnd.dodgybits.icons";
 
-    @InjectView(R.id.iconGrid) GridView mGrid;
+    public static final String ICON_NAME = "iconName";
+    public static final String ICON_SET = "iconSet";
+
+    @InjectView(R.id.icon_grid) GridView mGrid;
+    @InjectView(R.id.none_button) Button mNoneButton;
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -47,6 +49,8 @@ public class IconPickerActivity extends RoboActivity implements OnItemClickListe
         setContentView(R.layout.icon_picker);
         mGrid.setAdapter(new IconAdapter(this));
         mGrid.setOnItemClickListener(this);
+        mNoneButton.setOnClickListener(this);
+        FontUtils.setCustomFont(mNoneButton, getAssets());
     }
 
     @Override
@@ -65,13 +69,24 @@ public class IconPickerActivity extends RoboActivity implements OnItemClickListe
 		Bundle bundle = new Bundle();
 		int iconId = (Integer)mGrid.getAdapter().getItem(position);
 		String iconName = getResources().getResourceEntryName(iconId);
-	    bundle.putString("iconName", iconName);
+	    bundle.putString(ICON_NAME, iconName);
+	    bundle.putBoolean(ICON_SET, true);
 	    Intent mIntent = new Intent();
 	    mIntent.putExtras(bundle);
 	    setResult(RESULT_OK, mIntent);
 		finish();
     }
-    
+
+    @Override
+    public void onClick(View v) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ICON_SET, false);
+        Intent mIntent = new Intent();
+        mIntent.putExtras(bundle);
+        setResult(RESULT_OK, mIntent);
+        finish();
+    }
+
     public class IconAdapter extends BaseAdapter {
         public IconAdapter(Context context) {
         	loadIcons();

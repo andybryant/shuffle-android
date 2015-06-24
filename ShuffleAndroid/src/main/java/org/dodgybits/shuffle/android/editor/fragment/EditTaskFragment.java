@@ -613,7 +613,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         mDescriptionWidget = (EditText) getView().findViewById(R.id.description);
         mDetailsWidget = (EditText) getView().findViewById(R.id.details);
 
-        mCompleteEntry = getView().findViewById(R.id.completed_row);
 
         mAddContextButton = (Button) getView().findViewById(R.id.context_add);
         mAddContextButton.setOnClickListener(this);
@@ -624,6 +623,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
         updateProjectButton();
 
+        mCompleteEntry = getView().findViewById(R.id.completed_row);
         mCompleteEntry.setOnClickListener(this);
         mCompleteEntry.setOnFocusChangeListener(this);
         mCompletedCheckBox = (SwitchCompat) mCompleteEntry.findViewById(R.id.completed_entry_checkbox);

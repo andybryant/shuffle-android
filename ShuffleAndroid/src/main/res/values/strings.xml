@@ -223,11 +223,11 @@ allow that, you can turn it off under Settings.</string>
     <string name="archived_title">Archived</string>
     <string name="icon_title">Icon</string>
     <string name="name_title">Name</string>
-    <string name="context_name_title">Context name</string>
+    <string name="context_name_title">Tag name</string>
     <string name="project_name_title">Project name</string>
     <string name="sequence_title">Actions completed in sequence</string>
     <string name="parallel_title">Actions completed in parallel</string>
-    <string name="default_context_title">Default context</string>
+    <string name="default_context_title">Default tag</string>
     <string name="preview_title">Preview</string>
     <string name="context_errands">Errands</string>
     <string name="context_online">Online</string>
