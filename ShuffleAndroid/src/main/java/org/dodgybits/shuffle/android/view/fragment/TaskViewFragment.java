@@ -364,11 +364,11 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
             mTemporalRow.setVisibility(View.VISIBLE);
             StringBuilder text = new StringBuilder();
             if (!deferInPast) {
-                text.append(getResources().getString(R.string.deferred_until_phrase, formatDateTime(deferUntilMillis, false)));
+                text.append(getResources().getString(R.string.deferred_until_phrase, formatDateTime(deferUntilMillis)));
                 text.append(".\n");
             }
             if (dueIsSet) {
-                text.append(getResources().getString(R.string.due_phrase, formatDateTime(dueMillis, false)));
+                text.append(getResources().getString(R.string.due_phrase, formatDateTime(dueMillis)));
             }
             mTemporalView.setTextColor(getResources().getColor(
                     dueIsSet && dueInPast ? R.color.theme_primary_dark : R.color.label_color));
@@ -384,10 +384,14 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         }
     }
 
-    private CharSequence formatDateTime(long millis, boolean withPreposition) {
+    private CharSequence formatDateTime(long millis) {
+        int fullFlags = DateUtils.FORMAT_SHOW_TIME |
+                DateUtils.FORMAT_SHOW_WEEKDAY  |
+                DateUtils.FORMAT_ABBREV_WEEKDAY |
+                DateUtils.FORMAT_SHOW_DATE;
         CharSequence value;
         if (millis > 0L) {
-            value = DateUtils.getRelativeTimeSpanString(getActivity(), millis, withPreposition);
+            value = DateUtils.formatDateTime(getActivity(), millis, fullFlags);
         } else {
             value = "";
         }

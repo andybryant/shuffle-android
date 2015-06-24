@@ -186,7 +186,7 @@ allow that, you can turn it off under Settings.</string>
     <!-- task view screen -->
     <string name="status_title">Status</string>
     <string name="deferred_until_phrase">On hold until %1$s</string>
-    <string name="due_phrase">Due %1$s</string>
+    <string name="due_phrase">Due on %1$s</string>
 
     <string name="view_calendar_entry">View calendar entry</string>
 

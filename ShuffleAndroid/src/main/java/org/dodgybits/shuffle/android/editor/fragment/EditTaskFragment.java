@@ -752,7 +752,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
             mDeferredEditButton.setTextColor(getResources().getColor(R.color.deferred));
             mDeferredEditButton.setTag("bold");
             mDeferredEditButton.setText(getString(R.string.deferred_until_phrase ,
-                    formatDateTime(deferredMillis, false)));
+                    formatDateTime(deferredMillis)));
         } else {
             mDeferredEditButton.setTextColor(getResources().getColor(R.color.label_color));
             mDeferredEditButton.setTag("regular");
@@ -765,7 +765,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         boolean dueInPast = dueMillis < System.currentTimeMillis();
         if (dueSet) {
             mDueEditButton.setText(getString(R.string.due_phrase,
-                    formatDateTime(dueMillis, true)));
+                    formatDateTime(dueMillis)));
         } else {
             mDueEditButton.setText(R.string.not_due);
         }
@@ -773,10 +773,14 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 dueSet && dueInPast ? R.color.theme_primary_dark : R.color.label_color));
     }
 
-    private CharSequence formatDateTime(long millis, boolean withPreposition) {
+    private CharSequence formatDateTime(long millis) {
+        int fullFlags = DateUtils.FORMAT_SHOW_TIME |
+                DateUtils.FORMAT_SHOW_WEEKDAY  |
+                DateUtils.FORMAT_ABBREV_WEEKDAY |
+                DateUtils.FORMAT_SHOW_DATE;
         CharSequence value;
         if (millis > 0L) {
-            value = DateUtils.getRelativeTimeSpanString(getActivity(), millis, withPreposition);
+            value = DateUtils.formatDateTime(getActivity(), millis, fullFlags);
         } else {
             value = "";
         }
