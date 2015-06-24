@@ -21,6 +21,7 @@ import org.dodgybits.shuffle.android.core.model.encoding.EntityEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityPersister;
 import org.dodgybits.shuffle.android.core.util.FontUtils;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
+import roboguice.event.EventManager;
 import roboguice.fragment.RoboFragment;
 
 public abstract class AbstractEditFragment<E extends Entity> extends RoboFragment
@@ -31,6 +32,8 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
     protected EntityPersister<E> mPersister;
     @Inject
     protected EntityEncoder<E> mEncoder;
+    @Inject
+    protected EventManager mEventManager;
 
     protected Uri mUri;
     protected boolean mIsNewEntity;

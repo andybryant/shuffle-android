@@ -2,18 +2,22 @@ package org.dodgybits.shuffle.android.editor.fragment;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
+import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import org.dodgybits.shuffle.sync.model.ProjectChangeSet;
+import roboguice.event.EventManager;
 
 import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.LOCAL_CHANGE_SOURCE;
 
@@ -25,11 +29,12 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
     private RelativeLayout mParallelEntry;
     private TextView mParallelLabel;
     private ImageView mParallelButton;
-    private View mDeletedDivider;
-    private View mDeletedEntry;
-    private CheckBox mDeletedCheckBox;
+
     private View mActiveEntry;
-    private CheckBox mActiveCheckBox;
+    private CompoundButton mActiveCheckBox;
+    private ImageView mActiveIcon;
+
+    private Button mDeleteButton;
 
     private String[] mContextNames;
     private long[] mContextIds;
@@ -49,13 +54,22 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
                 break;
             }
 
-            case R.id.active_entry: {
+            case R.id.active_row: {
                 mActiveCheckBox.toggle();
+                updateActiveIcon();
                 break;
             }
 
-            case R.id.deleted_entry: {
-                mDeletedCheckBox.toggle();
+            case R.id.active_entry_checkbox: {
+                super.onClick(v);
+                updateActiveIcon();
+                break;
+            }
+
+            case R.id.delete_button: {
+                mEventManager.fire(new UpdateProjectDeletedEvent(
+                        mOriginalItem.getLocalId(), !mOriginalItem.isDeleted()));
+                getActivity().finish();
                 break;
             }
 
@@ -65,6 +79,11 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
         }
     }
 
+    private void updateActiveIcon() {
+        mActiveIcon.setImageResource(
+                mActiveCheckBox.isChecked() ? R.drawable.ic_visibility_black_24dp : R.drawable.ic_visibility_off_black_24dp);
+    }
+
     @Override
     protected void findViewsAndAddListeners() {
         mNameWidget = (EditText) getView().findViewById(R.id.name);
@@ -72,10 +91,16 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
         mParallelEntry = (RelativeLayout) getView().findViewById(R.id.parallel_entry);
         mParallelLabel = (TextView) getView().findViewById(R.id.parallel_label);
         mParallelButton = (ImageView) getView().findViewById(R.id.parallel_icon);
-        mDeletedEntry = getView().findViewById(R.id.deleted_entry);
-        mDeletedDivider = getView().findViewById(R.id.deleted_divider);
-        mActiveEntry = getView().findViewById(R.id.active_entry);
-        mActiveCheckBox = (CheckBox) getView().findViewById(R.id.active_entry_checkbox);
+
+        mDeleteButton = (Button) getView().findViewById(R.id.delete_button);
+        mDeleteButton.setOnClickListener(this);
+
+        mActiveEntry = getView().findViewById(R.id.active_row);
+        mActiveEntry.setOnClickListener(this);
+        mActiveEntry.setOnFocusChangeListener(this);
+        mActiveCheckBox = (SwitchCompat) mActiveEntry.findViewById(R.id.active_entry_checkbox);
+        mActiveCheckBox.setOnClickListener(this);
+        mActiveIcon = (ImageView) mActiveEntry.findViewById(R.id.active_icon);
 
         Cursor contactCursor = getActivity().getContentResolver().query(
                 ContextProvider.Contexts.CONTENT_URI,
@@ -99,13 +124,6 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
         mDefaultContextSpinner.setAdapter(adapter);
 
         mParallelEntry.setOnClickListener(this);
-
-        mActiveEntry.setOnClickListener(this);
-        mActiveEntry.setOnFocusChangeListener(this);
-
-        mDeletedEntry.setOnClickListener(this);
-        mDeletedEntry.setOnFocusChangeListener(this);
-        mDeletedCheckBox = (CheckBox) mDeletedEntry.findViewById(R.id.deleted_entry_checkbox);
     }
 
     @Override
@@ -136,7 +154,6 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
 
         String name = mNameWidget.getText().toString();
         boolean active = mActiveCheckBox.isChecked();
-        boolean deleted = mDeletedCheckBox.isChecked();
 
         ProjectChangeSet changeSet = builder.getChangeSet();
 
@@ -166,11 +183,6 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
             changeSet.activeChanged();
             changed = true;
         }
-        if (deleted != builder.isDeleted()) {
-            builder.setDeleted(deleted);
-            changeSet.deleteChanged();
-            changed = true;
-        }
 
         builder.setModifiedDate(System.currentTimeMillis());
         builder.setChangeSet(changeSet);
@@ -185,10 +197,8 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
 
     @Override
     protected void updateUIFromExtras(Bundle savedState) {
-        mDeletedEntry.setVisibility(View.GONE);
-        mDeletedDivider.setVisibility(View.GONE);
-        mDeletedCheckBox.setChecked(false);
         mActiveCheckBox.setChecked(true);
+        mDeleteButton.setVisibility(View.GONE);
 
         updateParallelSection();
     }
@@ -212,10 +222,7 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
         updateParallelSection();
 
         mActiveCheckBox.setChecked(project.isActive());
-
-        mDeletedEntry.setVisibility(project.isDeleted() ? View.VISIBLE : View.GONE);
-        mDeletedDivider.setVisibility(project.isDeleted() ? View.VISIBLE : View.GONE);
-        mDeletedCheckBox.setChecked(project.isDeleted());
+        mDeleteButton.setText(project.isDeleted() ? R.string.restore_button_title : R.string.delete_completed_button_title);
 
         if (mOriginalItem == null) {
             mOriginalItem = project;

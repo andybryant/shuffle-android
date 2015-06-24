@@ -93,9 +93,6 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     @Inject
     private EntityCache<Context> mContextCache;
 
-    @Inject
-    protected EventManager mEventManager;
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         mDeferredTime = new Time();

@@ -52,9 +52,6 @@ public class EditContextFragment extends AbstractEditFragment<Context>
 
     private ContextListItem mContextPreview;
 
-    @Inject
-    protected EventManager mEventManager;
-
     @Override
     protected int getContentViewResId() {
         return R.layout.context_editor;
@@ -258,12 +255,11 @@ public class EditContextFragment extends AbstractEditFragment<Context>
     @Override
     protected void updateUIFromExtras(Bundle savedState) {
         mActiveCheckBox.setChecked(true);
+        mDeleteButton.setVisibility(View.GONE);
 
         displayIcon();
         displayColour();
         updatePreview();
-
-        mDeleteButton.setVisibility(View.GONE);
     }
 
     @Override
@@ -279,12 +275,12 @@ public class EditContextFragment extends AbstractEditFragment<Context>
 
         mNameWidget.setTextKeepState(context.getName());
 
+        updateActiveIcon();
+        mDeleteButton.setText(context.isDeleted() ? R.string.restore_button_title : R.string.delete_completed_button_title);
+
         if (mOriginalItem == null) {
             mOriginalItem = context;
         }
-
-        updateActiveIcon();
-        mDeleteButton.setText(context.isDeleted() ? R.string.restore_button_title : R.string.delete_completed_button_title);
     }
 
     @Override
