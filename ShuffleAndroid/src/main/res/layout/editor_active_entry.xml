@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/active_row"
     android:layout_width="match_parent"
     android:layout_height="72dp"
     android:background="@drawable/list_selector_background"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
     android:focusable="true"
     android:clickable="true">
 
     <ImageView
         android:id="@+id/active_icon"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
         android:src="@drawable/ic_visibility_black_24dp"
         style="@style/EditEntryIcon" />
 
@@ -18,8 +18,7 @@
         android:id="@+id/active_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="72dp"
+        android:layout_weight="1"
         android:layout_centerVertical="true"
         android:duplicateParentState="true"
         android:text="@string/active_title"
@@ -29,9 +28,8 @@
         android:id="@+id/active_entry_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="16dp"
+        android:layout_marginRight="@dimen/keyline_1"
         android:layout_centerVertical="true"
         android:duplicateParentState="true" />
 
-</RelativeLayout>
+</LinearLayout>

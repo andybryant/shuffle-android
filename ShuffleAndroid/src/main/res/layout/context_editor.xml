@@ -112,7 +112,7 @@
                         android:layout_width="40dip"
                         android:layout_height="40dip"
                         android:layout_alignParentRight="true"
-                        android:layout_marginRight="16dip"
+                        android:layout_marginRight="@dimen/keyline_1"
                         android:layout_centerVertical="true"
                         android:paddingTop="8dip"
                         android:focusable="false"
@@ -172,7 +172,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginRight="20dip"
+                        android:layout_marginRight="24dip"
                         android:focusable="false"
                         android:clickable="false" />
 
@@ -183,7 +183,7 @@
                         android:layout_alignParentRight="true"
                         android:duplicateParentState="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginRight="20dip"
+                        android:layout_marginRight="24dip"
                         android:text="@string/no_icon"
                         android:visibility="gone"
                         android:focusable="false"

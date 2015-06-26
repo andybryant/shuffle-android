@@ -59,34 +59,30 @@
             />
 
         <LinearLayout
+            android:id="@+id/parallel_entry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="72dp"
             android:orientation="horizontal"
+            android:background="@drawable/list_selector_background"
+            android:focusable="true"
+            android:clickable="true"
             >
 
             <ImageView
+                android:id="@+id/parallel_icon"
                 android:src="@drawable/ic_directions_black_24dp"
                 style="@style/EditEntryIcon"
                 />
 
             <RelativeLayout
-                android:id="@+id/parallel_entry"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="?android:attr/listPreferredItemHeight"
                 android:paddingRight="?android:attr/scrollbarSize"
-                android:background="@drawable/list_selector_background"
-                android:focusable="true"
-                android:clickable="true">
+                android:duplicateParentState="true"
+                >
 
-                <ImageView
-                    android:id="@+id/parallel_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:duplicateParentState="true" />
 
 
                 <TextView

@@ -43,7 +43,6 @@ import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
 import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import org.dodgybits.shuffle.sync.model.TaskChangeSet;
-import roboguice.event.EventManager;
 
 import java.util.List;
 import java.util.TimeZone;
@@ -77,6 +76,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     private Time mDueTime;
 
     private View mCompleteEntry;
+    private TextView mCompleteLabel;
     private CompoundButton mCompletedCheckBox;
     private ImageView mCompletedIcon;
 
@@ -240,7 +240,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         onDatesUpdated();
 
         mCompletedCheckBox.setChecked(task.isComplete());
-        updateCompletedIcon();
+        updateCompletedState();
         mDeleteButton.setText(task.isDeleted() ? R.string.restore_button_title : R.string.delete_completed_button_title);
     }
 
@@ -525,13 +525,13 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
             case R.id.completed_row: {
                 mCompletedCheckBox.toggle();
-                updateCompletedIcon();
+                updateCompletedState();
                 break;
             }
 
             case R.id.completed_entry_checkbox: {
                 super.onClick(v);
-                updateCompletedIcon();
+                updateCompletedState();
                 break;
             }
 
@@ -623,6 +623,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         mCompleteEntry = getView().findViewById(R.id.completed_row);
         mCompleteEntry.setOnClickListener(this);
         mCompleteEntry.setOnFocusChangeListener(this);
+        mCompleteLabel = (TextView) mCompleteEntry.findViewById(R.id.completed_label);
         mCompletedCheckBox = (SwitchCompat) mCompleteEntry.findViewById(R.id.completed_entry_checkbox);
         mCompletedCheckBox.setOnClickListener(this);
         mCompletedIcon = (ImageView) mCompleteEntry.findViewById(R.id.completed_icon);
@@ -791,7 +792,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 mOriginalItem.getCalendarEventId().isInitialised()) {
             mCalendarLabel.setText(getString(R.string.update_gcal_title));
             mCalendarDetail.setText(getString(R.string.update_gcal_detail));
-        } else if (!Time.isEpoch(mDueTime)) {
+        } else if (!Time.isEpoch(mDueTime) || !Time.isEpoch(mDeferredTime)) {
             mCalendarLabel.setText(getString(R.string.add_to_gcal_title));
             mCalendarDetail.setText(getString(R.string.add_to_gcal_detail));
         } else {
@@ -803,9 +804,10 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         mUpdateCalendarCheckBox.setEnabled(enabled);
     }
 
-    private void updateCompletedIcon() {
+    private void updateCompletedState() {
         mCompletedIcon.setImageResource(
                 mCompletedCheckBox.isChecked() ? R.drawable.ic_menu_incomplete : R.drawable.ic_menu_complete_black);
+        mCompleteLabel.setText(mCompletedCheckBox.isChecked() ? R.string.complete : R.string.incomplete);
     }
 
     
