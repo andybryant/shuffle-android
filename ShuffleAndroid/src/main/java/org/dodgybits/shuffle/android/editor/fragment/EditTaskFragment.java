@@ -718,11 +718,11 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         String name = getProjectName(mSelectedProjectId);
         if (name.isEmpty()) {
             mEditProjectButton.setTextColor(getResources().getColor(R.color.body_text_2));
-            mEditProjectButton.setTag("regular");
+            mEditProjectButton.setTag(FontUtils.REGULAR);
             mEditProjectButton.setText(getString(R.string.title_project_picker));
         } else {
             mEditProjectButton.setTextColor(getResources().getColor(R.color.body_text_1));
-            mEditProjectButton.setTag("bold");
+            mEditProjectButton.setTag(FontUtils.BOLD);
             mEditProjectButton.setText(name);
         }
         FontUtils.setCustomFont(mEditProjectButton, getActivity().getAssets());
@@ -748,12 +748,12 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
         boolean deferredInPast = deferredMillis < System.currentTimeMillis();
         if (deferredSet && !deferredInPast) {
             mDeferredEditButton.setTextColor(getResources().getColor(R.color.deferred));
-            mDeferredEditButton.setTag("bold");
+            mDeferredEditButton.setTag(FontUtils.BOLD);
             mDeferredEditButton.setText(getString(R.string.deferred_until_phrase ,
                     formatDateTime(deferredMillis)));
         } else {
             mDeferredEditButton.setTextColor(getResources().getColor(R.color.label_color));
-            mDeferredEditButton.setTag("regular");
+            mDeferredEditButton.setTag(FontUtils.REGULAR);
             mDeferredEditButton.setText(R.string.not_deferred);
         }
         FontUtils.setCustomFont(mDeferredEditButton, getActivity().getAssets());

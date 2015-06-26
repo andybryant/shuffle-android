@@ -230,7 +230,7 @@ allow that, you can turn it off under Settings.</string>
     <string name="parallel_title">Actions completed in parallel</string>
     <string name="parallel_subtitle">All actions appear in Top Actions</string>
     <string name="default_context_title">Default tag</string>
-    <string name="default_context_button">Pick default tag</string>
+    <string name="pick_default_context">Pick default tag...</string>
     <string name="preview_title">Preview</string>
     <string name="context_errands">Errands</string>
     <string name="context_online">Online</string>

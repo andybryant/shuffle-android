@@ -1,18 +1,15 @@
 package org.dodgybits.shuffle.android.editor.fragment;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.inject.Inject;
@@ -22,11 +19,10 @@ import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
+import org.dodgybits.shuffle.android.core.util.FontUtils;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.editor.activity.EditProjectActivity;
-import org.dodgybits.shuffle.android.editor.activity.EditTaskActivity;
 import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
-import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import org.dodgybits.shuffle.sync.model.ProjectChangeSet;
@@ -37,8 +33,10 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
     private static final String TAG = "EditProjectFragment";
 
     private EditText mNameWidget;
-    private Button mDefaultContextButton;
-    private ViewGroup mParallelEntry;
+    private ViewGroup mDefaultContextRow;
+    private TextView mDefaultContextLabel;
+    private TextView mDefaultContextName;
+    private ViewGroup mParallelRow;
     private TextView mParallelLabel;
     private TextView mParallelSubtitle;
     private ImageView mParallelButton;
@@ -63,9 +61,14 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.parallel_entry: {
+            case R.id.parallel_row: {
                 isParallel = !isParallel;
                 updateParallelSection();
+                break;
+            }
+
+            case R.id.default_context_row: {
+                showContextPicker();
                 break;
             }
 
@@ -85,11 +88,6 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
                 mEventManager.fire(new UpdateProjectDeletedEvent(
                         mOriginalItem.getLocalId(), !mOriginalItem.isDeleted()));
                 getActivity().finish();
-                break;
-            }
-
-            case R.id.default_context: {
-                showContextPicker();
                 break;
             }
 
@@ -113,9 +111,11 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
     @Override
     protected void findViewsAndAddListeners() {
         mNameWidget = (EditText) getView().findViewById(R.id.name);
-        mDefaultContextButton = (Button) getView().findViewById(R.id.default_context);
-        mDefaultContextButton.setOnClickListener(this);
-        mParallelEntry = (ViewGroup) getView().findViewById(R.id.parallel_entry);
+        mDefaultContextRow = (ViewGroup) getView().findViewById(R.id.default_context_row);
+        mDefaultContextRow.setOnClickListener(this);
+        mDefaultContextLabel = (TextView) getView().findViewById(R.id.default_context_label);
+        mDefaultContextName = (TextView) getView().findViewById(R.id.default_context_name);
+        mParallelRow = (ViewGroup) getView().findViewById(R.id.parallel_row);
         mParallelLabel = (TextView) getView().findViewById(R.id.parallel_label);
         mParallelSubtitle = (TextView) getView().findViewById(R.id.parallel_subtitle);
         mParallelButton = (ImageView) getView().findViewById(R.id.parallel_icon);
@@ -131,7 +131,7 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
         mActiveCheckBox.setOnClickListener(this);
         mActiveIcon = (ImageView) mActiveEntry.findViewById(R.id.active_icon);
 
-        mParallelEntry.setOnClickListener(this);
+        mParallelRow.setOnClickListener(this);
     }
 
     @Override
@@ -237,9 +237,12 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
     private void updateDefaultContext() {
         Context context = mContextCache.findById(mDefaultContextId);
         if (context == null) {
-            mDefaultContextButton.setText(R.string.default_context_button);
+            mDefaultContextLabel.setText(R.string.pick_default_context);
+            mDefaultContextName.setVisibility(View.GONE);
         } else {
-            mDefaultContextButton.setText(getString(R.string.default_context_title, context.getName()));
+            mDefaultContextLabel.setText(getString(R.string.default_context_title, context.getName()));
+            mDefaultContextName.setVisibility(View.VISIBLE);
+            mDefaultContextName.setText(context.getName());
         }
     }
 
