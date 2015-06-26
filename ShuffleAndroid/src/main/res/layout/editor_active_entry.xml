@@ -15,6 +15,7 @@
         style="@style/EditEntryIcon" />
 
     <TextView
+        android:id="@+id/active_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

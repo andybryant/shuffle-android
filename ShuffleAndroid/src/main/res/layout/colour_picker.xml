@@ -15,7 +15,7 @@
 
 <GridView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/colourGrid"
-    android:layout_width="fill_parent"
+    android:layout_width="300dp"
     android:layout_height="fill_parent"
     android:layoutAnimation="@anim/layout_grid_fade"
     android:padding="20dip"

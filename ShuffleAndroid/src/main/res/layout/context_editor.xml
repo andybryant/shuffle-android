@@ -67,10 +67,14 @@
                 />
 
             <LinearLayout
+                android:id="@+id/colour_entry"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/list_selector_background"
                 android:minHeight="72dp"
                 android:orientation="horizontal"
+                android:focusable="true"
+                android:clickable="true"
                 >
 
                 <ImageView
@@ -80,13 +84,13 @@
 
 
                 <RelativeLayout
-                    android:id="@+id/colour_entry"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:paddingRight="?android:attr/scrollbarSize"
-                    android:focusable="true"
-                    android:clickable="true">
+                    android:text="@string/colour_title"
+                    android:duplicateParentState="true"
+                    >
 
                     <TextView
                         android:id="@+id/colour_label"
@@ -122,10 +126,14 @@
             <View style="@style/EditDivider" />
 
             <LinearLayout
+                android:id="@+id/icon_entry"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="72dp"
                 android:orientation="horizontal"
+                android:background="@drawable/list_selector_background"
+                android:focusable="true"
+                android:clickable="true"
                 >
 
                 <ImageView
@@ -135,15 +143,13 @@
 
 
                 <RelativeLayout
-                    android:id="@+id/icon_entry"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:minHeight="?android:attr/listPreferredItemHeight"
                     android:paddingRight="?android:attr/scrollbarSize"
-                    android:background="@drawable/list_selector_background"
-                    android:focusable="true"
-                    android:clickable="true">
+                    android:duplicateParentState="true"
+                    >
 
                     <TextView
                         android:id="@+id/icon_label"
@@ -175,6 +181,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
+                        android:duplicateParentState="true"
                         android:layout_centerVertical="true"
                         android:layout_marginRight="20dip"
                         android:text="@string/no_icon"

@@ -11,7 +11,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
-import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
@@ -25,7 +24,6 @@ import org.dodgybits.shuffle.android.list.view.context.ContextListItem;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import org.dodgybits.shuffle.sync.model.ContextChangeSet;
-import roboguice.event.EventManager;
 
 import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.LOCAL_CHANGE_SOURCE;
 
@@ -45,6 +43,7 @@ public class EditContextFragment extends AbstractEditFragment<Context>
     private TextView mIconNoneWidget;
 
     private View mActiveEntry;
+    private TextView mActiveLabel;
     private CompoundButton mActiveCheckBox;
     private ImageView mActiveIcon;
 
@@ -78,14 +77,14 @@ public class EditContextFragment extends AbstractEditFragment<Context>
 
             case R.id.active_row: {
                 mActiveCheckBox.toggle();
-                updateActiveIcon();
+                updateActiveState();
                 updatePreview();
                 break;
             }
 
             case R.id.active_entry_checkbox: {
                 super.onClick(v);
-                updateActiveIcon();
+                updateActiveState();
                 updatePreview();
                 break;
             }
@@ -150,9 +149,10 @@ public class EditContextFragment extends AbstractEditFragment<Context>
         updatePreview();
     }
 
-    private void updateActiveIcon() {
+    private void updateActiveState() {
         mActiveIcon.setImageResource(
                 mActiveCheckBox.isChecked() ? R.drawable.ic_visibility_black_24dp : R.drawable.ic_visibility_off_black_24dp);
+        mActiveLabel.setText(mActiveCheckBox.isChecked() ? R.string.active : R.string.inactive);
     }
 
 
@@ -169,6 +169,7 @@ public class EditContextFragment extends AbstractEditFragment<Context>
         mActiveEntry = getView().findViewById(R.id.active_row);
         mActiveEntry.setOnClickListener(this);
         mActiveEntry.setOnFocusChangeListener(this);
+        mActiveLabel = (TextView) mActiveEntry.findViewById(R.id.active_label);
         mActiveCheckBox = (SwitchCompat) mActiveEntry.findViewById(R.id.active_entry_checkbox);
         mActiveCheckBox.setOnClickListener(this);
         mActiveIcon = (ImageView) mActiveEntry.findViewById(R.id.active_icon);
@@ -275,7 +276,7 @@ public class EditContextFragment extends AbstractEditFragment<Context>
 
         mNameWidget.setTextKeepState(context.getName());
 
-        updateActiveIcon();
+        updateActiveState();
         mDeleteButton.setText(context.isDeleted() ? R.string.restore_button_title : R.string.delete_completed_button_title);
 
         if (mOriginalItem == null) {
