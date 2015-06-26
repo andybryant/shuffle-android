@@ -61,8 +61,7 @@
         <LinearLayout
             android:id="@+id/parallel_entry"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="72dp"
+            android:layout_height="72dp"
             android:orientation="horizontal"
             android:background="@drawable/list_selector_background"
             android:focusable="true"
@@ -76,28 +75,36 @@
                 />
 
             <RelativeLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="?android:attr/listPreferredItemHeight"
-                android:paddingRight="?android:attr/scrollbarSize"
-                android:duplicateParentState="true"
-                >
-
-
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:duplicateParentState="true">
 
                 <TextView
                     android:id="@+id/parallel_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_toLeftOf="@+id/parallel_icon"
+                    android:singleLine="true"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/sequence_title"
+                    android:duplicateParentState="true"
+                    android:textColor="@color/label_color"
+                    />
+
+                <TextView
+                    android:id="@+id/parallel_subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/parallel_label"
+                    android:layout_alignLeft="@+id/parallel_label"
                     android:layout_centerVertical="true"
                     android:text="@string/sequence_title"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="16sp"
                     android:textColor="@color/label_color"
-                    android:maxLines="2"
                     android:duplicateParentState="true"
-                    android:paddingLeft="8dip" />
+                    />
+
 
             </RelativeLayout>
 
@@ -119,27 +126,17 @@
                 style="@style/EditEntryIcon"
                 />
 
-            <LinearLayout
+            <Button
+                android:id="@+id/default_context"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/default_context_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="8dip"
-                    android:paddingRight="4dip"
-                    android:text="@string/default_context_title"
-                    style="@style/LabelTextViewStyle" />
-
-
-                <Spinner
-                    android:id="@+id/default_context"
-                    android:layout_width="fill_parent"
-                    android:layout_height="48dip" />
-
-            </LinearLayout>
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"
+                android:text="@string/default_context_title"
+                android:textColor="@color/label_color"
+                android:tag="bold"
+                android:paddingLeft="0dp"
+                style="@style/EditButton"
+                />
 
         </LinearLayout>
 

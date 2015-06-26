@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import com.google.common.collect.Lists;
 import org.dodgybits.android.shuffle.R;
@@ -184,6 +186,31 @@ public class EntityPickerDialogHelper {
         List<Id> getInitialSelection();
         void onSelected(List<Id> ids);
         void onCancel();
+    }
+
+    public static class SingleSelectContextPickerDialog extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final OnEntitySelected listener = (OnEntitySelected) getActivity();
+            String title = getActivity().getString(R.string.title_context_picker);
+            return createSingleSelectDialog(getActivity(), listener, createContextCursor(getActivity()), title,
+                    null, true, false);
+        }
+    }
+
+    public static class ContextPickerDialog extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return createMultiSelectContextPickerDialog(getActivity());
+        }
+    }
+
+    public static class ProjectPickerDialog extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return createSingleSelectProjectPickerDialog(getActivity(), true, false);
+        }
+
     }
 
 }

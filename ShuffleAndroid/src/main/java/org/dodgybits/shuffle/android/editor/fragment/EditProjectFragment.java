@@ -6,18 +6,30 @@ import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import com.google.inject.Inject;
+
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
+import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
+import org.dodgybits.shuffle.android.editor.activity.EditProjectActivity;
+import org.dodgybits.shuffle.android.editor.activity.EditTaskActivity;
 import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import org.dodgybits.shuffle.sync.model.ProjectChangeSet;
-import roboguice.event.EventManager;
 
 import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.LOCAL_CHANGE_SOURCE;
 
@@ -25,20 +37,23 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
     private static final String TAG = "EditProjectFragment";
 
     private EditText mNameWidget;
-    private Spinner mDefaultContextSpinner;
-    private RelativeLayout mParallelEntry;
+    private Button mDefaultContextButton;
+    private ViewGroup mParallelEntry;
     private TextView mParallelLabel;
+    private TextView mParallelSubtitle;
     private ImageView mParallelButton;
 
     private View mActiveEntry;
+    private TextView mActiveLabel;
     private CompoundButton mActiveCheckBox;
     private ImageView mActiveIcon;
 
     private Button mDeleteButton;
-
-    private String[] mContextNames;
-    private long[] mContextIds;
     private boolean isParallel;
+    private Id mDefaultContextId;
+
+    @Inject
+    private EntityCache<Context> mContextCache;
 
     @Override
     protected int getContentViewResId() {
@@ -56,13 +71,13 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
 
             case R.id.active_row: {
                 mActiveCheckBox.toggle();
-                updateActiveIcon();
+                updateActiveState();
                 break;
             }
 
             case R.id.active_entry_checkbox: {
                 super.onClick(v);
-                updateActiveIcon();
+                updateActiveState();
                 break;
             }
 
@@ -73,23 +88,36 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
                 break;
             }
 
+            case R.id.default_context: {
+                showContextPicker();
+                break;
+            }
+
             default:
                 super.onClick(v);
                 break;
         }
     }
 
-    private void updateActiveIcon() {
+    private void showContextPicker() {
+        ((EditProjectActivity)getActivity()).showContextPicker();
+    }
+
+
+    private void updateActiveState() {
         mActiveIcon.setImageResource(
                 mActiveCheckBox.isChecked() ? R.drawable.ic_visibility_black_24dp : R.drawable.ic_visibility_off_black_24dp);
+        mActiveLabel.setText(mActiveCheckBox.isChecked() ? R.string.active : R.string.inactive);
     }
 
     @Override
     protected void findViewsAndAddListeners() {
         mNameWidget = (EditText) getView().findViewById(R.id.name);
-        mDefaultContextSpinner = (Spinner) getView().findViewById(R.id.default_context);
-        mParallelEntry = (RelativeLayout) getView().findViewById(R.id.parallel_entry);
+        mDefaultContextButton = (Button) getView().findViewById(R.id.default_context);
+        mDefaultContextButton.setOnClickListener(this);
+        mParallelEntry = (ViewGroup) getView().findViewById(R.id.parallel_entry);
         mParallelLabel = (TextView) getView().findViewById(R.id.parallel_label);
+        mParallelSubtitle = (TextView) getView().findViewById(R.id.parallel_subtitle);
         mParallelButton = (ImageView) getView().findViewById(R.id.parallel_icon);
 
         mDeleteButton = (Button) getView().findViewById(R.id.delete_button);
@@ -98,30 +126,10 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
         mActiveEntry = getView().findViewById(R.id.active_row);
         mActiveEntry.setOnClickListener(this);
         mActiveEntry.setOnFocusChangeListener(this);
+        mActiveLabel = (TextView) mActiveEntry.findViewById(R.id.active_label);
         mActiveCheckBox = (SwitchCompat) mActiveEntry.findViewById(R.id.active_entry_checkbox);
         mActiveCheckBox.setOnClickListener(this);
         mActiveIcon = (ImageView) mActiveEntry.findViewById(R.id.active_icon);
-
-        Cursor contactCursor = getActivity().getContentResolver().query(
-                ContextProvider.Contexts.CONTENT_URI,
-                new String[] {ContextProvider.Contexts._ID, ContextProvider.Contexts.NAME},
-                null, null,
-                ContextProvider.Contexts.NAME + " ASC");
-        int size = contactCursor.getCount() + 1;
-        mContextIds = new long[size];
-        mContextIds[0] = 0;
-        mContextNames = new String[size];
-        mContextNames[0] = getText(R.string.none_empty).toString();
-        for (int i = 1; i < size; i++) {
-            contactCursor.moveToNext();
-            mContextIds[i] = contactCursor.getLong(0);
-            mContextNames[i] = contactCursor.getString(1);
-        }
-        contactCursor.close();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                getActivity(), android.R.layout.simple_list_item_1, mContextNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mDefaultContextSpinner.setAdapter(adapter);
 
         mParallelEntry.setOnClickListener(this);
     }
@@ -163,13 +171,8 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
             changed = true;
         }
 
-        Id defaultContextId = Id.NONE;
-        int selectedItemPosition = mDefaultContextSpinner.getSelectedItemPosition();
-        if (selectedItemPosition > 0) {
-            defaultContextId = Id.create(mContextIds[selectedItemPosition]);
-        }
-        if (!ObjectUtils.equals(defaultContextId, builder.getDefaultContextId())) {
-            builder.setDefaultContextId(defaultContextId);
+        if (!ObjectUtils.equals(mDefaultContextId, builder.getDefaultContextId())) {
+            builder.setDefaultContextId(mDefaultContextId);
             changeSet.defaultContextChanged();
             changed = true;
         }
@@ -201,22 +204,14 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
         mDeleteButton.setVisibility(View.GONE);
 
         updateParallelSection();
+        updateDefaultContext();
     }
 
     @Override
     protected void updateUIFromItem(Project project) {
         mNameWidget.setTextKeepState(project.getName());
-        Id defaultContextId = project.getDefaultContextId();
-        if (defaultContextId.isInitialised()) {
-            for (int i = 1; i < mContextIds.length; i++) {
-                if (mContextIds[i] == defaultContextId.getId()) {
-                    mDefaultContextSpinner.setSelection(i);
-                    break;
-                }
-            }
-        } else {
-            mDefaultContextSpinner.setSelection(0);
-        }
+        mDefaultContextId = project.getDefaultContextId();
+        updateDefaultContext();
 
         isParallel = project.isParallel();
         updateParallelSection();
@@ -234,12 +229,28 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
         return getString(R.string.project_name);
     }
 
+    public void setSelectedContext(Id id) {
+        mDefaultContextId = id;
+        updateDefaultContext();
+    }
+
+    private void updateDefaultContext() {
+        Context context = mContextCache.findById(mDefaultContextId);
+        if (context == null) {
+            mDefaultContextButton.setText(R.string.default_context_button);
+        } else {
+            mDefaultContextButton.setText(getString(R.string.default_context_title, context.getName()));
+        }
+    }
+
     private void updateParallelSection() {
         if (isParallel) {
             mParallelLabel.setText(R.string.parallel_title);
+            mParallelSubtitle.setText(R.string.parallel_subtitle);
             mParallelButton.setImageResource(R.drawable.parallel);
         } else {
             mParallelLabel.setText(R.string.sequence_title);
+            mParallelSubtitle.setText(R.string.sequence_subtitle);
             mParallelButton.setImageResource(R.drawable.sequence);
         }
     }

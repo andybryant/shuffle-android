@@ -19,7 +19,7 @@
     <string name="title_inbox">Inbox</string>
     <string name="title_project">Projects</string>
     <string name="title_context">Tags</string>
-    <string name="title_next_tasks">Next Actions</string>
+    <string name="title_next_tasks">Top Actions</string>
     <string name="title_due_tasks">Due Actions</string>
     <string name="title_tickler">Tickler</string>
     <string name="title_custom">Custom</string>
@@ -164,7 +164,7 @@
 \n
 <b>New in version 1.7.1:</b>\n
 \t• Fixed crash creating new actions in Spanish version\n 
-\t• Ignore deleted items calculating Next Actions\n	
+\t• Ignore deleted items calculating Top Actions\n
 \n
 <b>New in version 1.7.0:</b>\n
 \t• View filters, customisable in each view.\n
@@ -175,7 +175,7 @@
 \t• Tickler view for inactive actions.\n
 \t• Support for Tracks sites with self signed certificates.\n
 \t• Fixed calendar selection bug on Android 2.2.\n
-\t• Fixed action reordering in projects and Next Actions.\n
+\t• Fixed action reordering in projects and Top Actions.\n
 \t• Action view screen added.\n
 \t• Spanish, Portugese and Japanese translations.\n
 \n
@@ -226,8 +226,11 @@ allow that, you can turn it off under Settings.</string>
     <string name="context_name_title">Tag name</string>
     <string name="project_name_title">Project name</string>
     <string name="sequence_title">Actions completed in sequence</string>
+    <string name="sequence_subtitle">Only the top action appears in Top Actions</string>
     <string name="parallel_title">Actions completed in parallel</string>
+    <string name="parallel_subtitle">All actions appear in Top Actions</string>
     <string name="default_context_title">Default tag</string>
+    <string name="default_context_button">Pick default tag</string>
     <string name="preview_title">Preview</string>
     <string name="context_errands">Errands</string>
     <string name="context_online">Online</string>
@@ -403,7 +406,7 @@ Once a project or tag is assigned to an action, it will automatically be removed
 The <b>Project</b> perspective lists all your projects, and allows you to drill-down 
 into each project to view its actions. In addition to the standard adding, editing and deleting
 of actions, the project view also supports rearranging actions in the order you intend to complete them.
-This step is important for the Next Actions perspective.\n
+This step is important for the Top Actions perspective.\n
 For some projects it makes sense for actions to completed one after the other in strict order. For other
 projects, actions can be completed in any order. This is configurable when creating or editing a project.
     </string>
@@ -418,7 +421,7 @@ actions are applicable to your current situation. For instance, you\'re out and 
 check your Errands tag and see you need to buy an umbrella and pick up the dry cleaning on your way home.
     </string>
     <string name="help4">
-<b>Next actions</b> is the best place to look to determine what the next thing this to work on is. \n
+<b>Top Actions</b> is the best place to look to determine what the next thing this to work on is. \n
 It shows the following actions\n
 - those without a project\n
 - the first action for sequential projects\n

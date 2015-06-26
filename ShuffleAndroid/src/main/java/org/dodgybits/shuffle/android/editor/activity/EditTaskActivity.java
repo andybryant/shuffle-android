@@ -30,11 +30,13 @@ public class EditTaskActivity extends AbstractEditActivity
     }
 
     public void showContextPicker() {
-        new ContextPickerDialog().show(getSupportFragmentManager(), "contexts");
+        new EntityPickerDialogHelper.ContextPickerDialog()
+                .show(getSupportFragmentManager(), "contexts");
     }
 
     public void showProjectPicker() {
-        new ProjectPickerDialog().show(getSupportFragmentManager(), "project");
+        new EntityPickerDialogHelper.SingleSelectContextPickerDialog()
+                .show(getSupportFragmentManager(), "project");
     }
 
     @Override
@@ -61,19 +63,4 @@ public class EditTaskActivity extends AbstractEditActivity
         }
     }
 
-
-    public static class ContextPickerDialog extends DialogFragment {
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return EntityPickerDialogHelper.createMultiSelectContextPickerDialog(getActivity());
-        }
-    }
-
-    public static class ProjectPickerDialog extends DialogFragment {
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return EntityPickerDialogHelper.createSingleSelectProjectPickerDialog(getActivity(), true, true);
-        }
-
-    }
 }
