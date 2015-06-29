@@ -16,8 +16,10 @@
 package org.dodgybits.shuffle.android.core;
 
 import android.app.Application;
+
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+
 import org.dodgybits.android.shuffle.R;
 
 import java.util.HashMap;
@@ -29,17 +31,17 @@ public class ShuffleApplication extends Application {
 
     public enum TrackerName {
         APP_TRACKER, // Tracker used only in this app.
-        ECOMMERCE_TRACKER, // Tracker used by all ecommerce transactions from a company.
+        E_COMMERCE_TRACKER, // Tracker used by all e-commerce transactions from a company.
     }
 
-    HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
+    HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
 
     synchronized public Tracker getTracker(TrackerName trackerId) {
         if (!mTrackers.containsKey(trackerId)) {
 
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             Tracker t;
-            if (trackerId == TrackerName.ECOMMERCE_TRACKER) {
+            if (trackerId == TrackerName.E_COMMERCE_TRACKER) {
                 t = analytics.newTracker(PROPERTY_ID);
             } else {
                 t = analytics.newTracker(R.xml.analytics);

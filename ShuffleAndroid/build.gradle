@@ -3,6 +3,7 @@ apply plugin: 'android'
 repositories {
     mavenLocal()
     mavenCentral()
+    jcenter()
 }
 
 android {
@@ -69,14 +70,16 @@ android {
 dependencies {
     compile 'org.roboguice:roboguice:3.0.1'
     provided 'org.roboguice:roboblender:3.0.1'
-    compile 'com.google.android.gms:play-services-base:6.5.+'
+    compile 'com.google.android.gms:play-services-analytics:7.5.0'
+    compile 'com.google.android.gms:play-services-gcm:7.5.0'
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:design:22.2.0'
     compile 'com.android.support:support-v13:22.2.0'
     compile 'com.android.support:support-annotations:22.2.0'
+    compile 'com.bignerdranch.android:recyclerview-multiselect:0.2'
     compile ('org.dodgybits.shuffle:shuffle-dto:2.0.3-SNAPSHOT') {
         exclude group: 'com.google.inject'
     }
-    compile 'com.google.guava:guava:16.0'
+    compile 'com.google.guava:guava:18.0'
     androidTestCompile 'junit:junit:4.11'
 }
