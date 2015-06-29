@@ -61,7 +61,7 @@ public class EntityPickerDialogHelper {
         return activity.getContentResolver().query(
                 ProjectProvider.Projects.CONTENT_URI,
                 new String[]{ProjectProvider.Projects._ID, ProjectProvider.Projects.NAME},
-                null, null, null);
+                ProjectProvider.Projects.DELETED + "=0", null, null);
     }
 
     private static Cursor createContextCursor(Activity activity) {
