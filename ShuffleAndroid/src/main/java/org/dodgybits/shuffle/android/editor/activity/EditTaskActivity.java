@@ -35,7 +35,7 @@ public class EditTaskActivity extends AbstractEditActivity
     }
 
     public void showProjectPicker() {
-        new EntityPickerDialogHelper.SingleSelectContextPickerDialog()
+        new EntityPickerDialogHelper.ProjectPickerDialog()
                 .show(getSupportFragmentManager(), "project");
     }
 
