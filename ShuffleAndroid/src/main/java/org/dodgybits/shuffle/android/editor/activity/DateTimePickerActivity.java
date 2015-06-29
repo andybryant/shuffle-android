@@ -9,6 +9,7 @@ import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -104,8 +105,10 @@ public class DateTimePickerActivity extends RoboActivity implements View.OnClick
             lastRow.setVisibility(View.VISIBLE);
             lastRow.setOnClickListener(this);
             lastDateTime.setText(DateUtils.formatDateTime(this, lastMillis, fullFlags));
+            noneRow.setVisibility(View.VISIBLE);
         } else {
             lastRow.setVisibility(View.GONE);
+            noneRow.setVisibility(View.GONE);
         }
         pickRow.setOnClickListener(this);
         noneRow.setOnClickListener(this);
