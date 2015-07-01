@@ -1,10 +1,5 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-    jcenter()
-}
 
 android {
     compileSdkVersion 21
