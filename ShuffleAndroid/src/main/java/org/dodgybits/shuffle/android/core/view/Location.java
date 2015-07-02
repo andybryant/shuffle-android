@@ -450,6 +450,9 @@ public class Location implements Parcelable {
 
         private Builder deriveViewMode() {
             ViewMode mode;
+            if (mResult.mListQuery == null) {
+                return this;
+            }
             boolean itemView = mResult.mSelectedIndex >= 0;
             switch (mResult.mListQuery) {
                 case search:
