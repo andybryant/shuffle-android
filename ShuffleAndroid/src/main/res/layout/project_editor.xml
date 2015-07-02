@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/keyline_1"
                 android:layout_marginRight="16dp"
-                android:hint="@string/context_name_title"
+                android:hint="@string/project_name_title"
                 android:tag="regular"
                 android:autoText="true"
                 android:singleLine="true"
