@@ -2,14 +2,28 @@ package org.dodgybits.shuffle.android.list.view.project;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.*;
+import android.util.SparseIntArray;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
+
+import com.bignerdranch.android.multiselector.MultiSelector;
+import com.bignerdranch.android.multiselector.SingleSelector;
+import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.google.inject.Inject;
+
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.*;
+import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.LoadCountCursorEvent;
+import org.dodgybits.shuffle.android.core.event.LoadListCursorEvent;
+import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
+import org.dodgybits.shuffle.android.core.event.ProjectTaskCountCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -19,19 +33,16 @@ import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
+import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
+
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
-import roboguice.fragment.RoboListFragment;
+import roboguice.fragment.RoboFragment;
+import roboguice.inject.ContextScopedProvider;
 
-public class ProjectListFragment extends RoboListFragment {
+public class ProjectListFragment extends RoboFragment {
     private static final String TAG = "ProjectListFragment";
-    
-    /** Argument name(s) */
-    private static final String BUNDLE_LIST_STATE = "ProjectListFragment.state.listState";
-
-    @Inject
-    private ProjectListAdaptor mListAdapter;
 
     @Inject
     private TaskPersister mTaskPersister;
@@ -40,14 +51,18 @@ public class ProjectListFragment extends RoboListFragment {
     private ProjectPersister mProjectPersister;
 
     @Inject
+    private ContextScopedProvider<ProjectListItem> mProjectListItemProvider;
+
+    @Inject
     private EventManager mEventManager;
 
     @Inject
     private CursorProvider mCursorProvider;
 
-    private Parcelable mSavedListState;
-
     private Cursor mCursor;
+    private RecyclerView mRecyclerView;
+    private ProjectListAdapter mListAdapter;
+    private MultiSelector mMultiSelector = new SingleSelector();
 
     /**
      * When creating, retrieve this instance's number from its arguments.
@@ -61,27 +76,18 @@ public class ProjectListFragment extends RoboListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup root = (ViewGroup) super.onCreateView(inflater, container, savedInstanceState);
-        inflater.inflate(R.layout.fab, root, true);
+        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.recycler_view, container, false);
+        mRecyclerView = (RecyclerView) root.findViewById(R.id.recycler_view);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(layoutManager);
+        mListAdapter = new ProjectListAdapter();
+        mRecyclerView.setAdapter(mListAdapter);
         return root;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        final ListView lv = getListView();
-        lv.setItemsCanFocus(false);
-        lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        registerForContextMenu(lv);
-
-        setEmptyText(getString(R.string.no_projects));
-
-        if (savedInstanceState != null) {
-            // Fragment doesn't have this method.  Call it manually.
-            restoreInstanceState(savedInstanceState);
-            restoreListState();
-        }
 
         updateCursor();
         Log.d(TAG, "-onActivityCreated");
@@ -98,49 +104,32 @@ public class ProjectListFragment extends RoboListFragment {
     }
 
     @Override
-    public void onPause() {
-        mSavedListState = getListView().onSaveInstanceState();
-        super.onPause();
-
-        Log.d(TAG, "-onPause");
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
 
         refreshChildCount();
     }
 
-    /**
-     * Called when a message is clicked.
-     */
-    @Override
-    public void onListItemClick(ListView parent, View view, int position, long id) {
-        Location location = Location.viewTaskList(ListQuery.project, Id.create(id), Id.NONE);
-        mEventManager.fire(new NavigationRequestEvent(location));
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getActivity().getMenuInflater();
-        inflater.inflate(R.menu.project_list_context_menu, menu);
-
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Cursor cursor = (Cursor) getListAdapter().getItem(info.position);
-        Project project = mProjectPersister.read(cursor);
-
-        String entityName = getString(R.string.project_name);
-
-        MenuItem deleteMenu = menu.findItem(R.id.action_delete);
-        deleteMenu.setVisible(!project.isDeleted());
-        deleteMenu.setTitle(getString(R.string.menu_delete_entity, entityName));
-        
-        MenuItem undeleteMenu = menu.findItem(R.id.action_undelete);
-        undeleteMenu.setVisible(project.isDeleted());
-        undeleteMenu.setTitle(getString(R.string.menu_undelete_entity, entityName));
-    }
+//    @Override
+//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//        super.onCreateContextMenu(menu, v, menuInfo);
+//        MenuInflater inflater = getActivity().getMenuInflater();
+//        inflater.inflate(R.menu.project_list_context_menu, menu);
+//
+//        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+//        Cursor cursor = (Cursor) getListAdapter().getItem(info.position);
+//        Project project = mProjectPersister.read(cursor);
+//
+//        String entityName = getString(R.string.project_name);
+//
+//        MenuItem deleteMenu = menu.findItem(R.id.action_delete);
+//        deleteMenu.setVisible(!project.isDeleted());
+//        deleteMenu.setTitle(getString(R.string.menu_delete_entity, entityName));
+//
+//        MenuItem undeleteMenu = menu.findItem(R.id.action_undelete);
+//        undeleteMenu.setVisible(project.isDeleted());
+//        undeleteMenu.setTitle(getString(R.string.menu_undelete_entity, entityName));
+//    }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
@@ -185,33 +174,21 @@ public class ProjectListFragment extends RoboListFragment {
             return;
         }
 
-        Log.d(TAG, "Swapping cursor and setting adapter");
+        Log.d(TAG, "Swapping adapter cursor");
         mCursor = cursor;
-        mListAdapter.swapCursor(cursor);
-        setListAdapter(mListAdapter);
-
-        restoreListState();
-    }
-
-    private void restoreListState() {
-        if (getActivity() != null && getListAdapter() != null) {
-            // Restore the state -- this step has to be the last, because Some of the
-            // "post processing" seems to reset the scroll position.
-            if (mSavedListState != null) {
-                getListView().onRestoreInstanceState(mSavedListState);
-                mSavedListState = null;
-            }
-        }
+        mListAdapter.changeCursor(cursor);
     }
 
     private void onTaskCountCursorLoaded(@Observes ProjectTaskCountCursorLoadedEvent event) {
         Cursor cursor = event.getCursor();
-        mListAdapter.setTaskCountArray(mTaskPersister.readCountArray(cursor));
+        SparseIntArray taskCountArray = mTaskPersister.readCountArray(cursor);
+        mListAdapter.setTaskCountArray(taskCountArray);
+        Log.d(TAG, "Project task count loaded " + taskCountArray);
         if (getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    getListView().invalidateViews();
+                    mListAdapter.notifyDataSetChanged();
                 }
             });
         }
@@ -222,12 +199,72 @@ public class ProjectListFragment extends RoboListFragment {
         return (RoboAppCompatActivity) getActivity();
     }
 
-    void restoreInstanceState(Bundle savedInstanceState) {
-        mSavedListState = savedInstanceState.getParcelable(BUNDLE_LIST_STATE);
-    }
-
     private void refreshChildCount() {
         mEventManager.fire(new LoadCountCursorEvent(ViewMode.PROJECT_LIST));
+    }
+
+    public class ProjectHolder extends SwappingHolder implements
+            View.OnClickListener, View.OnLongClickListener {
+
+        ProjectListItem mProjectListItem;
+        Project mProject;
+
+        public ProjectHolder(ProjectListItem projectListItem) {
+            super(projectListItem, mMultiSelector);
+
+            mProjectListItem = projectListItem;
+            mProjectListItem.setOnClickListener(this);
+            mProjectListItem.setOnLongClickListener(this);
+            mProjectListItem.setLongClickable(true);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mProject != null) {
+                Location location = Location.viewTaskList(ListQuery.project, mProject.getLocalId(), Id.NONE);
+                mEventManager.fire(new NavigationRequestEvent(location));
+            }
+        }
+
+        public void onUpdate(Project project, SparseIntArray taskCountArray) {
+            mProject = project;
+            mProjectListItem.setTaskCountArray(taskCountArray);
+            mProjectListItem.updateView(project);
+        }
+
+
+
+        @Override
+        public boolean onLongClick(View v) {
+//            AppCompatActivity activity = (AppCompatActivity)getActivity();
+//            activity.startSupportActionMode(mEditMode);
+//            mMultiSelector.setSelected(this, true);
+            return true;
+        }
+    }
+
+    public class ProjectListAdapter extends AbstractCursorAdapter<ProjectHolder> {
+
+        private SparseIntArray mTaskCountArray;
+
+        @Override
+        public ProjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            ProjectListItem listItem = mProjectListItemProvider.get(getActivity());
+            return new ProjectHolder(listItem);
+        }
+
+        @Override
+        public void onBindViewHolder(ProjectHolder holder, int position) {
+            Log.d(TAG, "Binding holder at " + position);
+            mCursor.moveToPosition(position);
+            Project project = mProjectPersister.read(mCursor);
+            holder.onUpdate(project, mTaskCountArray);
+        }
+
+        public void setTaskCountArray(SparseIntArray taskCountArray) {
+            mTaskCountArray = taskCountArray;
+        }
     }
 
 }

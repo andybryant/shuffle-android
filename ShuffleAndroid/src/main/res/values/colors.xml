@@ -68,7 +68,7 @@
 
     <color name="list_main_text_color">#403c36</color>
     <color name="drawer_background_color">@color/white</color>
-    <color name="list_background_color">@color/view_incomplete_background_color</color>
+    <color name="list_background_color">@color/white</color>
     <color name="pager_background_color">#555555</color>
     <color name="view_highlight_color">#0099cc</color>
     <color name="view_project_color">#eeeeff</color>
