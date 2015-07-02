@@ -48,7 +48,7 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
 
     private Button mDeleteButton;
     private boolean isParallel;
-    private Id mDefaultContextId;
+    private Id mDefaultContextId = Id.NONE;
 
     @Inject
     private EntityCache<Context> mContextCache;
