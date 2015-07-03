@@ -195,9 +195,8 @@ public class ContextListFragment extends RoboListFragment {
         }
     }
 
-    private void onTaskCountCursorLoaded(@Observes ContextTaskCountCursorLoadedEvent event) {
-        Cursor cursor = event.getCursor();
-        mListAdapter.setTaskCountArray(mTaskPersister.readCountArray(cursor));
+    private void onTaskCountCursorLoaded(@Observes ContextTaskCountLoadedEvent event) {
+        mListAdapter.setTaskCountArray(event.getTaskCountArray());
         if (getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -206,7 +205,6 @@ public class ContextListFragment extends RoboListFragment {
                 }
             });
         }
-        cursor.close();
     }
 
     protected RoboAppCompatActivity getRoboAppCompatActivity() {

@@ -15,12 +15,17 @@
  */
 package org.dodgybits.shuffle.android.core.event;
 
-import android.database.Cursor;
+import android.util.SparseIntArray;
 
-public class ContextTaskCountCursorLoadedEvent extends AbstractCursorLoadedEvent {
+public class ContextTaskCountLoadedEvent {
 
-    public ContextTaskCountCursorLoadedEvent(Cursor cursor) {
-        super(cursor);
+    private SparseIntArray taskCountArray;
+
+    public ContextTaskCountLoadedEvent(SparseIntArray taskCountArray) {
+        this.taskCountArray = taskCountArray;
     }
 
+    public SparseIntArray getTaskCountArray() {
+        return taskCountArray;
+    }
 }

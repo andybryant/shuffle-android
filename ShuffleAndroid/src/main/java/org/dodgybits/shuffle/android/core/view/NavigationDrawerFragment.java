@@ -364,11 +364,11 @@ public class NavigationDrawerFragment extends RoboFragment {
         return result;
     }
 
-    private void onContextCountLoaded(@Observes ContextTaskCountCursorLoadedEvent event) {
+    private void onContextCountLoaded(@Observes ContextTaskCountLoadedEvent event) {
         // TODO iterate through cursor - construct location, find entry and update
     }
 
-    private void onProjectCountLoaded(@Observes ProjectTaskCountCursorLoadedEvent event) {
+    private void onProjectCountLoaded(@Observes ProjectTaskCountLoadedEvent event) {
         // TODO iterate through cursor - construct mainView, find entry and update
 
     }

@@ -11,19 +11,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SingleSelector;
 import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.google.inject.Inject;
-
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
-import org.dodgybits.shuffle.android.core.event.LoadCountCursorEvent;
-import org.dodgybits.shuffle.android.core.event.LoadListCursorEvent;
-import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
-import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
-import org.dodgybits.shuffle.android.core.event.ProjectTaskCountCursorLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.*;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -35,7 +28,6 @@ import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
-
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
@@ -179,11 +171,9 @@ public class ProjectListFragment extends RoboFragment {
         mListAdapter.changeCursor(cursor);
     }
 
-    private void onTaskCountCursorLoaded(@Observes ProjectTaskCountCursorLoadedEvent event) {
-        Cursor cursor = event.getCursor();
-        SparseIntArray taskCountArray = mTaskPersister.readCountArray(cursor);
-        mListAdapter.setTaskCountArray(taskCountArray);
-        Log.d(TAG, "Project task count loaded " + taskCountArray);
+    private void onTaskCountCursorLoaded(@Observes ProjectTaskCountLoadedEvent event) {
+        Log.d(TAG, "Project task count loaded " + event.getTaskCountArray());
+        mListAdapter.setTaskCountArray(event.getTaskCountArray());
         if (getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -192,7 +182,6 @@ public class ProjectListFragment extends RoboFragment {
                 }
             });
         }
-        cursor.close();
     }
 
     protected RoboAppCompatActivity getRoboAppCompatActivity() {

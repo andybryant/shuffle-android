@@ -24,8 +24,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.util.SparseIntArray;
 import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.core.event.*;
+import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
@@ -59,10 +61,13 @@ public class CursorLoader {
 
     private TaskListContext mTaskListContext;
 
+    private TaskPersister mTaskPersister;
+
     @Inject
-    public CursorLoader(Activity activity, EventManager eventManager) {
+    public CursorLoader(Activity activity, EventManager eventManager, TaskPersister taskPersister) {
         mActivity = (FragmentActivity) activity;
         mEventManager = eventManager;
+        mTaskPersister = taskPersister;
     }
 
     private void onViewUpdated(@Observes LocationUpdatedEvent event) {
@@ -230,10 +235,13 @@ public class CursorLoader {
                 public void onLoadFinished(Loader<Cursor> loader, final Cursor cursor) {
                     Log.d(TAG, "In CONTEXT_TASK_COUNT_LOADER_CALLBACKS.onLoadFinished");
 
+                    final SparseIntArray taskCountArray = mTaskPersister.readCountArray(cursor);
+                    cursor.close();
+
                     new Handler().post(new Runnable() {
                         @Override
                         public void run() {
-                            mEventManager.fire(new ContextTaskCountCursorLoadedEvent(cursor));
+                            mEventManager.fire(new ContextTaskCountLoadedEvent(taskCountArray));
                         }
                     });
                 }
@@ -314,10 +322,13 @@ public class CursorLoader {
                 public void onLoadFinished(Loader<Cursor> loader, final Cursor cursor) {
                     Log.d(TAG, "In PROJECT_TASK_COUNT_LOADER_CALLBACKS.onLoadFinished");
 
+                    final SparseIntArray taskCountArray = mTaskPersister.readCountArray(cursor);
+                    cursor.close();
+
                     new Handler().post(new Runnable() {
                         @Override
                         public void run() {
-                            mEventManager.fire(new ProjectTaskCountCursorLoadedEvent(cursor));
+                            mEventManager.fire(new ProjectTaskCountLoadedEvent(taskCountArray));
                         }
                     });
                 }
