@@ -24,17 +24,15 @@
 
     <TextView
         android:id="@+id/count"
-        android:layout_width="wrap_content"
+        android:layout_width="36dp"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:textSize="24sp"
-        android:tag="regular"
+        android:gravity="right"
         android:textColor="@color/view_minimal_text_color"
-        android:shadowColor="@color/white"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="1" />
+        android:tag="regular"
+        />
 
     <ImageView
         android:id="@+id/parallel_image"
@@ -42,6 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/count"
         android:layout_centerVertical="true"
+        android:alpha="0.54"
         android:paddingLeft="5dip"
         android:paddingRight="10dip" />
 
