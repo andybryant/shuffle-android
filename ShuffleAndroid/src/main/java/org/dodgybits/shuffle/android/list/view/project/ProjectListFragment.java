@@ -1,7 +1,6 @@
 package org.dodgybits.shuffle.android.list.view.project;
 
 import android.database.Cursor;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -9,17 +8,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseIntArray;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.AdapterView;
-
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SingleSelector;
-import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.*;
@@ -39,6 +32,8 @@ import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.ContextScopedProvider;
+
+import java.util.List;
 
 public class ProjectListFragment extends RoboFragment {
     private static final String TAG = "ProjectListFragment";
@@ -62,24 +57,29 @@ public class ProjectListFragment extends RoboFragment {
     private RecyclerView mRecyclerView;
     private ProjectListAdapter mListAdapter;
     private MultiSelector mMultiSelector = new SingleSelector();
-
+    private ActionMode mActionMode = null;
     private ModalMultiSelectorCallback mEditMode = new ModalMultiSelectorCallback(mMultiSelector) {
 
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             super.onCreateActionMode(actionMode, menu);
             getActivity().getMenuInflater().inflate(R.menu.project_list_context_menu, menu);
-//
-//            int position = mMultiSelector.getSelectedPositions().get(0);
-//            Project project = mListAdapter.readProject(position);
+
             String entityName = getString(R.string.project_name);
-//
+            List<Integer> positions = mMultiSelector.getSelectedPositions();
+            boolean isDeleted = false;
+            if (positions != null && !positions.isEmpty() && mCursor != null) {
+                int position = positions.get(0);
+                Project project = mListAdapter.readProject(position);
+                isDeleted = project.isDeleted();
+            }
+
             MenuItem deleteMenu = menu.findItem(R.id.action_delete);
-            deleteMenu.setVisible(true);
+            deleteMenu.setVisible(!isDeleted);
             deleteMenu.setTitle(getString(R.string.menu_delete_entity, entityName));
 
             MenuItem undeleteMenu = menu.findItem(R.id.action_undelete);
-            undeleteMenu.setVisible(false);
+            undeleteMenu.setVisible(isDeleted);
             undeleteMenu.setTitle(getString(R.string.menu_undelete_entity, entityName));
 
             return true;
@@ -108,6 +108,13 @@ public class ProjectListFragment extends RoboFragment {
                     return true;
             }
             return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            super.onDestroyActionMode(actionMode);
+            mMultiSelector.clearSelections();
+            mActionMode = null;
         }
     };
 
@@ -158,7 +165,7 @@ public class ProjectListFragment extends RoboFragment {
             if (mMultiSelector.isSelectable()) {
                 if (mEditMode != null) {
                     mEditMode.setClearOnPrepare(false);
-                    ((AppCompatActivity) getActivity()).startSupportActionMode(mEditMode);
+                    mActionMode = getRoboAppCompatActivity().startSupportActionMode(mEditMode);
                 }
             }
         }
@@ -271,6 +278,10 @@ public class ProjectListFragment extends RoboFragment {
                     Location location = Location.viewTaskList(ListQuery.project, mProject.getLocalId(), Id.NONE);
                     mEventManager.fire(new NavigationRequestEvent(location));
                 }
+            } else {
+                if (mMultiSelector.getSelectedPositions().isEmpty() && mActionMode != null) {
+                    mActionMode.finish();
+                }
             }
         }
 
@@ -282,8 +293,7 @@ public class ProjectListFragment extends RoboFragment {
 
         @Override
         public boolean onLongClick(View v) {
-            AppCompatActivity activity = (AppCompatActivity)getActivity();
-            activity.startSupportActionMode(mEditMode);
+            mActionMode = getRoboAppCompatActivity().startSupportActionMode(mEditMode);
             mMultiSelector.setSelected(this, true);
             return true;
         }
