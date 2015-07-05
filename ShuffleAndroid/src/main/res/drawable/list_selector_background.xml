@@ -20,5 +20,6 @@
     <item android:state_pressed="true" android:drawable="@drawable/list_pressed_holo" />
     <item android:state_focused="true" android:drawable="@drawable/list_focused_holo" />
     <item android:state_selected="true" android:drawable="@drawable/list_selected_holo" />
+    <item android:state_activated="true" android:drawable="@drawable/list_selected_holo" />
 
 </selector>

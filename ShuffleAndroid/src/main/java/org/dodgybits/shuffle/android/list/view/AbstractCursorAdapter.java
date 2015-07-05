@@ -3,9 +3,10 @@ package org.dodgybits.shuffle.android.list.view;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 
+import com.bignerdranch.android.multiselector.SelectableHolder;
 import com.bignerdranch.android.multiselector.SwappingHolder;
 
-public abstract class AbstractCursorAdapter<T extends SwappingHolder> extends RecyclerView.Adapter<T> {
+public abstract class AbstractCursorAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<T> {
 
     Cursor dataCursor;
 

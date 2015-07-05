@@ -1,6 +1,7 @@
 package org.dodgybits.shuffle.android.list.view.project;
 
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -32,6 +33,7 @@ import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
+import org.dodgybits.shuffle.android.list.view.SelectableHolderImpl;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -79,7 +81,6 @@ public class ProjectListFragment extends RoboFragment {
             MenuItem undeleteMenu = menu.findItem(R.id.action_undelete);
             undeleteMenu.setVisible(false);
             undeleteMenu.setTitle(getString(R.string.menu_undelete_entity, entityName));
-
 
             return true;
         }
@@ -135,8 +136,9 @@ public class ProjectListFragment extends RoboFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        Log.d(TAG, "+onActivityCreated " + savedInstanceState + " selector=" + mMultiSelector);
+
         updateCursor();
-        Log.d(TAG, "-onActivityCreated");
 
         getView().findViewById(R.id.fab).setOnClickListener(
                 new View.OnClickListener() {
@@ -149,9 +151,8 @@ public class ProjectListFragment extends RoboFragment {
         );
 
         if (mMultiSelector != null) {
-            Bundle bundle = savedInstanceState;
-            if (bundle != null) {
-                mMultiSelector.restoreSelectionStates(bundle.getBundle(TAG));
+            if (savedInstanceState != null) {
+                mMultiSelector.restoreSelectionStates(savedInstanceState.getBundle(TAG));
             }
 
             if (mMultiSelector.isSelectable()) {
@@ -159,14 +160,13 @@ public class ProjectListFragment extends RoboFragment {
                     mEditMode.setClearOnPrepare(false);
                     ((AppCompatActivity) getActivity()).startSupportActionMode(mEditMode);
                 }
-
             }
         }
-
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        Log.d(TAG, "Saving state");
         outState.putBundle(TAG, mMultiSelector.saveSelectionStates());
         super.onSaveInstanceState(outState);
     }
@@ -248,7 +248,7 @@ public class ProjectListFragment extends RoboFragment {
     }
 
 
-    public class ProjectHolder extends SwappingHolder implements
+    public class ProjectHolder extends SelectableHolderImpl implements
             View.OnClickListener, View.OnLongClickListener {
 
         ProjectListItem mProjectListItem;
@@ -280,17 +280,13 @@ public class ProjectListFragment extends RoboFragment {
             mProjectListItem.updateView(project);
         }
 
-
-
         @Override
         public boolean onLongClick(View v) {
-            mMultiSelector.setSelected(this, true);
             AppCompatActivity activity = (AppCompatActivity)getActivity();
             activity.startSupportActionMode(mEditMode);
+            mMultiSelector.setSelected(this, true);
             return true;
         }
-
-
 
     }
 
