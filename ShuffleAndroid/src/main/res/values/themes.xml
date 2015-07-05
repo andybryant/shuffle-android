@@ -21,6 +21,7 @@
     <style name="ShuffleTheme.Base" parent="Theme.AppCompat.Light">
         <item name="actionBarIconColor">#fff</item>
         <item name="actionBarInsetStart">@dimen/keyline_2</item>
+        <item name="actionModeBackground">@color/actionbar_background</item>
         <item name="popupItemBackground">?android:selectableItemBackground</item>
         <item name="photoItemForeground">?android:selectableItemBackground</item>
         <item name="photoItemForegroundBorderless">?android:selectableItemBackground</item>

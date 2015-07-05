@@ -94,17 +94,17 @@ public class ProjectListFragment extends RoboFragment {
                 case R.id.action_edit:
                     mEventManager.fire(new NavigationRequestEvent(
                             Location.editProject(projectId)));
-                    mMultiSelector.clearSelections();
+                    mActionMode.finish();
                     return true;
 
                 case R.id.action_delete:
                     mEventManager.fire(new UpdateProjectDeletedEvent(projectId, true));
-                    mMultiSelector.clearSelections();
+                    mActionMode.finish();
                     return true;
 
                 case R.id.action_undelete:
                     mEventManager.fire(new UpdateProjectDeletedEvent(projectId, false));
-                    mMultiSelector.clearSelections();
+                    mActionMode.finish();
                     return true;
             }
             return false;
