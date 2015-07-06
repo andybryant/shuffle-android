@@ -146,16 +146,6 @@ public class ProjectListFragment extends RoboFragment {
 
         updateCursor();
 
-        getView().findViewById(R.id.fab).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Location location = Location.newProject();
-                        mEventManager.fire(new NavigationRequestEvent(location));
-                    }
-                }
-        );
-
         if (mMultiSelector != null) {
             if (savedInstanceState != null) {
                 mMultiSelector.restoreSelectionStates(savedInstanceState.getBundle(TAG));

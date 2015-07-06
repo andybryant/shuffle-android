@@ -151,16 +151,7 @@ public class ContextListFragment extends RoboFragment {
         super.onActivityCreated(savedInstanceState);
 
         updateCursor();
-        getView().findViewById(R.id.fab).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Location location = Location.newContext();
-                        mEventManager.fire(new NavigationRequestEvent(location));
-                    }
-                }
-        );
-
+        
         if (mMultiSelector != null) {
             if (savedInstanceState != null) {
                 mMultiSelector.restoreSelectionStates(savedInstanceState.getBundle(TAG));
