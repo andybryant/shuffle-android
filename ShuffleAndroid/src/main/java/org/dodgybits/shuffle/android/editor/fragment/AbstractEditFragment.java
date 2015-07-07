@@ -20,6 +20,7 @@ import org.dodgybits.shuffle.android.core.model.Entity;
 import org.dodgybits.shuffle.android.core.model.encoding.EntityEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityPersister;
 import org.dodgybits.shuffle.android.core.util.FontUtils;
+import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 import roboguice.event.EventManager;
 import roboguice.fragment.RoboFragment;
@@ -184,8 +185,9 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
             text = getResources().getString(R.string.itemSavedToast,
                     getItemName());
         }
+        View parentView = UiUtilities.getSnackBarParentView(getActivity());
         Snackbar.make(
-                getView(), text, Snackbar.LENGTH_SHORT).show();
+                parentView, text, Snackbar.LENGTH_SHORT).show();
     }
 
     protected abstract boolean isValid();

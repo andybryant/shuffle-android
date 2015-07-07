@@ -16,6 +16,7 @@ import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
+import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.list.event.*;
 import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import roboguice.event.Observes;
@@ -170,14 +171,15 @@ public class EntityUpdateListener {
         String text = mActivity.getResources().getString(
                 isDeleted ? R.string.itemDeletedToast : R.string.itemUndeletedToast,
                 entityName);
-        View topView = mActivity.findViewById(android.R.id.content);
-        Snackbar.make(topView, text, Snackbar.LENGTH_SHORT).show();
+        View parentView = UiUtilities.getSnackBarParentView(mActivity);
+        Snackbar.make(parentView, text, Snackbar.LENGTH_SHORT).show();
     }
     
     private void showSavedToast(String entityName) {
         String text = mActivity.getString(R.string.itemSavedToast, entityName);
-        View topView = mActivity.findViewById(android.R.id.content);
-        Snackbar.make(topView, text, Snackbar.LENGTH_SHORT).show();
+        View parentView = UiUtilities.getSnackBarParentView(mActivity);
+        Snackbar.make(parentView, text, Snackbar.LENGTH_SHORT).show();
     }
-    
+
+
 }

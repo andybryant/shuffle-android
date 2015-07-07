@@ -30,6 +30,13 @@ public class UiUtilities {
         return !useTabletUI(res) || res.getBoolean(R.bool.list_collapsible);
     }
 
+    public static View getSnackBarParentView(Activity activity) {
+        View parent = activity.findViewById(R.id.coordinator_layout);
+        if (parent == null) {
+            parent = activity.findViewById(android.R.id.content);
+        }
+        return parent;
+    }
     public static String getTitle(Resources res, ListQuery listQuery) {
         String title = "";
         switch (listQuery) {
