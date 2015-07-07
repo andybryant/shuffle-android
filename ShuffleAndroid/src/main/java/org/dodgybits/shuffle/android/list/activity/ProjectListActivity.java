@@ -20,7 +20,7 @@ public class ProjectListActivity extends AbstractMainActivity {
     }
 
     public void onClickFab(View view) {
-        Location location = Location.newContext();
+        Location location = Location.newProject();
         mEventManager.fire(new NavigationRequestEvent(location));
     }
 
