@@ -500,9 +500,11 @@ public class Location implements Parcelable {
                 deriveViewMode();
             } else if (mResult.getProjectId().isInitialised()) {
                 mResult.mProjectId = Id.NONE;
+                mResult.mLocationActivity = ProjectList;
                 deriveViewMode();
             } else if (mResult.getContextId().isInitialised()) {
                 mResult.mContextId = Id.NONE;
+                mResult.mLocationActivity = ContextList;
                 deriveViewMode();
             } else {
                 Log.w(TAG, "No parent view for top level view " + mResult);

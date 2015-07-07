@@ -2,44 +2,48 @@ package org.dodgybits.shuffle.android.list.view.context;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v7.view.*;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseIntArray;
-import android.view.*;
-import android.view.ActionMode;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
+
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SingleSelector;
 import com.google.inject.Inject;
+
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.*;
+import org.dodgybits.shuffle.android.core.event.ContextTaskCountLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.LoadCountCursorEvent;
+import org.dodgybits.shuffle.android.core.event.LoadListCursorEvent;
+import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
-import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.UpdateContextDeletedEvent;
-import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
 import org.dodgybits.shuffle.android.list.view.SelectableHolderImpl;
-import org.dodgybits.shuffle.android.list.view.project.ProjectListItem;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
+
+import java.util.List;
+
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
-import roboguice.fragment.RoboListFragment;
 import roboguice.inject.ContextScopedProvider;
-
-import java.util.List;
 
 public class ContextListFragment extends RoboFragment {
     private static final String TAG = "ContextListFragment";
@@ -151,7 +155,7 @@ public class ContextListFragment extends RoboFragment {
         super.onActivityCreated(savedInstanceState);
 
         updateCursor();
-        
+
         if (mMultiSelector != null) {
             if (savedInstanceState != null) {
                 mMultiSelector.restoreSelectionStates(savedInstanceState.getBundle(TAG));
