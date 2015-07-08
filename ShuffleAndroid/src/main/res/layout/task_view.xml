@@ -97,6 +97,7 @@
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_weight="1"
+        android:layout_marginTop="-20dip"
         android:fillViewport="true"
         android:background="@color/white"
         android:fadingEdge="none"
@@ -105,9 +106,13 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="20dip"
+            android:layout_height="wrap_content"
             android:scrollbars="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="40dip"
+                />
 
             <LinearLayout
                 android:id="@+id/context_row"
