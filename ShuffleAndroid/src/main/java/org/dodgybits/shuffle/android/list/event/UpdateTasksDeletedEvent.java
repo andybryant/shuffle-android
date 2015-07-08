@@ -2,6 +2,7 @@ package org.dodgybits.shuffle.android.list.event;
 
 import com.google.common.collect.Sets;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class UpdateTasksDeletedEvent {
@@ -9,7 +10,7 @@ public class UpdateTasksDeletedEvent {
     private boolean mDeleted;
 
     public UpdateTasksDeletedEvent(Set<Long> taskIds, boolean deleted) {
-        mTaskIds = taskIds;
+        mTaskIds = new HashSet<>(taskIds);
         mDeleted = deleted;
     }
 

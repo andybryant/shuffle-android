@@ -5,9 +5,10 @@ import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
+
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
@@ -17,13 +18,21 @@ import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
-import org.dodgybits.shuffle.android.list.event.*;
+import org.dodgybits.shuffle.android.list.event.MoveTasksEvent;
+import org.dodgybits.shuffle.android.list.event.NewContextEvent;
+import org.dodgybits.shuffle.android.list.event.NewProjectEvent;
+import org.dodgybits.shuffle.android.list.event.NewTaskEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateContextDeletedEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
 import org.dodgybits.shuffle.android.server.sync.SyncUtils;
-import roboguice.event.Observes;
-import roboguice.inject.ContextSingleton;
 
 import java.util.List;
 import java.util.Set;
+
+import roboguice.event.Observes;
+import roboguice.inject.ContextSingleton;
 
 import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.LOCAL_CHANGE_SOURCE;
 
@@ -31,14 +40,15 @@ import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.LO
 public class EntityUpdateListener {
     private static final String TAG = "EntityUpdateListener";
 
-    private Activity mActivity;
-    private ProjectPersister mProjectPersister;
-    private ContextPersister mContextPersister;
-    private TaskPersister mTaskPersister;
-    
+    private final Activity mActivity;
+    private final ProjectPersister mProjectPersister;
+    private final ContextPersister mContextPersister;
+    private final TaskPersister mTaskPersister;
+
     @Inject
-    public EntityUpdateListener(Activity activity, ProjectPersister projectPersister,
-                                ContextPersister contextPersister, TaskPersister taskPersister) {
+    public EntityUpdateListener(
+            Activity activity, ProjectPersister projectPersister,
+            ContextPersister contextPersister, TaskPersister taskPersister) {
         mActivity = activity;
         mProjectPersister = projectPersister;
         mContextPersister = contextPersister;
@@ -46,32 +56,47 @@ public class EntityUpdateListener {
     }
 
     private void onToggleProjectDeleted(@Observes UpdateProjectDeletedEvent event) {
-        Id id = event.getProjectId();
+        final Id id = event.getProjectId();
         boolean isDeleted = event.isDeleted();
         if (event.isDeleted() == null) {
             // need to look up current value and toggle
             Project project = mProjectPersister.findById(id);
             isDeleted = !project.isDeleted();
         }
-        
+        final boolean undoState = !isDeleted;
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mProjectPersister.updateDeletedFlag(id, undoState);
+                SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
+            }
+        };
         mProjectPersister.updateDeletedFlag(event.getProjectId(), isDeleted);
         String entityName = mActivity.getString(R.string.project_name);
-        showDeletedToast(entityName, isDeleted);
+        showDeletedToast(entityName, isDeleted, listener);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
     private void onToggleContextDeleted(@Observes UpdateContextDeletedEvent event) {
-        Id id = event.getContextId();
+        final Id id = event.getContextId();
         boolean isDeleted = event.isDeleted();
         if (event.isDeleted() == null) {
             // need to look up current value and toggle
             Context context = mContextPersister.findById(id);
             isDeleted = !context.isDeleted();
         }
-        
+        final boolean undoState = !isDeleted;
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContextPersister.updateDeletedFlag(id, undoState);
+                SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
+            }
+        };
+
         mContextPersister.updateDeletedFlag(event.getContextId(), event.isDeleted());
         String entityName = mActivity.getString(R.string.context_name);
-        showDeletedToast(entityName, isDeleted);
+        showDeletedToast(entityName, isDeleted, listener);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
@@ -80,26 +105,48 @@ public class EntityUpdateListener {
     }
 
     private void onUpdateTasksDeleted(@Observes UpdateTasksDeletedEvent event) {
-        Set<Long> taskIds = event.getTaskIds();
+        final Set<Long> taskIds = event.getTaskIds();
         for (Long taskId : taskIds) {
             Id id = Id.create(taskId);
             mTaskPersister.updateDeletedFlag(id, event.isDeleted());
         }
+        final boolean undoState = !event.isDeleted();
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (Long taskId : taskIds) {
+                    Id id = Id.create(taskId);
+                    mTaskPersister.updateDeletedFlag(id, undoState);
+                }
+                SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
+            }
+        };
 
         String entityName = mActivity.getString(R.string.task_name);
-        showDeletedToast(entityName, event.isDeleted());
+        showDeletedToast(entityName, event.isDeleted(), listener);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
     private void onUpdateTaskCompleted(@Observes UpdateTasksCompletedEvent event) {
-        Set<Long> taskIds = event.getTaskIds();
+        final Set<Long> taskIds = event.getTaskIds();
         for (Long taskId : taskIds) {
             Id id = Id.create(taskId);
             mTaskPersister.updateCompleteFlag(id, event.isCompleted());
         }
+        final boolean undoState = !event.isCompleted();
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (Long taskId : taskIds) {
+                    Id id = Id.create(taskId);
+                    mTaskPersister.updateCompleteFlag(id, undoState);
+                }
+                SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
+            }
+        };
 
         String entityName = mActivity.getString(R.string.task_name);
-        showSavedToast(entityName);
+        showSavedToast(entityName, listener);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
@@ -131,7 +178,7 @@ public class EntityUpdateListener {
 
         mTaskPersister.insert(builder.build());
         String entityName = mActivity.getString(R.string.task_name);
-        showSavedToast(entityName);
+        showSavedToast(entityName, null);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
@@ -147,7 +194,7 @@ public class EntityUpdateListener {
 
         mProjectPersister.insert(builder.build());
         String entityName = mActivity.getString(R.string.project_name);
-        showSavedToast(entityName);
+        showSavedToast(entityName, null);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
@@ -163,23 +210,31 @@ public class EntityUpdateListener {
 
         mContextPersister.insert(builder.build());
         String entityName = mActivity.getString(R.string.context_name);
-        showSavedToast(entityName);
+        showSavedToast(entityName, null);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
-    private void showDeletedToast(String entityName, boolean isDeleted) {
+    private void showDeletedToast(
+            String entityName, boolean isDeleted, View.OnClickListener undoListener) {
         String text = mActivity.getResources().getString(
                 isDeleted ? R.string.itemDeletedToast : R.string.itemUndeletedToast,
                 entityName);
         View parentView = UiUtilities.getSnackBarParentView(mActivity);
-        Snackbar.make(parentView, text, Snackbar.LENGTH_SHORT).show();
+        Snackbar snackbar = Snackbar.make(parentView, text, Snackbar.LENGTH_LONG);
+        if (undoListener != null) {
+            snackbar.setAction(R.string.undo_button_title, undoListener);
+        }
+        snackbar.show();
     }
     
-    private void showSavedToast(String entityName) {
+    private void showSavedToast(String entityName, View.OnClickListener undoListener) {
         String text = mActivity.getString(R.string.itemSavedToast, entityName);
         View parentView = UiUtilities.getSnackBarParentView(mActivity);
-        Snackbar.make(parentView, text, Snackbar.LENGTH_SHORT).show();
+        Snackbar snackbar = Snackbar.make(parentView, text, Snackbar.LENGTH_LONG);
+        if (undoListener != null) {
+            snackbar.setAction(R.string.undo_button_title, undoListener);
+        }
+        snackbar.show();
     }
-
 
 }

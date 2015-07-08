@@ -105,6 +105,7 @@
     <string name="yesterday">Yesterday</string>
     <string name="previous_button_title">Previous</string>
     <string name="next_button_title">Next</string>
+    <string name="undo_button_title">Undo</string>
 
     <!--  search -->
     <string name="search_label_action">Shuffle actions</string>
