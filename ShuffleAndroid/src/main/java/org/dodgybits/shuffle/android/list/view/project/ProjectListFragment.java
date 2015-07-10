@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
@@ -171,14 +172,19 @@ public class ProjectListFragment extends RoboFragment {
             }
 
             @Override
-            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            public void onChildDraw(
+                    Canvas c, RecyclerView recyclerView,
+                    RecyclerView.ViewHolder viewHolder,
+                    float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                     // Get RecyclerView item from the ViewHolder
                     View itemView = viewHolder.itemView;
 
                     Paint p = new Paint();
-                    float vertOffset = ((float)itemView.getHeight() - sCompleteIcon.getHeight()) / 2f;
                     if (dX > 0) {
+                        Bitmap icon = sCompleteIcon;
+                        int y = itemView.getTop() + (itemView.getHeight() - icon.getHeight()) / 2;
+
                         /* Set your color for positive displacement */
                         p.setColor(getResources().getColor(R.color.complete_background));
 
@@ -186,10 +192,20 @@ public class ProjectListFragment extends RoboFragment {
                         c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
                                 (float) itemView.getBottom(), p);
 
-                        float hOffset = 1f * (float)sCompleteIcon.getWidth();
-                        // TODO crop accordingly
-                        c.drawBitmap(sCompleteIcon, (float) itemView.getLeft() + hOffset, (float) itemView.getTop() + vertOffset, null);
+                        int hOffset = icon.getWidth();
+                        int x = itemView.getLeft() + hOffset;
+                        if (dX > x) {
+
+                            Rect destRect = new Rect(x, y,
+                                    (int)Math.min(x + icon.getScaledWidth(c), dX),
+                                    y + icon.getScaledHeight(c));
+                            Rect srcRect = new Rect(0, 0, destRect.width(), destRect.height());
+                            c.drawBitmap(icon, srcRect, destRect, null);
+                        }
                     } else {
+                        Bitmap icon = sDeferIcon;
+                        int y = itemView.getTop() + (itemView.getHeight() - icon.getHeight()) / 2;
+
                         /* Set your color for negative displacement */
                         p.setColor(getResources().getColor(R.color.deferred));
 
@@ -197,9 +213,17 @@ public class ProjectListFragment extends RoboFragment {
                         c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(),
                                 (float) itemView.getRight(), (float) itemView.getBottom(), p);
 
-                        float hOffset = 2f * (float)sDeferIcon.getWidth();
-                        // TODO crop accordingly
-                        c.drawBitmap(sDeferIcon, (float) itemView.getRight() - hOffset, (float) itemView.getTop() + vertOffset, null);
+                        int hOffset = 2 * icon.getWidth();
+                        int x = itemView.getRight() - hOffset;
+                        if (itemView.getRight() + dX < x + icon.getScaledWidth(c)) {
+                            Rect destRect = new Rect(
+                                    Math.max(x, (int) (itemView.getRight() + dX)), y,
+                                    x + icon.getScaledWidth(c),
+                                    y + icon.getScaledHeight(c));
+                            Rect srcRect = new Rect(icon.getScaledWidth(c) - destRect.width(), 0,
+                                    icon.getScaledWidth(c), destRect.height());
+                            c.drawBitmap(icon, srcRect, destRect, null);
+                        }
                     }
                 }
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
