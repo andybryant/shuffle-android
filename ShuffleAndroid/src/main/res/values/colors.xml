@@ -58,6 +58,8 @@
     <color name="actionbar_title_color">@color/white</color>
     <color name="actionbar_background">#0063be</color>
 
+    <color name="complete_background">#0F9D58</color>
+
     <color name="description_text_color_incomplete">@color/list_main_text_color</color>
     <color name="snippet_text_color_incomplete">@color/list_main_text_color</color>
     <color name="project_text_color_incomplete">#002aa0</color>

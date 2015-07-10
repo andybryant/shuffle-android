@@ -1,10 +1,16 @@
 package org.dodgybits.shuffle.android.list.view.project;
 
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.*;
@@ -37,6 +43,9 @@ import java.util.List;
 
 public class ProjectListFragment extends RoboFragment {
     private static final String TAG = "ProjectListFragment";
+
+    private static Bitmap sCompleteIcon;
+    private static Bitmap sDeferIcon;
 
     @Inject
     private TaskPersister mTaskPersister;
@@ -126,6 +135,11 @@ public class ProjectListFragment extends RoboFragment {
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
+
+        Resources r = getActivity().getResources();
+        sCompleteIcon = BitmapFactory.decodeResource(r, R.drawable.ic_done_white_24dp);
+        sDeferIcon = BitmapFactory.decodeResource(r, R.drawable.ic_schedule_white_24dp);
+
     }
 
     @Override
@@ -138,6 +152,61 @@ public class ProjectListFragment extends RoboFragment {
         mRecyclerView.setLayoutManager(layoutManager);
         mListAdapter = new ProjectListAdapter();
         mRecyclerView.setAdapter(mListAdapter);
+
+        // init swipe to dismiss logic
+        ItemTouchHelper swipeToDismissTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
+                0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                // callback for drag-n-drop, false to skip this feature
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                // callback for swipe to dismiss, removing item from data and adapter
+
+//                items.remove(viewHolder.getAdapterPosition());
+                mListAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    // Get RecyclerView item from the ViewHolder
+                    View itemView = viewHolder.itemView;
+
+                    Paint p = new Paint();
+                    float vertOffset = ((float)itemView.getHeight() - sCompleteIcon.getHeight()) / 2f;
+                    if (dX > 0) {
+                        /* Set your color for positive displacement */
+                        p.setColor(getResources().getColor(R.color.complete_background));
+
+                        // Draw Rect with varying right side, equal to displacement dX
+                        c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
+                                (float) itemView.getBottom(), p);
+
+                        float hOffset = 1f * (float)sCompleteIcon.getWidth();
+                        // TODO crop accordingly
+                        c.drawBitmap(sCompleteIcon, (float) itemView.getLeft() + hOffset, (float) itemView.getTop() + vertOffset, null);
+                    } else {
+                        /* Set your color for negative displacement */
+                        p.setColor(getResources().getColor(R.color.deferred));
+
+                        // Draw Rect with varying left side, equal to the item's right side plus negative displacement dX
+                        c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(),
+                                (float) itemView.getRight(), (float) itemView.getBottom(), p);
+
+                        float hOffset = 2f * (float)sDeferIcon.getWidth();
+                        // TODO crop accordingly
+                        c.drawBitmap(sDeferIcon, (float) itemView.getRight() - hOffset, (float) itemView.getTop() + vertOffset, null);
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        });
+        swipeToDismissTouchHelper.attachToRecyclerView(mRecyclerView);
+
         return root;
     }
 
