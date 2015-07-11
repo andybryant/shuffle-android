@@ -34,6 +34,15 @@ public interface EntityPersister<E extends Entity> {
      */
     boolean updateDeletedFlag(Id id, boolean isDeleted);
 
+    /**
+     * Set deleted flag entity with the given id to isDeleted.
+     *
+     * @param id entity id
+     * @param isActive flag to set active flag to
+     * @return whether the operation succeeded
+     */
+    boolean updateActiveFlag(Id id, boolean isActive);
+
 
     /**
      * Permanently delete all items that currently flagged as deleted.

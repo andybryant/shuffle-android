@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,9 +28,11 @@ import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
+import org.dodgybits.shuffle.android.core.view.AbstractSwipeItemTouchHelperCallback;
 import org.dodgybits.shuffle.android.core.view.DividerItemDecoration;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
+import org.dodgybits.shuffle.android.list.event.UpdateProjectActiveEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
@@ -45,8 +48,9 @@ import java.util.List;
 public class ProjectListFragment extends RoboFragment {
     private static final String TAG = "ProjectListFragment";
 
-    private static Bitmap sCompleteIcon;
-    private static Bitmap sDeferIcon;
+    private static Bitmap sInactiveIcon;
+    private static Bitmap sActiveIcon;
+    private static Bitmap sDeleteIcon;
 
     @Inject
     private TaskPersister mTaskPersister;
@@ -138,9 +142,11 @@ public class ProjectListFragment extends RoboFragment {
         setHasOptionsMenu(true);
 
         Resources r = getActivity().getResources();
-        sCompleteIcon = BitmapFactory.decodeResource(r, R.drawable.ic_done_white_24dp);
-        sDeferIcon = BitmapFactory.decodeResource(r, R.drawable.ic_schedule_white_24dp);
-
+//        sCompleteIcon = BitmapFactory.decodeResource(r, R.drawable.ic_done_white_24dp);
+//        sDeferIcon = BitmapFactory.decodeResource(r, R.drawable.ic_schedule_white_24dp);
+        sActiveIcon = BitmapFactory.decodeResource(r, R.drawable.ic_visibility_white_24dp);
+        sInactiveIcon = BitmapFactory.decodeResource(r, R.drawable.ic_visibility_off_white_24dp);
+        sDeleteIcon = BitmapFactory.decodeResource(r, R.drawable.ic_delete_white_24dp);
     }
 
     @Override
@@ -155,81 +161,8 @@ public class ProjectListFragment extends RoboFragment {
         mRecyclerView.setAdapter(mListAdapter);
 
         // init swipe to dismiss logic
-        ItemTouchHelper swipeToDismissTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
-                0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                // callback for drag-n-drop, false to skip this feature
-                return false;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                // callback for swipe to dismiss, removing item from data and adapter
-
-//                items.remove(viewHolder.getAdapterPosition());
-                mListAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-            }
-
-            @Override
-            public void onChildDraw(
-                    Canvas c, RecyclerView recyclerView,
-                    RecyclerView.ViewHolder viewHolder,
-                    float dX, float dY, int actionState, boolean isCurrentlyActive) {
-                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-                    // Get RecyclerView item from the ViewHolder
-                    View itemView = viewHolder.itemView;
-
-                    Paint p = new Paint();
-                    if (dX > 0) {
-                        Bitmap icon = sCompleteIcon;
-                        int y = itemView.getTop() + (itemView.getHeight() - icon.getHeight()) / 2;
-
-                        /* Set your color for positive displacement */
-                        p.setColor(getResources().getColor(R.color.complete_background));
-
-                        // Draw Rect with varying right side, equal to displacement dX
-                        c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
-                                (float) itemView.getBottom(), p);
-
-                        int hOffset = icon.getWidth();
-                        int x = itemView.getLeft() + hOffset;
-                        if (dX > x) {
-
-                            Rect destRect = new Rect(x, y,
-                                    (int)Math.min(x + icon.getScaledWidth(c), dX),
-                                    y + icon.getScaledHeight(c));
-                            Rect srcRect = new Rect(0, 0, destRect.width(), destRect.height());
-                            c.drawBitmap(icon, srcRect, destRect, null);
-                        }
-                    } else {
-                        Bitmap icon = sDeferIcon;
-                        int y = itemView.getTop() + (itemView.getHeight() - icon.getHeight()) / 2;
-
-                        /* Set your color for negative displacement */
-                        p.setColor(getResources().getColor(R.color.deferred));
-
-                        // Draw Rect with varying left side, equal to the item's right side plus negative displacement dX
-                        c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(),
-                                (float) itemView.getRight(), (float) itemView.getBottom(), p);
-
-                        int hOffset = 2 * icon.getWidth();
-                        int x = itemView.getRight() - hOffset;
-                        if (itemView.getRight() + dX < x + icon.getScaledWidth(c)) {
-                            Rect destRect = new Rect(
-                                    Math.max(x, (int) (itemView.getRight() + dX)), y,
-                                    x + icon.getScaledWidth(c),
-                                    y + icon.getScaledHeight(c));
-                            Rect srcRect = new Rect(icon.getScaledWidth(c) - destRect.width(), 0,
-                                    icon.getScaledWidth(c), destRect.height());
-                            c.drawBitmap(icon, srcRect, destRect, null);
-                        }
-                    }
-                }
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-            }
-        });
-        swipeToDismissTouchHelper.attachToRecyclerView(mRecyclerView);
+        ItemTouchHelper helper = new ItemTouchHelper(new ProjectCallback());
+        helper.attachToRecyclerView(mRecyclerView);
 
         return root;
     }
@@ -275,6 +208,7 @@ public class ProjectListFragment extends RoboFragment {
         if (!getUserVisibleHint()) return super.onContextItemSelected(item);
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position = mListAdapter.getItemPosition(info.id);
         switch (item.getItemId()) {
             case R.id.action_edit:
                 Location location = Location.editProject(Id.create(info.id));
@@ -282,10 +216,12 @@ public class ProjectListFragment extends RoboFragment {
                 return true;
             case R.id.action_delete:
                 mEventManager.fire(new UpdateProjectDeletedEvent(Id.create(info.id), true));
+                mListAdapter.notifyItemRemoved(position);
                 mEventManager.fire(new LoadListCursorEvent(ViewMode.PROJECT_LIST));
                 return true;
             case R.id.action_undelete:
                 mEventManager.fire(new UpdateProjectDeletedEvent(Id.create(info.id), false));
+                mListAdapter.notifyItemRemoved(position);
                 mEventManager.fire(new LoadListCursorEvent(ViewMode.PROJECT_LIST));
                 return true;
         }
@@ -387,6 +323,10 @@ public class ProjectListFragment extends RoboFragment {
 
     public class ProjectListAdapter extends AbstractCursorAdapter<ProjectHolder> {
 
+        public ProjectListAdapter() {
+            setHasStableIds(true);
+        }
+
         private SparseIntArray mTaskCountArray;
 
         @Override
@@ -410,6 +350,62 @@ public class ProjectListFragment extends RoboFragment {
         public void setTaskCountArray(SparseIntArray taskCountArray) {
             mTaskCountArray = taskCountArray;
         }
+
+        @Override
+        public long getItemId(int position) {
+            mCursor.moveToPosition(position);
+            return mCursor.getLong(0);
+        }
+
+        public int getItemPosition(long id) {
+            int position = -1;
+            int i = 0;
+            if (mCursor.moveToFirst()) {
+                do {
+                    if (mCursor.getLong(0) == id) {
+                        position = i;
+                        break;
+                    }
+                    i++;
+                } while (mCursor.moveToNext());
+            }
+            return position;
+        }
+    }
+
+    public class ProjectCallback extends AbstractSwipeItemTouchHelperCallback {
+
+        public ProjectCallback() {
+            super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+
+            setNegativeColor(getResources().getColor(R.color.delete_background));
+            setNegativeIcon(sDeleteIcon);
+            setPositiveColor(getResources().getColor(R.color.active_background));
+            setPositiveIcon(sInactiveIcon);
+        }
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            // callback for drag-n-drop, false to skip this feature
+            return false;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            Id id = Id.create(viewHolder.getItemId());
+            if (direction == ItemTouchHelper.LEFT) {
+                mEventManager.fire(new UpdateProjectActiveEvent(id, false));
+                mListAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                mEventManager.fire(new LoadListCursorEvent(ViewMode.PROJECT_LIST));
+            } else {
+                mEventManager.fire(new UpdateProjectDeletedEvent(id, true));
+                mListAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                mEventManager.fire(new LoadListCursorEvent(ViewMode.PROJECT_LIST));
+            }
+
+        }
+
+
     }
 
 }

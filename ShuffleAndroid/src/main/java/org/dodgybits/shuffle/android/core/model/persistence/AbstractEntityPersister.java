@@ -117,6 +117,22 @@ public abstract class AbstractEntityPersister<E extends Entity> implements Entit
         return success;
     }
 
+    @Override
+    public boolean updateActiveFlag(Id id, boolean isActive) {
+        boolean success = false;
+        Long changeSetValue = getChangeSet(id);
+        if (changeSetValue != null) {
+            EntityChangeSet changeSet = EntityChangeSet.fromChangeSet(changeSetValue);
+            changeSet.activeChanged();
+            ContentValues values = new ContentValues();
+            writeBoolean(values, ShuffleTable.ACTIVE, isActive);
+            values.put(ShuffleTable.MODIFIED_DATE, System.currentTimeMillis());
+            values.put(ShuffleTable.CHANGE_SET, changeSet.getChangeSet());
+            success = mResolver.update(getUri(id), values, null, null) == 1;
+        }
+        return success;
+    }
+
     protected Long getChangeSet(Id id) {
         Long changeSet = null;
         Cursor cursor = mResolver.query(

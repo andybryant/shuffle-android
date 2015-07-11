@@ -23,6 +23,7 @@ import org.dodgybits.shuffle.android.list.event.NewContextEvent;
 import org.dodgybits.shuffle.android.list.event.NewProjectEvent;
 import org.dodgybits.shuffle.android.list.event.NewTaskEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateContextDeletedEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateProjectActiveEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
@@ -57,8 +58,8 @@ public class EntityUpdateListener {
 
     private void onToggleProjectDeleted(@Observes UpdateProjectDeletedEvent event) {
         final Id id = event.getProjectId();
-        boolean isDeleted = event.isDeleted();
-        if (event.isDeleted() == null) {
+        Boolean isDeleted = event.isDeleted();
+        if (isDeleted == null) {
             // need to look up current value and toggle
             Project project = mProjectPersister.findById(id);
             isDeleted = !project.isDeleted();
@@ -77,10 +78,33 @@ public class EntityUpdateListener {
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
+    private void onToggleProjectActive(@Observes UpdateProjectActiveEvent event) {
+        final Id id = event.getProjectId();
+        Boolean isActive = event.getActive();
+        if (isActive == null) {
+            // need to look up current value and toggle
+            Project project = mProjectPersister.findById(id);
+            isActive = !project.isActive();
+        }
+        final boolean undoState = !isActive;
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mProjectPersister.updateActiveFlag(id, undoState);
+                SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
+            }
+        };
+        mProjectPersister.updateActiveFlag(event.getProjectId(), isActive);
+        String entityName = mActivity.getString(R.string.project_name);
+        showActiveToast(entityName, isActive, listener);
+        SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
+
+    }
+
     private void onToggleContextDeleted(@Observes UpdateContextDeletedEvent event) {
         final Id id = event.getContextId();
-        boolean isDeleted = event.isDeleted();
-        if (event.isDeleted() == null) {
+        Boolean isDeleted = event.isDeleted();
+        if (isDeleted == null) {
             // need to look up current value and toggle
             Context context = mContextPersister.findById(id);
             isDeleted = !context.isDeleted();
@@ -227,6 +251,19 @@ public class EntityUpdateListener {
         snackbar.show();
     }
     
+    private void showActiveToast(
+            String entityName, boolean isActive, View.OnClickListener undoListener) {
+        String text = mActivity.getResources().getString(
+                isActive ? R.string.itemActiveToast : R.string.itemDeactivatedToast,
+                entityName);
+        View parentView = UiUtilities.getSnackBarParentView(mActivity);
+        Snackbar snackbar = Snackbar.make(parentView, text, Snackbar.LENGTH_LONG);
+        if (undoListener != null) {
+            snackbar.setAction(R.string.undo_button_title, undoListener);
+        }
+        snackbar.show();
+    }
+
     private void showSavedToast(String entityName, View.OnClickListener undoListener) {
         String text = mActivity.getString(R.string.itemSavedToast, entityName);
         View parentView = UiUtilities.getSnackBarParentView(mActivity);
