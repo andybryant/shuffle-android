@@ -58,9 +58,9 @@
     <color name="actionbar_title_color">@color/white</color>
     <color name="actionbar_background">#0063be</color>
 
-    <color name="complete_background">#0F9D58</color>
-    <color name="delete_background">#9D0F28</color>
-    <color name="active_background">#9D9D9D</color>
+    <color name="complete_background">#388E3C</color>
+    <color name="delete_background">#F44336</color>
+    <color name="active_background">#9575CD</color>
 
     <color name="description_text_color_incomplete">@color/list_main_text_color</color>
     <color name="snippet_text_color_incomplete">@color/list_main_text_color</color>

@@ -1,9 +1,14 @@
 package org.dodgybits.shuffle.android.list.view.context;
 
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
@@ -22,7 +27,6 @@ import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.ContextTaskCountLoadedEvent;
 import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.LoadCountCursorEvent;
-import org.dodgybits.shuffle.android.core.event.LoadListCursorEvent;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
@@ -30,9 +34,11 @@ import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
+import org.dodgybits.shuffle.android.core.view.AbstractSwipeItemTouchHelperCallback;
 import org.dodgybits.shuffle.android.core.view.DividerItemDecoration;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
+import org.dodgybits.shuffle.android.list.event.UpdateContextActiveEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateContextDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
@@ -49,6 +55,9 @@ import roboguice.inject.ContextScopedProvider;
 public class ContextListFragment extends RoboFragment {
     private static final String TAG = "ContextListFragment";
 
+    private static Bitmap sInactiveIcon;
+    private static Bitmap sActiveIcon;
+    private static Bitmap sDeleteIcon;
 
     @Inject
     private TaskPersister mTaskPersister;
@@ -69,7 +78,7 @@ public class ContextListFragment extends RoboFragment {
     private RecyclerView mRecyclerView;
     private ContextListAdapter mListAdapter;
     private MultiSelector mMultiSelector = new SingleSelector();
-    private android.support.v7.view.ActionMode mActionMode = null;
+    private ActionMode mActionMode = null;
     private ModalMultiSelectorCallback mEditMode = new ModalMultiSelectorCallback(mMultiSelector) {
 
         @Override
@@ -138,6 +147,13 @@ public class ContextListFragment extends RoboFragment {
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
+
+        Resources r = getActivity().getResources();
+//        sCompleteIcon = BitmapFactory.decodeResource(r, R.drawable.ic_done_white_24dp);
+//        sDeferIcon = BitmapFactory.decodeResource(r, R.drawable.ic_schedule_white_24dp);
+        sActiveIcon = BitmapFactory.decodeResource(r, R.drawable.ic_visibility_white_24dp);
+        sInactiveIcon = BitmapFactory.decodeResource(r, R.drawable.ic_visibility_off_white_24dp);
+        sDeleteIcon = BitmapFactory.decodeResource(r, R.drawable.ic_delete_white_24dp);
     }
 
     @Override
@@ -149,7 +165,13 @@ public class ContextListFragment extends RoboFragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
         mListAdapter = new ContextListAdapter();
+        mListAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(mListAdapter);
+
+        // init swipe to dismiss logic
+        ItemTouchHelper helper = new ItemTouchHelper(new ContextCallback());
+        helper.attachToRecyclerView(mRecyclerView);
+
         return root;
     }
 
@@ -199,11 +221,9 @@ public class ContextListFragment extends RoboFragment {
                 return true;
             case R.id.action_delete:
                 mEventManager.fire(new UpdateContextDeletedEvent(Id.create(info.id), true));
-                mEventManager.fire(new LoadListCursorEvent(ViewMode.CONTEXT_LIST));
                 return true;
             case R.id.action_undelete:
                 mEventManager.fire(new UpdateContextDeletedEvent(Id.create(info.id), false));
-                mEventManager.fire(new LoadListCursorEvent(ViewMode.CONTEXT_LIST));
                 return true;
         }
 
@@ -231,7 +251,7 @@ public class ContextListFragment extends RoboFragment {
             return;
         }
 
-        Log.d(TAG, "Swapping cursor and setting adapter");
+        Log.d(TAG, "Swapping adapter cursor");
         mCursor = cursor;
         mListAdapter.changeCursor(cursor);
     }
@@ -326,5 +346,40 @@ public class ContextListFragment extends RoboFragment {
         public void setTaskCountArray(SparseIntArray taskCountArray) {
             mTaskCountArray = taskCountArray;
         }
+
     }
+
+    public class ContextCallback extends AbstractSwipeItemTouchHelperCallback {
+
+        public ContextCallback() {
+            super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+
+            setNegativeColor(getResources().getColor(R.color.delete_background));
+            setNegativeIcon(sDeleteIcon);
+            setPositiveColor(getResources().getColor(R.color.active_background));
+            setPositiveIcon(sInactiveIcon);
+        }
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            // callback for drag-n-drop, false to skip this feature
+            return false;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            Id id = Id.create(viewHolder.getItemId());
+            if (direction == ItemTouchHelper.LEFT) {
+                Log.d(TAG, "Deactivating context id " + id + " position=" + viewHolder.getAdapterPosition());
+                mEventManager.fire(new UpdateContextActiveEvent(id, false));
+            } else {
+                Log.d(TAG, "Deleting context id " + id + " position=" + viewHolder.getAdapterPosition());
+                mEventManager.fire(new UpdateContextDeletedEvent(id, true));
+            }
+
+        }
+
+
+    }
+
 }

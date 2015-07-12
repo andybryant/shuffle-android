@@ -22,6 +22,7 @@ import org.dodgybits.shuffle.android.list.event.MoveTasksEvent;
 import org.dodgybits.shuffle.android.list.event.NewContextEvent;
 import org.dodgybits.shuffle.android.list.event.NewProjectEvent;
 import org.dodgybits.shuffle.android.list.event.NewTaskEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateContextActiveEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateContextDeletedEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateProjectActiveEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
@@ -98,7 +99,6 @@ public class EntityUpdateListener {
         String entityName = mActivity.getString(R.string.project_name);
         showActiveToast(entityName, isActive, listener);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
-
     }
 
     private void onToggleContextDeleted(@Observes UpdateContextDeletedEvent event) {
@@ -121,6 +121,28 @@ public class EntityUpdateListener {
         mContextPersister.updateDeletedFlag(event.getContextId(), event.isDeleted());
         String entityName = mActivity.getString(R.string.context_name);
         showDeletedToast(entityName, isDeleted, listener);
+        SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
+    }
+
+    private void onToggleContextActive(@Observes UpdateContextActiveEvent event) {
+        final Id id = event.getContextId();
+        Boolean isActive = event.getActive();
+        if (isActive == null) {
+            // need to look up current value and toggle
+            Context context = mContextPersister.findById(id);
+            isActive = !context.isActive();
+        }
+        final boolean undoState = !isActive;
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContextPersister.updateActiveFlag(id, undoState);
+                SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
+            }
+        };
+        mContextPersister.updateActiveFlag(event.getContextId(), isActive);
+        String entityName = mActivity.getString(R.string.context_name);
+        showActiveToast(entityName, isActive, listener);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 

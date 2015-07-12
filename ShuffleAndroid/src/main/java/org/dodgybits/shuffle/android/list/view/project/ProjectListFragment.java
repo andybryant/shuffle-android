@@ -4,25 +4,31 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.util.SparseIntArray;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SingleSelector;
 import com.google.inject.Inject;
+
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.*;
+import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.LoadCountCursorEvent;
+import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
+import org.dodgybits.shuffle.android.core.event.ProjectTaskCountLoadedEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -38,12 +44,13 @@ import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
 import org.dodgybits.shuffle.android.list.view.SelectableHolderImpl;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
+
+import java.util.List;
+
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.ContextScopedProvider;
-
-import java.util.List;
 
 public class ProjectListFragment extends RoboFragment {
     private static final String TAG = "ProjectListFragment";
@@ -171,8 +178,6 @@ public class ProjectListFragment extends RoboFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Log.d(TAG, "+onActivityCreated " + savedInstanceState + " selector=" + mMultiSelector);
-
         updateCursor();
 
         if (mMultiSelector != null) {
@@ -208,18 +213,15 @@ public class ProjectListFragment extends RoboFragment {
         if (!getUserVisibleHint()) return super.onContextItemSelected(item);
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int position = mListAdapter.getItemPosition(info.id);
         switch (item.getItemId()) {
             case R.id.action_edit:
                 Location location = Location.editProject(Id.create(info.id));
                 mEventManager.fire(new NavigationRequestEvent(location));
                 return true;
             case R.id.action_delete:
-                Log.d(TAG, "Deleting project id " + info.id + " position=" + position);
                 mEventManager.fire(new UpdateProjectDeletedEvent(Id.create(info.id), true));
                 return true;
             case R.id.action_undelete:
-                Log.d(TAG, "Restoring project id " + info.id + " position=" + position);
                 mEventManager.fire(new UpdateProjectDeletedEvent(Id.create(info.id), false));
                 return true;
         }
@@ -230,6 +232,7 @@ public class ProjectListFragment extends RoboFragment {
     private void onViewLoaded(@Observes LocationUpdatedEvent event) {
         updateCursor();
     }
+
     private void onCursorUpdated(@Observes CursorUpdatedEvent event) {
         updateCursor();
     }
@@ -345,29 +348,6 @@ public class ProjectListFragment extends RoboFragment {
             mTaskCountArray = taskCountArray;
         }
 
-        @Override
-        public long getItemId(int position) {
-            if (mCursor.isClosed()) {
-                return super.getItemId(position);
-            }
-            mCursor.moveToPosition(position);
-            return mCursor.getLong(0);
-        }
-
-        public int getItemPosition(long id) {
-            int position = -1;
-            int i = 0;
-            if (mCursor.moveToFirst()) {
-                do {
-                    if (mCursor.getLong(0) == id) {
-                        position = i;
-                        break;
-                    }
-                    i++;
-                } while (mCursor.moveToNext());
-            }
-            return position;
-        }
     }
 
     public class ProjectCallback extends AbstractSwipeItemTouchHelperCallback {
