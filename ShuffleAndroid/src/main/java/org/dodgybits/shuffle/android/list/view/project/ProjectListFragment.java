@@ -106,8 +106,7 @@ public class ProjectListFragment extends RoboFragment {
 
             switch (menuItem.getItemId()) {
                 case R.id.action_edit:
-                    mEventManager.fire(new NavigationRequestEvent(
-                            Location.editProject(projectId)));
+                    mEventManager.fire(new NavigationRequestEvent(Location.editProject(projectId)));
                     mActionMode.finish();
                     return true;
 
@@ -158,6 +157,7 @@ public class ProjectListFragment extends RoboFragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
         mListAdapter = new ProjectListAdapter();
+        mListAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(mListAdapter);
 
         // init swipe to dismiss logic
@@ -215,14 +215,12 @@ public class ProjectListFragment extends RoboFragment {
                 mEventManager.fire(new NavigationRequestEvent(location));
                 return true;
             case R.id.action_delete:
+                Log.d(TAG, "Deleting project id " + info.id + " position=" + position);
                 mEventManager.fire(new UpdateProjectDeletedEvent(Id.create(info.id), true));
-                mListAdapter.notifyItemRemoved(position);
-                mEventManager.fire(new LoadListCursorEvent(ViewMode.PROJECT_LIST));
                 return true;
             case R.id.action_undelete:
+                Log.d(TAG, "Restoring project id " + info.id + " position=" + position);
                 mEventManager.fire(new UpdateProjectDeletedEvent(Id.create(info.id), false));
-                mListAdapter.notifyItemRemoved(position);
-                mEventManager.fire(new LoadListCursorEvent(ViewMode.PROJECT_LIST));
                 return true;
         }
 
@@ -323,10 +321,6 @@ public class ProjectListFragment extends RoboFragment {
 
     public class ProjectListAdapter extends AbstractCursorAdapter<ProjectHolder> {
 
-        public ProjectListAdapter() {
-            setHasStableIds(true);
-        }
-
         private SparseIntArray mTaskCountArray;
 
         @Override
@@ -353,6 +347,9 @@ public class ProjectListFragment extends RoboFragment {
 
         @Override
         public long getItemId(int position) {
+            if (mCursor.isClosed()) {
+                return super.getItemId(position);
+            }
             mCursor.moveToPosition(position);
             return mCursor.getLong(0);
         }
@@ -394,13 +391,11 @@ public class ProjectListFragment extends RoboFragment {
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
             Id id = Id.create(viewHolder.getItemId());
             if (direction == ItemTouchHelper.LEFT) {
+                Log.d(TAG, "Deactivating project id " + id + " position=" + viewHolder.getAdapterPosition());
                 mEventManager.fire(new UpdateProjectActiveEvent(id, false));
-                mListAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-                mEventManager.fire(new LoadListCursorEvent(ViewMode.PROJECT_LIST));
             } else {
+                Log.d(TAG, "Deleting project id " + id + " position=" + viewHolder.getAdapterPosition());
                 mEventManager.fire(new UpdateProjectDeletedEvent(id, true));
-                mListAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-                mEventManager.fire(new LoadListCursorEvent(ViewMode.PROJECT_LIST));
             }
 
         }
