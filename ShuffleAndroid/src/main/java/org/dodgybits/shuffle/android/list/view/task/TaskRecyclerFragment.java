@@ -1,4 +1,4 @@
-package org.dodgybits.shuffle.android.list.view.project;
+package org.dodgybits.shuffle.android.list.view.task;
 
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -11,24 +11,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.util.SparseIntArray;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.AdapterView;
-
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SingleSelector;
 import com.google.inject.Inject;
-
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
-import org.dodgybits.shuffle.android.core.event.LoadCountCursorEvent;
-import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
-import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
-import org.dodgybits.shuffle.android.core.event.ProjectTaskCountLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.*;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -43,21 +33,24 @@ import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
 import org.dodgybits.shuffle.android.list.view.SelectableHolderImpl;
+import org.dodgybits.shuffle.android.list.view.project.ProjectListItem;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
-
-import java.util.List;
-
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.ContextScopedProvider;
 
-public class ProjectListFragment extends RoboFragment {
+import java.util.List;
+
+public class TaskRecyclerFragment extends RoboFragment {
     private static final String TAG = "ProjectListFragment";
 
     private static Bitmap sInactiveIcon;
     private static Bitmap sActiveIcon;
     private static Bitmap sDeleteIcon;
+
+    @Inject
+    private TaskPersister mTaskPersister;
 
     @Inject
     private ProjectPersister mProjectPersister;

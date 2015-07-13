@@ -30,6 +30,7 @@ import org.dodgybits.shuffle.android.list.view.context.ContextListFragment;
 import org.dodgybits.shuffle.android.list.view.project.ProjectListFragment;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
+import org.dodgybits.shuffle.android.list.view.task.TaskRecyclerFragment;
 import org.dodgybits.shuffle.android.view.fragment.TaskPagerFragment;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -71,13 +72,13 @@ public class FragmentLoader {
         Log.i(TAG, "Task list Cursor loaded - loading fragment now");
         switch (mLocation.getViewMode()) {
             case TASK_LIST:
-                addTaskList(event.getTaskListContext());
+                addTaskList();
                 break;
             case TASK:
                 if (isTabletUi()) {
-                    addTaskList(event.getTaskListContext());
+                    addTaskList();
                 }
-                addTaskView(event.getTaskListContext());
+                addTaskView();
                 break;
             default:
                 Log.w(TAG, "Unexpected view mode " + mLocation.getViewMode());
@@ -97,23 +98,23 @@ public class FragmentLoader {
         }
     }
 
-    private void addTaskList(TaskListContext listContext) {
-        TaskListFragment fragment = getTaskListFragment();
+    private void addTaskList() {
+        TaskRecyclerFragment fragment = getTaskRecyclerFragment();
         if (fragment == null) {
-            fragment = new TaskListFragment();
+            fragment = new TaskRecyclerFragment();
             Log.d(TAG, "Creating task list fragment " + fragment);
 
             FragmentTransaction fragmentTransaction =
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             fragmentTransaction.replace(R.id.entity_list_pane,
                     fragment, TAG_TASK_LIST);
             fragmentTransaction.commitAllowingStateLoss();
         }
     }
 
-    private void addTaskView(TaskListContext listContext) {
+    private void addTaskView() {
         TaskPagerFragment fragment = getTaskPagerFragment() ;
         if (fragment == null) {
             fragment = new TaskPagerFragment();
@@ -122,7 +123,7 @@ public class FragmentLoader {
             FragmentTransaction fragmentTransaction =
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             fragmentTransaction.replace(R.id.task_pane, fragment, TAG_TASK_ITEM);
             fragmentTransaction.commitAllowingStateLoss();
         }
@@ -137,7 +138,7 @@ public class FragmentLoader {
             FragmentTransaction fragmentTransaction =
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             fragmentTransaction.replace(R.id.entity_list_pane, fragment, TAG_CONTEXT_LIST);
             fragmentTransaction.commitAllowingStateLoss();
         }
@@ -152,7 +153,7 @@ public class FragmentLoader {
             FragmentTransaction fragmentTransaction =
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             fragmentTransaction.replace(R.id.entity_list_pane, fragment, TAG_PROJECT_LIST);
             fragmentTransaction.commitAllowingStateLoss();
         }
@@ -173,6 +174,14 @@ public class FragmentLoader {
         final Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG_TASK_LIST);
         if (isValidFragment(fragment)) {
             return (TaskListFragment) fragment;
+        }
+        return null;
+    }
+
+    protected TaskRecyclerFragment getTaskRecyclerFragment() {
+        final Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG_TASK_LIST);
+        if (isValidFragment(fragment)) {
+            return (TaskRecyclerFragment) fragment;
         }
         return null;
     }

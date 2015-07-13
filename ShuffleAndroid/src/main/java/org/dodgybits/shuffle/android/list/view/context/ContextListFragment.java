@@ -60,9 +60,6 @@ public class ContextListFragment extends RoboFragment {
     private static Bitmap sDeleteIcon;
 
     @Inject
-    private TaskPersister mTaskPersister;
-    
-    @Inject
     private ContextPersister mContextPersister;
 
     @Inject
