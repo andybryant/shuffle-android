@@ -45,18 +45,14 @@ import java.util.List;
 public class TaskRecyclerFragment extends RoboFragment {
     private static final String TAG = "ProjectListFragment";
 
-    private static Bitmap sInactiveIcon;
-    private static Bitmap sActiveIcon;
-    private static Bitmap sDeleteIcon;
+    private static Bitmap sCompleteIcon;
+    private static Bitmap sDeferIcon;
 
     @Inject
     private TaskPersister mTaskPersister;
 
     @Inject
-    private ProjectPersister mProjectPersister;
-
-    @Inject
-    private ContextScopedProvider<ProjectListItem> mProjectListItemProvider;
+    private ContextScopedProvider<TaskListItem> mTaskListItemProvider;
 
     @Inject
     private EventManager mEventManager;
@@ -66,7 +62,7 @@ public class TaskRecyclerFragment extends RoboFragment {
 
     private Cursor mCursor;
     private RecyclerView mRecyclerView;
-    private ProjectListAdapter mListAdapter;
+    private TaskListAdapter mListAdapter;
     private MultiSelector mMultiSelector = new SingleSelector();
     private ActionMode mActionMode = null;
     private ModalMultiSelectorCallback mEditMode = new ModalMultiSelectorCallback(mMultiSelector) {
@@ -138,11 +134,8 @@ public class TaskRecyclerFragment extends RoboFragment {
         setHasOptionsMenu(true);
 
         Resources r = getActivity().getResources();
-//        sCompleteIcon = BitmapFactory.decodeResource(r, R.drawable.ic_done_white_24dp);
-//        sDeferIcon = BitmapFactory.decodeResource(r, R.drawable.ic_schedule_white_24dp);
-        sActiveIcon = BitmapFactory.decodeResource(r, R.drawable.ic_visibility_white_24dp);
-        sInactiveIcon = BitmapFactory.decodeResource(r, R.drawable.ic_visibility_off_white_24dp);
-        sDeleteIcon = BitmapFactory.decodeResource(r, R.drawable.ic_delete_white_24dp);
+        sCompleteIcon = BitmapFactory.decodeResource(r, R.drawable.ic_done_white_24dp);
+        sDeferIcon = BitmapFactory.decodeResource(r, R.drawable.ic_schedule_white_24dp);
     }
 
     @Override
@@ -158,7 +151,7 @@ public class TaskRecyclerFragment extends RoboFragment {
         mRecyclerView.setAdapter(mListAdapter);
 
         // init swipe to dismiss logic
-        ItemTouchHelper helper = new ItemTouchHelper(new ProjectCallback());
+        ItemTouchHelper helper = new ItemTouchHelper(new TaskCallback());
         helper.attachToRecyclerView(mRecyclerView);
 
         return root;
@@ -340,15 +333,15 @@ public class TaskRecyclerFragment extends RoboFragment {
 
     }
 
-    public class ProjectCallback extends AbstractSwipeItemTouchHelperCallback {
+    public class TaskCallback extends AbstractSwipeItemTouchHelperCallback {
 
-        public ProjectCallback() {
+        public TaskCallback() {
             super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
 
-            setNegativeColor(getResources().getColor(R.color.delete_background));
-            setNegativeIcon(sDeleteIcon);
-            setPositiveColor(getResources().getColor(R.color.active_background));
-            setPositiveIcon(sInactiveIcon);
+            setNegativeColor(getResources().getColor(R.color.complete_background));
+            setNegativeIcon(sCompleteIcon);
+            setPositiveColor(getResources().getColor(R.color.deferred));
+            setPositiveIcon(sDeferIcon);
         }
 
         @Override
