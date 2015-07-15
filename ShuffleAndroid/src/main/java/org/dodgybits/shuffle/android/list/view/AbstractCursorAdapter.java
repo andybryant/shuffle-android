@@ -43,19 +43,4 @@ public abstract class AbstractCursorAdapter<T extends RecyclerView.ViewHolder> e
         return dataCursor.getLong(0);
     }
 
-    public int getItemPosition(long id) {
-        int position = -1;
-        int i = 0;
-        if (dataCursor.moveToFirst()) {
-            do {
-                if (dataCursor.getLong(0) == id) {
-                    position = i;
-                    break;
-                }
-                i++;
-            } while (dataCursor.moveToNext());
-        }
-        return position;
-    }
-
 }

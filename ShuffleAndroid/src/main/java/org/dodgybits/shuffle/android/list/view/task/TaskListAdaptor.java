@@ -174,7 +174,7 @@ public class TaskListAdaptor extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         // Reset the view (in case it was recycled) and prepare for binding
         TaskListItem itemView = (TaskListItem) view;
-        itemView.bindViewInit(this);
+//        itemView.bindViewInit(this);
 
         Task task = mPersister.read(cursor);
         itemView.setTask(task, mProjectNameVisible);

@@ -168,8 +168,14 @@ public class EntityUpdateListener {
             }
         };
 
-        String entityName = mActivity.getString(R.string.task_name);
-        showDeletedToast(entityName, event.isDeleted(), listener);
+        if (event.getTaskIds().size() == 1) {
+            String entityName = mActivity.getString(R.string.task_name);
+            showDeletedToast(entityName, event.isDeleted(), listener);
+        } else {
+            String text = mActivity.getString(event.isDeleted() ?
+                    R.string.tasks_deleted_toast : R.string.tasks_restored_toast);
+            showToast(text, listener);
+        }
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
@@ -191,8 +197,15 @@ public class EntityUpdateListener {
             }
         };
 
-        String entityName = mActivity.getString(R.string.task_name);
-        showSavedToast(entityName, listener);
+        String text;
+        if (event.getTaskIds().size() == 1) {
+            text = mActivity.getString(event.isCompleted() ?
+                    R.string.task_complete_toast : R.string.task_incomplete_toast);
+        } else {
+            text = mActivity.getString(event.isCompleted() ?
+                    R.string.tasks_complete_toast : R.string.tasks_incomplete_toast);
+        }
+        showToast(text, listener);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
@@ -265,12 +278,7 @@ public class EntityUpdateListener {
         String text = mActivity.getResources().getString(
                 isDeleted ? R.string.itemDeletedToast : R.string.itemUndeletedToast,
                 entityName);
-        View parentView = UiUtilities.getSnackBarParentView(mActivity);
-        Snackbar snackbar = Snackbar.make(parentView, text, Snackbar.LENGTH_LONG);
-        if (undoListener != null) {
-            snackbar.setAction(R.string.undo_button_title, undoListener);
-        }
-        snackbar.show();
+        showToast(text, undoListener);
     }
     
     private void showActiveToast(
@@ -278,16 +286,15 @@ public class EntityUpdateListener {
         String text = mActivity.getResources().getString(
                 isActive ? R.string.itemActiveToast : R.string.itemDeactivatedToast,
                 entityName);
-        View parentView = UiUtilities.getSnackBarParentView(mActivity);
-        Snackbar snackbar = Snackbar.make(parentView, text, Snackbar.LENGTH_LONG);
-        if (undoListener != null) {
-            snackbar.setAction(R.string.undo_button_title, undoListener);
-        }
-        snackbar.show();
+        showToast(text, undoListener);
     }
 
     private void showSavedToast(String entityName, View.OnClickListener undoListener) {
         String text = mActivity.getString(R.string.itemSavedToast, entityName);
+        showToast(text, undoListener);
+    }
+
+    private void showToast(String text, View.OnClickListener undoListener) {
         View parentView = UiUtilities.getSnackBarParentView(mActivity);
         Snackbar snackbar = Snackbar.make(parentView, text, Snackbar.LENGTH_LONG);
         if (undoListener != null) {

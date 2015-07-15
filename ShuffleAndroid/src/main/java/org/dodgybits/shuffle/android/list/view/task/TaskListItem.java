@@ -47,7 +47,6 @@ public class TaskListItem extends View {
     /* package */ long mTaskId;
 
     
-    private TaskListAdaptor mAdapter;
     private TaskListItemCoordinates mCoordinates;
     private android.content.Context mAndroidContext;
 
@@ -457,7 +456,7 @@ public class TaskListItem extends View {
     @Override
     public void draw(Canvas canvas) {
         // Update the background, before View.draw() draws it.
-        setSelected(mAdapter.isSelected(this));
+//        setSelected(mAdapter.isSelected(this));
         updateBackground();
         super.draw(canvas);
     }
@@ -477,7 +476,7 @@ public class TaskListItem extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         // Draw the checkbox
-        canvas.drawBitmap(mAdapter.isSelected(this) ? sSelectedIconOn : sSelectedIconOff,
+        canvas.drawBitmap(isActivated() ? sSelectedIconOn : sSelectedIconOff,
                 mCoordinates.checkmarkX, mCoordinates.checkmarkY, null);
 
         // Draw the project name
@@ -589,16 +588,6 @@ public class TaskListItem extends View {
                 colours, null, Shader.TileMode.CLAMP);
     }
 
-    /**
-     * Called by the adapter at bindView() time
-     *
-     * @param adapter the adapter that creates this view
-     */
-    public void bindViewInit(TaskListAdaptor adapter) {
-        mAdapter = adapter;
-        requestLayout();
-    }
-
     private static final int TOUCH_SLOP = 24;
     private static int sScaledTouchSlop = -1;
 
@@ -645,7 +634,7 @@ public class TaskListItem extends View {
             case MotionEvent.ACTION_UP:
                 if (mDownEvent) {
                     if (touchX < checkRight) {
-                        mAdapter.toggleSelected(this);
+//                        mAdapter.toggleSelected(this);
                         handled = true;
                     }
                 }

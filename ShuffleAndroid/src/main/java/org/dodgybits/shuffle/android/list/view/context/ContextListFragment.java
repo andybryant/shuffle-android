@@ -206,27 +206,6 @@ public class ContextListFragment extends RoboFragment {
         refreshChildCount();
     }
 
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        if (!getUserVisibleHint()) return super.onContextItemSelected(item);
-
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId()) {
-            case R.id.action_edit:
-                Location location = Location.editContext(Id.create(info.id));
-                mEventManager.fire(new NavigationRequestEvent(location));
-                return true;
-            case R.id.action_delete:
-                mEventManager.fire(new UpdateContextDeletedEvent(Id.create(info.id), true));
-                return true;
-            case R.id.action_undelete:
-                mEventManager.fire(new UpdateContextDeletedEvent(Id.create(info.id), false));
-                return true;
-        }
-
-        return super.onContextItemSelected(item);
-    }
-
     private void onViewLoaded(@Observes LocationUpdatedEvent event) {
         updateCursor();
     }

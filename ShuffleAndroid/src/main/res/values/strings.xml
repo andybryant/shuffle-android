@@ -316,6 +316,12 @@ allow that, you can turn it off under Settings.</string>
     <string name="itemUndeletedToast">%1$s restored.</string>
     <string name="itemActiveToast">%1$s activated.</string>
     <string name="itemDeactivatedToast">%1$s deactivated.</string>
+    <string name="tasks_deleted_toast">Actions deleted</string>
+    <string name="tasks_restored_toast">Actions deleted</string>
+    <string name="task_complete_toast">Action marked complete</string>
+    <string name="tasks_complete_toast">Actions marked complete</string>
+    <string name="task_incomplete_toast">Action marked incomplete</string>
+    <string name="tasks_incomplete_toast">Actions marked incomplete</string>
 
     <!-- App engine sync -->
     <string name="title_gae_sync_preferences">Server sync settings</string>

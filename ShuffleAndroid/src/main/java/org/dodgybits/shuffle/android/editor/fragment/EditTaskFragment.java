@@ -806,7 +806,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
     private void updateCompletedState() {
         mCompletedIcon.setImageResource(
-                mCompletedCheckBox.isChecked() ? R.drawable.ic_menu_incomplete : R.drawable.ic_menu_complete_black);
+                mCompletedCheckBox.isChecked() ? R.drawable.ic_done_green_24dp : R.drawable.ic_done_black_24dp);
         mCompleteLabel.setText(mCompletedCheckBox.isChecked() ? R.string.complete : R.string.incomplete);
     }
 

@@ -405,7 +405,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     }
 
     private void updateCompleteFab(boolean isComplete) {
-        mCompleteFabIcon.setImageResource(isComplete ? R.drawable.ic_menu_incomplete : R.drawable.ic_menu_complete_white);
+        mCompleteFabIcon.setImageResource(isComplete ? R.drawable.ic_done_green_24dp : R.drawable.ic_done_white_24dp);
     }
 
 
