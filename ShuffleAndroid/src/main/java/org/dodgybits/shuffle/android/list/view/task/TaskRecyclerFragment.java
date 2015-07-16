@@ -101,7 +101,7 @@ public class TaskRecyclerFragment extends RoboFragment {
                 mActionMode.setTitle(getActivity().getResources().getQuantityString(
                         R.plurals.task_view_selected_message_count, num, num));
             }
-            
+
             // Show appropriate menu items.
             boolean incompleteExists = doesSelectionContainIncompleteTasks();
             boolean undeletedExists = doesSelectionContainUndeletedTasks();
@@ -384,7 +384,9 @@ public class TaskRecyclerFragment extends RoboFragment {
         public void onBindViewHolder(TaskHolder holder, int position) {
             Log.d(TAG, "Binding holder at " + position);
             Task task = readTask(position);
-            holder.bindTask(task);
+            if (task != null) {
+                holder.bindTask(task);
+            }
         }
 
         public Task readTask(int position) {
@@ -418,11 +420,11 @@ public class TaskRecyclerFragment extends RoboFragment {
             Task task = holder.mTask;
             long id = viewHolder.getItemId();
             if (direction == ItemTouchHelper.LEFT) {
-                Log.d(TAG, "Toggling complete on task id " + id + " position=" + viewHolder.getAdapterPosition());
-                mEventManager.fire(new UpdateTasksCompletedEvent(id, !task.isComplete()));
-            } else {
                 Log.d(TAG, "Deferring task id " + id + " position=" + viewHolder.getAdapterPosition());
                 // TODO
+            } else {
+                Log.d(TAG, "Toggling complete on task id " + id + " position=" + viewHolder.getAdapterPosition());
+                mEventManager.fire(new UpdateTasksCompletedEvent(id, !task.isComplete()));
             }
 
         }

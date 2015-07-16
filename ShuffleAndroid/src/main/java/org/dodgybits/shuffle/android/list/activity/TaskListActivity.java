@@ -24,7 +24,9 @@ public class TaskListActivity extends AbstractMainActivity {
 
         if (mActionBarToolbar != null) {
             ViewCompat.setElevation(mActionBarToolbar, 0f);
+            ViewCompat.setElevation((View)mActionBarToolbar.getParent(), 0f);
         }
+
     }
 
     @Override
@@ -38,7 +40,7 @@ public class TaskListActivity extends AbstractMainActivity {
 
     @Override
     protected int contentView(boolean isTablet) {
-        return R.layout.entity_list_activity;
+        return R.layout.task_list_activity;
     }
 
     public void onClickFab(View view) {
