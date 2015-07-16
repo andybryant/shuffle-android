@@ -119,10 +119,6 @@ public class TaskListItem extends View {
 
     private static int sItemHeight;
 
-    // Note: these cannot be shared Drawables because they are selectors which have state.
-    private Drawable mCompleteSelector;
-    private Drawable mIncompleteSelector;
-
     private CharSequence mFormattedProject;
     // We must initialize this to something, in case the timestamp of the message is zero (which
     // should be very rare); this is otherwise set in setTimestamp
@@ -315,25 +311,13 @@ public class TaskListItem extends View {
     private Drawable mCurrentBackground = null; // Only used by updateBackground()
 
     private void updateBackground() {
-        final Drawable newBackground;
-        if (isDone()) {
-            if (mCompleteSelector == null) {
-                mCompleteSelector = getContext().getResources()
-                        .getDrawable(R.drawable.task_complete_selector);
-            }
-            newBackground = mCompleteSelector;
-        } else {
-            if (mIncompleteSelector == null) {
-                mIncompleteSelector = getContext().getResources()
-                        .getDrawable(R.drawable.task_incomplete_selector);
-            }
-            newBackground = mIncompleteSelector;
-        }
+        final Drawable newBackground = getResources().getDrawable(R.drawable.list_selector_background);
         if (newBackground != mCurrentBackground) {
             // setBackgroundDrawable is a heavy operation.  Only call it when really needed.
             setBackgroundDrawable(newBackground);
             mCurrentBackground = newBackground;
         }
+
     }
 
     private void calculateContentsText() {
