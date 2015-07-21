@@ -67,14 +67,6 @@
                 style="@style/HeaderBar"
                 />
 
-            <!-- see http://stackoverflow.com/questions/30836957/android-toolbar-disappear-during-scrolling-with-coordinatorlayout# -->
-            <View
-                android:id="@+id/appbar_bottom"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/transparent"
-                android:visibility="invisible" />
-
         </android.support.design.widget.AppBarLayout>
 
         <android.support.design.widget.FloatingActionButton
