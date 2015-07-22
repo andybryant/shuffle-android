@@ -9,7 +9,6 @@ import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;

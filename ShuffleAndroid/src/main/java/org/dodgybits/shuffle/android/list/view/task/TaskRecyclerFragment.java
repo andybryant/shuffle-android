@@ -1,5 +1,7 @@
 package org.dodgybits.shuffle.android.list.view.task;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -28,6 +30,7 @@ import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.view.AbstractSwipeItemTouchHelperCallback;
 import org.dodgybits.shuffle.android.core.view.DividerItemDecoration;
 import org.dodgybits.shuffle.android.core.view.Location;
+import org.dodgybits.shuffle.android.editor.activity.DateTimePickerActivity;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
@@ -44,6 +47,8 @@ import java.util.Set;
 
 public class TaskRecyclerFragment extends RoboFragment {
     private static final String TAG = "TaskRecyclerFragment";
+
+    private static final int DEFERRED_CODE = 102;
 
     private static Bitmap sCompleteIcon;
     private static Bitmap sDeferIcon;
@@ -69,11 +74,14 @@ public class TaskRecyclerFragment extends RoboFragment {
 
     private boolean mEnableTaskReordering = false;
 
+    private ItemTouchHelper mItemTouchHelper;
+
     private Cursor mCursor;
     private RecyclerView mRecyclerView;
     private TaskListAdapter mListAdapter;
     private MultiSelector mMultiSelector = new MultiSelector();
     private ActionMode mActionMode = null;
+    private int mDeferredPosition = -1;
 
     private ModalMultiSelectorCallback mEditMode = new ModalMultiSelectorCallback(mMultiSelector) {
         private MenuItem mMarkComplete;
@@ -183,8 +191,8 @@ public class TaskRecyclerFragment extends RoboFragment {
         mRecyclerView.setAdapter(mListAdapter);
 
         // init swipe to dismiss logic
-        ItemTouchHelper helper = new ItemTouchHelper(new TaskCallback());
-        helper.attachToRecyclerView(mRecyclerView);
+        mItemTouchHelper = new ItemTouchHelper(new TaskCallback());
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         return root;
     }
@@ -215,6 +223,30 @@ public class TaskRecyclerFragment extends RoboFragment {
         Log.d(TAG, "Saving state");
         outState.putBundle(TAG, mMultiSelector.saveSelectionStates());
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "Got resultCode " + resultCode + " with data " + data);
+        switch (requestCode) {
+            case DEFERRED_CODE:
+                TaskHolder holder = (TaskHolder) mRecyclerView.findViewHolderForAdapterPosition(mDeferredPosition);
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data != null) {
+                        long deferred = data.getLongExtra(DateTimePickerActivity.DATETIME_VALUE, 0L);
+                        Task.Builder builder = Task.newBuilder().mergeFrom(holder.mTask)
+                                .setStartDate(deferred);
+                        builder.getChangeSet().showFromChanged();
+                        mTaskPersister.update(builder.build());
+                    }
+                } else {
+                    mItemTouchHelper.startSwipe(holder);
+                }
+                break;
+
+            default:
+                Log.e(TAG, "Unknown requestCode: " + requestCode);
+        }
     }
 
     private void onViewUpdate(@Observes LocationUpdatedEvent event) {
@@ -382,7 +414,6 @@ public class TaskRecyclerFragment extends RoboFragment {
 
         @Override
         public void onBindViewHolder(TaskHolder holder, int position) {
-            Log.d(TAG, "Binding holder at " + position);
             Task task = readTask(position);
             if (task != null) {
                 holder.bindTask(task);
@@ -421,7 +452,12 @@ public class TaskRecyclerFragment extends RoboFragment {
             long id = viewHolder.getItemId();
             if (direction == ItemTouchHelper.LEFT) {
                 Log.d(TAG, "Deferring task id " + id + " position=" + viewHolder.getAdapterPosition());
-                // TODO
+                mDeferredPosition = viewHolder.getAdapterPosition();
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType(DateTimePickerActivity.TYPE);
+                intent.putExtra(DateTimePickerActivity.DATETIME_VALUE, task.getStartDate());
+                intent.putExtra(DateTimePickerActivity.TITLE, getString(R.string.title_deferred_picker));
+                startActivityForResult(intent, DEFERRED_CODE);
             } else {
                 Log.d(TAG, "Toggling complete on task id " + id + " position=" + viewHolder.getAdapterPosition());
                 mEventManager.fire(new UpdateTasksCompletedEvent(id, !task.isComplete()));
