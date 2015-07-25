@@ -23,8 +23,6 @@
         <item name="actionBarInsetStart">@dimen/keyline_2</item>
         <item name="actionModeBackground">@color/actionbar_background</item>
         <item name="popupItemBackground">?android:selectableItemBackground</item>
-        <item name="photoItemForeground">?android:selectableItemBackground</item>
-        <item name="photoItemForegroundBorderless">?android:selectableItemBackground</item>
 
         <!--   your app branding color for the app bar -->
         <item name="colorPrimary">@color/theme_primary</item>

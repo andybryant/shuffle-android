@@ -95,21 +95,12 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
                     return false;
                 }
 
-                MenuItem deleteMenu = menu.findItem(R.id.action_delete);
-                MenuItem restoreMenu = menu.findItem(R.id.action_undelete);
                 if (listContext.showEditActions()) {
                     String entityName = listContext.getEditEntityName(mActivity);
-                    boolean entityDeleted = listContext.isEditEntityDeleted(mActivity, mContextCache, mProjectCache);
                     editMenu.setVisible(true);
                     editMenu.setTitle(getString(R.string.menu_edit, entityName));
-                    deleteMenu.setVisible(!entityDeleted);
-                    deleteMenu.setTitle(getString(R.string.menu_delete_entity, entityName));
-                    restoreMenu.setVisible(entityDeleted);
-                    restoreMenu.setTitle(getString(R.string.menu_undelete_entity, entityName));
                 } else {
                     editMenu.setVisible(false);
-                    deleteMenu.setVisible(false);
-                    restoreMenu.setVisible(false);
                 }
                 break;
             case TASK:
@@ -124,10 +115,10 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_view_settings:
-                Log.d(TAG, "Bringing up view settings");
-                mEventManager.fire(
-                        new EditListSettingsEvent(mLocation.getListQuery(), mActivity, FILTER_CONFIG));
+            case R.id.complete_toggle:
+                Log.d(TAG, "complete toggle hit");
+//                mEventManager.fire(
+//                        new EditListSettingsEvent(mLocation.getListQuery(), mActivity, FILTER_CONFIG));
                 return true;
             case R.id.action_edit:
                 switch (mLocation.getViewMode()) {
