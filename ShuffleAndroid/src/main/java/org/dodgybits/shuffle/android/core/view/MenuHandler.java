@@ -7,15 +7,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.CompoundButton;
+
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.CompletedToggleEvent;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
-import org.dodgybits.shuffle.android.list.event.EditListSettingsEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import roboguice.event.EventManager;
@@ -81,7 +84,6 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
             return false;
         }
         MenuItem editMenu = menu.findItem(R.id.action_edit);
-
         switch (mLocation.getViewMode()) {
             case CONTEXT_LIST:
                 editMenu.setTitle(getString(R.string.menu_edit, getString(R.string.context_name)));
@@ -110,16 +112,29 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
                 break;
         }
 
+        addCompleteToggleListener(menu);
+
         return true;
+    }
+
+    private void addCompleteToggleListener(Menu menu) {
+        MenuItem toggleMenu = menu.findItem(R.id.complete_toggle);
+        if (toggleMenu != null) {
+            final CompoundButton completeSwitch = (CompoundButton) toggleMenu.getActionView();
+            if (completeSwitch != null) {
+                completeSwitch.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(TAG, "complete toggle hit");
+                        mEventManager.fire(new CompletedToggleEvent(completeSwitch.isChecked()));
+                    }
+                });
+            }
+        }
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.complete_toggle:
-                Log.d(TAG, "complete toggle hit");
-//                mEventManager.fire(
-//                        new EditListSettingsEvent(mLocation.getListQuery(), mActivity, FILTER_CONFIG));
-                return true;
             case R.id.action_edit:
                 switch (mLocation.getViewMode()) {
                     case CONTEXT_LIST:
