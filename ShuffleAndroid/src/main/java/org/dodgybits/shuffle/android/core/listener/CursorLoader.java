@@ -80,7 +80,7 @@ public class CursorLoader {
 
     private void onListSettingsUpdated(@Observes ListSettingsUpdatedEvent event) {
         if (event.getListQuery().equals(mLocation.getListQuery())) {
-            // our list settings changed - reload list (even if this list isn't currently visible)
+            // our list settings changed - reload list
             restartListLoading(mLocation.getViewMode());
             restartCountLoading(mLocation.getViewMode());
         }

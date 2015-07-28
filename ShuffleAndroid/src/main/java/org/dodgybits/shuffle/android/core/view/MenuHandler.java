@@ -19,7 +19,9 @@ import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
+import org.dodgybits.shuffle.android.core.model.persistence.selector.Flag;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
+import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -122,11 +124,18 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
         if (toggleMenu != null) {
             final CompoundButton completeSwitch = (CompoundButton) toggleMenu.getActionView();
             if (completeSwitch != null) {
+                Flag completed = ListSettingsCache.findSettings(
+                        mLocation.getListQuery())
+                        .getCompleted(mActivity);
+                completeSwitch.setChecked(completed == Flag.yes);
                 completeSwitch.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Log.d(TAG, "complete toggle hit");
-                        mEventManager.fire(new CompletedToggleEvent(completeSwitch.isChecked()));
+                        mEventManager.fire(new CompletedToggleEvent(
+                                completeSwitch.isChecked(),
+                                mLocation.getListQuery(),
+                                mLocation.getViewMode()));
                     }
                 });
             }

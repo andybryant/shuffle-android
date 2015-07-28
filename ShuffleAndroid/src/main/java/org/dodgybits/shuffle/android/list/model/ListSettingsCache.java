@@ -50,7 +50,7 @@ public class ListSettingsCache {
         SPARSE_SETTINGS_MAP.put(ListQuery.search, searchSettings);
     }
 
-    public static final ListSettings findSettings(ListQuery query) {
+    public static ListSettings findSettings(ListQuery query) {
         ListSettings settings = SPARSE_SETTINGS_MAP.get(query);
         if (settings == null) {
             // if setting is not in the map, it means the query has all the standard default settings
@@ -64,7 +64,7 @@ public class ListSettingsCache {
     public static Intent createListSettingsEditorIntent(Context context, ListQuery query) {
         Intent intent = new Intent(context, ListSettingsEditorActivity.class);
         intent.putExtra(ListSettingsEditorActivity.LIST_QUERY_EXTRA, query.name());
-        ListSettings settings = ListSettingsCache.findSettings(query);
+        ListSettings settings = findSettings(query);
         settings.addToIntent(intent);
         return intent;
     }

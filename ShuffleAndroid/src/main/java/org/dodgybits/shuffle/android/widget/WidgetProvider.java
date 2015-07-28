@@ -74,8 +74,7 @@ public class WidgetProvider extends RoboAppWidgetProvider {
         String action = intent.getAction();
         if (TaskProvider.UPDATE_INTENT.equals(action) ||
                 ProjectProvider.UPDATE_INTENT.equals(action) ||
-                ContextProvider.UPDATE_INTENT.equals(action) ||
-                ListSettings.LIST_PREFERENCES_UPDATED.equals(action)) {
+                ContextProvider.UPDATE_INTENT.equals(action)) {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             // Retrieve the identifiers for each instance of your chosen widget.
             ComponentName thisWidget = new ComponentName(context, getClass());

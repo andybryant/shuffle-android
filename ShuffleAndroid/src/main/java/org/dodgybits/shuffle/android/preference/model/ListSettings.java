@@ -14,12 +14,12 @@ public class ListSettings {
     
     public static final String LIST_PREFERENCES_UPDATED = "org.dodgybits.shuffle.android.LIST_PREFERENCES_UPDATE";
 
-    public static final String LIST_FILTER_ACTIVE = ".list_active";
-    public static final String LIST_FILTER_COMPLETED = ".list_completed";
-    public static final String LIST_FILTER_DELETED = ".list_deleted";
-    public static final String LIST_FILTER_PENDING = ".list_pending";
-    public static final String LIST_FILTER_PROJECT = ".list_project";
-    public static final String LIST_FILTER_CONTEXT = ".list_context";
+    public static final String LIST_FILTER_ACTIVE = ".list_active.2";
+    public static final String LIST_FILTER_COMPLETED = ".list_completed.2";
+    public static final String LIST_FILTER_DELETED = ".list_deleted.2";
+    public static final String LIST_FILTER_PENDING = ".list_pending.2";
+    public static final String LIST_FILTER_PROJECT = ".list_project.2";
+    public static final String LIST_FILTER_CONTEXT = ".list_context.2";
 
     private static final String PREFIX = "mPrefix";
     private static final String BUNDLE = "list-preference-settings";
@@ -38,7 +38,7 @@ public class ListSettings {
 
     private String mPrefix;
     private Flag mDefaultCompleted = Flag.no;
-    private Flag mDefaultPending = Flag.ignored;
+    private Flag mDefaultPending = Flag.no;
     private Flag mDefaultDeleted = Flag.no;
     private Flag mDefaultActive = Flag.yes;
 
@@ -191,6 +191,12 @@ public class ListSettings {
         return getFlag(context, LIST_FILTER_COMPLETED, mDefaultCompleted);
     }
 
+    public void setCompleted(Context context, Flag flag) {
+        getSharedPreferences(context).edit()
+                .putString(mPrefix + LIST_FILTER_COMPLETED, flag.name())
+                .commit();
+    }
+
     public Flag getDeleted(Context context) {
         return getFlag(context, LIST_FILTER_DELETED, mDefaultDeleted);
     }
@@ -225,16 +231,6 @@ public class ListSettings {
         return value;
     }
 
-    private boolean getBoolean(Context context, String setting, boolean defaultValue) {
-        boolean value = getSharedPreferences(context).getBoolean(mPrefix + setting, defaultValue);
-        if (Log.isLoggable(TAG, Log.DEBUG)) {
-            String message = String.format("Got value %s for settings %s%s with default %s",
-                    value, mPrefix, setting, defaultValue);
-            Log.d(TAG, message);
-        }
-        return value;
-    }
-    
     private Id getId(Context context, String setting) {
         long value = Long.valueOf(getSharedPreferences(context).getString(mPrefix + setting, "0"));
         if (Log.isLoggable(TAG, Log.DEBUG)) {
