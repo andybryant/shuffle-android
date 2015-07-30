@@ -11,6 +11,7 @@ import org.dodgybits.shuffle.android.editor.fragment.AbstractEditFragment;
 import org.dodgybits.shuffle.android.editor.fragment.EditTaskFragment;
 
 import java.util.List;
+import java.util.Set;
 
 public class EditTaskActivity extends AbstractEditActivity
         implements EntityPickerDialogHelper.OnEntitiesSelected, EntityPickerDialogHelper.OnEntitySelected {
@@ -45,8 +46,8 @@ public class EditTaskActivity extends AbstractEditActivity
     }
 
     @Override
-    public void onSelected(List<Id> ids) {
-        mEditFragment.setSelectedContextIds(ids);
+    public void onSelected(List<Id> selectedIds, Set<Id> modifiedIds) {
+        mEditFragment.setSelectedContextIds(selectedIds);
     }
 
     @Override

@@ -9,12 +9,15 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 
 import java.util.List;
+import java.util.Set;
 
 public class EntityPickerDialogHelper {
     private static final String TAG = "EntityPkrDlgHelper";
@@ -135,11 +138,13 @@ public class EntityPickerDialogHelper {
         final boolean[] selectedItems = new boolean[count];
         updateSelectedFlags(selectedItems, selectedIds, ids);
         final List<Id> newSelectedItems = Lists.newArrayList(selectedIds);
+        final Set<Id> modifiedItems = Sets.newHashSet();
         builder.setMultiChoiceItems(names, selectedItems, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                 Log.d(TAG, "Checkbox changed");
                 Id id = Id.create(ids[which]);
+                modifiedItems.add(id);
                 if (isChecked) {
                     newSelectedItems.add(id);
                 } else {
@@ -150,7 +155,7 @@ public class EntityPickerDialogHelper {
         builder.setPositiveButton(R.string.ok_button_title, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 Log.d(TAG, "Ok button clicked");
-                multiListener.onSelected(newSelectedItems);
+                multiListener.onSelected(newSelectedItems, modifiedItems);
             }
         });
         builder.setNegativeButton(R.string.cancel_button_title, new DialogInterface.OnClickListener() {
@@ -184,7 +189,7 @@ public class EntityPickerDialogHelper {
 
     public interface OnEntitiesSelected {
         List<Id> getInitialSelection();
-        void onSelected(List<Id> ids);
+        void onSelected(List<Id> selectedIds, Set<Id> modifiedIds);
         void onCancel();
     }
 

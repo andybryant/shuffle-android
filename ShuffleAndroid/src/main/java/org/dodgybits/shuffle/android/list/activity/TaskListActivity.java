@@ -6,12 +6,18 @@ import android.view.View;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
+import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
+import org.dodgybits.shuffle.android.core.view.EntityPickerDialogHelper;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 
-public class TaskListActivity extends AbstractMainActivity {
+import java.util.List;
+import java.util.Set;
+
+public class TaskListActivity extends AbstractMainActivity
+        implements EntityPickerDialogHelper.OnEntitiesSelected {
 
     @Override
     public Location.LocationActivity getLocationActivity() {
@@ -48,4 +54,24 @@ public class TaskListActivity extends AbstractMainActivity {
         mEventManager.fire(new NavigationRequestEvent(location));
     }
 
+    public void showContextPicker() {
+        new EntityPickerDialogHelper.ContextPickerDialog()
+                .show(getSupportFragmentManager(), "contexts");
+    }
+
+    @Override
+    public List<Id> getInitialSelection() {
+        // TODO get list from selected items
+    }
+
+    @Override
+    public void onSelected(List<Id> selectedIds, Set<Id> modifiedIds) {
+        // TODO save changes
+        // tODO end CAB
+    }
+
+    @Override
+    public void onCancel() {
+        // nothing to do
+    }
 }

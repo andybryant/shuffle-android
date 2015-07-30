@@ -145,6 +145,10 @@ public class TaskRecyclerFragment extends RoboFragment {
                     mEventManager.fire(new UpdateTasksCompletedEvent(taskIds, false));
                     mActionMode.finish();
                     return true;
+
+                case R.id.action_update_contexts:
+
+                    return true;
             }
             return false;
         }
