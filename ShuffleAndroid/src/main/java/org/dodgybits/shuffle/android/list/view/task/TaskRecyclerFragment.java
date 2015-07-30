@@ -17,6 +17,7 @@ import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
@@ -24,13 +25,16 @@ import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.LocationProvider;
+import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.view.AbstractSwipeItemTouchHelperCallback;
 import org.dodgybits.shuffle.android.core.view.DividerItemDecoration;
+import org.dodgybits.shuffle.android.core.view.EntityPickerDialogHelper;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.editor.activity.DateTimePickerActivity;
+import org.dodgybits.shuffle.android.list.activity.TaskListActivity;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
@@ -82,84 +86,7 @@ public class TaskRecyclerFragment extends RoboFragment {
     private MultiSelector mMultiSelector = new MultiSelector();
     private ActionMode mActionMode = null;
     private int mDeferredPosition = -1;
-
-    private ModalMultiSelectorCallback mEditMode = new ModalMultiSelectorCallback(mMultiSelector) {
-        private MenuItem mMarkComplete;
-        private MenuItem mMarkIncomplete;
-        private MenuItem mMarkDelete;
-        private MenuItem mMarkUndelete;
-
-        @Override
-        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-            super.onCreateActionMode(actionMode, menu);
-            getActivity().getMenuInflater().inflate(R.menu.task_list_context_menu, menu);
-
-            mMarkComplete = menu.findItem(R.id.action_mark_complete);
-            mMarkIncomplete = menu.findItem(R.id.action_mark_incomplete);
-            mMarkDelete = menu.findItem(R.id.action_delete);
-            mMarkUndelete = menu.findItem(R.id.action_undelete);
-
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            if (mActionMode != null) {
-                int num = mMultiSelector.getSelectedPositions().size();
-                mActionMode.setTitle(getActivity().getResources().getQuantityString(
-                        R.plurals.task_view_selected_message_count, num, num));
-            }
-
-            // Show appropriate menu items.
-            boolean incompleteExists = doesSelectionContainIncompleteTasks();
-            boolean undeletedExists = doesSelectionContainUndeletedTasks();
-            mMarkComplete.setVisible(incompleteExists);
-            mMarkIncomplete.setVisible(!incompleteExists);
-            mMarkDelete.setVisible(undeletedExists);
-            mMarkUndelete.setVisible(!undeletedExists);
-
-            return true;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-            Set<Long> taskIds = new HashSet<>(getSelectedIds());
-            switch (menuItem.getItemId()) {
-
-                case R.id.action_delete:
-                    mEventManager.fire(new UpdateTasksDeletedEvent(taskIds, true));
-                    mActionMode.finish();
-                    return true;
-
-                case R.id.action_undelete:
-                    mEventManager.fire(new UpdateTasksDeletedEvent(taskIds, false));
-                    mActionMode.finish();
-                    return true;
-
-                case R.id.action_mark_complete:
-                    mEventManager.fire(new UpdateTasksCompletedEvent(taskIds, true));
-                    mActionMode.finish();
-                    return true;
-
-                case R.id.action_mark_incomplete:
-                    mEventManager.fire(new UpdateTasksCompletedEvent(taskIds, false));
-                    mActionMode.finish();
-                    return true;
-
-                case R.id.action_update_contexts:
-
-                    return true;
-            }
-            return false;
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode actionMode) {
-            super.onDestroyActionMode(actionMode);
-            mMultiSelector.clearSelections();
-            mActionMode = null;
-        }
-    };
+    private ModalMultiSelectorCallback mEditMode = new TaskModalMultiSelectorCallback(mMultiSelector);
 
     /**
      * When creating, retrieve this instance's number from its arguments.
@@ -251,6 +178,10 @@ public class TaskRecyclerFragment extends RoboFragment {
             default:
                 Log.e(TAG, "Unknown requestCode: " + requestCode);
         }
+    }
+
+    private TaskListActivity getTaskListActivity() {
+        return (TaskListActivity) getActivity();
     }
 
     private void onViewUpdate(@Observes LocationUpdatedEvent event) {
@@ -471,5 +402,129 @@ public class TaskRecyclerFragment extends RoboFragment {
 
 
     }
+
+    private class TaskModalMultiSelectorCallback extends
+            ModalMultiSelectorCallback implements
+            EntityPickerDialogHelper.OnEntitiesSelected {
+        private MenuItem mMarkComplete;
+        private MenuItem mMarkIncomplete;
+        private MenuItem mMarkDelete;
+        private MenuItem mMarkUndelete;
+
+        public TaskModalMultiSelectorCallback(MultiSelector multiSelector) {
+            super(multiSelector);
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            super.onCreateActionMode(actionMode, menu);
+            getActivity().getMenuInflater().inflate(R.menu.task_list_context_menu, menu);
+
+            mMarkComplete = menu.findItem(R.id.action_mark_complete);
+            mMarkIncomplete = menu.findItem(R.id.action_mark_incomplete);
+            mMarkDelete = menu.findItem(R.id.action_delete);
+            mMarkUndelete = menu.findItem(R.id.action_undelete);
+
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            if (mActionMode != null) {
+                int num = mMultiSelector.getSelectedPositions().size();
+                mActionMode.setTitle(getActivity().getResources().getQuantityString(
+                        R.plurals.task_view_selected_message_count, num, num));
+            }
+
+            // Show appropriate menu items.
+            boolean incompleteExists = doesSelectionContainIncompleteTasks();
+            boolean undeletedExists = doesSelectionContainUndeletedTasks();
+            mMarkComplete.setVisible(incompleteExists);
+            mMarkIncomplete.setVisible(!incompleteExists);
+            mMarkDelete.setVisible(undeletedExists);
+            mMarkUndelete.setVisible(!undeletedExists);
+
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            Set<Long> taskIds = new HashSet<>(getSelectedIds());
+            switch (menuItem.getItemId()) {
+
+                case R.id.action_delete:
+                    mEventManager.fire(new UpdateTasksDeletedEvent(taskIds, true));
+                    mActionMode.finish();
+                    return true;
+
+                case R.id.action_undelete:
+                    mEventManager.fire(new UpdateTasksDeletedEvent(taskIds, false));
+                    mActionMode.finish();
+                    return true;
+
+                case R.id.action_mark_complete:
+                    mEventManager.fire(new UpdateTasksCompletedEvent(taskIds, true));
+                    mActionMode.finish();
+                    return true;
+
+                case R.id.action_mark_incomplete:
+                    mEventManager.fire(new UpdateTasksCompletedEvent(taskIds, false));
+                    mActionMode.finish();
+                    return true;
+
+                case R.id.action_update_contexts:
+                    getTaskListActivity().setSelectionHandler(this);
+                    getTaskListActivity().showContextPicker();
+                    return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            super.onDestroyActionMode(actionMode);
+            mMultiSelector.clearSelections();
+            mActionMode = null;
+        }
+
+        @Override
+        public List<Id> getInitialSelection() {
+            Set<Id> contextIds = Sets.newHashSet();
+            List<Integer> selectedPositions = getMultiSelector().getSelectedPositions();
+            for (Integer position : selectedPositions) {
+                mCursor.moveToPosition(position);
+                contextIds.addAll(mTaskPersister.readContextIds(mCursor));
+            }
+            return Lists.newArrayList(contextIds);
+        }
+
+        @Override
+        public void onSelected(List<Id> selectedIds, Set<Id> modifiedIds) {
+            List<Integer> selectedPositions = getMultiSelector().getSelectedPositions();
+            for (Integer position : selectedPositions) {
+                mCursor.moveToPosition(position);
+                Task task = mTaskPersister.read(mCursor);
+                Set<Id> updatedContexts = Sets.newHashSet(task.getContextIds());
+                for (Id id : modifiedIds) {
+                    if (selectedIds.contains(id)) {
+                        updatedContexts.add(id);
+                    } else {
+                        updatedContexts.remove(id);
+                    }
+                }
+                mTaskPersister.saveContextIds(task.getLocalId().getId(), Lists.newArrayList(updatedContexts));
+                mListAdapter.notifyItemChanged(position);
+            }
+
+            mActionMode.finish();
+        }
+
+        @Override
+        public void onCancel() {
+            // nothing to do
+        }
+
+
+    };
 
 }

@@ -19,6 +19,8 @@ import java.util.Set;
 public class TaskListActivity extends AbstractMainActivity
         implements EntityPickerDialogHelper.OnEntitiesSelected {
 
+    private EntityPickerDialogHelper.OnEntitiesSelected mSelectionHandler;
+
     @Override
     public Location.LocationActivity getLocationActivity() {
         return Location.LocationActivity.TaskList;
@@ -59,19 +61,23 @@ public class TaskListActivity extends AbstractMainActivity
                 .show(getSupportFragmentManager(), "contexts");
     }
 
-    @Override
-    public List<Id> getInitialSelection() {
-        // TODO get list from selected items
+    public void setSelectionHandler(EntityPickerDialogHelper.OnEntitiesSelected selectionHandler) {
+        mSelectionHandler = selectionHandler;
     }
 
     @Override
+    public List<Id> getInitialSelection() {
+        return  mSelectionHandler.getInitialSelection();
+    }
+
+
+    @Override
     public void onSelected(List<Id> selectedIds, Set<Id> modifiedIds) {
-        // TODO save changes
-        // tODO end CAB
+        mSelectionHandler.onSelected(selectedIds, modifiedIds);
     }
 
     @Override
     public void onCancel() {
-        // nothing to do
+        mSelectionHandler.onCancel();
     }
 }

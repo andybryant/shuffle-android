@@ -1,9 +1,5 @@
 package org.dodgybits.shuffle.android.editor.activity;
 
-import android.app.Dialog;
-import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-
 import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.view.EntityPickerDialogHelper;

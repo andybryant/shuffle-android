@@ -94,21 +94,26 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
                 .setChangeSet(TaskChangeSet.fromChangeSet(cursor.getLong(CHANGE_SET_INDEX)));
 
         if (includeContextIds) {
-            Cursor contextCursor = mResolver.query(TaskProvider.TaskContexts.CONTENT_URI,
-                    TaskProvider.TaskContexts.FULL_PROJECTION,
-                    TaskProvider.TaskContexts.TASK_ID + "=?",
-                    new String[]{String.valueOf(builder.getLocalId().getId())},
-                    TaskProvider.TaskContexts.TASK_ID);
-            List<Id> contextIds = Lists.newArrayList();
-            while (contextCursor.moveToNext()) {
-                long id = contextCursor.getLong(TASK_CONTEXTS_CONTEXT_ID_INDEX);
-                contextIds.add(Id.create(id));
-            }
-            contextCursor.close();
-            builder.setContextIds(contextIds);
+            builder.setContextIds(readContextIds(cursor));
         }
 
         return builder.build();
+    }
+
+    public List<Id> readContextIds(Cursor cursor) {
+        Id taskId = readLocalId(cursor);
+        Cursor contextCursor = mResolver.query(TaskProvider.TaskContexts.CONTENT_URI,
+                TaskProvider.TaskContexts.FULL_PROJECTION,
+                TaskProvider.TaskContexts.TASK_ID + "=?",
+                new String[]{String.valueOf(taskId.getId())},
+                TaskProvider.TaskContexts.TASK_ID);
+        List<Id> contextIds = Lists.newArrayList();
+        while (contextCursor.moveToNext()) {
+            long id = contextCursor.getLong(TASK_CONTEXTS_CONTEXT_ID_INDEX);
+            contextIds.add(Id.create(id));
+        }
+        contextCursor.close();
+        return contextIds;
     }
 
     public Id readLocalId(Cursor cursor) {
@@ -202,7 +207,8 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
     @Override
     protected void update(Uri uri, Task task) {
         super.update(uri, task);
-        saveContextIds(uri, task);
+        final long taskId = ContentUris.parseId(uri);
+        saveContextIds(taskId, task.getContextIds());
     }
 
     @Override
@@ -492,14 +498,12 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
         mResolver.update(uri, values, null, null);
     }
 
-    private void saveContextIds(Uri uri, Task task) {
-        final long taskId = ContentUris.parseId(uri);
+    public void saveContextIds(long taskId, List<Id> contextIds) {
         int deletedRows = mResolver.delete(TaskProvider.TaskContexts.CONTENT_URI,
                 TASK_ID + "=?",
                 new String[]{String.valueOf(taskId)});
         Log.d(TAG, "Deleted " + deletedRows + " existing context links for task " + taskId);
 
-        final List<Id> contextIds = task.getContextIds();
         if (!contextIds.isEmpty()) {
             final int count = contextIds.size();
             ContentValues[] valuesArray = new ContentValues[count];
