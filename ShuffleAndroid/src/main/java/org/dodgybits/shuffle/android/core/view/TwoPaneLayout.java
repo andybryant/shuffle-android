@@ -30,7 +30,6 @@ import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.TaskVisibilityChangeEvent;
 import org.dodgybits.shuffle.android.core.listener.LocationProvider;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
-import org.dodgybits.shuffle.android.list.model.ListQuery;
 
 import roboguice.RoboGuice;
 import roboguice.event.EventManager;
@@ -108,7 +107,7 @@ public class TwoPaneLayout extends FrameLayout {
         // The task list might be visible now, depending on the layout: in portrait we
         // don't show the task list, but in landscape we do.  This information is stored
         // in the constants
-        mListCollapsible = UiUtilities.isListCollapsible(res);
+        mListCollapsible = UiUtilities.hideListOnViewTask(res);
 
         final int taskListWeight = res.getInteger(R.integer.task_list_weight);
         final int taskViewWeight = res.getInteger(R.integer.task_view_weight);

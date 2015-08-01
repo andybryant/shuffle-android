@@ -530,7 +530,7 @@ public class Location implements Parcelable {
 
     }
 
-    public static enum LocationActivity {
+    public enum LocationActivity {
         TaskSearch, TaskList, ProjectList, ContextList,
         Help, Preferences,
         EditTask, EditProject, EditContext

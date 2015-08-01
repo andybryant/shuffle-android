@@ -1,5 +1,6 @@
 package org.dodgybits.shuffle.android.list.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.view.View;
@@ -12,6 +13,7 @@ import org.dodgybits.shuffle.android.core.view.EntityPickerDialogHelper;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
+import org.dodgybits.shuffle.android.view.activity.TaskListViewActivity;
 
 import java.util.List;
 import java.util.Set;
@@ -28,6 +30,7 @@ public class TaskListActivity extends AbstractMainActivity
 
     @Override
     public void onCreate(Bundle savedState) {
+        checkActivity();
         super.onCreate(savedState);
 
         if (mActionBarToolbar != null) {
@@ -37,9 +40,16 @@ public class TaskListActivity extends AbstractMainActivity
 
     }
 
+    protected void checkActivity() {
+        if (!UiUtilities.hideListOnViewTask(getResources())) {
+            startActivity(new Intent(this, TaskListViewActivity.class));
+            finish();
+        }
+    }
+
     @Override
     protected boolean handleBackPress() {
-        if (mLocation != null && mLocation.getViewMode() == ViewMode.TASK && UiUtilities.isListCollapsible(getResources())) {
+        if (mLocation != null && mLocation.getViewMode() == ViewMode.TASK && UiUtilities.hideListOnViewTask(getResources())) {
             mEventManager.fire(new NavigationRequestEvent(mLocation.parent()));
             return true;
         }
