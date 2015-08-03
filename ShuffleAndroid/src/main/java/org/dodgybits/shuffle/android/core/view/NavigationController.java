@@ -51,7 +51,8 @@ public class NavigationController {
 
     private boolean shouldStartNewActivity(Location newLocation) {
         return (mLocation.getLocationActivity() != newLocation.getLocationActivity() ||
-                mLocation.getListQuery() != newLocation.getListQuery());
+                mLocation.getListQuery() != newLocation.getListQuery() ||
+                mLocation.isListView() != newLocation.isListView());
     }
 
 }

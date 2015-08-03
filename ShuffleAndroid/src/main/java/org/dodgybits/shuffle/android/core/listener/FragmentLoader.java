@@ -50,18 +50,9 @@ public class FragmentLoader {
 
     private FragmentActivity mActivity;
 
-    private Boolean tabletUi;
-
     @Inject
     public FragmentLoader(Activity activity) {
         mActivity = (FragmentActivity) activity;
-    }
-
-    private boolean isTabletUi() {
-        if (tabletUi == null) {
-            tabletUi = UiUtilities.useTabletUI(mActivity.getResources());
-        }
-        return tabletUi;
     }
 
     private void onViewUpdated(@Observes LocationUpdatedEvent event) {
@@ -75,7 +66,7 @@ public class FragmentLoader {
                 addTaskList();
                 break;
             case TASK:
-                if (isTabletUi()) {
+                if (UiUtilities.showListOnViewTask(mActivity.getResources())) {
                     addTaskList();
                 }
                 addTaskView();
@@ -107,7 +98,7 @@ public class FragmentLoader {
             FragmentTransaction fragmentTransaction =
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             fragmentTransaction.replace(R.id.entity_list_pane,
                     fragment, TAG_TASK_LIST);
             fragmentTransaction.commitAllowingStateLoss();
@@ -123,7 +114,7 @@ public class FragmentLoader {
             FragmentTransaction fragmentTransaction =
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             fragmentTransaction.replace(R.id.task_pane, fragment, TAG_TASK_ITEM);
             fragmentTransaction.commitAllowingStateLoss();
         }
@@ -138,7 +129,7 @@ public class FragmentLoader {
             FragmentTransaction fragmentTransaction =
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             fragmentTransaction.replace(R.id.entity_list_pane, fragment, TAG_CONTEXT_LIST);
             fragmentTransaction.commitAllowingStateLoss();
         }
@@ -153,29 +144,10 @@ public class FragmentLoader {
             FragmentTransaction fragmentTransaction =
                     mActivity.getSupportFragmentManager().beginTransaction();
             // Use cross fading animation.
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             fragmentTransaction.replace(R.id.entity_list_pane, fragment, TAG_PROJECT_LIST);
             fragmentTransaction.commitAllowingStateLoss();
         }
-    }
-
-    /**
-     * Get the task list fragment for this activity. If the task list fragment is
-     * not attached, this method returns null.
-     *
-     * Caution! This method returns the {@link TaskListFragment} after the fragment has been
-     * added, <b>and</b> after the {@link android.app.FragmentManager} has run through its queue to add the
-     * fragment. There is a non-trivial amount of time after the fragment is instantiated and before
-     * this call returns a non-null value, depending on the {@link android.app.FragmentManager}. If you
-     * need the fragment immediately after adding it, consider making the fragment an observer of
-     * the controller and perform the task immediately on {@link android.app.Fragment#onActivityCreated(android.os.Bundle)}
-     */
-    protected TaskListFragment getTaskListFragment() {
-        final Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG_TASK_LIST);
-        if (isValidFragment(fragment)) {
-            return (TaskListFragment) fragment;
-        }
-        return null;
     }
 
     protected TaskRecyclerFragment getTaskRecyclerFragment() {

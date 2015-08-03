@@ -14,11 +14,6 @@ public class ProjectListActivity extends AbstractMainActivity {
         return Location.LocationActivity.ProjectList;
     }
 
-    @Override
-    protected int contentView(boolean isTablet) {
-        return R.layout.entity_list_activity;
-    }
-
     public void onClickFab(View view) {
         Location location = Location.newProject();
         mEventManager.fire(new NavigationRequestEvent(location));

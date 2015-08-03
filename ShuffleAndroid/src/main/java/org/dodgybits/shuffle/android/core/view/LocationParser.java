@@ -16,6 +16,7 @@ import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 import org.dodgybits.shuffle.android.preference.activity.PreferencesActivity;
+import org.dodgybits.shuffle.android.view.activity.TaskViewActivity;
 
 public class LocationParser {
     private static final String TAG = "LocationParser";
@@ -97,8 +98,6 @@ public class LocationParser {
             } else {
                 Log.w(TAG, "Unexpected intent uri" + uri);
             }
-        } else {
-            Log.e(TAG, "Unexpected intent " + intent);
         }
     }
 
@@ -168,7 +167,7 @@ public class LocationParser {
                     location.getContextId().getId());
             intent = new Intent(Intent.ACTION_VIEW, url);
         } else {
-            intent = new Intent(context, TaskListActivity.class);
+            intent = new Intent(context, location.getViewMode().isListMode() ? TaskListActivity.class : TaskViewActivity.class);
         }
         intent.putExtra(Location.QUERY_NAME, listQuery.name());
         if (location.getSelectedIndex() > -1) {

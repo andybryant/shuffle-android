@@ -2,6 +2,7 @@ package org.dodgybits.shuffle.android.core.activity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -90,16 +91,19 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
     public void onCreate(Bundle savedState) {
         super.onCreate(savedState);
 
+        validateActivity();
+
         // don't show soft keyboard unless user clicks on quick add box
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         mLocationParser.setLocationActivity(getLocationActivity());
         Location location = parseLocation(savedState);
+        validateLocation(location);
         mEventManager.fire(new LocationUpdatedEvent(location));
 
         final boolean tabletUi = UiUtilities.useTabletUI(this.getResources());
-        Log.d(TAG, "Using tablet layout? " + tabletUi);
+        Log.d(TAG, getClass().getName() + " using tablet layout? " + tabletUi);
         setContentView(contentView(tabletUi));
 
         mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
@@ -114,7 +118,30 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
         }
 
         setupNavDrawer();
+
+
         mEventManager.fire(new OnCreatedEvent());
+    }
+
+    /**
+     * Insure this is the right activity for the device.
+     * Warning - this is called before mLocation is set.
+     * If you need location, use validateLocation instead.
+     */
+    protected void validateActivity() {
+    }
+
+    /**
+     * Insure this is the right activity for location.
+     */
+    protected void validateLocation(Location location) {
+    }
+
+    protected void redirect(Class newActivityClazz) {
+        Intent newIntent = new Intent(getIntent());
+        newIntent.setClass(this, newActivityClazz);
+        startActivity(newIntent);
+        finish();
     }
 
     @Override
@@ -170,7 +197,7 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
     }
 
     protected int contentView(boolean isTablet) {
-        return R.layout.two_pane_activity;
+        return R.layout.entity_list_activity;
     }
 
     private Location parseLocation(Bundle savedState) {

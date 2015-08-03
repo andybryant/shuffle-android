@@ -3,6 +3,7 @@ package org.dodgybits.shuffle.android.list.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
+import android.util.Log;
 import android.view.View;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
@@ -14,12 +15,15 @@ import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.view.activity.TaskListViewActivity;
+import org.dodgybits.shuffle.android.view.activity.TaskViewActivity;
 
 import java.util.List;
 import java.util.Set;
 
 public class TaskListActivity extends AbstractMainActivity
         implements EntityPickerDialogHelper.OnEntitiesSelected {
+    private static final String TAG = "TaskListActivity";
+
 
     private EntityPickerDialogHelper.OnEntitiesSelected mSelectionHandler;
 
@@ -29,36 +33,28 @@ public class TaskListActivity extends AbstractMainActivity
     }
 
     @Override
-    public void onCreate(Bundle savedState) {
-        checkActivity();
-        super.onCreate(savedState);
-
-        if (mActionBarToolbar != null) {
-            ViewCompat.setElevation(mActionBarToolbar, 0f);
-            ViewCompat.setElevation((View)mActionBarToolbar.getParent(), 0f);
+    protected void validateActivity() {
+        if (UiUtilities.showListOnViewTask(getResources())) {
+            Log.d(TAG, "Switching to TaskListViewActivity");
+            redirect(TaskListViewActivity.class);
         }
-
     }
 
-    protected void checkActivity() {
-        if (!UiUtilities.hideListOnViewTask(getResources())) {
-            startActivity(new Intent(this, TaskListViewActivity.class));
-            finish();
+    @Override
+    protected void validateLocation(Location location) {
+        if (!location.isListView()) {
+            Log.d(TAG, "Switching to TaskViewActivity");
+            redirect(TaskViewActivity.class);
         }
     }
 
     @Override
     protected boolean handleBackPress() {
-        if (mLocation != null && mLocation.getViewMode() == ViewMode.TASK && UiUtilities.hideListOnViewTask(getResources())) {
+        if (mLocation != null && mLocation.getViewMode() == ViewMode.TASK && !UiUtilities.showListOnViewTask(getResources())) {
             mEventManager.fire(new NavigationRequestEvent(mLocation.parent()));
             return true;
         }
         return false;
-    }
-
-    @Override
-    protected int contentView(boolean isTablet) {
-        return R.layout.task_list_activity;
     }
 
     public void onClickFab(View view) {

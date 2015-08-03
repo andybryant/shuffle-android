@@ -15,11 +15,6 @@ public class ContextListActivity extends AbstractMainActivity {
         return Location.LocationActivity.ContextList;
     }
 
-    @Override
-    protected int contentView(boolean isTablet) {
-        return R.layout.entity_list_activity;
-    }
-
     public void onClickFab(View view) {
         Location location = Location.newContext();
         mEventManager.fire(new NavigationRequestEvent(location));

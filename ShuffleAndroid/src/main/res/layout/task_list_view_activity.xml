@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2014 Android Shuffle Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2015 Android Shuffle Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -28,26 +28,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <org.dodgybits.shuffle.android.core.view.TwoPaneLayout
-            android:id="@+id/two_pane_activity"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="?attr/actionBarSize"
+            android:orientation="horizontal"
             >
 
             <FrameLayout
                 android:id="@+id/entity_list_pane"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="3"
                 />
 
             <FrameLayout
                 android:id="@+id/task_pane"
                 android:layout_width="0dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                />
 
-        </org.dodgybits.shuffle.android.core.view.TwoPaneLayout>
+        </LinearLayout>
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
@@ -59,7 +61,7 @@
                 android:id="@+id/toolbar_actionbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:theme="@style/ActionBarThemeOverlay"
+                android:theme="@style/ActionBarThemeOverlay"
                 app:popupTheme="@style/ActionBarPopupThemeOverlay"
                 app:titleTextAppearance="@style/ActionBar.TitleText"
                 app:contentInsetStart="?actionBarInsetStart"

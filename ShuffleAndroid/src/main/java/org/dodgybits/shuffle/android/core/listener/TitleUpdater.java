@@ -40,7 +40,7 @@ public class TitleUpdater {
             case TASK:
                 // blank for task view unless in landscape mode on tablet
                 // also don't show in project task list view as project already shown in task view
-                if (!UiUtilities.hideListOnViewTask(mActivity.getResources()) && listQuery != ListQuery.project) {
+                if (UiUtilities.showListOnViewTask(mActivity.getResources()) && listQuery != ListQuery.project) {
                     title = getTaskListTitle(location);
                 }
                 break;

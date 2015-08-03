@@ -26,8 +26,8 @@ public class UiUtilities {
         return res.getBoolean(R.bool.use_tablet_ui);
     }
 
-    public static boolean hideListOnViewTask(Resources res) {
-        return !useTabletUI(res) || res.getBoolean(R.bool.list_collapsible);
+    public static boolean showListOnViewTask(Resources res) {
+        return useTabletUI(res) && !res.getBoolean(R.bool.list_collapsible);
     }
 
     public static View getSnackBarParentView(Activity activity) {
@@ -96,7 +96,7 @@ public class UiUtilities {
     private static Set<ListQuery> sEntityListQueries = Sets.newHashSet(ListQuery.project, ListQuery.context);
 
     public static boolean showHomeAsUp(Resources res, Location location) {
-        return (location.getViewMode() == ViewMode.TASK && hideListOnViewTask(res)) ||
+        return (location.getViewMode() == ViewMode.TASK && !showListOnViewTask(res)) ||
                 (location.getViewMode() == ViewMode.TASK_LIST && (sEntityListQueries.contains(location.getListQuery())));
     }
 
