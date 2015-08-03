@@ -117,15 +117,16 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         findViews();
 
         mViewCalendarButton.setOnClickListener(this);
-
-        getView().findViewById(R.id.complete_fab).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        toggleComplete();
+        if (mCompleteFabIcon != null) {
+            mCompleteFabIcon.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            toggleComplete();
+                        }
                     }
-                }
-        );
+            );
+        }
 
         updateCursor();
     }
@@ -405,7 +406,9 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     }
 
     private void updateCompleteFab(boolean isComplete) {
-        mCompleteFabIcon.setImageResource(isComplete ? R.drawable.ic_done_green_24dp : R.drawable.ic_done_white_24dp);
+        if (mCompleteFabIcon != null) {
+            mCompleteFabIcon.setImageResource(isComplete ? R.drawable.ic_done_green_24dp : R.drawable.ic_done_white_24dp);
+        }
     }
 
 

@@ -1,11 +1,7 @@
 package org.dodgybits.shuffle.android.list.activity;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.view.ViewCompat;
 import android.util.Log;
 import android.view.View;
-import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.model.Id;
@@ -34,17 +30,18 @@ public class TaskListActivity extends AbstractMainActivity
 
     @Override
     protected void validateActivity() {
-        if (UiUtilities.showListOnViewTask(getResources())) {
-            Log.d(TAG, "Switching to TaskListViewActivity");
-            redirect(TaskListViewActivity.class);
-        }
     }
 
     @Override
     protected void validateLocation(Location location) {
         if (!location.isListView()) {
-            Log.d(TAG, "Switching to TaskViewActivity");
-            redirect(TaskViewActivity.class);
+            if (UiUtilities.showListOnViewTask(getResources())) {
+                Log.d(TAG, "Switching to TaskListViewActivity");
+                redirect(TaskListViewActivity.class);
+            } else {
+                Log.d(TAG, "Switching to TaskViewActivity");
+                redirect(TaskViewActivity.class);
+            }
         }
     }
 

@@ -1,11 +1,15 @@
 package org.dodgybits.shuffle.android.view.activity;
 
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.util.Log;
+import android.view.View;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.list.activity.TaskListActivity;
+import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 
 public class TaskListViewActivity extends TaskListActivity {
     private static final String TAG = "TaskListViewActivity";
@@ -20,6 +24,11 @@ public class TaskListViewActivity extends TaskListActivity {
     public void onCreate(Bundle savedState) {
         super.onCreate(savedState);
 
+
+        if (mActionBarToolbar != null) {
+            ViewCompat.setElevation(mActionBarToolbar, 0f);
+            ViewCompat.setElevation((View) mActionBarToolbar.getParent(), 0f);
+        }
     }
 
     @Override
@@ -40,6 +49,11 @@ public class TaskListViewActivity extends TaskListActivity {
     @Override
     protected int contentView(boolean isTablet) {
         return R.layout.task_list_view_activity;
+    }
+
+    public void onClickFab(View view) {
+        Location location = Location.newTaskFromTaskListContext(TaskListContext.create(mLocation));
+        mEventManager.fire(new NavigationRequestEvent(location));
     }
 
 }
