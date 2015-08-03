@@ -12,22 +12,23 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white"
-    >
+    android:layout_weight="1"
 
+    android:fillViewport="true"
+    android:background="@color/white"
+    android:fadingEdge="none"
+    android:animateLayoutChanges="true">
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:elevation="8dip"
-        android:background="@color/theme_primary"
-        >
+        android:paddingTop="24dp"
+        android:scrollbars="vertical">
+
 
         <TextView
             android:id="@+id/project"
@@ -35,188 +36,139 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dip"
             android:layout_marginLeft="@dimen/keyline_2"
+            android:layout_alignParentLeft="true"
             android:maxLines="2"
-            android:textColor="@color/white"
             android:textSize="34sp"
             android:ellipsize="end"
             android:text="xxxxxxxxx" />
 
-        <RelativeLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="72dip">
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/project"
+            android:layout_marginLeft="@dimen/keyline_2"
+            android:layout_marginBottom="20dip"
+            android:tag="regular"
+            android:autoLink="all"
+            android:textColorLink="@color/button_material_dark"
+            android:textSize="20sp"
+            android:text="xxxxxxx"
+            android:layout_alignParentBottom="false" />
 
-            <org.dodgybits.shuffle.android.list.view.StatusView
-                android:id="@+id/status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="false"
-                android:tag="regular"
-                android:visibility="gone"
-                android:paddingRight="16dip"
-                android:paddingTop="4dip"
-                android:singleLine="true"
-                android:textSize="12sp"
-                android:text="Active"
-                android:textColor="@color/theme_accent"
-                />
+        <org.dodgybits.shuffle.android.list.view.StatusView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="regular"
+            android:visibility="gone"
+            android:paddingRight="16dip"
+            android:paddingTop="4dip"
+            android:singleLine="true"
+            android:textSize="12sp"
+            android:text="Active"
+            android:textColor="@color/theme_accent"
+            />
 
-            <TextView
-                android:id="@+id/description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/status"
-                android:layout_marginLeft="@dimen/keyline_2"
-                android:layout_marginBottom="20dip"
-                android:tag="regular"
-                android:autoLink="all"
-                android:textColor="@color/white"
-                android:textColorLink="@color/button_material_light"
-                android:textSize="20sp"
-                android:text="xxxxxxx"
-                android:layout_alignParentBottom="false" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/complete_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_done_white_24dp"
-        android:layout_marginLeft="16dip"
-        android:layout_marginTop="-28dip"
-        app:borderWidth="0dp"
-        />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_weight="1"
-        android:layout_marginTop="-24dip"
-        android:fillViewport="true"
-        android:background="@color/white"
-        android:fadingEdge="none"
-        android:animateLayoutChanges="true">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="40dip" />
 
         <LinearLayout
-            android:orientation="vertical"
+            android:id="@+id/context_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="vertical">
+            android:paddingBottom="20dip"
+            android:minHeight="72dip">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="40dip"
-                />
+            <ImageView
+                android:src="@drawable/ic_label_black_24dp"
+                style="@style/EditEntryIcon" />
 
-            <LinearLayout
-                android:id="@+id/context_row"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="20dip"
-                android:minHeight="72dip"
-                >
-
-                <ImageView
-                    android:src="@drawable/ic_label_black_24dp"
-                    style="@style/EditEntryIcon"
-                    />
-
-                <org.dodgybits.shuffle.android.core.view.RowLayout
-                    android:id="@+id/context_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingRight="?android:attr/scrollbarSize"
-                    android:horizontalSpacing="@dimen/context_small_horizontal_spacing"
-                    android:verticalSpacing="@dimen/context_small_vertical_spacing"
-                    android:textSize="14sp"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/details_row"
+            <org.dodgybits.shuffle.android.core.view.RowLayout
+                android:id="@+id/context_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="72dip"
-                android:paddingBottom="20dip">
-
-                <ImageView
-                    android:src="@drawable/ic_subject_black_24dp"
-                    style="@style/EditEntryIcon"
-                    />
-
-                <TextView
-                    android:id="@+id/details"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:tag="regular"
-                    android:autoLink="all"
-                    android:paddingRight="?android:attr/scrollbarSize"
-                    android:textSize="18sp"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/temporal_row"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="20dip"
-                android:minHeight="72dip">
-
-                <ImageView
-                    android:src="@drawable/ic_schedule_black_24dp"
-                    style="@style/EditEntryIcon"
-                    />
-
-                <TextView
-                    android:id="@+id/temporal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:tag="regular"
-                    android:hint="@string/none_empty"
-                    android:textSize="18sp"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/calendar_row"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="8dip"
-                android:paddingBottom="8dip"
+                android:layout_gravity="center_vertical"
                 android:paddingRight="?android:attr/scrollbarSize"
-                android:gravity="center">
-
-                <Button
-                    android:id="@+id/view_calendar_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/office_calendar"
-                    android:text="@string/view_calendar_entry"
-                    android:tag="allcaps"
-                    android:textColor="@color/white"
-                    android:background="@drawable/button_primary_background"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    />
-
-            </LinearLayout>
+                android:horizontalSpacing="@dimen/context_small_horizontal_spacing"
+                android:verticalSpacing="@dimen/context_small_vertical_spacing"
+                android:textSize="14sp" />
 
         </LinearLayout>
 
-    </ScrollView>
+        <LinearLayout
+            android:id="@+id/details_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="72dip"
+            android:paddingBottom="20dip">
 
-</LinearLayout>
+            <ImageView
+                android:src="@drawable/ic_subject_black_24dp"
+                style="@style/EditEntryIcon" />
+
+            <TextView
+                android:id="@+id/details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:tag="regular"
+                android:autoLink="all"
+                android:paddingRight="?android:attr/scrollbarSize"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/temporal_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dip"
+            android:minHeight="72dip">
+
+            <ImageView
+                android:src="@drawable/ic_schedule_black_24dp"
+                style="@style/EditEntryIcon" />
+
+            <TextView
+                android:id="@+id/temporal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:tag="regular"
+                android:hint="@string/none_empty"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/calendar_row"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dip"
+            android:paddingBottom="8dip"
+            android:paddingRight="?android:attr/scrollbarSize"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/view_calendar_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/office_calendar"
+                android:text="@string/view_calendar_entry"
+                android:tag="allcaps"
+                android:textColor="@color/white"
+                android:background="@drawable/button_primary_background"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
+

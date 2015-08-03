@@ -71,7 +71,7 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
                 inflater.inflate(R.menu.list_menu, menu);
                 break;
             case TASK:
-                inflater.inflate(R.menu.task_view_menu, menu);
+//                inflater.inflate(R.menu.task_view_menu, menu);
                 break;
             case SEARCH_RESULTS_TASK:
             case SEARCH_RESULTS_LIST:
