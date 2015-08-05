@@ -93,7 +93,7 @@
                         android:paddingTop="12dp"
                         android:orientation="vertical"
                         android:elevation="8dip"
-                        android:background="@color/theme_primary">
+                        android:background="@color/dialog_background">
 
                         <ImageButton
                             android:id="@+id/edit_button"
@@ -101,7 +101,8 @@
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_margin="12dp"
-                            android:src="@drawable/ic_edit_white_24dp"
+                            android:src="@drawable/ic_edit_black_24dp"
+                            android:background="@drawable/button_gray_background"
                             style="?android:attr/borderlessButtonStyle" />
 
                         <ImageButton
@@ -110,7 +111,8 @@
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_margin="12dp"
-                            android:src="@drawable/ic_done_white_24dp"
+                            android:src="@drawable/ic_done_black_24dp"
+                            android:background="@drawable/button_gray_background"
                             style="?android:attr/borderlessButtonStyle" />
 
                         <ImageButton
@@ -119,7 +121,8 @@
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_margin="12dp"
-                            android:src="@drawable/ic_schedule_white_24dp"
+                            android:src="@drawable/ic_schedule_black_24dp"
+                            android:background="@drawable/button_gray_background"
                             style="?android:attr/borderlessButtonStyle" />
 
                         <ImageButton
@@ -128,7 +131,8 @@
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_margin="12dp"
-                            android:src="@drawable/ic_delete_white_24dp"
+                            android:src="@drawable/ic_delete_black_24dp"
+                            android:background="@drawable/button_gray_background"
                             style="?android:attr/borderlessButtonStyle" />
 
                     </LinearLayout>
@@ -144,10 +148,9 @@
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="32dip"
-            android:layout_marginBottom="@dimen/fab_margin"
+            android:layout_margin="@dimen/fab_margin"
             app:layout_anchor="@id/entity_list_pane"
-            app:layout_anchorGravity="bottom|right"
+            app:layout_anchorGravity="bottom|left"
             android:src="@drawable/ic_add_white_24dp"
             android:onClick="onClickFab"
             />

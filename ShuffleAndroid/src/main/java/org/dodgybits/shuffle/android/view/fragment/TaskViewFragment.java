@@ -163,7 +163,12 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         long taskId = mTask.getLocalId().getId();
         Log.d(TAG, "Toggling complete on task " + mTask.getDescription() + " id=" + taskId + " tag=" + getTag());
         mEventManager.fire(new UpdateTasksCompletedEvent(taskId, !mTask.isComplete()));
-        mEventManager.fire(new NavigationRequestEvent(mLocationProvider.getLocation().parent()));
+    }
+
+    private void toggleDeleted() {
+        long taskId = mTask.getLocalId().getId();
+        Log.d(TAG, "Toggling deleted on task " + mTask.getDescription() + " id=" + taskId + " tag=" + getTag());
+        mEventManager.fire(new UpdateTasksDeletedEvent(taskId, !mTask.isDeleted()));
     }
 
     private void initializeArgCache() {
@@ -171,9 +176,12 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
         Bundle args = getArguments();
         long id = args.getLong(ID);
         int position = findPosition(id);
-        mCursor.moveToPosition(position);
-        mTask = mPersister.read(mCursor);
-        Log.d(TAG, "Read task from cursor at position " + position);
+        if (mCursor.moveToPosition(position)) {
+            mTask = mPersister.read(mCursor);
+            Log.d(TAG, "Read task from cursor at position " + position);
+        } else {
+            Log.w(TAG, "Invalid task position " + position + " cursor size " + mCursor.getCount());
+        }
     }
 
     private int findPosition(long id) {
@@ -263,9 +271,7 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
                 break;
             }
             case R.id.delete_button: {
-                Log.d(TAG, "Toggling delete on task");
-                mEventManager.fire(new UpdateTasksDeletedEvent(mTask.getLocalId().getId(), !mTask.isDeleted()));
-                mEventManager.fire(new NavigationRequestEvent(mLocationProvider.getLocation().parent()));
+                toggleDeleted();
                 break;
             }
         }
@@ -386,8 +392,8 @@ public class TaskViewFragment extends RoboFragment implements View.OnClickListen
     }
 
     private void updateToolbar(boolean isComplete, boolean isDeleted) {
-        mDeleteButton.setImageResource(isDeleted ? R.drawable.ic_restore_white_24dp : R.drawable.ic_delete_white_24dp);
-        mCompleteButton.setImageResource(isComplete ? R.drawable.ic_done_green_24dp : R.drawable.ic_done_white_24dp);
+        mDeleteButton.setImageResource(isDeleted ? R.drawable.ic_restore_black_24dp : R.drawable.ic_delete_black_24dp);
+        mCompleteButton.setImageResource(isComplete ? R.drawable.ic_done_green_24dp : R.drawable.ic_done_black_24dp);
     }
 
 
