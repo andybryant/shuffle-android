@@ -25,6 +25,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
@@ -34,16 +36,20 @@ import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.EntityUpdateListener;
 import org.dodgybits.shuffle.android.core.listener.ListSettingsListener;
 import org.dodgybits.shuffle.android.core.listener.LocationProvider;
+import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Task;
-import org.dodgybits.shuffle.android.core.model.encoding.TaskEncoder;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.view.Location;
+import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
+
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
 
 
-public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageChangeListener {
+public class TaskPagerFragment extends RoboFragment
+        implements ViewPager.OnPageChangeListener, View.OnClickListener {
     private static final String TAG = "TaskPagerFragment";
 
     @Inject
@@ -61,12 +67,18 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
     @Inject
     private LocationProvider mLocationProvider;
 
+    @Inject
+    private TaskPersister mTaskPersister;
+
+    private ImageButton mEditButton;
+    private ImageButton mCompleteButton;
+    private ImageButton mDeferButton;
+    private ImageButton mDeleteButton;
+
+
     Cursor mCursor;
-
     MyAdapter mAdapter;
-
     ViewPager mPager;
-
     Location mLocation;
 
     @Override
@@ -84,6 +96,17 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
         mPager.addOnPageChangeListener(this);
 
         mLocation = mLocationProvider.getLocation();
+
+        mEditButton = (ImageButton) getActivity().findViewById(R.id.edit_button);
+        mCompleteButton = (ImageButton) getActivity().findViewById(R.id.complete_button);
+        mDeferButton = (ImageButton) getActivity().findViewById(R.id.defer_button);
+        mDeleteButton = (ImageButton) getActivity().findViewById(R.id.delete_button);
+
+        mEditButton.setOnClickListener(this);
+        mCompleteButton.setOnClickListener(this);
+        mDeferButton.setOnClickListener(this);
+        mDeleteButton.setOnClickListener(this);
+
         updateCursor();
     }
 
@@ -101,9 +124,17 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
     }
 
     private void updateCursor(Cursor cursor) {
-        if (cursor == null || mCursor == cursor) {
+        if (cursor == null) {
             return;
         }
+        if (cursor == mCursor) {
+            if (mLocation != null && mPager != null) {
+                mPager.setCurrentItem(mLocation.getSelectedIndex());
+                updateToolbar();
+            }
+            return;
+        }
+
         if (getActivity() == null) {
             Log.w(TAG, "Activity not set on " + this);
             return;
@@ -117,6 +148,7 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
             mPager.setAdapter(mAdapter);
             mAdapter.notifyDataSetChanged();
             mPager.setCurrentItem(mLocation.getSelectedIndex());
+            updateToolbar();
         }
     }
 
@@ -130,6 +162,7 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
         if (mLocation.getSelectedIndex() != newIndex) {
             Location newView = mLocation.builderFrom().setSelectedIndex(newIndex).build();
             mEventManager.fire(new NavigationRequestEvent(newView));
+            updateToolbar();
         }
     }
 
@@ -157,8 +190,7 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
         @Override
         public long getItemId(int position) {
             mCursor.moveToPosition(position);
-            long taskId = mCursor.getLong(0);
-            return taskId;
+            return mCursor.getLong(0);
         }
 
         @Override
@@ -171,6 +203,11 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
                 mFragments[position] = fragment;
             }
             return fragment;
+        }
+
+        public Task getTask(int position) {
+            mCursor.moveToPosition(position);
+            return mTaskPersister.read(mCursor, false);
         }
 
         @Override
@@ -188,5 +225,63 @@ public class TaskPagerFragment extends RoboFragment implements ViewPager.OnPageC
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.edit_button: {
+                editTask();
+                break;
+            }
+            case R.id.complete_button: {
+                toggleComplete();
+                break;
+            }
+            case R.id.defer_button: {
+                // TODO
+                break;
+            }
+            case R.id.delete_button: {
+                toggleDeleted();
+                break;
+            }
+        }
+    }
+
+    private void editTask() {
+        Log.d(TAG, "Editing the action");
+        Task task = getSelectedTask();
+        Location location = Location.editTask(task.getLocalId());
+        mEventManager.fire(new NavigationRequestEvent(location));
+    }
+
+    private void toggleComplete() {
+        Task task = getSelectedTask();
+        long taskId = task.getLocalId().getId();
+        Log.d(TAG, "Toggling complete on task " + task.getDescription() +
+                " id=" + taskId + " tag=" + getTag());
+        mEventManager.fire(new UpdateTasksCompletedEvent(taskId, !task.isComplete()));
+    }
+
+    private void toggleDeleted() {
+        Task task = getSelectedTask();
+        long taskId = task.getLocalId().getId();
+        Log.d(TAG, "Toggling deleted on task " + task.getDescription() +
+                " id=" + taskId + " tag=" + getTag());
+        mEventManager.fire(new UpdateTasksDeletedEvent(taskId, !task.isDeleted()));
+    }
+
+    private void updateToolbar() {
+        Task task = getSelectedTask();
+        if (task != null) {
+            mDeleteButton.setImageResource(task.isDeleted() ? R.drawable.ic_restore_black_24dp :
+                    R.drawable.ic_delete_black_24dp);
+            mCompleteButton.setImageResource(task.isComplete() ? R.drawable.ic_done_green_24dp :
+                    R.drawable.ic_done_black_24dp);
+        }
+    }
+
+    private Task getSelectedTask() {
+        return mAdapter == null ? null : mAdapter.getTask(mPager.getCurrentItem());
+    }
 
 }

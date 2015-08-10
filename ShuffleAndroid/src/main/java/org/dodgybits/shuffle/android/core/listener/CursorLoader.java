@@ -26,6 +26,8 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.util.SparseIntArray;
 import com.google.inject.Inject;
+
+import org.dodgybits.shuffle.android.core.content.TaskCursorLoader;
 import org.dodgybits.shuffle.android.core.event.*;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
@@ -60,6 +62,7 @@ public class CursorLoader {
     private Location mLocation;
 
     private TaskListContext mTaskListContext;
+    private TaskSelector mTaskSelector;
 
     private TaskPersister mTaskPersister;
 
@@ -74,15 +77,25 @@ public class CursorLoader {
         Log.d(TAG, "Received view update event " + event);
         mLocation = event.getLocation();
         mTaskListContext = TaskListContext.create(mLocation);
-        restartListLoading(mLocation.getViewMode());
-        restartCountLoading(mLocation.getViewMode());
+        mTaskSelector = mTaskListContext.createSelectorWithPreferences(mActivity);
+
+        // delay call so that when list is reloaded straight away,
+        // other location update handlers have all been called
+        final Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                startListLoading(mLocation.getViewMode());
+                startCountLoading(mLocation.getViewMode());
+            }
+        });
     }
 
     private void onListSettingsUpdated(@Observes ListSettingsUpdatedEvent event) {
         if (event.getListQuery().equals(mLocation.getListQuery())) {
             // our list settings changed - reload list
-            restartListLoading(mLocation.getViewMode());
-            restartCountLoading(mLocation.getViewMode());
+            startListLoading(mLocation.getViewMode());
+            startCountLoading(mLocation.getViewMode());
         }
     }
 
@@ -100,17 +113,25 @@ public class CursorLoader {
         switch (viewMode) {
             case TASK:
             case TASK_LIST:
-                lm.initLoader(LOADER_ID_TASK_LIST_LOADER, null, TASK_LIST_LOADER_CALLBACKS);
+                lm.initLoader(listId(), null, TASK_LIST_LOADER_CALLBACKS);
                 break;
             case CONTEXT_LIST:
-                lm.initLoader(LOADER_ID_CONTEXT_LIST_LOADER, null, CONTEXT_LIST_LOADER_CALLBACKS);
+                lm.initLoader(listId(), null, CONTEXT_LIST_LOADER_CALLBACKS);
                 break;
             case PROJECT_LIST:
-                lm.initLoader(LOADER_ID_PROJECT_LIST_LOADER, null, PROJECT_LIST_LOADER_CALLBACKS);
+                lm.initLoader(listId(), null, PROJECT_LIST_LOADER_CALLBACKS);
                 break;
             default:
                 // TODO
         }
+    }
+
+    private int listId() {
+        return mTaskSelector.hashCode();
+    }
+
+    private int countId() {
+        return 31 * mTaskSelector.hashCode();
     }
 
     private void startCountLoading(ViewMode viewMode) {
@@ -118,10 +139,10 @@ public class CursorLoader {
         final LoaderManager lm = mActivity.getSupportLoaderManager();
         switch (viewMode) {
             case CONTEXT_LIST:
-                lm.initLoader(LOADER_ID_CONTEXT_TASK_COUNT_LOADER, null, CONTEXT_TASK_COUNT_LOADER_CALLBACKS);
+                lm.initLoader(countId(), null, CONTEXT_TASK_COUNT_LOADER_CALLBACKS);
                 break;
             case PROJECT_LIST:
-                lm.initLoader(LOADER_ID_PROJECT_TASK_COUNT_LOADER, null, PROJECT_TASK_COUNT_LOADER_CALLBACKS);
+                lm.initLoader(countId(), null, PROJECT_TASK_COUNT_LOADER_CALLBACKS);
                 break;
             default:
                 // TODO
@@ -134,13 +155,13 @@ public class CursorLoader {
         switch (viewMode) {
             case TASK:
             case TASK_LIST:
-                lm.restartLoader(LOADER_ID_TASK_LIST_LOADER, null, TASK_LIST_LOADER_CALLBACKS);
+                lm.restartLoader(listId(), null, TASK_LIST_LOADER_CALLBACKS);
                 break;
             case CONTEXT_LIST:
-                lm.restartLoader(LOADER_ID_CONTEXT_LIST_LOADER, null, CONTEXT_LIST_LOADER_CALLBACKS);
+                lm.restartLoader(listId(), null, CONTEXT_LIST_LOADER_CALLBACKS);
                 break;
             case PROJECT_LIST:
-                lm.restartLoader(LOADER_ID_PROJECT_LIST_LOADER, null, PROJECT_LIST_LOADER_CALLBACKS);
+                lm.restartLoader(listId(), null, PROJECT_LIST_LOADER_CALLBACKS);
                 break;
             default:
                 // TODO
@@ -152,10 +173,10 @@ public class CursorLoader {
         final LoaderManager lm = mActivity.getSupportLoaderManager();
         switch (viewMode) {
             case CONTEXT_LIST:
-                lm.restartLoader(LOADER_ID_CONTEXT_TASK_COUNT_LOADER, null, CONTEXT_TASK_COUNT_LOADER_CALLBACKS);
+                lm.restartLoader(countId(), null, CONTEXT_TASK_COUNT_LOADER_CALLBACKS);
                 break;
             case PROJECT_LIST:
-                lm.restartLoader(LOADER_ID_PROJECT_TASK_COUNT_LOADER, null, PROJECT_TASK_COUNT_LOADER_CALLBACKS);
+                lm.restartLoader(countId(), null, PROJECT_TASK_COUNT_LOADER_CALLBACKS);
                 break;
             default:
                 // TODO
@@ -171,7 +192,7 @@ public class CursorLoader {
                 @Override
                 public Loader<Cursor> onCreateLoader(int id, Bundle args) {
                     final TaskListContext listContext = mTaskListContext;
-                    return TaskListAdaptor.createLoader(mActivity, listContext);
+                    return TaskCursorLoader.createLoader(mActivity, listContext);
                 }
 
                 @Override

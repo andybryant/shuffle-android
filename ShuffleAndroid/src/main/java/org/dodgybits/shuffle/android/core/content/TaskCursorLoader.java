@@ -18,14 +18,26 @@ package org.dodgybits.shuffle.android.core.content;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
+import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 
 public class TaskCursorLoader extends CursorLoader {
     protected final Context mContext;
 
     private TaskSelector mSelector;
+
+    /**
+     * Creates the loader for {@link TaskListFragment}.
+     *
+     * @return always of {@link Cursor}.
+     */
+    public static Loader<Cursor> createLoader(Context context, TaskListContext listContext) {
+        return new TaskCursorLoader(context, listContext);
+    }
 
     public TaskCursorLoader(Context context, TaskListContext listContext) {
         this(context, listContext.createSelectorWithPreferences(context));

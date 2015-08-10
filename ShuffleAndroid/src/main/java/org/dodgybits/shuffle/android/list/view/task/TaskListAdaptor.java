@@ -210,14 +210,4 @@ public class TaskListAdaptor extends CursorAdapter {
         }
     }
 
-    /**
-     * Creates the loader for {@link TaskListFragment}.
-     *
-     * @return always of {@link Cursor}.
-     */
-    public static Loader<Cursor> createLoader(Context context, TaskListContext listContext) {
-        return new TaskCursorLoader(context, listContext);
-    }
-
-
 }

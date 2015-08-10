@@ -46,6 +46,7 @@ public class FragmentLoader {
     public static final String TAG_CONTEXT_LIST = "tag-context-list";
     public static final String TAG_PROJECT_LIST = "tag-project-list";
 
+    private Location mPrevLocation;
     private Location mLocation;
 
     private FragmentActivity mActivity;
@@ -56,11 +57,17 @@ public class FragmentLoader {
     }
 
     private void onViewUpdated(@Observes LocationUpdatedEvent event) {
+        mPrevLocation = mLocation;
         mLocation = event.getLocation();
     }
 
     private void onTaskListCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
         Log.i(TAG, "Task list Cursor loaded - loading fragment now");
+        if (!isNewLocation()) {
+            Log.d(TAG, "Not updating fragment since already loaded");
+            return;
+        }
+
         switch (mLocation.getViewMode()) {
             case TASK_LIST:
                 addTaskList();
@@ -77,13 +84,26 @@ public class FragmentLoader {
         }
     }
 
+    private boolean isNewLocation() {
+        return (mPrevLocation == null ||
+                mLocation.getViewMode() != mPrevLocation.getViewMode());
+    }
+
     private void onContextListCursorLoaded(@Observes ContextListCursorLoadedEvent event) {
+        if (!isNewLocation()) {
+            Log.d(TAG, "Not updating context list fragment since already loaded");
+            return;
+        }
         if (mLocation.getViewMode() == ViewMode.CONTEXT_LIST) {
             addContextList();
         }
     }
 
     private void onProjectListCursorLoaded(@Observes ProjectListCursorLoadedEvent event) {
+        if (!isNewLocation()) {
+            Log.d(TAG, "Not updating project list fragment since already loaded");
+            return;
+        }
         if (mLocation.getViewMode() == ViewMode.PROJECT_LIST) {
             addProjectList();
         }
