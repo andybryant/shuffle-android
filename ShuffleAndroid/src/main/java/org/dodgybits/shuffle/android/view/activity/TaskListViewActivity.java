@@ -39,10 +39,10 @@ public class TaskListViewActivity extends TaskListActivity {
     protected void validateLocation(Location location) {
         if (location.isListView()) {
             Log.d(TAG, "Switching to TaskListActivity");
-            redirect(TaskListActivity.class);
+            redirect(TaskListActivity.class, location);
         } else if (!UiUtilities.showListOnViewTask(getResources())) {
             Log.d(TAG, "Switching to TaskViewActivity");
-            redirect(TaskViewActivity.class);
+            redirect(TaskViewActivity.class, location);
         }
     }
 

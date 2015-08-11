@@ -138,7 +138,12 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
     }
 
     protected void redirect(Class newActivityClazz) {
-        Intent newIntent = new Intent(getIntent());
+        redirect(newActivityClazz, null);
+    }
+
+    protected void redirect(Class newActivityClazz, Location location) {
+        Intent newIntent = location == null ? new Intent(getIntent()) :
+                LocationParser.createIntent(this, location);
         newIntent.setClass(this, newActivityClazz);
         startActivity(newIntent);
         finish();

@@ -37,10 +37,10 @@ public class TaskListActivity extends AbstractMainActivity
         if (!location.isListView()) {
             if (UiUtilities.showListOnViewTask(getResources())) {
                 Log.d(TAG, "Switching to TaskListViewActivity");
-                redirect(TaskListViewActivity.class);
+                redirect(TaskListViewActivity.class, location);
             } else {
                 Log.d(TAG, "Switching to TaskViewActivity");
-                redirect(TaskViewActivity.class);
+                redirect(TaskViewActivity.class, location);
             }
         }
     }

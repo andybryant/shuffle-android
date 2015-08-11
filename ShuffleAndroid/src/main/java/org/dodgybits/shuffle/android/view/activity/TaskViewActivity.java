@@ -42,7 +42,7 @@ public class TaskViewActivity extends AbstractMainActivity {
     protected void validateLocation(Location location) {
         if (location.isListView()) {
             Log.d(TAG, "Switching to TaskListActivity");
-            redirect(TaskListActivity.class);
+            redirect(TaskListActivity.class, location);
         }
     }
 
