@@ -146,8 +146,6 @@ public class ContextListFragment extends RoboFragment {
         setHasOptionsMenu(true);
 
         Resources r = getActivity().getResources();
-//        sCompleteIcon = BitmapFactory.decodeResource(r, R.drawable.ic_done_white_24dp);
-//        sDeferIcon = BitmapFactory.decodeResource(r, R.drawable.ic_schedule_white_24dp);
         sActiveIcon = BitmapFactory.decodeResource(r, R.drawable.ic_visibility_white_24dp);
         sInactiveIcon = BitmapFactory.decodeResource(r, R.drawable.ic_visibility_off_white_24dp);
         sDeleteIcon = BitmapFactory.decodeResource(r, R.drawable.ic_delete_white_24dp);
@@ -199,13 +197,6 @@ public class ContextListFragment extends RoboFragment {
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        refreshChildCount();
-    }
-
     private void onViewLoaded(@Observes LocationUpdatedEvent event) {
         updateCursor();
     }
@@ -230,6 +221,7 @@ public class ContextListFragment extends RoboFragment {
         Log.d(TAG, "Swapping adapter cursor");
         mCursor = cursor;
         mListAdapter.changeCursor(cursor);
+        refreshChildCount();
     }
 
     private void onTaskCountCursorLoaded(@Observes ContextTaskCountLoadedEvent event) {
