@@ -345,13 +345,16 @@ public class ProjectListFragment extends RoboFragment {
 
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            ProjectHolder holder = (ProjectHolder) viewHolder;
+            Project project = holder.mProject;
             Id id = Id.create(viewHolder.getItemId());
+
             if (direction == ItemTouchHelper.LEFT) {
-                Log.d(TAG, "Deactivating project id " + id + " position=" + viewHolder.getAdapterPosition());
-                mEventManager.fire(new UpdateProjectActiveEvent(id, false));
+                Log.d(TAG, "Toggling active for project id " + id + " position=" + viewHolder.getAdapterPosition());
+                mEventManager.fire(new UpdateProjectActiveEvent(id, !project.isActive()));
             } else {
-                Log.d(TAG, "Deleting project id " + id + " position=" + viewHolder.getAdapterPosition());
-                mEventManager.fire(new UpdateProjectDeletedEvent(id, true));
+                Log.d(TAG, "Toggling delete for project id " + id + " position=" + viewHolder.getAdapterPosition());
+                mEventManager.fire(new UpdateProjectDeletedEvent(id, !project.isDeleted()));
             }
 
         }

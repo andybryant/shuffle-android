@@ -4,13 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/active_toggle"
-        android:title="@string/active_title"
-        app:actionLayout="@layout/active_switch"
+        android:id="@+id/complete_toggle"
+        android:title="@string/completed_title"
+        app:actionLayout="@layout/completed_switch"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_white_24dp"
         android:title="@string/menu_search"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_edit"
+        android:icon="@drawable/ic_edit_white_24dp"
+        android:title="@string/menu_edit"
+        android:visible="false"
+        app:showAsAction="never" />
 </menu>

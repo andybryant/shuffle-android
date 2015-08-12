@@ -344,13 +344,15 @@ public class ContextListFragment extends RoboFragment {
 
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            ContextHolder holder = (ContextHolder) viewHolder;
+            Context context = holder.mContext;
             Id id = Id.create(viewHolder.getItemId());
             if (direction == ItemTouchHelper.LEFT) {
-                Log.d(TAG, "Deactivating context id " + id + " position=" + viewHolder.getAdapterPosition());
-                mEventManager.fire(new UpdateContextActiveEvent(id, false));
+                Log.d(TAG, "Toggling active for context id " + id + " position=" + viewHolder.getAdapterPosition());
+                mEventManager.fire(new UpdateContextActiveEvent(id, !context.isActive()));
             } else {
-                Log.d(TAG, "Deleting context id " + id + " position=" + viewHolder.getAdapterPosition());
-                mEventManager.fire(new UpdateContextDeletedEvent(id, true));
+                Log.d(TAG, "Toggling delete for context id " + id + " position=" + viewHolder.getAdapterPosition());
+                mEventManager.fire(new UpdateContextDeletedEvent(id, !context.isDeleted()));
             }
 
         }

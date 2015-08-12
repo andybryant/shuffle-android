@@ -12,6 +12,7 @@ import android.widget.CompoundButton;
 
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.ActiveToggleEvent;
 import org.dodgybits.shuffle.android.core.event.CompletedToggleEvent;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
@@ -68,7 +69,7 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
                 inflater.inflate(R.menu.list_menu, menu);
                 break;
             case TASK_LIST:
-                inflater.inflate(R.menu.list_menu, menu);
+                inflater.inflate(R.menu.task_list_menu, menu);
                 break;
             case TASK:
 //                inflater.inflate(R.menu.task_view_menu, menu);
@@ -88,10 +89,8 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
         MenuItem editMenu = menu.findItem(R.id.action_edit);
         switch (mLocation.getViewMode()) {
             case CONTEXT_LIST:
-                editMenu.setTitle(getString(R.string.menu_edit, getString(R.string.context_name)));
                 break;
             case PROJECT_LIST:
-                editMenu.setTitle(getString(R.string.menu_edit, getString(R.string.project_name)));
                 break;
             case TASK_LIST:
                 TaskListContext listContext = TaskListContext.create(mLocation);
@@ -115,6 +114,7 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
         }
 
         addCompleteToggleListener(menu);
+        addActiveToggleListener(menu);
 
         return true;
     }
@@ -134,6 +134,29 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
                         Log.d(TAG, "complete toggle hit");
                         mEventManager.fire(new CompletedToggleEvent(
                                 completeSwitch.isChecked(),
+                                mLocation.getListQuery(),
+                                mLocation.getViewMode()));
+                    }
+                });
+            }
+        }
+    }
+
+    private void addActiveToggleListener(Menu menu) {
+        MenuItem toggleMenu = menu.findItem(R.id.active_toggle);
+        if (toggleMenu != null) {
+            final CompoundButton activeSwitch = (CompoundButton) toggleMenu.getActionView();
+            if (activeSwitch != null) {
+                Flag active = ListSettingsCache.findSettings(
+                        mLocation.getListQuery())
+                        .getActive(mActivity);
+                activeSwitch.setChecked(active == Flag.no);
+                activeSwitch.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(TAG, "active toggle hit");
+                        mEventManager.fire(new ActiveToggleEvent(
+                                activeSwitch.isChecked(),
                                 mLocation.getListQuery(),
                                 mLocation.getViewMode()));
                     }

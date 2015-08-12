@@ -187,6 +187,12 @@ public class ListSettings {
         return getFlag(context, LIST_FILTER_ACTIVE, mDefaultActive);
     }
 
+    public void setActive(Context context, Flag flag) {
+        getSharedPreferences(context).edit()
+                .putString(mPrefix + LIST_FILTER_ACTIVE, flag.name())
+                .commit();
+    }
+
     public Flag getCompleted(Context context) {
         return getFlag(context, LIST_FILTER_COMPLETED, mDefaultCompleted);
     }
