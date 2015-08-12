@@ -93,7 +93,8 @@ public class DateTimePickerActivity extends RoboActivity implements View.OnClick
         int fullFlags = DateUtils.FORMAT_SHOW_TIME |
                 DateUtils.FORMAT_SHOW_WEEKDAY  |
                 DateUtils.FORMAT_ABBREV_WEEKDAY |
-                DateUtils.FORMAT_SHOW_DATE;
+                DateUtils.FORMAT_SHOW_DATE |
+                DateUtils.FORMAT_ABBREV_MONTH;
         tomorrowRow.setOnClickListener(this);
         tomorrowDateTime.setText(DateUtils.formatDateTime(this, tomorrowMillis, flags));
         nextWeekRow.setOnClickListener(this);

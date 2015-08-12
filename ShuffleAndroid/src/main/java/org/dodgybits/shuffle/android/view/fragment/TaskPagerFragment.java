@@ -15,6 +15,8 @@
  */
 package org.dodgybits.shuffle.android.view.fragment;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -40,6 +42,7 @@ import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.view.Location;
+import org.dodgybits.shuffle.android.editor.activity.DateTimePickerActivity;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
 
@@ -51,6 +54,8 @@ import roboguice.fragment.RoboFragment;
 public class TaskPagerFragment extends RoboFragment
         implements ViewPager.OnPageChangeListener, View.OnClickListener {
     private static final String TAG = "TaskPagerFragment";
+
+    private static final int DEFERRED_CODE = 102;
 
     @Inject
     private ListSettingsListener mListSettingsListener;
@@ -108,6 +113,27 @@ public class TaskPagerFragment extends RoboFragment
         mDeleteButton.setOnClickListener(this);
 
         updateCursor();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "Got resultCode " + resultCode + " with data " + data);
+        switch (requestCode) {
+            case DEFERRED_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data != null) {
+                        long deferred = data.getLongExtra(DateTimePickerActivity.DATETIME_VALUE, 0L);
+                        Task.Builder builder = Task.newBuilder().mergeFrom(getSelectedTask())
+                                .setStartDate(deferred);
+                        builder.getChangeSet().showFromChanged();
+                        mTaskPersister.update(builder.build());
+                    }
+                }
+                break;
+
+            default:
+                Log.e(TAG, "Unknown requestCode: " + requestCode);
+        }
     }
 
     private void onViewUpdated(@Observes LocationUpdatedEvent event) {
@@ -237,7 +263,7 @@ public class TaskPagerFragment extends RoboFragment
                 break;
             }
             case R.id.defer_button: {
-                // TODO
+                deferTask();
                 break;
             }
             case R.id.delete_button: {
@@ -252,6 +278,15 @@ public class TaskPagerFragment extends RoboFragment
         Task task = getSelectedTask();
         Location location = Location.editTask(task.getLocalId());
         mEventManager.fire(new NavigationRequestEvent(location));
+    }
+
+    private void deferTask() {
+        Task task = getSelectedTask();
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(DateTimePickerActivity.TYPE);
+        intent.putExtra(DateTimePickerActivity.DATETIME_VALUE, task.getStartDate());
+        intent.putExtra(DateTimePickerActivity.TITLE, getString(R.string.title_deferred_picker));
+        startActivityForResult(intent, DEFERRED_CODE);
     }
 
     private void toggleComplete() {
