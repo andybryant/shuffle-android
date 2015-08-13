@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
@@ -33,7 +32,6 @@ import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
-import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.view.AbstractSwipeItemTouchHelperCallback;
 import org.dodgybits.shuffle.android.core.view.DividerItemDecoration;
 import org.dodgybits.shuffle.android.core.view.Location;
@@ -83,13 +81,20 @@ public class ProjectListFragment extends RoboFragment {
             super.onCreateActionMode(actionMode, menu);
             getActivity().getMenuInflater().inflate(R.menu.project_list_context_menu, menu);
 
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
             String entityName = getString(R.string.project_name);
             List<Integer> positions = mMultiSelector.getSelectedPositions();
             boolean isDeleted = false;
+            boolean isActive = true;
             if (positions != null && !positions.isEmpty() && mCursor != null) {
                 int position = positions.get(0);
                 Project project = mListAdapter.readProject(position);
                 isDeleted = project.isDeleted();
+                isActive = project.isActive();
             }
 
             MenuItem deleteMenu = menu.findItem(R.id.action_delete);
@@ -99,6 +104,12 @@ public class ProjectListFragment extends RoboFragment {
             MenuItem undeleteMenu = menu.findItem(R.id.action_undelete);
             undeleteMenu.setVisible(isDeleted);
             undeleteMenu.setTitle(getString(R.string.menu_undelete_entity, entityName));
+
+            MenuItem activeMenu = menu.findItem(R.id.action_active);
+            activeMenu.setVisible(!isActive);
+
+            MenuItem inactiveMenu = menu.findItem(R.id.action_inactive);
+            inactiveMenu.setVisible(isActive);
 
             return true;
         }
@@ -123,6 +134,17 @@ public class ProjectListFragment extends RoboFragment {
                     mEventManager.fire(new UpdateProjectDeletedEvent(projectId, false));
                     mActionMode.finish();
                     return true;
+
+                case R.id.action_active:
+                    mEventManager.fire(new UpdateProjectActiveEvent(projectId, true));
+                    mActionMode.finish();
+                    return true;
+
+                case R.id.action_inactive:
+                    mEventManager.fire(new UpdateProjectActiveEvent(projectId, false));
+                    mActionMode.finish();
+                    return true;
+
             }
             return false;
         }
@@ -271,6 +293,8 @@ public class ProjectListFragment extends RoboFragment {
             } else {
                 if (mMultiSelector.getSelectedPositions().isEmpty() && mActionMode != null) {
                     mActionMode.finish();
+                } else {
+                    mActionMode.invalidate();
                 }
             }
         }
@@ -285,6 +309,7 @@ public class ProjectListFragment extends RoboFragment {
         public boolean onLongClick(View v) {
             mActionMode = getRoboAppCompatActivity().startSupportActionMode(mEditMode);
             mMultiSelector.setSelected(this, true);
+            mActionMode.invalidate();
             return true;
         }
 

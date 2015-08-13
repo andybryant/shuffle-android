@@ -61,6 +61,8 @@
     <string name="menu_edit">Edit %s</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_undelete">Restore</string>
+    <string name="menu_active">Mark active</string>
+    <string name="menu_inactive">Mark inactive</string>
     <string name="menu_delete_entity">Delete %s</string>
     <string name="menu_undelete_entity">Restore %s</string>
     <string name="menu_revert">Revert</string>
