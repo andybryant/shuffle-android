@@ -71,12 +71,15 @@ public class TaskListItem extends View {
     private static final TextPaint sRegularPaint = new TextPaint();
     private static final TextPaint sBoldPaint = new TextPaint();
     private static final Paint sContextBackgroundPaint = new Paint();
+    private static final Paint sActiveIconPaint = new Paint();
     private static int sContextCornerSmallRadius;
     private static int sContextCornerLargeRadius;
 
     private static Bitmap sStateInactive;
     private static Bitmap sStateDeleted;
     private static Bitmap sStateCompleted;
+    private static Bitmap sMoreHorizontal;
+    private static Bitmap sActivated;
 
     private static Map<String, Bitmap> mContextIconMap;
 
@@ -123,6 +126,10 @@ public class TaskListItem extends View {
                     BitmapFactory.decodeResource(r, R.drawable.ic_delete_black_24dp);
             sStateCompleted =
                     BitmapFactory.decodeResource(r, R.drawable.ic_done_green_24dp);
+            sMoreHorizontal =
+                    BitmapFactory.decodeResource(r, R.drawable.ic_more_horiz_black_24dp);
+            sActivated =
+                    BitmapFactory.decodeResource(r, R.drawable.ic_done_black_24dp);
 
             mContextIconMap = Maps.newHashMap();        
     
@@ -154,7 +161,7 @@ public class TaskListItem extends View {
 
     private boolean mProjectNameVisible = true;
 
-    public void setTask(Task task, boolean projectNameVisible) {
+    public void setTask(Task task, boolean projectNameVisible, boolean isSelected) {
         mProjectNameVisible = projectNameVisible;
         mIsCompleted = task.isComplete();
         mProject = mProjectCache.findById(task.getProjectId());
@@ -162,8 +169,8 @@ public class TaskListItem extends View {
         List<Context> contexts = mContextCache.findById(task.getContextIds());
         mIsActive = TaskLifecycleState.getActiveStatus(task, contexts, mProject) == TaskLifecycleState.Status.yes;
         mIsDeleted = TaskLifecycleState.getDeletedStatus(task, mProject) != TaskLifecycleState.Status.no;
-        
         setTimestamp(task.getDueDate());
+        setSelected(isSelected);
 
         boolean changed = setContexts(contexts);
         changed |= setText(task.getDescription(), task.getDetails());
@@ -341,7 +348,20 @@ public class TaskListItem extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        // Draw the project name
+        int yOffset = (mFormattedProject.length() == 0) ? mCoordinates.projectOffset : 0;
+        drawProject(canvas);
+        drawState(canvas, yOffset);
+        drawDescription(canvas, yOffset);
+        drawSnippet(canvas, yOffset);
+        drawDate(canvas);
+        if (isActivated()) {
+            drawActivatedIndicator(canvas);
+        } else {
+            drawContexts(canvas);
+        }
+    }
+
+    private void drawProject(Canvas canvas) {
         Paint projectPaint = sBoldPaint;
         projectPaint.setColor(getFontColor(isDone() ? PROJECT_TEXT_COLOR_COMPLETE
                 : PROJECT_TEXT_COLOR_INCOMPLETE));
@@ -349,20 +369,22 @@ public class TaskListItem extends View {
         canvas.drawText(mFormattedProject, 0, mFormattedProject.length(),
                 mCoordinates.projectX, mCoordinates.projectY - mCoordinates.projectAscent,
                 projectPaint);
+    }
 
-        // Draw the task state. Most important being deleted, then complete, then inactive
+    private void drawState(Canvas canvas, int yOffset) {
         if (mIsDeleted) {
             canvas.drawBitmap(sStateDeleted,
-                    mCoordinates.stateX, mCoordinates.stateY, null);
+                    mCoordinates.stateX, mCoordinates.stateY + yOffset, null);
         } else if (mIsCompleted) {
             canvas.drawBitmap(sStateCompleted,
-                    mCoordinates.stateX, mCoordinates.stateY, null);
+                    mCoordinates.stateX, mCoordinates.stateY + yOffset, null);
         } else if (!mIsActive) {
             canvas.drawBitmap(sStateInactive,
-                    mCoordinates.stateX, mCoordinates.stateY, null);
+                    mCoordinates.stateX, mCoordinates.stateY + yOffset, null);
         }
+    }
 
-        // Description
+    private void drawDescription(Canvas canvas, int yOffset) {
         TextPaint descriptionPaint = isDone() ? sRegularPaint : sBoldPaint;
         descriptionPaint.setColor(getFontColor(isDone() ? DESCRIPTION_TEXT_COLOR_COMPLETE
                 : DESCRIPTION_TEXT_COLOR_INCOMPLETE));
@@ -370,11 +392,12 @@ public class TaskListItem extends View {
         canvas.save();
         canvas.translate(
                 mCoordinates.descriptionX,
-                mCoordinates.descriptionY);
+                mCoordinates.descriptionY + yOffset);
         mDescriptionLayout.draw(canvas);
         canvas.restore();
+    }
 
-        // Draw snippet
+    private void drawSnippet(Canvas canvas, int yOffset) {
         TextPaint snippetPaint = sRegularPaint;
         snippetPaint.setColor(getFontColor(isDone() ? SNIPPET_TEXT_COLOR_COMPLETE
                 : SNIPPET_TEXT_COLOR_INCOMPLETE));
@@ -382,11 +405,12 @@ public class TaskListItem extends View {
         canvas.save();
         canvas.translate(
                 mCoordinates.detailsX,
-                mCoordinates.detailsY);
+                mCoordinates.detailsY + yOffset);
         mSnippetLayout.draw(canvas);
         canvas.restore();
+    }
 
-        // Draw the date
+    private void drawDate(Canvas canvas) {
         TextPaint datePaint = isDone() ? sRegularPaint : sBoldPaint;;
         datePaint.setTextSize(mCoordinates.dateFontSize);
         datePaint.setColor(getFontColor(mIsCompleted ?
@@ -395,33 +419,43 @@ public class TaskListItem extends View {
                 - (int) datePaint.measureText(mFormattedDate, 0, mFormattedDate.length());
         canvas.drawText(mFormattedDate, 0, mFormattedDate.length(),
                 dateX, mCoordinates.dateY - mCoordinates.dateAscent, datePaint);
+    }
 
-        // Draw the contexts
+    private void drawContexts(Canvas canvas) {
+        int numContexts = Math.min(4, mContexts.size());
+        int radius = numContexts <= 1 ? sContextCornerLargeRadius : sContextCornerSmallRadius;
         if (mContexts.isEmpty()) {
-            int bgColor = sTextColours.getBackgroundColour(0);
+            int bgColor = sTextColours.getBackgroundColour(17);
             sContextBackgroundPaint.setShader(getShader(bgColor, mCoordinates.contextRects[0][0], 0f));
             canvas.drawRoundRect(mCoordinates.contextRects[0][0],
-                    sContextCornerLargeRadius, sContextCornerLargeRadius, sContextBackgroundPaint);
+                    radius, radius, sContextBackgroundPaint);
         } else {
-            int numContexts = Math.min(4, mContexts.size());
             for (int i = 0; i < numContexts; i++) {
                 Context context = mContexts.get(i);
                 int bgColor = sTextColours.getBackgroundColour(context.getColourIndex());
                 RectF contextRect = mCoordinates.contextRects[numContexts - 1][i];
                 sContextBackgroundPaint.setShader(getShader(bgColor, contextRect));
-                if (numContexts == 1) {
-                    canvas.drawRoundRect(contextRect,
-                            sContextCornerLargeRadius, sContextCornerLargeRadius, sContextBackgroundPaint);
-                } else {
-                    canvas.drawRoundRect(contextRect,
-                            sContextCornerSmallRadius, sContextCornerSmallRadius, sContextBackgroundPaint);
-//                    canvas.drawRect(contextRect, sContextBackgroundPaint);
-                }
+                canvas.drawRoundRect(contextRect, radius, radius, sContextBackgroundPaint);
                 Bitmap contextIcon = getContextIcon(context.getIconName());
                 RectF destIconRect = mCoordinates.contextDestIconRects[numContexts - 1][i];
                 canvas.drawBitmap(contextIcon, mCoordinates.contextSourceIconRect, destIconRect, null);
             }
         }
+        if (mContexts.size() > 4) {
+            canvas.drawBitmap(sMoreHorizontal, mCoordinates.contextSourceIconRect,
+                    mCoordinates.contextMoreRect, null);
+        }
+    }
+
+    private void drawActivatedIndicator(Canvas canvas) {
+        sContextBackgroundPaint.setShader(null);
+//        sContextBackgroundPaint.setColor(getResources().getColor(R.color.white));
+//        canvas.drawRect(mCoordinates.contextRects[0][0], sContextBackgroundPaint);
+        sContextBackgroundPaint.setColor(sTextColours.getBackgroundColour(0));
+        int radius = sContextCornerLargeRadius;
+        canvas.drawRoundRect(mCoordinates.activatedRect, radius, radius, sContextBackgroundPaint);
+        canvas.drawBitmap(sActivated, mCoordinates.contextSourceIconRect,
+                mCoordinates.contextDestIconRects[0][0], null);
     }
 
     private Bitmap getContextIcon(String iconName) {

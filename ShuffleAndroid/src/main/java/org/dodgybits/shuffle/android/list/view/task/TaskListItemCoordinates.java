@@ -33,6 +33,7 @@ public class TaskListItemCoordinates {
     int projectLineCount;
     int projectFontSize;
     int projectAscent;
+    int projectOffset;
 
     // Details.
     int detailsX;
@@ -58,6 +59,8 @@ public class TaskListItemCoordinates {
     Rect contextSourceIconRect;
     RectF[][] contextRects = new RectF[4][4];
     RectF[][] contextDestIconRects = new RectF[4][4];
+    Rect contextMoreRect;
+    RectF activatedRect;
 
     // Date.
     int dateX;
@@ -173,6 +176,8 @@ public class TaskListItemCoordinates {
             coordinates.projectLineCount = 1; //getLineCount(project);
             coordinates.projectFontSize = (int) project.getTextSize();
             coordinates.projectAscent = Math.round(project.getPaint().ascent());
+            coordinates.projectOffset = context.getResources().
+                    getDimensionPixelSize(R.dimen.task_list_project_offset);
 
             TextView details = (TextView) view.findViewById(R.id.details);
             coordinates.detailsX = UiUtilities.getX(details);
@@ -224,9 +229,9 @@ public class TaskListItemCoordinates {
                     coordinates.contextsX + coordinates.contextsWidth - padding,
                     coordinates.contextsY + 3 * coordinates.contextsHeight / 4 - padding);
             coordinates.contextRects[2][0] = new RectF(
-                    coordinates.contextsX + coordinates.contextsWidth / 4,
+                    coordinates.contextsX ,
                     coordinates.contextsY,
-                    coordinates.contextsX + 3 * coordinates.contextsWidth / 4,
+                    coordinates.contextsX + coordinates.contextsWidth,
                     coordinates.contextsY + coordinates.contextsHeight / 2);
             coordinates.contextDestIconRects[2][0] = new RectF(
                     coordinates.contextsX + coordinates.contextsWidth / 4 +  padding,
@@ -269,6 +274,15 @@ public class TaskListItemCoordinates {
                     coordinates.contextsX + coordinates.contextsWidth,
                     coordinates.contextsY + coordinates.contextsHeight);
             coordinates.contextDestIconRects[3][3] = inset(coordinates.contextRects[3][3], padding);
+            coordinates.contextMoreRect = new Rect(
+                    coordinates.contextsX + coordinates.contextsWidth / 4,
+                    coordinates.contextsY + coordinates.contextsHeight +
+                            coordinates.projectOffset / 2,
+                    coordinates.contextsX + 3 * coordinates.contextsWidth / 4,
+                    coordinates.contextsY + coordinates.contextsHeight +
+                            coordinates.projectOffset / 2 +
+                            coordinates.contextsWidth / 2);
+            coordinates.activatedRect = inset(coordinates.contextRects[0][0], padding);
 
             TextView date = (TextView) view.findViewById(R.id.date);
             coordinates.dateX = UiUtilities.getX(date);

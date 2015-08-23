@@ -323,7 +323,8 @@ public class TaskRecyclerFragment extends RoboFragment {
         public void bindTask(Task task) {
             mTask = task;
             boolean projectVisible = mTaskListContext == null || mTaskListContext.isProjectNameVisible();
-            mTaskListItem.setTask(task, projectVisible);
+            boolean isSelected = mLocation.getTaskId().equals(mTask.getLocalId());
+            mTaskListItem.setTask(task, projectVisible, isSelected);
         }
 
         @Override

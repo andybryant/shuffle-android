@@ -44,6 +44,7 @@ import org.dodgybits.shuffle.android.preference.model.Preferences;
 import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import org.dodgybits.shuffle.sync.model.TaskChangeSet;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -674,8 +675,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
                 return !context.isDeleted();
             }
         }));
-
-
+        Collections.sort(contexts);
 
         int viewCount = mContextContainer.getChildCount();
         if (contexts.isEmpty()) {
