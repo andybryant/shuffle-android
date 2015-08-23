@@ -1,6 +1,6 @@
 <resources>
-    <dimen name="project_font_size">20sp</dimen>
-    <dimen name="contents_font_size">18sp</dimen>
+    <!--<dimen name="project_font_size">20sp</dimen>-->
+    <!--<dimen name="contents_font_size">18sp</dimen>-->
 
     <dimen name="keyline_1">24dp</dimen>
     <dimen name="keyline_1_minus_8dp">16dp</dimen>

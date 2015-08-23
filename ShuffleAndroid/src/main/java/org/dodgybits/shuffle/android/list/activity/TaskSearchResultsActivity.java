@@ -24,7 +24,7 @@ import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.view.Location;
-import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
+import org.dodgybits.shuffle.android.list.view.task.TaskRecyclerFragment;
 
 import roboguice.event.Observes;
 import roboguice.inject.ContextScopedProvider;
@@ -33,7 +33,7 @@ public class TaskSearchResultsActivity extends AbstractMainActivity {
     public static final String TAG = "TaskSearchResultsAct";
 
     @Inject
-    ContextScopedProvider<TaskListFragment> mTaskListFragmentProvider;
+    ContextScopedProvider<TaskRecyclerFragment> mTaskListFragmentProvider;
 
     @Override
     public Location.LocationActivity getLocationActivity() {

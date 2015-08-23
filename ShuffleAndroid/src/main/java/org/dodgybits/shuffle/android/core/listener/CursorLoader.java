@@ -25,10 +25,18 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.util.SparseIntArray;
+
 import com.google.inject.Inject;
 
 import org.dodgybits.shuffle.android.core.content.TaskCursorLoader;
-import org.dodgybits.shuffle.android.core.event.*;
+import org.dodgybits.shuffle.android.core.event.ContextListCursorLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.ContextTaskCountLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.LoadCountCursorEvent;
+import org.dodgybits.shuffle.android.core.event.LoadListCursorEvent;
+import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.ProjectListCursorLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.ProjectTaskCountLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.core.view.Location;
@@ -38,10 +46,10 @@ import org.dodgybits.shuffle.android.list.content.ProjectCursorLoader;
 import org.dodgybits.shuffle.android.list.event.ListSettingsUpdatedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
-import org.dodgybits.shuffle.android.list.view.task.TaskListAdaptor;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
+
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
@@ -49,11 +57,6 @@ import roboguice.inject.ContextSingleton;
 @ContextSingleton
 public class CursorLoader {
     private static final String TAG = "CursorLoader";
-    private static final int LOADER_ID_TASK_LIST_LOADER = 1;
-    private static final int LOADER_ID_CONTEXT_LIST_LOADER = 2;
-    private static final int LOADER_ID_CONTEXT_TASK_COUNT_LOADER = 3;
-    private static final int LOADER_ID_PROJECT_LIST_LOADER = 4;
-    private static final int LOADER_ID_PROJECT_TASK_COUNT_LOADER = 5;
 
     private FragmentActivity mActivity;
 

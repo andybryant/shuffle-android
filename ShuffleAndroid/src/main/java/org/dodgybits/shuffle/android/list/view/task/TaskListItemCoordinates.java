@@ -1,29 +1,26 @@
 package org.dodgybits.shuffle.android.list.view.task;
 
 import android.content.Context;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.util.FontUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 
 /**
  * Represents the coordinates of elements inside a TaskListItem
- * (eg, checkbox, project, description, contexts, etc.) It will inflate a view,
+ * (e.g. project, description, contexts, etc.) It will inflate a view,
  * and record the coordinates of each element after layout. This will allows us
  * to easily improve performance by creating custom view while still defining
  * layout in XML files.
  */
 public class TaskListItemCoordinates {
-
-    private static int CONTENT_LENGTH;
-
-    // Checkmark.
-    int checkmarkX;
-    int checkmarkY;
-    int checkmarkWidthIncludingMargins;
 
     // Active and deleted state.
     int stateX;
@@ -37,25 +34,31 @@ public class TaskListItemCoordinates {
     int projectFontSize;
     int projectAscent;
 
-    // Contents.
-    int contentsX;
-    int contentsY;
-    int contentsWidth;
-    int contentsLineCount;
-    int contentsFontSize;
-    int contentsAscent;
+    // Details.
+    int detailsX;
+    int detailsY;
+    int detailsWidth;
+    int detailsLineCount;
+    int detailsFontSize;
+    int detailsAscent;
+
+    // Description.
+    int descriptionX;
+    int descriptionY;
+    int descriptionWidth;
+    int descriptionLineCount;
+    int descriptionFontSize;
+    int descriptionAscent;
 
     // Contexts
     int contextsX;
     int contextsY;
-    int contextsFontSize;
     int contextsWidth;
     int contextsHeight;
-    int contextsAscent;
+    Rect contextSourceIconRect;
+    RectF[][] contextRects = new RectF[4][4];
+    RectF[][] contextDestIconRects = new RectF[4][4];
 
-    int contextIconWidth;
-    int contextIconHeight;
-    
     // Date.
     int dateX;
     int dateXEnd;
@@ -66,7 +69,7 @@ public class TaskListItemCoordinates {
 
     // Cache to save Coordinates based on view width.
     private static SparseArray<TaskListItemCoordinates> mCache =
-            new SparseArray<TaskListItemCoordinates>();
+            new SparseArray<>();
 
     // Not directly instantiable.
     private TaskListItemCoordinates() {}
@@ -86,7 +89,7 @@ public class TaskListItemCoordinates {
      * Returns the height of the view in this mode.
      */
     public static int getHeight(Context context) {
-        return context.getResources().getDimensionPixelSize(R.dimen.list_item_height);
+        return context.getResources().getDimensionPixelSize(R.dimen.task_list_item_height);
     }
 
 
@@ -120,9 +123,16 @@ public class TaskListItemCoordinates {
     }
 
     /**
-     * Returns the length (maximum of characters) of contents in this mode.
+     * Returns the length (maximum of characters) of details in this mode.
      */
-    public static int getContentsLength(Context context) {
+    public static int getDetailsLength(Context context) {
+        return context.getResources().getInteger(R.integer.content_length);
+    }
+
+    /**
+     * Returns the length (maximum of characters) of description in this mode.
+     */
+    public static int getDescriptionLength(Context context) {
         return context.getResources().getInteger(R.integer.content_length);
     }
 
@@ -146,16 +156,11 @@ public class TaskListItemCoordinates {
             // Layout the appropriate view.
             int height = getHeight(context);
             View view = LayoutInflater.from(context).inflate(R.layout.task_list_item, null);
+            FontUtils.setCustomFont(view, context.getAssets());
             int widthSpec = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
             int heightSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
             view.measure(widthSpec, heightSpec);
             view.layout(0, 0, width, height);
-
-            // Records coordinates.
-            View checkmark = view.findViewById(R.id.checkmark);
-            coordinates.checkmarkX = UiUtilities.getX(checkmark);
-            coordinates.checkmarkY = UiUtilities.getY(checkmark);
-            coordinates.checkmarkWidthIncludingMargins = getWidth(checkmark, true);
 
             View state = view.findViewById(R.id.active_state);
             coordinates.stateX = UiUtilities.getX(state);
@@ -165,29 +170,105 @@ public class TaskListItemCoordinates {
             coordinates.projectX = UiUtilities.getX(project);
             coordinates.projectY = UiUtilities.getY(project);
             coordinates.projectWidth = getWidth(project, false);
-            coordinates.projectLineCount = getLineCount(project);
+            coordinates.projectLineCount = 1; //getLineCount(project);
             coordinates.projectFontSize = (int) project.getTextSize();
             coordinates.projectAscent = Math.round(project.getPaint().ascent());
 
-            TextView contents = (TextView) view.findViewById(R.id.contents);
-            coordinates.contentsX = UiUtilities.getX(contents);
-            coordinates.contentsY = UiUtilities.getY(contents);
-            coordinates.contentsWidth = getWidth(contents, false);
-            coordinates.contentsLineCount = getLineCount(contents);
-            coordinates.contentsFontSize = (int) contents.getTextSize();
-            coordinates.contentsAscent = Math.round(contents.getPaint().ascent());
+            TextView details = (TextView) view.findViewById(R.id.details);
+            coordinates.detailsX = UiUtilities.getX(details);
+            coordinates.detailsY = UiUtilities.getY(details);
+            coordinates.detailsWidth = getWidth(details, false);
+            coordinates.detailsLineCount = 1; //getLineCount(details);
+            coordinates.detailsFontSize = (int) details.getTextSize();
+            coordinates.detailsAscent = Math.round(details.getPaint().ascent());
 
-            TextView contexts = (TextView) view.findViewById(R.id.contexts);
+            TextView description = (TextView) view.findViewById(R.id.description);
+            coordinates.descriptionX = UiUtilities.getX(description);
+            coordinates.descriptionY = UiUtilities.getY(description);
+            coordinates.descriptionWidth = getWidth(description, false);
+            coordinates.descriptionLineCount = 1; //getLineCount(description);
+            coordinates.descriptionFontSize = (int) description.getTextSize();
+            coordinates.descriptionAscent = Math.round(description.getPaint().ascent());
+
+            ImageView contexts = (ImageView) view.findViewById(R.id.context_block);
             coordinates.contextsX = UiUtilities.getX(contexts);
             coordinates.contextsY = UiUtilities.getY(contexts);
             coordinates.contextsWidth = getWidth(contexts, false);
             coordinates.contextsHeight = getHeight(contexts, false);
-            coordinates.contextsFontSize = (int) contexts.getTextSize();
-            coordinates.contextsAscent = Math.round(contexts.getPaint().ascent());
-
-            View contextIcon = view.findViewById(R.id.context_icon);
-            coordinates.contextIconWidth = getWidth(contextIcon, false);
-            coordinates.contextIconHeight = getHeight(contextIcon, false);
+            float doublePadding = contexts.getPaddingLeft();
+            float padding = contexts.getPaddingLeft() / 2f;
+            coordinates.contextRects[0][0] = new RectF(
+                    coordinates.contextsX,
+                    coordinates.contextsY,
+                    coordinates.contextsX + coordinates.contextsWidth,
+                    coordinates.contextsY + coordinates.contextsHeight);
+            coordinates.contextDestIconRects[0][0] = inset(coordinates.contextRects[0][0], doublePadding);
+            coordinates.contextRects[1][0] = new RectF(
+                    coordinates.contextsX,
+                    coordinates.contextsY,
+                    coordinates.contextsX + coordinates.contextsWidth / 2,
+                    coordinates.contextsY + coordinates.contextsHeight);
+            coordinates.contextDestIconRects[1][0] = new RectF(
+                    coordinates.contextsX +  padding,
+                    coordinates.contextsY + coordinates.contextsHeight / 4 + padding,
+                    coordinates.contextsX + coordinates.contextsWidth / 2 - padding,
+                    coordinates.contextsY + 3 * coordinates.contextsHeight / 4 - padding);
+            coordinates.contextRects[1][1] = new RectF(
+                    coordinates.contextsX + coordinates.contextsWidth / 2,
+                    coordinates.contextsY,
+                    coordinates.contextsX + coordinates.contextsWidth,
+                    coordinates.contextsY + coordinates.contextsHeight);
+            coordinates.contextDestIconRects[1][1] = new RectF(
+                    coordinates.contextsX + coordinates.contextsWidth / 2 +  padding,
+                    coordinates.contextsY + coordinates.contextsHeight / 4 + padding,
+                    coordinates.contextsX + coordinates.contextsWidth - padding,
+                    coordinates.contextsY + 3 * coordinates.contextsHeight / 4 - padding);
+            coordinates.contextRects[2][0] = new RectF(
+                    coordinates.contextsX + coordinates.contextsWidth / 4,
+                    coordinates.contextsY,
+                    coordinates.contextsX + 3 * coordinates.contextsWidth / 4,
+                    coordinates.contextsY + coordinates.contextsHeight / 2);
+            coordinates.contextDestIconRects[2][0] = new RectF(
+                    coordinates.contextsX + coordinates.contextsWidth / 4 +  padding,
+                    coordinates.contextsY + padding,
+                    coordinates.contextsX + 3 * coordinates.contextsWidth / 4 - padding,
+                    coordinates.contextsY + coordinates.contextsHeight / 2 - padding);
+            coordinates.contextRects[2][1] = new RectF(
+                    coordinates.contextsX,
+                    coordinates.contextsY + coordinates.contextsHeight / 2,
+                    coordinates.contextsX + coordinates.contextsWidth / 2,
+                    coordinates.contextsY + coordinates.contextsHeight);
+            coordinates.contextDestIconRects[2][1] = inset(coordinates.contextRects[2][1], padding);
+            coordinates.contextRects[2][2] = new RectF(
+                    coordinates.contextsX + coordinates.contextsWidth / 2,
+                    coordinates.contextsY + coordinates.contextsHeight / 2,
+                    coordinates.contextsX + coordinates.contextsWidth,
+                    coordinates.contextsY + coordinates.contextsHeight);
+            coordinates.contextDestIconRects[2][2] = inset(coordinates.contextRects[2][2], padding);
+            coordinates.contextRects[3][0] = new RectF(
+                    coordinates.contextsX,
+                    coordinates.contextsY,
+                    coordinates.contextsX + coordinates.contextsWidth / 2,
+                    coordinates.contextsY + coordinates.contextsHeight / 2);
+            coordinates.contextDestIconRects[3][0] = inset(coordinates.contextRects[3][0], padding);
+            coordinates.contextRects[3][1] = new RectF(
+                    coordinates.contextsX + coordinates.contextsWidth / 2,
+                    coordinates.contextsY,
+                    coordinates.contextsX + coordinates.contextsWidth,
+                    coordinates.contextsY + coordinates.contextsHeight / 2);
+            coordinates.contextDestIconRects[3][1] = inset(coordinates.contextRects[3][1], padding);
+            coordinates.contextRects[3][2] = new RectF(
+                    coordinates.contextsX,
+                    coordinates.contextsY + coordinates.contextsHeight / 2,
+                    coordinates.contextsX + coordinates.contextsWidth / 2,
+                    coordinates.contextsY + coordinates.contextsHeight);
+            coordinates.contextDestIconRects[3][2] = inset(coordinates.contextRects[3][2], padding);
+            coordinates.contextRects[3][3] = new RectF(
+                    coordinates.contextsX + coordinates.contextsWidth / 2,
+                    coordinates.contextsY + coordinates.contextsHeight / 2,
+                    coordinates.contextsX + coordinates.contextsWidth,
+                    coordinates.contextsY + coordinates.contextsHeight);
+            coordinates.contextDestIconRects[3][3] = inset(coordinates.contextRects[3][3], padding);
 
             TextView date = (TextView) view.findViewById(R.id.date);
             coordinates.dateX = UiUtilities.getX(date);
@@ -198,5 +279,49 @@ public class TaskListItemCoordinates {
             coordinates.dateAscent = Math.round(date.getPaint().ascent());
         }
         return coordinates;
+    }
+
+    private static RectF inset(RectF src, float inset) {
+        return new RectF(
+                src.left + inset,
+                src.top + inset,
+                src.right - inset,
+                src.bottom - inset);
+    }
+
+    @Override
+    public String toString() {
+        return "TaskListItemCoordinates{" +
+                "stateX=" + stateX +
+                ", stateY=" + stateY +
+                ", projectX=" + projectX +
+                ", projectY=" + projectY +
+                ", projectWidth=" + projectWidth +
+                ", projectLineCount=" + projectLineCount +
+                ", projectFontSize=" + projectFontSize +
+                ", projectAscent=" + projectAscent +
+                ", detailsX=" + detailsX +
+                ", detailsY=" + detailsY +
+                ", detailsWidth=" + detailsWidth +
+                ", detailsLineCount=" + detailsLineCount +
+                ", detailsFontSize=" + detailsFontSize +
+                ", detailsAscent=" + detailsAscent +
+                ", descriptionX=" + descriptionX +
+                ", descriptionY=" + descriptionY +
+                ", descriptionWidth=" + descriptionWidth +
+                ", descriptionLineCount=" + descriptionLineCount +
+                ", descriptionFontSize=" + descriptionFontSize +
+                ", descriptionAscent=" + descriptionAscent +
+                ", contextsX=" + contextsX +
+                ", contextsY=" + contextsY +
+                ", contextsWidth=" + contextsWidth +
+                ", contextsHeight=" + contextsHeight +
+                ", dateX=" + dateX +
+                ", dateXEnd=" + dateXEnd +
+                ", dateY=" + dateY +
+                ", dateWidth=" + dateWidth +
+                ", dateFontSize=" + dateFontSize +
+                ", dateAscent=" + dateAscent +
+                '}';
     }
 }

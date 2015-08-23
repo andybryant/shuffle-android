@@ -22,7 +22,7 @@ import android.support.v4.content.Loader;
 
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
-import org.dodgybits.shuffle.android.list.view.task.TaskListFragment;
+import org.dodgybits.shuffle.android.list.view.task.TaskRecyclerFragment;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 
 public class TaskCursorLoader extends CursorLoader {
@@ -31,7 +31,7 @@ public class TaskCursorLoader extends CursorLoader {
     private TaskSelector mSelector;
 
     /**
-     * Creates the loader for {@link TaskListFragment}.
+     * Creates the loader for {@link TaskRecyclerFragment}.
      *
      * @return always of {@link Cursor}.
      */

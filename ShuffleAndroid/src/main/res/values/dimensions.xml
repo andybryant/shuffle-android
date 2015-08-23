@@ -39,18 +39,19 @@
     <dimen name="text_size_diff_large_small">6sp</dimen>
 
 
-    <dimen name="list_item_height">70sp</dimen>
+    <dimen name="list_item_height">72dp</dimen>
+    <dimen name="task_list_item_height">84dp</dimen>
 
     <!-- Task list items -->
-    <dimen name="activestate_margin_left">0dip</dimen>
-    <dimen name="activestate_margin_top">10sp</dimen>
-    <dimen name="checkmark_margin_top">3sp</dimen>
-    <dimen name="date_margin_top">7sp</dimen>
+    <dimen name="state_margin_left">0dip</dimen>
+    <dimen name="state_margin_top">10sp</dimen>
+    <dimen name="date_margin_top">8sp</dimen>
+    <dimen name="date_margin_right">12sp</dimen>
 
-    <dimen name="project_font_size">18sp</dimen>
-    <dimen name="contents_font_size">16sp</dimen>
-    <dimen name="date_font_size">13sp</dimen>
-    <dimen name="contexts_font_size">13sp</dimen>
+    <dimen name="project_font_size">20sp</dimen>
+    <dimen name="description_font_size">18sp</dimen>
+    <dimen name="details_font_size">18sp</dimen>
+    <dimen name="date_font_size">18sp</dimen>
 
     <dimen name="keyline_1">16dp</dimen>
     <dimen name="keyline_1_minus_8dp">8dp</dimen>
@@ -77,11 +78,11 @@
 
     <dimen name="context_widget_corner_radius">5dip</dimen>
 
-    <dimen name="fab_elevation">8dp</dimen>
-    <dimen name="fab_press_translation_z">9dp</dimen>
-    <dimen name="fab_size">56dp</dimen>
-    <dimen name="fab_size_small">40dp</dimen>
-    <dimen name="fab_icon_size">24dp</dimen>
+    <!--<dimen name="fab_elevation">8dp</dimen>-->
+    <!--<dimen name="fab_press_translation_z">9dp</dimen>-->
+    <!--<dimen name="fab_size">56dp</dimen>-->
+    <!--<dimen name="fab_size_small">40dp</dimen>-->
+    <!--<dimen name="fab_icon_size">24dp</dimen>-->
 
 
 </resources>
