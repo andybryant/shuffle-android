@@ -196,6 +196,7 @@ public class TaskRecyclerFragment extends RoboFragment {
             mEnableTaskReordering = mTaskListContext.showMoveActions();
 //            mSelectedTaskId = mLocation.getSelectedIndex();
             updateCursor();
+            mListAdapter.notifyDataSetChanged();
         }
     }
 
@@ -323,7 +324,7 @@ public class TaskRecyclerFragment extends RoboFragment {
         public void bindTask(Task task) {
             mTask = task;
             boolean projectVisible = mTaskListContext == null || mTaskListContext.isProjectNameVisible();
-            boolean isSelected = mLocation.getTaskId().equals(mTask.getLocalId());
+            boolean isSelected = mLocation.getSelectedIndex() == getAdapterPosition();
             mTaskListItem.setTask(task, projectVisible, isSelected);
         }
 

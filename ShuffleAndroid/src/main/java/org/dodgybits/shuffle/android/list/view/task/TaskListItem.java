@@ -71,7 +71,6 @@ public class TaskListItem extends View {
     private static final TextPaint sRegularPaint = new TextPaint();
     private static final TextPaint sBoldPaint = new TextPaint();
     private static final Paint sContextBackgroundPaint = new Paint();
-    private static final Paint sActiveIconPaint = new Paint();
     private static int sContextCornerSmallRadius;
     private static int sContextCornerLargeRadius;
 
@@ -157,15 +156,12 @@ public class TaskListItem extends View {
         sInit = false;
     }
 
-    private int mOrder;
-
     private boolean mProjectNameVisible = true;
 
     public void setTask(Task task, boolean projectNameVisible, boolean isSelected) {
         mProjectNameVisible = projectNameVisible;
         mIsCompleted = task.isComplete();
         mProject = mProjectCache.findById(task.getProjectId());
-        mOrder = task.getOrder();
         List<Context> contexts = mContextCache.findById(task.getContextIds());
         mIsActive = TaskLifecycleState.getActiveStatus(task, contexts, mProject) == TaskLifecycleState.Status.yes;
         mIsDeleted = TaskLifecycleState.getDeletedStatus(task, mProject) != TaskLifecycleState.Status.no;
