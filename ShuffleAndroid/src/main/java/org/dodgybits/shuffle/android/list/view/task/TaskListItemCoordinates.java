@@ -57,8 +57,8 @@ public class TaskListItemCoordinates {
     int contextsWidth;
     int contextsHeight;
     Rect contextSourceIconRect;
-    RectF[][] contextRects = new RectF[4][4];
-    RectF[][] contextDestIconRects = new RectF[4][4];
+    RectF[][] contextRects = new RectF[5][4];
+    RectF[][] contextDestIconRects = new RectF[5][4];
     Rect contextMoreRect;
     RectF activatedRect;
 
@@ -209,71 +209,55 @@ public class TaskListItemCoordinates {
                     coordinates.contextsY + coordinates.contextsHeight);
             coordinates.contextDestIconRects[0][0] = inset(coordinates.contextRects[0][0], doublePadding);
             coordinates.contextRects[1][0] = new RectF(
-                    coordinates.contextsX,
+                    coordinates.contextsX + coordinates.contextsWidth / 4,
                     coordinates.contextsY,
-                    coordinates.contextsX + coordinates.contextsWidth / 2,
-                    coordinates.contextsY + coordinates.contextsHeight);
-            coordinates.contextDestIconRects[1][0] = new RectF(
-                    coordinates.contextsX +  padding,
-                    coordinates.contextsY + coordinates.contextsHeight / 4 + padding,
-                    coordinates.contextsX + coordinates.contextsWidth / 2 - padding,
-                    coordinates.contextsY + 3 * coordinates.contextsHeight / 4 - padding);
-            coordinates.contextRects[1][1] = new RectF(
-                    coordinates.contextsX + coordinates.contextsWidth / 2,
-                    coordinates.contextsY,
-                    coordinates.contextsX + coordinates.contextsWidth,
-                    coordinates.contextsY + coordinates.contextsHeight);
-            coordinates.contextDestIconRects[1][1] = new RectF(
-                    coordinates.contextsX + coordinates.contextsWidth / 2 +  padding,
-                    coordinates.contextsY + coordinates.contextsHeight / 4 + padding,
-                    coordinates.contextsX + coordinates.contextsWidth - padding,
-                    coordinates.contextsY + 3 * coordinates.contextsHeight / 4 - padding);
+                    coordinates.contextsX + 3 * coordinates.contextsWidth / 4,
+                    coordinates.contextsY + coordinates.contextsHeight / 2);
             coordinates.contextRects[2][0] = new RectF(
-                    coordinates.contextsX ,
+                    coordinates.contextsX,
                     coordinates.contextsY,
-                    coordinates.contextsX + coordinates.contextsWidth,
+                    coordinates.contextsX + coordinates.contextsWidth / 2,
                     coordinates.contextsY + coordinates.contextsHeight / 2);
-            coordinates.contextDestIconRects[2][0] = new RectF(
-                    coordinates.contextsX + coordinates.contextsWidth / 4 +  padding,
-                    coordinates.contextsY + padding,
-                    coordinates.contextsX + 3 * coordinates.contextsWidth / 4 - padding,
-                    coordinates.contextsY + coordinates.contextsHeight / 2 - padding);
             coordinates.contextRects[2][1] = new RectF(
-                    coordinates.contextsX,
-                    coordinates.contextsY + coordinates.contextsHeight / 2,
                     coordinates.contextsX + coordinates.contextsWidth / 2,
-                    coordinates.contextsY + coordinates.contextsHeight);
-            coordinates.contextDestIconRects[2][1] = inset(coordinates.contextRects[2][1], padding);
-            coordinates.contextRects[2][2] = new RectF(
-                    coordinates.contextsX + coordinates.contextsWidth / 2,
-                    coordinates.contextsY + coordinates.contextsHeight / 2,
+                    coordinates.contextsY,
                     coordinates.contextsX + coordinates.contextsWidth,
-                    coordinates.contextsY + coordinates.contextsHeight);
-            coordinates.contextDestIconRects[2][2] = inset(coordinates.contextRects[2][2], padding);
+                    coordinates.contextsY + coordinates.contextsHeight / 2);
             coordinates.contextRects[3][0] = new RectF(
-                    coordinates.contextsX,
+                    coordinates.contextsX + coordinates.contextsWidth / 4,
                     coordinates.contextsY,
-                    coordinates.contextsX + coordinates.contextsWidth / 2,
+                    coordinates.contextsX + 3 * coordinates.contextsWidth / 4,
                     coordinates.contextsY + coordinates.contextsHeight / 2);
-            coordinates.contextDestIconRects[3][0] = inset(coordinates.contextRects[3][0], padding);
             coordinates.contextRects[3][1] = new RectF(
-                    coordinates.contextsX + coordinates.contextsWidth / 2,
-                    coordinates.contextsY,
-                    coordinates.contextsX + coordinates.contextsWidth,
-                    coordinates.contextsY + coordinates.contextsHeight / 2);
-            coordinates.contextDestIconRects[3][1] = inset(coordinates.contextRects[3][1], padding);
-            coordinates.contextRects[3][2] = new RectF(
                     coordinates.contextsX,
                     coordinates.contextsY + coordinates.contextsHeight / 2,
                     coordinates.contextsX + coordinates.contextsWidth / 2,
                     coordinates.contextsY + coordinates.contextsHeight);
-            coordinates.contextDestIconRects[3][2] = inset(coordinates.contextRects[3][2], padding);
-            coordinates.contextRects[3][3] = new RectF(
+            coordinates.contextRects[3][2] = new RectF(
                     coordinates.contextsX + coordinates.contextsWidth / 2,
                     coordinates.contextsY + coordinates.contextsHeight / 2,
                     coordinates.contextsX + coordinates.contextsWidth,
                     coordinates.contextsY + coordinates.contextsHeight);
-            coordinates.contextDestIconRects[3][3] = inset(coordinates.contextRects[3][3], padding);
+            coordinates.contextRects[4][0] = new RectF(
+                    coordinates.contextsX,
+                    coordinates.contextsY,
+                    coordinates.contextsX + coordinates.contextsWidth / 2,
+                    coordinates.contextsY + coordinates.contextsHeight / 2);
+            coordinates.contextRects[4][1] = new RectF(
+                    coordinates.contextsX + coordinates.contextsWidth / 2,
+                    coordinates.contextsY,
+                    coordinates.contextsX + coordinates.contextsWidth,
+                    coordinates.contextsY + coordinates.contextsHeight / 2);
+            coordinates.contextRects[4][2] = new RectF(
+                    coordinates.contextsX,
+                    coordinates.contextsY + coordinates.contextsHeight / 2,
+                    coordinates.contextsX + coordinates.contextsWidth / 2,
+                    coordinates.contextsY + coordinates.contextsHeight);
+            coordinates.contextRects[4][3] = new RectF(
+                    coordinates.contextsX + coordinates.contextsWidth / 2,
+                    coordinates.contextsY + coordinates.contextsHeight / 2,
+                    coordinates.contextsX + coordinates.contextsWidth,
+                    coordinates.contextsY + coordinates.contextsHeight);
             coordinates.contextMoreRect = new Rect(
                     coordinates.contextsX + coordinates.contextsWidth / 4,
                     coordinates.contextsY + coordinates.contextsHeight +
@@ -283,6 +267,12 @@ public class TaskListItemCoordinates {
                             coordinates.projectOffset / 2 +
                             coordinates.contextsWidth / 2);
             coordinates.activatedRect = inset(coordinates.contextRects[0][0], padding);
+
+            for (int i = 1; i <= 4; i++) {
+                for (int j = 0; j < i; j++) {
+                    coordinates.contextDestIconRects[i][j] = inset(coordinates.contextRects[i][j], padding);
+                }
+            }
 
             TextView date = (TextView) view.findViewById(R.id.date);
             coordinates.dateX = UiUtilities.getX(date);

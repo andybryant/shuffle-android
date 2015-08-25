@@ -73,6 +73,11 @@ public class TaskListItem extends View {
     private static final Paint sContextBackgroundPaint = new Paint();
     private static int sContextCornerSmallRadius;
     private static int sContextCornerLargeRadius;
+    private static final Paint sContextMorePaint = new Paint();
+    static {
+        final LightingColorFilter lcf = new LightingColorFilter( 0xFF000000, 0xFFAAAAAA);
+        sContextMorePaint.setColorFilter(lcf);
+    }
 
     private static Bitmap sStateInactive;
     private static Bitmap sStateDeleted;
@@ -423,23 +428,23 @@ public class TaskListItem extends View {
         if (mContexts.isEmpty()) {
             int bgColor = sTextColours.getBackgroundColour(17);
             sContextBackgroundPaint.setShader(getShader(bgColor, mCoordinates.contextRects[0][0], 0f));
-            canvas.drawRoundRect(mCoordinates.contextRects[0][0],
-                    radius, radius, sContextBackgroundPaint);
+            canvas.drawOval(mCoordinates.contextRects[0][0],sContextBackgroundPaint);
         } else {
             for (int i = 0; i < numContexts; i++) {
                 Context context = mContexts.get(i);
                 int bgColor = sTextColours.getBackgroundColour(context.getColourIndex());
-                RectF contextRect = mCoordinates.contextRects[numContexts - 1][i];
+                RectF contextRect = mCoordinates.contextRects[numContexts][i];
                 sContextBackgroundPaint.setShader(getShader(bgColor, contextRect));
-                canvas.drawRoundRect(contextRect, radius, radius, sContextBackgroundPaint);
+                sContextBackgroundPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
+                canvas.drawOval(contextRect, sContextBackgroundPaint);
                 Bitmap contextIcon = getContextIcon(context.getIconName());
-                RectF destIconRect = mCoordinates.contextDestIconRects[numContexts - 1][i];
+                RectF destIconRect = mCoordinates.contextDestIconRects[numContexts][i];
                 canvas.drawBitmap(contextIcon, mCoordinates.contextSourceIconRect, destIconRect, null);
             }
         }
         if (mContexts.size() > 4) {
             canvas.drawBitmap(sMoreHorizontal, mCoordinates.contextSourceIconRect,
-                    mCoordinates.contextMoreRect, null);
+                    mCoordinates.contextMoreRect, sContextMorePaint);
         }
     }
 

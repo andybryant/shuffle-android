@@ -194,12 +194,12 @@ public class TaskRecyclerFragment extends RoboFragment {
             mTaskListContext = TaskListContext.create(mLocation);
 
             mEnableTaskReordering = mTaskListContext.showMoveActions();
-//            mSelectedTaskId = mLocation.getSelectedIndex();
             updateCursor();
-            mListAdapter.notifyDataSetChanged();
+            if (mListAdapter != null) {
+                mListAdapter.notifyDataSetChanged();
+            }
         }
     }
-
 
     private List<Long> getSelectedIds() {
         return Lists.transform(mMultiSelector.getSelectedPositions(), new Function<Integer, Long>() {
