@@ -307,16 +307,30 @@ public class TaskRecyclerFragment extends RoboFragment {
 
         @Override
         public void onClick(View v) {
-            if (!mMultiSelector.tapSelection(this)) {
-                if (mTask != null) {
-                    Location location = Location.viewTask(mTaskListContext, getAdapterPosition());
-                    mEventManager.fire(new NavigationRequestEvent(location));
-                }
-            } else if (mActionMode != null) {
-                if (mMultiSelector.getSelectedPositions().isEmpty()) {
-                    mActionMode.finish();
+            clickPanel();
+        }
+
+        private void clickPanel() {
+            if (mTask != null) {
+                Location location = Location.viewTask(mTaskListContext, getAdapterPosition());
+                mEventManager.fire(new NavigationRequestEvent(location));
+            }
+        }
+
+        public void clickTag() {
+            if (mActionMode == null) {
+                mActionMode = getRoboAppCompatActivity().startSupportActionMode(mEditMode);
+                mMultiSelector.setSelected(this, true);
+                mActionMode.invalidate();
+            } else {
+                if (mMultiSelector.tapSelection(this)) {
+                    if (mMultiSelector.getSelectedPositions().isEmpty()) {
+                        mActionMode.finish();
+                    } else {
+                        mActionMode.invalidate();
+                    }
                 } else {
-                    mActionMode.invalidate();
+                    clickPanel();
                 }
             }
         }
@@ -330,13 +344,7 @@ public class TaskRecyclerFragment extends RoboFragment {
 
         @Override
         public boolean onLongClick(View v) {
-            if (mActionMode == null) {
-                mActionMode = getRoboAppCompatActivity().startSupportActionMode(mEditMode);
-                mMultiSelector.setSelected(this, true);
-                mActionMode.invalidate();
-            } else {
-                onClick(v);
-            }
+            clickTag();
             return true;
         }
     }
@@ -346,7 +354,9 @@ public class TaskRecyclerFragment extends RoboFragment {
         @Override
         public TaskHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             TaskListItem listItem = mTaskListItemProvider.get(getActivity());
-            return new TaskHolder(listItem);
+            TaskHolder taskHolder = new TaskHolder(listItem);
+            listItem.setHolder(taskHolder);
+            return taskHolder;
         }
 
         @Override

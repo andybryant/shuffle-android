@@ -1,10 +1,12 @@
 package org.dodgybits.shuffle.android.list.view.task;
 
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.text.*;
 import android.text.format.DateUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import com.google.common.base.Objects;
@@ -40,6 +42,7 @@ public class TaskListItem extends View {
 
     private TaskListItemCoordinates mCoordinates;
     private android.content.Context mAndroidContext;
+    private TaskRecyclerFragment.TaskHolder mHolder;
 
     private final EntityCache<Context> mContextCache;
     private final EntityCache<Project> mProjectCache;
@@ -54,6 +57,8 @@ public class TaskListItem extends View {
     private boolean mIsDeleted = false;
 
     private List<Context> mContexts = Collections.emptyList();
+
+    private boolean mDownEvent;
 
     @Inject
     public TaskListItem(
@@ -108,6 +113,10 @@ public class TaskListItem extends View {
     // We must initialize this to something, in case the timestamp of the message is zero (which
     // should be very rare); this is otherwise set in setTimestamp
     private CharSequence mFormattedDate = "";
+
+    public void setHolder(TaskRecyclerFragment.TaskHolder holder) {
+        mHolder = holder;
+    }
 
     private void init(android.content.Context context) {
         mAndroidContext = context;
@@ -502,6 +511,70 @@ public class TaskListItem extends View {
         return new LinearGradient(rect.left, rect.top, rect.left, rect.bottom,
                 colours, null, Shader.TileMode.CLAMP);
     }
+
+    private static final int TOUCH_SLOP = 24;
+    private static int sScaledTouchSlop = -1;
+
+    private void initializeSlop(android.content.Context context) {
+        if (sScaledTouchSlop == -1) {
+            final Resources res = context.getResources();
+            final Configuration config = res.getConfiguration();
+            final float density = res.getDisplayMetrics().density;
+            final float sizeAndDensity;
+            if (config.isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_XLARGE)) {
+                sizeAndDensity = density * 1.5f;
+            } else {
+                sizeAndDensity = density;
+            }
+            sScaledTouchSlop = (int) (sizeAndDensity * TOUCH_SLOP + 0.5f);
+        }
+    }
+
+
+    /**
+     * Overriding this method allows us to "catch" clicks in the checkbox or star
+     * and process them accordingly.
+     */
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        initializeSlop(getContext());
+
+        boolean handled = false;
+        int touchX = (int) event.getX();
+        int checkRight = mCoordinates.contextsX
+                + mCoordinates.contextsWidth + sScaledTouchSlop;
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (touchX < checkRight) {
+                    mDownEvent = true;
+                    handled = true;
+                }
+                break;
+
+            case MotionEvent.ACTION_CANCEL:
+                mDownEvent = false;
+                break;
+
+            case MotionEvent.ACTION_UP:
+                if (mDownEvent) {
+                    if (touchX < checkRight) {
+                        mHolder.clickTag();
+                        handled = true;
+                    }
+                }
+                break;
+        }
+
+        if (handled) {
+            invalidate();
+        } else {
+            handled = super.onTouchEvent(event);
+        }
+
+        return handled;
+    }
+
 
     @Override
     public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
