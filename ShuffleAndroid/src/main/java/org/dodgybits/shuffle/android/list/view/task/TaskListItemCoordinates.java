@@ -61,6 +61,7 @@ public class TaskListItemCoordinates {
     RectF[][] contextDestIconRects = new RectF[5][4];
     Rect contextMoreRect;
     RectF activatedRect;
+    RectF selectedRect;
 
     // Date.
     int dateX;
@@ -209,10 +210,10 @@ public class TaskListItemCoordinates {
                     coordinates.contextsY + coordinates.contextsHeight);
             coordinates.contextDestIconRects[0][0] = inset(coordinates.contextRects[0][0], doublePadding);
             coordinates.contextRects[1][0] = new RectF(
-                    coordinates.contextsX + coordinates.contextsWidth / 4,
+                    coordinates.contextsX + coordinates.contextsWidth / 6,
                     coordinates.contextsY,
-                    coordinates.contextsX + 3 * coordinates.contextsWidth / 4,
-                    coordinates.contextsY + coordinates.contextsHeight / 2);
+                    coordinates.contextsX + 5 * coordinates.contextsWidth / 6,
+                    coordinates.contextsY + 2 * coordinates.contextsHeight / 3);
             coordinates.contextRects[2][0] = new RectF(
                     coordinates.contextsX,
                     coordinates.contextsY,
@@ -267,6 +268,15 @@ public class TaskListItemCoordinates {
                             coordinates.projectOffset / 2 +
                             coordinates.contextsWidth / 2);
             coordinates.activatedRect = inset(coordinates.contextRects[0][0], padding);
+
+            View selectedIndicator = view.findViewById(R.id.selected_indicator);
+            int x = UiUtilities.getX(selectedIndicator);
+            int y = UiUtilities.getY(selectedIndicator);
+            coordinates.selectedRect = new RectF(
+                    x,
+                    y,
+                    x + getWidth(selectedIndicator, false),
+                    y + getHeight(selectedIndicator, false));
 
             for (int i = 1; i <= 4; i++) {
                 for (int j = 0; j < i; j++) {

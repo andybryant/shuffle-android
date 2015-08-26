@@ -6,6 +6,12 @@
     android:layout_height="@dimen/task_list_item_height"
     android:orientation="horizontal">
 
+    <View
+        android:id="@+id/selected_indicator"
+        android:layout_width="4dp"
+        android:layout_height="match_parent"
+        />
+
     <ImageView
         android:id="@+id/context_block"
         android:layout_marginLeft="8dp"

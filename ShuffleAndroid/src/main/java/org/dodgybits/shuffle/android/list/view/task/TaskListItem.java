@@ -78,6 +78,7 @@ public class TaskListItem extends View {
         final LightingColorFilter lcf = new LightingColorFilter( 0xFF000000, 0xFFAAAAAA);
         sContextMorePaint.setColorFilter(lcf);
     }
+    private static final Paint sSelectedIndicatorPaint = new Paint();
 
     private static Bitmap sStateInactive;
     private static Bitmap sStateDeleted;
@@ -360,6 +361,9 @@ public class TaskListItem extends View {
         } else {
             drawContexts(canvas);
         }
+        if (isSelected()) {
+            drawSelectedIndicator(canvas);
+        }
     }
 
     private void drawProject(Canvas canvas) {
@@ -450,13 +454,18 @@ public class TaskListItem extends View {
 
     private void drawActivatedIndicator(Canvas canvas) {
         sContextBackgroundPaint.setShader(null);
-//        sContextBackgroundPaint.setColor(getResources().getColor(R.color.white));
+        sContextBackgroundPaint.setColor(getResources().getColor(R.color.white));
 //        canvas.drawRect(mCoordinates.contextRects[0][0], sContextBackgroundPaint);
-        sContextBackgroundPaint.setColor(sTextColours.getBackgroundColour(0));
+//        sContextBackgroundPaint.setColor(sTextColours.getBackgroundColour(0));
         int radius = sContextCornerLargeRadius;
         canvas.drawRoundRect(mCoordinates.activatedRect, radius, radius, sContextBackgroundPaint);
         canvas.drawBitmap(sActivated, mCoordinates.contextSourceIconRect,
                 mCoordinates.contextDestIconRects[0][0], null);
+    }
+
+    private void drawSelectedIndicator(Canvas canvas) {
+        sSelectedIndicatorPaint.setColor(getResources().getColor(R.color.list_selected_indicator));
+        canvas.drawRect(mCoordinates.selectedRect, sSelectedIndicatorPaint);
     }
 
     private Bitmap getContextIcon(String iconName) {
