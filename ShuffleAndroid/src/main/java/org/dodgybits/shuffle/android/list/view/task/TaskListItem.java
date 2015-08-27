@@ -437,7 +437,6 @@ public class TaskListItem extends View {
 
     private void drawContexts(Canvas canvas) {
         int numContexts = Math.min(4, mContexts.size());
-        int radius = numContexts <= 1 ? sContextCornerLargeRadius : sContextCornerSmallRadius;
         if (mContexts.isEmpty()) {
             int bgColor = sTextColours.getBackgroundColour(17);
             sContextBackgroundPaint.setShader(getShader(bgColor, mCoordinates.contextRects[0][0], 0f));
@@ -464,10 +463,10 @@ public class TaskListItem extends View {
     private void drawActivatedIndicator(Canvas canvas) {
         sContextBackgroundPaint.setShader(null);
         sContextBackgroundPaint.setColor(getResources().getColor(R.color.white));
-//        canvas.drawRect(mCoordinates.contextRects[0][0], sContextBackgroundPaint);
+        canvas.drawOval(mCoordinates.contextRects[0][0], sContextBackgroundPaint);
 //        sContextBackgroundPaint.setColor(sTextColours.getBackgroundColour(0));
-        int radius = sContextCornerLargeRadius;
-        canvas.drawRoundRect(mCoordinates.activatedRect, radius, radius, sContextBackgroundPaint);
+//        int radius = sContextCornerLargeRadius;
+//        canvas.drawRoundRect(mCoordinates.activatedRect, radius, radius, sContextBackgroundPaint);
         canvas.drawBitmap(sActivated, mCoordinates.contextSourceIconRect,
                 mCoordinates.contextDestIconRects[0][0], null);
     }
