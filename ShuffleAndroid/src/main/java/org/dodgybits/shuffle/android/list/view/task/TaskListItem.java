@@ -450,8 +450,29 @@ public class TaskListItem extends View {
                 sContextBackgroundPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
                 canvas.drawOval(contextRect, sContextBackgroundPaint);
                 Bitmap contextIcon = getContextIcon(context.getIconName());
-                RectF destIconRect = mCoordinates.contextDestIconRects[numContexts][i];
-                canvas.drawBitmap(contextIcon, mCoordinates.contextSourceIconRect, destIconRect, null);
+                if (contextIcon == null) {
+                    int textColor = sTextColours.getTextColour(context.getColourIndex());
+                    int leftPadding, topPadding;
+                    sRegularPaint.setColor(textColor);
+                    String name = context.getName().toUpperCase();
+                    if (numContexts == 1) {
+                        sRegularPaint.setTextSize(mCoordinates.contextsSingleFontSize);
+                        leftPadding = mCoordinates.contextsSingleLabelLeft;
+                        topPadding = mCoordinates.contextsSingleLabelTop;
+                    } else {
+                        sRegularPaint.setTextSize(mCoordinates.contextsMultiFontSize);
+                        leftPadding = mCoordinates.contextsLabelLeft;
+                        topPadding = mCoordinates.contextsLabelTop;
+                    }
+                    int contextTextWidth = (int)sRegularPaint.measureText(name, 0, 1);
+                    canvas.drawText(name, 0, 1,
+                            contextRect.left + leftPadding - contextTextWidth / 2,
+                            contextRect.top - mCoordinates.contextsAscent + topPadding,
+                            sRegularPaint);
+                } else {
+                    RectF destIconRect = mCoordinates.contextDestIconRects[numContexts][i];
+                    canvas.drawBitmap(contextIcon, mCoordinates.contextSourceIconRect, destIconRect, null);
+                }
             }
         }
         if (mContexts.size() > 4) {
@@ -479,11 +500,13 @@ public class TaskListItem extends View {
     private Bitmap getContextIcon(String iconName) {
         Bitmap icon = mContextIconMap.get(iconName);
         if (icon == null) {
-            ContextIcon contextIcon = ContextIcon.createIcon(iconName, mAndroidContext.getResources());
-            icon = BitmapFactory.decodeResource(mAndroidContext.getResources(), contextIcon.largeIconId);
-            mContextIconMap.put(iconName, icon);
-            if (mCoordinates.contextSourceIconRect == null) {
-                mCoordinates.contextSourceIconRect = new Rect(0, 0, icon.getWidth(), icon.getHeight());
+            ContextIcon contextIcon = ContextIcon.createIcon(iconName, mAndroidContext.getResources(), true);
+            if (contextIcon != null) {
+                icon = BitmapFactory.decodeResource(mAndroidContext.getResources(), contextIcon.largeIconId);
+                mContextIconMap.put(iconName, icon);
+                if (mCoordinates.contextSourceIconRect == null) {
+                    mCoordinates.contextSourceIconRect = new Rect(0, 0, icon.getWidth(), icon.getHeight());
+                }
             }
         }
         return icon;

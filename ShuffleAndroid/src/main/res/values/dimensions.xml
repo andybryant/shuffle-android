@@ -50,6 +50,14 @@
     <dimen name="description_font_size">18sp</dimen>
     <dimen name="details_font_size">18sp</dimen>
     <dimen name="date_font_size">18sp</dimen>
+    <dimen name="context_font_size">16sp</dimen>
+    <dimen name="context_single_font_size">24sp</dimen>
+
+    <dimen name="context_label_left">12dp</dimen>
+    <dimen name="context_label_top">2dp</dimen>
+    <dimen name="context_single_label_left">24dp</dimen>
+    <dimen name="context_single_label_top">19dp</dimen>
+
 
     <dimen name="keyline_1">16dp</dimen>
     <dimen name="keyline_1_minus_8dp">8dp</dimen>
