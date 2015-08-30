@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class ListTitles {
 
     private static final HashMap<ListQuery,Integer> TITLE_ID_MAP =
-            new HashMap<ListQuery,Integer>();
+            new HashMap<>();
 
     static {
         TITLE_ID_MAP.put(ListQuery.inbox, R.string.title_inbox);

@@ -1,9 +1,7 @@
 package org.dodgybits.shuffle.android.list.activity;
 
-import android.os.Bundle;
 import android.view.View;
 
-import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.view.Location;

@@ -16,17 +16,16 @@
 
 package org.dodgybits.shuffle.android.list.view;
 
-import android.graphics.drawable.ColorDrawable;
-import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.view.TextColours;
-import org.dodgybits.shuffle.android.core.view.DrawableUtils;
-
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.GradientDrawable.Orientation;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
+import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.view.DrawableUtils;
+import org.dodgybits.shuffle.android.core.view.TextColours;
 
 /**
  * A TextView with coloured text and a round edged coloured background.
