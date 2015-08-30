@@ -14,15 +14,6 @@
 -->
 
 <resources>
-    <array name="perspectives">
-        <item>Inbox</item>
-        <item>Tâches dues</item>
-        <item>Tâches suivantes</item>
-        <item>Projets</item>
-        <item>Contextes</item>
-        <item>Coutume</item>
-        <item>Rappel</item>
-    </array>
 
     <array name="help_screens">
         <item>Introduction</item>

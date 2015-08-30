@@ -14,15 +14,6 @@
 -->
 
 <resources>
-    <array name="perspectives">
-        <item>Bandeja de entrada</item>
-        <item>Acciones pendientes</item>
-        <item>Acciones siguientes</item>
-        <item>Proyectos</item>
-        <item>Contextos</item>
-        <item>Costumbre</item>
-        <item>Recordatorio</item>
-    </array>
 
     <array name="help_screens">
         <item>Introducción</item>

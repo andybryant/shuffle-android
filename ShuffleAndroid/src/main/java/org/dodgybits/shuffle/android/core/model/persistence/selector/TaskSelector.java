@@ -150,30 +150,34 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
             expressions.add(expression);
         } else if (mActive == no) {
             // task is inactive if it is inactive or project is inactive or all contexts are inactive
-            String expression = "(task.active = 0 " +
-                "OR (projectId is not null AND projectId IN (select p._id from project p where p.active = 0)) " +
-                    "OR (" +
-                    "     ((select count(*) from taskContext tc where tc.taskId = task._id) > 0) AND " +
-                    "     ((select count(*) from taskContext tc, context c where " +
-                    "         tc.taskId = task._id and tc.contextId = c._id and c.active = 1) = 0)" +
-                    "    )" +
-                ")";
+            String expression = getInactiveExpression();
             expressions.add(expression);
         }
+    }
+
+    private String getInactiveExpression() {
+        return "(task.active = 0 " +
+                "OR (projectId is not null AND projectId IN (select p._id from project p where p.active = 0)) " +
+                "OR (" +
+                "     ((select count(*) from taskContext tc where tc.taskId = task._id) > 0) AND " +
+                "     ((select count(*) from taskContext tc, context c where " +
+                "         tc.taskId = task._id and tc.contextId = c._id and c.active = 1) = 0)" +
+                "    )" +
+                ")";
     }
     
     private void addDeletedExpression(List<String> expressions) {
         if (mDeleted == yes) {
             // task is deleted if it is deleted or project is deleted
             String expression = "(task.deleted = 1 " +
-                "OR (projectId is not null AND projectId IN (select p._id from project p where p.deleted = 1)) " +
+//                "OR (projectId is not null AND projectId IN (select p._id from project p where p.deleted = 1)) " +
                 ")";
             expressions.add(expression);
             
         } else if (mDeleted == no) {
             // task is not deleted if it is not deleted and project is not deleted
             String expression = "(task.deleted = 0 " +
-                "AND (projectId is null OR projectId IN (select p._id from project p where p.deleted = 0)) " +
+//                "AND (projectId is null OR projectId IN (select p._id from project p where p.deleted = 0)) " +
                 ")";
             expressions.add(expression);
         }
@@ -201,6 +205,10 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
         String result;
         long now = System.currentTimeMillis();
         switch (mListQuery) {
+            case inbox:
+                result = "(projectId is null AND (select count(*) from taskContext tc where tc.taskId = task._id) = 0)";
+                break;
+
             case nextTasks:
                 result = "((complete = 0) AND " +
                     "   (start < " + now + ") AND " +
@@ -212,10 +220,30 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
                     "      ORDER BY displayOrder ASC limit 1))" +
                     "))";
                 break;
-                
-            case inbox:
-                result = "(projectId is null AND (select count(*) from taskContext tc where tc.taskId = task._id) = 0)";
+
+            case dueTasks:
+                long startMS = 0L;
+                long endOfToday = getEndDate();
+                long endOfTomorrow = endOfToday + DateUtils.DAY_IN_MILLIS;
+                result = "(due > " + startMS + ")" +
+                        " AND ( (due < " + endOfToday + ") OR" +
+                        "( allDay = 1 AND due < " + endOfTomorrow + " ))";
                 break;
+
+            case project:
+            case context:
+                // by default show all results (completely customizable)
+                result = "(1 == 1)";
+                break;
+
+            case deferred:
+                result = "((complete = 0) AND (deleted = 0) AND (start > " + now + "))";
+                break;
+
+            case deleted:
+                result = "(deleted = 1)";
+                break;
+
             case search:
                 StringBuilder builder = new StringBuilder();
                 builder.append("description LIKE ");
@@ -223,23 +251,6 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
                 builder.append(" OR details LIKE ");
                 DatabaseUtils.appendEscapedSQLString(builder, '%' + mSearchQuery + '%');
                 result = builder.toString();
-                break;
-            case tickler:
-            case all:
-            case custom:
-            case context:
-            case project:
-                // by default show all results (completely customizable)
-                result = "(1 == 1)";
-                break;
-                
-            case dueTasks:
-                long startMS = 0L;
-                long endOfToday = getEndDate();
-                long endOfTomorrow = endOfToday + DateUtils.DAY_IN_MILLIS;
-                result = "(due > " + startMS + ")" +
-                    " AND ( (due < " + endOfToday + ") OR" +
-                    "( allDay = 1 AND due < " + endOfTomorrow + " ))";
                 break;
 
             default:
@@ -421,17 +432,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
 
             setComplete(settings.getCompleted(context));
             setPending(settings.getPending(context));
-            
-            Id contextId = settings.getContextId(context);
-            if (contextId.isInitialised()) {
-                setContextId(contextId);
-            }
-            
-            Id projectId = settings.getProjectId(context);
-            if (projectId.isInitialised()) {
-                setProjectId(projectId);
-            }
-            
+
             return this;
         }
 

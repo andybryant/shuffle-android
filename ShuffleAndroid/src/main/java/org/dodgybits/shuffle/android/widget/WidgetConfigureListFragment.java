@@ -3,14 +3,17 @@ package org.dodgybits.shuffle.android.widget;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.widget.ListView;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.activity.LauncherShortcutActivity;
 import org.dodgybits.shuffle.android.core.view.IconNameCountListAdaptor;
+import org.dodgybits.shuffle.android.core.view.IconNameCountListAdaptor.ListItem;
 import org.dodgybits.shuffle.android.core.view.ListIcons;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
 import roboguice.fragment.RoboListFragment;
-import org.dodgybits.shuffle.android.core.view.IconNameCountListAdaptor.ListItem;
+
+import static org.dodgybits.shuffle.android.list.model.ListQuery.*;
 
 public class WidgetConfigureListFragment extends RoboListFragment {
     private static final String TAG = "WidgetConfigListFrag";
@@ -19,15 +22,14 @@ public class WidgetConfigureListFragment extends RoboListFragment {
 
     private void createListItems() {
         if (sListItems == null) {
-            String[] perspectives = getResources().getStringArray(R.array.perspectives).clone();
             sListItems = new ListItem[] {
-                    createTaskListItem(ListIcons.INBOX, ListQuery.inbox, perspectives[0]),
-                    createTaskListItem(ListIcons.DUE_TASKS, ListQuery.dueTasks, getString(R.string.title_due_tasks)),
-                    createTaskListItem(ListIcons.NEXT_TASKS, ListQuery.nextTasks, perspectives[2]),
-                    createDialogListItem(ListIcons.PROJECTS, perspectives[3], WidgetConfigure.PROJECT_PICKER_DIALOG),
-                    createDialogListItem(ListIcons.CONTEXTS, perspectives[4], WidgetConfigure.CONTEXT_PICKER_DIALOG),
-                    createTaskListItem(ListIcons.CUSTOM, ListQuery.custom, perspectives[5]),
-                    createTaskListItem(ListIcons.TICKLER, ListQuery.tickler, perspectives[6])
+                    createTaskListItem(ListIcons.INBOX, inbox, getString(R.string.title_inbox)),
+                    createTaskListItem(ListIcons.DUE_TASKS, dueTasks, getString(R.string.title_due_tasks)),
+                    createTaskListItem(ListIcons.NEXT_TASKS, nextTasks, getString(R.string.title_next_tasks)),
+                    createDialogListItem(ListIcons.PROJECTS, getString(R.string.title_project), LauncherShortcutActivity.PROJECT_PICKER_DIALOG),
+                    createDialogListItem(ListIcons.CONTEXTS, getString(R.string.title_context), LauncherShortcutActivity.CONTEXT_PICKER_DIALOG),
+                    createTaskListItem(ListIcons.DEFFERED, deferred, getString(R.string.title_deferred)),
+                    createTaskListItem(ListIcons.DELETED, deleted, getString(R.string.title_deleted))
             };
         }
     }

@@ -14,15 +14,6 @@
 -->
 
 <resources>
-    <array name="perspectives">
-        <item>Skrzynka</item>
-        <item>Zaplanowane działania</item>
-        <item>Natępne zadania</item>
-        <item>Projekty</item>
-        <item>Konteksty</item>
-        <item>Własne</item>
-        <item>Oczekiwane</item>
-    </array>
 
     <array name="help_screens">
         <item>Wprowadzenie</item>

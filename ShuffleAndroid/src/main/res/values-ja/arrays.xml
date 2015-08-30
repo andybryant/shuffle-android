@@ -21,16 +21,6 @@
 -->
 
 <resources>
-    <array name="perspectives">
-        <item>新着アクション</item>
-        <item>期限ありアクション</item>
-        <item>次のアクション</item>
-        <item>プロジェクト</item>
-        <item>コンテキスト</item>
-        <item>カスタム</item>
-        <item>保留アクション</item>
-    </array>
-
     <array name="help_screens">
         <item>はじめに</item>
         <item>新着アクション</item>

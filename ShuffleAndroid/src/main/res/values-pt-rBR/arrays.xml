@@ -14,15 +14,6 @@
 -->
 
 <resources>
-    <array name="perspectives">
-        <item>Caixa de Entrada</item>
-        <item>Ações com prazo</item>
-        <item>Próximas ações</item>
-        <item>Projetos</item>
-        <item>Contextos</item>
-        <item>Personalizado</item>
-        <item>Ref. Rápida (tickler)</item>
-    </array>
 
     <array name="help_screens">
         <item>Introdução</item>

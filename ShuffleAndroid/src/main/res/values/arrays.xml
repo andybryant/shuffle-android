@@ -14,16 +14,6 @@
 -->
 
 <resources>
-    <array name="perspectives">
-        <item>Inbox</item>
-        <item>Due actions</item>
-        <item>Next actions</item>
-        <item>Projects</item>
-        <item>Tags</item>
-        <item>Custom</item>
-        <item>Tickler</item>
-    </array>
-
 
     <array name="help_screens">
         <item>Introduction</item>

@@ -14,15 +14,6 @@
 -->
 
 <resources>
-    <array name="perspectives">
-        <item>活动列表</item>
-        <item>预约活动</item>
-        <item>临近活动</item>
-        <item>内容</item>
-        <item>情景</item>
-        <item>習俗</item>
-        <item>提醒</item>
-    </array>
 
     <array name="help_screens">
         <item>介绍</item>

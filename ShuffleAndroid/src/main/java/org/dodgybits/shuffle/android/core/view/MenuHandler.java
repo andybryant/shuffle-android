@@ -215,17 +215,17 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
             case R.id.nav_due_tasks:
                 go(Location.viewTaskList(ListQuery.dueTasks));
                 return true;
-            case R.id.nav_custom:
-                go(Location.viewTaskList(ListQuery.custom));
-                return true;
-            case R.id.nav_tickler:
-                go(Location.viewTaskList(ListQuery.tickler));
-                return true;
             case R.id.nav_projects:
                 go(Location.viewProjectList());
                 return true;
             case R.id.nav_contexts:
                 go(Location.viewContextList());
+                return true;
+            case R.id.nav_deferred:
+                go(Location.viewTaskList(ListQuery.deferred));
+                return true;
+            case R.id.nav_deleted:
+                go(Location.viewTaskList(ListQuery.deleted));
                 return true;
             case R.id.nav_settings:
                 go(Location.viewSettings());

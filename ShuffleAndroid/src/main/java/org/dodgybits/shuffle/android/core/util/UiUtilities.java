@@ -55,14 +55,11 @@ public class UiUtilities {
             case context:
                 title = res.getString(R.string.title_context);
                 break;
-            case custom:
-                title = res.getString(R.string.title_custom);
+            case deferred:
+                title = res.getString(R.string.title_deferred);
                 break;
-            case tickler:
-                title = res.getString(R.string.title_tickler);
-                break;
-            case all:
-                title = res.getString(R.string.title_all);
+            case deleted:
+                title = res.getString(R.string.title_deleted);
                 break;
             case search:
                 title = res.getString(R.string.title_search);

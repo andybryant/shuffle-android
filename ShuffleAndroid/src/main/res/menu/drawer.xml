@@ -17,17 +17,6 @@
             android:icon="@drawable/ic_today_black_24dp"
             android:title="@string/title_due_tasks"/>
         <item
-            android:id="@+id/nav_custom"
-            android:checked="false"
-            android:icon="@drawable/ic_developer_board_black_24dp"
-            android:title="@string/title_custom"
-            />
-        <item
-            android:id="@+id/nav_tickler"
-            android:checked="false"
-            android:icon="@drawable/ic_timer_black_24dp"
-            android:title="@string/title_tickler"/>
-        <item
             android:id="@+id/nav_projects"
             android:checked="false"
             android:icon="@drawable/ic_folder_black_24dp"
@@ -37,6 +26,17 @@
             android:checked="false"
             android:icon="@drawable/ic_label_black_24dp"
             android:title="@string/title_context"/>
+        <item
+            android:id="@+id/nav_deferred"
+            android:checked="false"
+            android:icon="@drawable/ic_timer_black_24dp"
+            android:title="@string/title_deferred"
+            />
+        <item
+            android:id="@+id/nav_deleted"
+            android:checked="false"
+            android:icon="@drawable/ic_delete_black_24dp"
+            android:title="@string/title_deleted"/>
         <item
             android:id="@+id/nav_settings"
             android:checked="false"

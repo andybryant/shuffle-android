@@ -182,17 +182,17 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
             case dueTasks:
                 checkNavMenu(R.id.nav_due_tasks);
                 break;
-            case custom:
-                checkNavMenu(R.id.nav_custom);
-                break;
-            case tickler:
-                checkNavMenu(R.id.nav_tickler);
-                break;
             case project:
                 checkNavMenu(R.id.nav_projects);
                 break;
             case context:
                 checkNavMenu(R.id.nav_contexts);
+                break;
+            case deferred:
+                checkNavMenu(R.id.nav_deferred);
+                break;
+            case deleted:
+                checkNavMenu(R.id.nav_deleted);
                 break;
         }
     }

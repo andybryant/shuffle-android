@@ -131,8 +131,8 @@ public class HelpActivity extends RoboAppCompatActivity {
         mQueryIndex.put(ListQuery.nextTasks, 3);
         mQueryIndex.put(ListQuery.project, 4);
         mQueryIndex.put(ListQuery.context, 5);
-        mQueryIndex.put(ListQuery.custom, 6);
-        mQueryIndex.put(ListQuery.tickler, 7);
+        mQueryIndex.put(ListQuery.deferred, 6);
+        mQueryIndex.put(ListQuery.deleted, 7);
     }
 
     private int getRequestedPosition(Intent intent) {

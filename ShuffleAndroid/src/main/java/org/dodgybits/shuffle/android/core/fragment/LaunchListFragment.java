@@ -19,6 +19,8 @@ import org.dodgybits.shuffle.android.list.model.ListQuery;
 
 import roboguice.fragment.RoboListFragment;
 
+import static org.dodgybits.shuffle.android.list.model.ListQuery.*;
+
 public class LaunchListFragment extends RoboListFragment {
     private static final String TAG = "LaunchListFragment";
 
@@ -30,33 +32,32 @@ public class LaunchListFragment extends RoboListFragment {
     
     private void createListItems() {
         if (sListItems == null) {
-            String[] perspectives = getResources().getStringArray(R.array.perspectives).clone();
             sListItems = new ListItem[] {
                     createAddTaskListItem(R.drawable.ic_edit_black_24dp, getString(R.string.title_new_task)),
-                    createTaskListItem(ListIcons.INBOX, ListQuery.inbox, perspectives[0]),
-                    createTaskListItem(ListIcons.DUE_TASKS, ListQuery.dueTasks, getString(R.string.title_due_tasks)),
-                    createTaskListItem(ListIcons.NEXT_TASKS, ListQuery.nextTasks, perspectives[2]),
-                    createDialogListItem(ListIcons.PROJECTS, perspectives[3], LauncherShortcutActivity.PROJECT_PICKER_DIALOG),
-                    createDialogListItem(ListIcons.CONTEXTS, perspectives[4], LauncherShortcutActivity.CONTEXT_PICKER_DIALOG),
-                    createTaskListItem(ListIcons.CUSTOM, ListQuery.custom, perspectives[5]),
-                    createTaskListItem(ListIcons.TICKLER, ListQuery.tickler, perspectives[6])
+                    createTaskListItem(ListIcons.INBOX, inbox, getString(R.string.title_inbox)),
+                    createTaskListItem(ListIcons.DUE_TASKS, dueTasks, getString(R.string.title_due_tasks)),
+                    createTaskListItem(ListIcons.NEXT_TASKS, nextTasks, getString(R.string.title_next_tasks)),
+                    createDialogListItem(ListIcons.PROJECTS, getString(R.string.title_project), LauncherShortcutActivity.PROJECT_PICKER_DIALOG),
+                    createDialogListItem(ListIcons.CONTEXTS, getString(R.string.title_context), LauncherShortcutActivity.CONTEXT_PICKER_DIALOG),
+                    createTaskListItem(ListIcons.DEFFERED, deferred, getString(R.string.title_deferred)),
+                    createTaskListItem(ListIcons.DELETED, deleted, getString(R.string.title_deleted))
             };
         }
     }
 
-    private static ListItem createAddTaskListItem(int iconResId, String name) {
+    private static ListItem<LaunchEntry> createAddTaskListItem(int iconResId, String name) {
         LaunchEntry entry = new NewTaskLaunchEntry(name);
-        return new ListItem<LaunchEntry>(iconResId, name, entry);
+        return new ListItem<>(iconResId, name, entry);
     }
     
-    private static ListItem createTaskListItem(int iconResId, ListQuery query, String name) {
+    private static ListItem<LaunchEntry> createTaskListItem(int iconResId, ListQuery query, String name) {
         LaunchEntry entry = new TaskListLaunchEntry(query, name);
-        return new ListItem<LaunchEntry>(iconResId, name, entry);
+        return new ListItem<>(iconResId, name, entry);
     }
 
-    private static ListItem createDialogListItem(int iconResId, String name, int dialogId) {
+    private static ListItem<LaunchEntry> createDialogListItem(int iconResId, String name, int dialogId) {
         LaunchEntry entry = new DialogLaunchEntry(dialogId);
-        return new ListItem<LaunchEntry>(iconResId, name, entry);
+        return new ListItem<>(iconResId, name, entry);
     }
     
     
