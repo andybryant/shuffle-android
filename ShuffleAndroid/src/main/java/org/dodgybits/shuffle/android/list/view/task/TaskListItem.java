@@ -277,7 +277,7 @@ public class TaskListItem extends View {
                 mCoordinates.descriptionWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, false /* includePad */);
         if (mCoordinates.descriptionLineCount < mDescriptionLayout.getLineCount()) {
             int end = mDescriptionLayout.getLineEnd(mCoordinates.descriptionLineCount - 1);
-            mDescriptionLayout = new StaticLayout(mDescription.subSequence(0, end),
+            mDescriptionLayout = new StaticLayout(mDescription.subSequence(0, end) + "…",
                     descriptionPaint, mCoordinates.descriptionWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
         }
 
