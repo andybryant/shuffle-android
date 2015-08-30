@@ -29,6 +29,7 @@ import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
+import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.AbstractSwipeItemTouchHelperCallback;
 import org.dodgybits.shuffle.android.core.view.DividerItemDecoration;
 import org.dodgybits.shuffle.android.core.view.EntityPickerDialogHelper;
@@ -312,7 +313,12 @@ public class TaskRecyclerFragment extends RoboFragment {
 
         private void clickPanel() {
             if (mTask != null) {
-                Location location = Location.viewTask(mTaskListContext, getAdapterPosition());
+                Location location;
+                if (UiUtilities.showListOnViewTask(getResources())) {
+                    location = Location.viewTask(mTaskListContext, getAdapterPosition());
+                } else {
+                    location = Location.editTask(mTask.getLocalId());
+                }
                 mEventManager.fire(new NavigationRequestEvent(location));
             }
         }

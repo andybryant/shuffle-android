@@ -12,12 +12,13 @@
         android:layout_height="match_parent"
         />
 
-    <ImageView
+    <TextView
         android:id="@+id/context_block"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="12dp"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:textSize="@dimen/context_font_size"
         android:padding="8dp"
         android:layout_gravity="center_vertical"
         android:src="@drawable/applications_games" />

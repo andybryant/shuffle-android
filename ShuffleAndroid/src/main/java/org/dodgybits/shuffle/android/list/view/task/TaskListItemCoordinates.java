@@ -56,6 +56,13 @@ public class TaskListItemCoordinates {
     int contextsY;
     int contextsWidth;
     int contextsHeight;
+    int contextsLabelLeft;
+    int contextsLabelTop;
+    int contextsSingleLabelLeft;
+    int contextsSingleLabelTop;
+    int contextsSingleFontSize;
+    int contextsMultiFontSize;
+    int contextsAscent;
     Rect contextSourceIconRect;
     RectF[][] contextRects = new RectF[5][4];
     RectF[][] contextDestIconRects = new RectF[5][4];
@@ -196,9 +203,21 @@ public class TaskListItemCoordinates {
             coordinates.descriptionFontSize = (int) description.getTextSize();
             coordinates.descriptionAscent = Math.round(description.getPaint().ascent());
 
-            ImageView contexts = (ImageView) view.findViewById(R.id.context_block);
+            TextView contexts = (TextView) view.findViewById(R.id.context_block);
             coordinates.contextsX = UiUtilities.getX(contexts);
             coordinates.contextsY = UiUtilities.getY(contexts);
+
+            coordinates.contextsLabelLeft = context.getResources().
+                    getDimensionPixelSize(R.dimen.context_label_left);
+            coordinates.contextsLabelTop = context.getResources().
+                    getDimensionPixelSize(R.dimen.context_label_top);
+            coordinates.contextsSingleLabelLeft = context.getResources().
+                    getDimensionPixelSize(R.dimen.context_single_label_left);
+            coordinates.contextsSingleLabelTop = context.getResources().
+                    getDimensionPixelSize(R.dimen.context_single_label_top);
+            coordinates.contextsMultiFontSize = (int) contexts.getTextSize();
+            coordinates.contextsSingleFontSize = coordinates.contextsMultiFontSize * 2;
+            coordinates.contextsAscent = Math.round(contexts.getPaint().ascent());
             coordinates.contextsWidth = getWidth(contexts, false);
             coordinates.contextsHeight = getHeight(contexts, false);
             float doublePadding = contexts.getPaddingLeft();
@@ -210,10 +229,10 @@ public class TaskListItemCoordinates {
                     coordinates.contextsY + coordinates.contextsHeight);
             coordinates.contextDestIconRects[0][0] = inset(coordinates.contextRects[0][0], doublePadding);
             coordinates.contextRects[1][0] = new RectF(
-                    coordinates.contextsX + coordinates.contextsWidth / 6,
+                    coordinates.contextsX,
                     coordinates.contextsY,
-                    coordinates.contextsX + 5 * coordinates.contextsWidth / 6,
-                    coordinates.contextsY + 2 * coordinates.contextsHeight / 3);
+                    coordinates.contextsX + coordinates.contextsWidth,
+                    coordinates.contextsY + coordinates.contextsHeight);
             coordinates.contextRects[2][0] = new RectF(
                     coordinates.contextsX,
                     coordinates.contextsY,
@@ -226,9 +245,9 @@ public class TaskListItemCoordinates {
                     coordinates.contextsY + coordinates.contextsHeight / 2);
             coordinates.contextRects[3][0] = new RectF(
                     coordinates.contextsX + coordinates.contextsWidth / 4,
-                    coordinates.contextsY,
+                    coordinates.contextsY + coordinates.contextsHeight / 20,
                     coordinates.contextsX + 3 * coordinates.contextsWidth / 4,
-                    coordinates.contextsY + coordinates.contextsHeight / 2);
+                    coordinates.contextsY + 11 * coordinates.contextsHeight / 20);
             coordinates.contextRects[3][1] = new RectF(
                     coordinates.contextsX,
                     coordinates.contextsY + coordinates.contextsHeight / 2,
