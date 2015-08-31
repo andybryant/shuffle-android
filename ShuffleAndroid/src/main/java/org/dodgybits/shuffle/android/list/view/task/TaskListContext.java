@@ -134,16 +134,6 @@ public class TaskListContext implements Parcelable {
         return result;
     }
 
-    public Id getEntityId() {
-        Id result = Id.NONE;
-        if (mSelector.getContextId().isInitialised()) {
-            result = mSelector.getContextId();
-        } else if (mSelector.getProjectId().isInitialised()) {
-            result = mSelector.getProjectId();
-        }
-        return result;
-    }
-
     public TaskSelector createSelectorWithPreferences(Context context) {
         ListSettings settings = ListSettingsCache.findSettings(mSelector.getListQuery());
         return mSelector.builderFrom().applyListPreferences(context, settings).build();
@@ -169,29 +159,6 @@ public class TaskListContext implements Parcelable {
         }
 
         return title;
-    }
-
-    public void updateTitle(AppCompatActivity androidContext,
-                              EntityCache<org.dodgybits.shuffle.android.core.model.Context> contextCache,
-                              EntityCache<Project> projectCache) {
-        String name;
-        ActionBar actionBar = androidContext.getSupportActionBar();
-        if (mSelector.getContextId().isInitialised()) {
-            // it's possible the context no longer exists at this point
-            org.dodgybits.shuffle.android.core.model.Context context = contextCache.findById(mSelector.getContextId());
-            name = context == null ? "?" : context.getName();
-            androidContext.setTitle(name);
-            actionBar.setSubtitle(mTitleId);
-        } else if (mSelector.getProjectId().isInitialised()) {
-            // it's possible the project no longer exists at this point
-            Project project = projectCache.findById(mSelector.getProjectId());
-            name = project == null ? "?" : project.getName();
-            androidContext.setTitle(name);
-            actionBar.setSubtitle(mTitleId);
-        } else {
-            androidContext.setTitle(mTitleId);
-            actionBar.setSubtitle(null);
-        }
     }
 
     @Override
@@ -229,45 +196,6 @@ public class TaskListContext implements Parcelable {
         return name;
     }
     
-    public boolean isEditEntityDeleted(Context androidContext,
-                                       EntityCache<org.dodgybits.shuffle.android.core.model.Context> contextCache,
-                                       EntityCache<Project> projectCache) {
-        boolean isDeleted;
-        switch (getListQuery()) {
-            case context:
-                org.dodgybits.shuffle.android.core.model.Context context = contextCache.findById(mSelector.getContextId());
-                isDeleted = context != null && context.isDeleted();
-                break;
-
-            case project:
-                Project project = projectCache.findById(mSelector.getProjectId());
-                isDeleted = project != null && project.isDeleted();
-                break;
-
-            default:
-                throw new UnsupportedOperationException("Cannot create edit event for listContext " + this);
-        }
-
-        return isDeleted;
-    }
-
-    public Object createDeleteEvent(boolean delete) {
-        Object event;
-        switch (getListQuery()) {
-            case context:
-                event = new UpdateContextDeletedEvent(mSelector.getContextId(), delete);
-                break;
-
-            case project:
-                event = new UpdateProjectDeletedEvent(mSelector.getProjectId(), delete);
-                break;
-
-            default:
-                throw new UnsupportedOperationException("Cannot create delete event for listContext " + this);
-        }
-        return event;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
