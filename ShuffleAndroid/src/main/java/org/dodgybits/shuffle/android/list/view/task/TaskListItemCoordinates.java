@@ -233,6 +233,7 @@ public class TaskListItemCoordinates {
                     coordinates.contextsY,
                     coordinates.contextsX + coordinates.contextsWidth,
                     coordinates.contextsY + coordinates.contextsHeight);
+            coordinates.contextDestIconRects[1][0] = inset(coordinates.contextRects[1][0], doublePadding);
             coordinates.contextRects[2][0] = new RectF(
                     coordinates.contextsX,
                     coordinates.contextsY,
@@ -297,7 +298,7 @@ public class TaskListItemCoordinates {
                     x + getWidth(selectedIndicator, false),
                     y + getHeight(selectedIndicator, false));
 
-            for (int i = 1; i <= 4; i++) {
+            for (int i = 2; i <= 4; i++) {
                 for (int j = 0; j < i; j++) {
                     coordinates.contextDestIconRects[i][j] = inset(coordinates.contextRects[i][j], padding);
                 }
