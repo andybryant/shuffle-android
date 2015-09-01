@@ -9,7 +9,6 @@ import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.list.activity.TaskListActivity;
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 
 public class TaskListViewActivity extends TaskListActivity {
     private static final String TAG = "TaskListViewActivity";
@@ -52,7 +51,7 @@ public class TaskListViewActivity extends TaskListActivity {
     }
 
     public void onClickFab(View view) {
-        Location location = Location.newTaskFromTaskListContext(TaskListContext.create(mLocation));
+        Location location = Location.newTaskFromLocation(mLocation);
         mEventManager.fire(new NavigationRequestEvent(location));
     }
 

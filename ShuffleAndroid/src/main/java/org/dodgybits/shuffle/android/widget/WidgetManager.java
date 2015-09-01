@@ -22,8 +22,8 @@ import android.util.Log;
 import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
+import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
 import roboguice.inject.ContextScopedProvider;
 import roboguice.inject.ContextSingleton;
@@ -111,13 +111,13 @@ public class WidgetManager {
     }
 
     /** Saves shared preferences for the given widget */
-    static void saveWidgetPrefs(Context context, int appWidgetId, TaskListContext listContext) {
+    static void saveWidgetPrefs(Context context, int appWidgetId, Location location) {
         String queryKey = Preferences.getWidgetQueryKey(appWidgetId);
         String contextIdKey = Preferences.getWidgetContextIdKey(appWidgetId);
         String projectIdKey = Preferences.getWidgetProjectIdKey(appWidgetId);
-        TaskSelector selector = listContext.createSelectorWithPreferences(context);
+        TaskSelector selector = TaskSelector.fromLocation(context, location);
         Preferences.getEditor(context).
-                putString(queryKey, listContext.getListQuery().name()).
+                putString(queryKey, location.getListQuery().name()).
                 putLong(contextIdKey, selector.getContextId().getId()).
                 putLong(projectIdKey, selector.getProjectId().getId()).
                 commit();
@@ -138,8 +138,8 @@ public class WidgetManager {
     /**
      * Returns the saved list context for the given widget.
      */
-    static TaskListContext loadListContextPref(Context context, int appWidgetId) {
-        TaskListContext listContext = null;
+    static Location loadListContextPref(Context context, int appWidgetId) {
+        Location location = null;
         String contextIdKey = Preferences.getWidgetContextIdKey(appWidgetId);
         Id contextId = Preferences.getWidgetId(context, contextIdKey);
         String projectIdKey = Preferences.getWidgetProjectIdKey(appWidgetId);
@@ -150,17 +150,17 @@ public class WidgetManager {
             ListQuery query;
             try {
                 query = ListQuery.valueOf(queryName);
-                listContext = TaskListContext.create(query, contextId, projectId);
+                location = Location.viewTaskList(query, contextId, projectId);
             } catch (Exception e) {
                 Log.e(TAG, "Failed to parse key " + queryName);
                 // default to next tasks when can't parse key
                 query = ListQuery.nextTasks;
                 contextId = projectId = Id.NONE;
-                listContext = TaskListContext.create(query, contextId, projectId);
-                saveWidgetPrefs(context, appWidgetId, listContext);
+                location = Location.viewTaskList(query, contextId, projectId);
+                saveWidgetPrefs(context, appWidgetId, location);
             }
         }
-        return listContext;
+        return location;
     }
 
 }

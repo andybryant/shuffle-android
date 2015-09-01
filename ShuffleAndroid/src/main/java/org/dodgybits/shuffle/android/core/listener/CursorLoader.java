@@ -25,18 +25,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.util.SparseIntArray;
-
 import com.google.inject.Inject;
-
 import org.dodgybits.shuffle.android.core.content.TaskCursorLoader;
-import org.dodgybits.shuffle.android.core.event.ContextListCursorLoadedEvent;
-import org.dodgybits.shuffle.android.core.event.ContextTaskCountLoadedEvent;
-import org.dodgybits.shuffle.android.core.event.LoadCountCursorEvent;
-import org.dodgybits.shuffle.android.core.event.LoadListCursorEvent;
-import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
-import org.dodgybits.shuffle.android.core.event.ProjectListCursorLoadedEvent;
-import org.dodgybits.shuffle.android.core.event.ProjectTaskCountLoadedEvent;
-import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
+import org.dodgybits.shuffle.android.core.event.*;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.core.view.Location;
@@ -46,10 +37,8 @@ import org.dodgybits.shuffle.android.list.content.ProjectCursorLoader;
 import org.dodgybits.shuffle.android.list.event.ListSettingsUpdatedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
-
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
@@ -64,7 +53,6 @@ public class CursorLoader {
 
     private Location mLocation;
 
-    private TaskListContext mTaskListContext;
     private TaskSelector mTaskSelector;
 
     private TaskPersister mTaskPersister;
@@ -79,8 +67,7 @@ public class CursorLoader {
     private void onViewUpdated(@Observes LocationUpdatedEvent event) {
         Log.d(TAG, "Received view update event " + event);
         mLocation = event.getLocation();
-        mTaskListContext = TaskListContext.create(mLocation);
-        mTaskSelector = mTaskListContext.createSelectorWithPreferences(mActivity);
+        mTaskSelector = TaskSelector.fromLocation(mActivity, mLocation);
 
         // delay call so that when list is reloaded straight away,
         // other location update handlers have all been called
@@ -194,8 +181,7 @@ public class CursorLoader {
 
                 @Override
                 public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                    final TaskListContext listContext = mTaskListContext;
-                    return TaskCursorLoader.createLoader(mActivity, listContext);
+                    return TaskCursorLoader.createLoader(mActivity, mTaskSelector);
                 }
 
                 @Override
@@ -205,7 +191,7 @@ public class CursorLoader {
                     new Handler().post(new Runnable() {
                         @Override
                         public void run() {
-                            mEventManager.fire(new TaskListCursorLoadedEvent(c, mTaskListContext));
+                            mEventManager.fire(new TaskListCursorLoadedEvent(c, mLocation));
                         }
                     });
                 }

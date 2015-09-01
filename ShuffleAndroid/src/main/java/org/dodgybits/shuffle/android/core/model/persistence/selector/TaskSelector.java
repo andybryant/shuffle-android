@@ -1,5 +1,6 @@
 package org.dodgybits.shuffle.android.core.model.persistence.selector;
 
+import android.content.Context;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Parcel;
@@ -7,8 +8,10 @@ import android.os.Parcelable;
 import android.text.format.DateUtils;
 import android.util.Log;
 import org.dodgybits.shuffle.android.core.model.Id;
+import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.core.util.StringUtils;
+import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 import org.dodgybits.shuffle.android.preference.model.ListSettings;
 
@@ -105,6 +108,20 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
         dest.writeLong(getContextId().getId());
         dest.writeLong(getProjectId().getId());
         dest.writeString(getSearchQuery());
+    }
+
+    public static TaskSelector fromLocation(Context context, Location location) {
+        TaskSelector.Builder builder = TaskSelector.newBuilder()
+                .setListQuery(location.getListQuery())
+                .setSearchQuery(location.getSearchQuery());
+        if (location.getListQuery() == ListQuery.project) {
+            builder.setProjectId(location.getProjectId());
+        } else if (location.getListQuery() == ListQuery.context) {
+            builder.setContextId(location.getContextId());
+        }
+        ListSettings settings = ListSettingsCache.findSettings(location.getListQuery());
+        builder.applyListPreferences(context, settings);
+        return builder.build();
     }
 
     public static final Parcelable.Creator<TaskSelector> CREATOR

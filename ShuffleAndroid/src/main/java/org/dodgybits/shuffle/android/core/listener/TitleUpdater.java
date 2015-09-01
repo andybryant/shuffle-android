@@ -57,7 +57,7 @@ public class TitleUpdater {
         mActivity.setTitle(title);
     }
 
-    private String getTaskListTitle(Location location) {
+    public String getTaskListTitle(Location location) {
         String title = "";
         ListQuery listQuery = location.getListQuery();
         if (listQuery == ListQuery.context) {

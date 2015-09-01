@@ -21,7 +21,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 
 import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.ContextList;
 import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.EditContext;
@@ -53,12 +52,9 @@ public class Location implements Parcelable {
         return viewTaskList(ListQuery.inbox);
     }
 
-    public static Location newTaskFromTaskListContext(TaskListContext listContext) {
-        Location.Builder builder = Location.newBuilder();
+    public static Location newTaskFromLocation(Location location) {
+        Location.Builder builder = location.builderFrom();
         builder.setLocationActivity(EditTask);
-        builder.setListQuery(listContext.getListQuery());
-        builder.setContextId(listContext.getContextId());
-        builder.setProjectId(listContext.getProjectId());
         return builder.build();
     }
 
@@ -118,13 +114,11 @@ public class Location implements Parcelable {
         return builder.build();
     }
 
-    public static Location viewTask(ListQuery listQuery, int selectedIndex) {
-        return viewTask(listQuery, Id.NONE, Id.NONE, selectedIndex);
-    }
-
-    public static Location viewTask(TaskListContext listContext, int selectedIndex) {
-        return viewTask(listContext.getListQuery(),
-                listContext.getProjectId(), listContext.getContextId(), selectedIndex);
+    public static Location viewTask(Location location, int selectedIndex) {
+        Location.Builder builder = location.builderFrom();
+        builder.setLocationActivity(TaskList);
+        builder.setSelectedIndex(selectedIndex);
+        return builder.build();
     }
 
     public static Location viewTask(ListQuery listQuery, Id projectId, Id contextId, int selectedIndex) {
@@ -137,13 +131,14 @@ public class Location implements Parcelable {
         return builder.build();
     }
 
-    public static Location viewTaskList(TaskListContext listContext) {
-        return viewTaskList(listContext.getListQuery(),
-                listContext.getProjectId(), listContext.getContextId());
-    }
-
     public static Location viewTaskList(ListQuery listQuery) {
         return viewTaskList(listQuery, Id.NONE, Id.NONE);
+    }
+
+    public static Location viewTaskList(Location location) {
+        Location.Builder builder = location.builderFrom();
+        builder.setLocationActivity(TaskList);
+        return builder.build();
     }
 
     public static Location viewTaskList(ListQuery listQuery, Id projectId, Id contextId) {

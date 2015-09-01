@@ -44,5 +44,5 @@ Previously list specific configuration was spread amongst the following classes:
  * `ListSettings` - Simplified to only have to remaining settings - completed and active.
  * `ListSettingsCache` - updated with latest lists and default values.
  * `TaskSelector` - simplified to only support two remaining settings. Updated all inbuilt list queries.
- * `LocationFeatures` - identifies which features are available for a given location
+ * `ListFeatures` - identifies which features are available for a given list location
 

@@ -9,7 +9,6 @@ import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.EntityPickerDialogHelper;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 import org.dodgybits.shuffle.android.view.activity.TaskListViewActivity;
 import org.dodgybits.shuffle.android.view.activity.TaskViewActivity;
 
@@ -55,7 +54,7 @@ public class TaskListActivity extends AbstractMainActivity
     }
 
     public void onClickFab(View view) {
-        Location location = Location.newTaskFromTaskListContext(TaskListContext.create(mLocation));
+        Location location = Location.newTaskFromLocation(mLocation);
         mEventManager.fire(new NavigationRequestEvent(location));
     }
 

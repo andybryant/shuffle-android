@@ -20,7 +20,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
+import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.persistence.loader.ThrottlingCursorLoader;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 
@@ -76,9 +76,9 @@ class TaskWidgetLoader extends ThrottlingCursorLoader {
      *
      * Must be called from the UI thread
      */
-    void load(TaskListContext listContext) {
+    void load(Location location) {
         reset();
-        mSelector = listContext.createSelectorWithPreferences(mContext);
+        mSelector = TaskSelector.fromLocation(mContext, location);
         setSelectionAndArgs();
         startLoading();
     }

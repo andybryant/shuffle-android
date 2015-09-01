@@ -9,7 +9,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
-
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.ActiveToggleEvent;
@@ -23,7 +22,7 @@ import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.Flag;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
+import org.dodgybits.shuffle.android.preference.model.ListFeatures;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
@@ -93,13 +92,8 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
             case PROJECT_LIST:
                 break;
             case TASK_LIST:
-                TaskListContext listContext = TaskListContext.create(mLocation);
-                if (listContext == null) {
-                    return false;
-                }
-
-                if (listContext.showEditActions()) {
-                    String entityName = listContext.getEditEntityName(mActivity);
+                if (ListFeatures.showEditActions(mLocation)) {
+                    String entityName = ListFeatures.getEditEntityName(mActivity, mLocation);
                     editMenu.setVisible(true);
                     editMenu.setTitle(getString(R.string.menu_edit, entityName));
                 } else {

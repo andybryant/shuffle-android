@@ -41,7 +41,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.view.LocationParser;
+import org.dodgybits.shuffle.android.core.listener.TitleUpdater;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Task;
@@ -50,8 +50,8 @@ import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.Location;
+import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
-import org.dodgybits.shuffle.android.list.view.task.TaskListContext;
 
 import java.util.List;
 
@@ -112,7 +112,7 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
     /** The display name of this task list */
     private String mTaskListName;
 
-    private TaskListContext mListContext;
+    private Location mLocation;
 
     /**
      * The cursor for the messages, with some extra info such as the number of accounts.
@@ -133,6 +133,9 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
 
     @Inject
     LocationParser mLocationParser;
+
+    @Inject
+    TitleUpdater mTitleUpdater;
 
     ContextBitmapProvider mBitmapProvider;
     
@@ -166,9 +169,9 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
      * will remain valid until the loader loads the latest data.
      */
     public void start() {
-        mListContext = WidgetManager.loadListContextPref(mContext, mWidgetId);
-        if (mListContext != null) {
-            mLoader.load(mListContext);
+        mLocation = WidgetManager.loadListContextPref(mContext, mWidgetId);
+        if (mLocation != null) {
+            mLoader.load(mLocation);
         }
     }
 
@@ -190,7 +193,7 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
     @Override
     public void onLoadComplete(Loader<Cursor> loader, Cursor cursor) {
         mCursor = (TaskWidgetLoader.WidgetCursor) cursor;   // Save away the cursor
-        mTaskListName = mListContext.createTitle(mContext, mContextCache, mProjectCache);
+        mTaskListName = mTitleUpdater.getTaskListTitle(mLocation);
         updateHeader();
         mWidgetManager.notifyAppWidgetViewDataChanged(mWidgetId, R.id.task_list);
     }
@@ -253,10 +256,10 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
             final ListQuery listQuery = ListQuery.valueOf(queryName);
             final Id contextId = Id.create(Long.parseLong(pathSegments.get(2)));
             final Id projectId = Id.create(Long.parseLong(pathSegments.get(3)));
-            TaskListContext listContext = TaskListContext.create(listQuery, contextId, projectId);
             final int position = Integer.parseInt(pathSegments.get(4));
+            Location location = Location.viewTask(listQuery, contextId, projectId, position);
             if (COMMAND_NAME_VIEW_TASK.equals(command)) {
-                openTask(context, listContext, position);
+                openTask(context, location);
             }
         } catch (NumberFormatException e) {
             // Shouldn't happen as we construct all of the Uri's
@@ -265,9 +268,7 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
         return true;
     }
 
-    private static void openTask(final Context context, final TaskListContext listContext,
-                                 final int position) {
-        Location location = Location.viewTask(listContext, position);
+    private static void openTask(final Context context, final Location location) {
         Intent intent = LocationParser.createIntent(context, location);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // just in case intent comes without it
         context.startActivity(intent);
@@ -312,12 +313,12 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
             views.setViewVisibility(R.id.task_list, View.VISIBLE);
 
             // Create click intent for "create task" target
-            Location location = Location.newTaskFromTaskListContext(mListContext);
+            Location location = Location.newTaskFromLocation(mLocation);
             intent = LocationParser.createIntent(mContext, location);
             setActivityIntent(views, R.id.widget_compose, intent);
 
             // Create click intent for logo to open inbox
-            location = Location.viewTaskList(mListContext);
+            location = Location.viewTaskList(mLocation);
             intent = LocationParser.createIntent(mContext, location);
             setActivityIntent(views, R.id.widget_logo, intent);
             setActivityIntent(views, R.id.widget_title, intent);
@@ -437,7 +438,7 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
         Bitmap bitmap = mBitmapProvider.getBitmapForContexts(contexts);
         views.setImageViewBitmap(R.id.widget_context, bitmap);
 
-        TaskSelector selector = mListContext.createSelectorWithPreferences(mContext);
+        TaskSelector selector = TaskSelector.fromLocation(mContext, mLocation);
         String queryName = selector.getListQuery().name();
         String contextId = String.valueOf(selector.getContextId().getId());
         String projectId = String.valueOf(selector.getProjectId().getId());
@@ -505,6 +506,6 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
 
     @Override
     public String toString() {
-        return "View=" + mListContext.toString();
+        return "View=" + mLocation.toString();
     }
 }

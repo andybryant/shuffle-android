@@ -42,7 +42,7 @@ public class CursorProvider {
 
 
     private void onCursorLoaded(@Observes TaskListCursorLoadedEvent event) {
-        Log.d(TAG, "Updating cursor for context " + event.getTaskListContext());
+        Log.d(TAG, "Updating cursor for location " + event.getLocation());
         mTaskListCursor = event.getCursor();
         mEventManager.fire(new CursorUpdatedEvent());
     }

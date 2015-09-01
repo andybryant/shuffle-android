@@ -40,6 +40,7 @@ import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
 import org.dodgybits.shuffle.android.list.view.SelectableHolderImpl;
+import org.dodgybits.shuffle.android.preference.model.ListFeatures;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -74,8 +75,6 @@ public class TaskRecyclerFragment extends RoboFragment {
     private LocationProvider mLocationProvider;
 
     private Location mLocation;
-
-    private TaskListContext mTaskListContext;
 
     private boolean mEnableTaskReordering = false;
 
@@ -192,9 +191,8 @@ public class TaskRecyclerFragment extends RoboFragment {
     private void onViewUpdate(Location location) {
         if (!ObjectUtils.equals(location, mLocation)) {
             mLocation = location;
-            mTaskListContext = TaskListContext.create(mLocation);
 
-            mEnableTaskReordering = mTaskListContext.showMoveActions();
+            mEnableTaskReordering = ListFeatures.showMoveActions(mLocation);
             updateCursor();
             if (mListAdapter != null) {
                 mListAdapter.notifyDataSetChanged();
@@ -315,7 +313,7 @@ public class TaskRecyclerFragment extends RoboFragment {
             if (mTask != null) {
                 Location location;
                 if (UiUtilities.showListOnViewTask(getResources())) {
-                    location = Location.viewTask(mTaskListContext, getAdapterPosition());
+                    location = Location.viewTask(mLocation, getAdapterPosition());
                 } else {
                     location = Location.editTask(mTask.getLocalId());
                 }
@@ -343,7 +341,7 @@ public class TaskRecyclerFragment extends RoboFragment {
 
         public void bindTask(Task task) {
             mTask = task;
-            boolean projectVisible = mTaskListContext == null || mTaskListContext.isProjectNameVisible();
+            boolean projectVisible = ListFeatures.isProjectNameVisible(mLocation);
             boolean isSelected = mLocation.getSelectedIndex() == getAdapterPosition();
             mTaskListItem.setTask(task, projectVisible, isSelected);
         }
