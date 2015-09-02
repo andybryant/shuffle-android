@@ -9,12 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.dodgybits.shuffle.android.core.model.persistence.selector.Flag.ignored;
+import static org.dodgybits.shuffle.android.core.model.persistence.selector.Flag.no;
 
 public abstract class AbstractEntitySelector<E extends EntitySelector<E>> implements EntitySelector<E> {
     private static final String cTag = "AbstractEntitySelector";
 
     protected Flag mActive = ignored;
-    protected Flag mDeleted = ignored;
+    protected Flag mDeleted = no;
     protected String mSortOrder;
     
     @Override
@@ -41,7 +42,7 @@ public abstract class AbstractEntitySelector<E extends EntitySelector<E>> implem
     }
 
     protected List<String> getSelectionExpressions(android.content.Context context) {
-        List<String> expressions = new ArrayList<String>();
+        List<String> expressions = new ArrayList<>();
         return expressions;
     }    
 
@@ -128,7 +129,7 @@ public abstract class AbstractEntitySelector<E extends EntitySelector<E>> implem
         @Override
         public AbstractBuilder<E> applyListPreferences(android.content.Context context, ListSettings settings) {
             setActive(settings.getActive(context));
-            setDeleted(settings.getDeleted(context));
+            setDeleted(settings.getDefaultDeleted());
 
             return this;
         }

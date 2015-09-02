@@ -11,20 +11,14 @@ public class ListSettings {
     
     public static final String LIST_FILTER_ACTIVE = ".list_active.2";
     public static final String LIST_FILTER_COMPLETED = ".list_completed.2";
-    public static final String LIST_FILTER_DELETED = ".list_deleted.2";
-    public static final String LIST_FILTER_PENDING = ".list_pending.2";
 
     private String mPrefix;
     private Flag mDefaultCompleted = Flag.no;
-    private Flag mDefaultPending = Flag.no;
     private Flag mDefaultDeleted = Flag.no;
     private Flag mDefaultActive = Flag.yes;
 
 
-    private boolean mQuickAddEnabled = false;
-    private boolean mCompletedEnabled = true;
-    private boolean mPendingEnabled = true;
-    private boolean mDeletedEnabled = true;
+    private boolean mCompletedEnabled = false;
     private boolean mActiveEnabled = false;
 
     public ListSettings(String prefix) {
@@ -43,10 +37,6 @@ public class ListSettings {
         return mDefaultCompleted;
     }
 
-    public Flag getDefaultPending() {
-        return mDefaultPending;
-    }
-
     public Flag getDefaultDeleted() {
         return mDefaultDeleted;
     }
@@ -57,11 +47,6 @@ public class ListSettings {
 
     public ListSettings setDefaultCompleted(Flag value) {
         mDefaultCompleted = value;
-        return this;
-    }
-
-    public ListSettings setDefaultPending(Flag value) {
-        mDefaultPending = value;
         return this;
     }
 
@@ -79,26 +64,8 @@ public class ListSettings {
         return mCompletedEnabled;
     }
 
-    public ListSettings disableCompleted() {
-        mCompletedEnabled = false;
-        return this;
-    }
-
-    public boolean isPendingEnabled() {
-        return mPendingEnabled;
-    }
-
-    public ListSettings disablePending() {
-        mPendingEnabled = false;
-        return this;
-    }
-
-    public boolean isDeletedEnabled() {
-        return mDeletedEnabled;
-    }
-
-    public ListSettings disableDeleted() {
-        mDeletedEnabled = false;
+    public ListSettings enableCompleted() {
+        mCompletedEnabled = true;
         return this;
     }
 
@@ -108,15 +75,6 @@ public class ListSettings {
 
     public ListSettings enableActive() {
         mActiveEnabled = true;
-        return this;
-    }
-
-    public boolean isQuickAddEnabled() {
-        return mQuickAddEnabled;
-    }
-
-    public ListSettings enableQuickAdd() {
-        mQuickAddEnabled = true;
         return this;
     }
 
@@ -139,15 +97,6 @@ public class ListSettings {
                 .putString(mPrefix + LIST_FILTER_COMPLETED, flag.name())
                 .commit();
     }
-
-    public Flag getDeleted(Context context) {
-        return getFlag(context, LIST_FILTER_DELETED, mDefaultDeleted);
-    }
-
-    public Flag getPending(Context context) {
-        return getFlag(context, LIST_FILTER_PENDING, mDefaultPending);
-    }
-
 
     private Flag getFlag(Context context, String setting, Flag defaultValue) {
         String valueStr = getSharedPreferences(context).getString(mPrefix + setting, defaultValue.name());

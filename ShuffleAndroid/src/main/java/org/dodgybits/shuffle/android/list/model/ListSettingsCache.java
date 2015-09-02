@@ -1,5 +1,6 @@
 package org.dodgybits.shuffle.android.list.model;
 
+import org.dodgybits.shuffle.android.core.model.persistence.selector.Flag;
 import org.dodgybits.shuffle.android.preference.model.ListSettings;
 
 import java.util.HashMap;
@@ -11,31 +12,36 @@ public class ListSettingsCache {
 
     private static ListSettings inboxSettings =
             new ListSettings(ListQuery.inbox.name())
-                    .enableQuickAdd();
+                    .setDefaultActive(Flag.ignored)
+                    .enableCompleted();
     private static ListSettings nextTasksSettings =
-            new ListSettings(NEXT_TASKS_SETTINGS_KEY).
-                    disableCompleted().
-                    disableDeleted();
+            new ListSettings(NEXT_TASKS_SETTINGS_KEY)
+                    .setDefaultCompleted(Flag.ignored)
+                    .setDefaultActive(Flag.ignored);
     private static ListSettings dueTaskSettings =
-            new ListSettings(DUE_TASKS_SETTINGS_KEY);
+            new ListSettings(DUE_TASKS_SETTINGS_KEY)
+                    .enableCompleted();
     private static ListSettings projectSettings =
             new ListSettings(ListQuery.project.name())
-                    .disableCompleted()
+                    .enableCompleted()
                     .enableActive();
     private static ListSettings contextSettings =
             new ListSettings(ListQuery.context.name())
-                    .disableCompleted()
+                    .enableCompleted()
                     .enableActive();
     private static ListSettings deferredSettings =
             new ListSettings(ListQuery.deferred.name())
-                    .disableCompleted()
-                    .enableActive();
+                    .enableCompleted();
     private static ListSettings deletedSettings =
             new ListSettings(ListQuery.deleted.name())
-                    .disableCompleted();
+                    .setDefaultDeleted(Flag.yes)
+                    .setDefaultActive(Flag.ignored)
+                    .enableCompleted();
     private static ListSettings searchSettings =
             new ListSettings(ListQuery.search.name())
-                    .enableActive();
+                    .setDefaultCompleted(Flag.ignored)
+                    .setDefaultActive(Flag.ignored)
+                    .enableCompleted();
 
 
     private static final HashMap<ListQuery,ListSettings> SPARSE_SETTINGS_MAP =

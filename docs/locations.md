@@ -23,7 +23,7 @@ I changed the main navigable locations in Shuffle. There intention should now be
 
 ## Settings
 
- * __Toggle completed__ - Inbox, Due actions, Project actions, Tag actions, Deferred, Inactive, Deleted
+ * __Toggle completed__ - Inbox, Due actions, Project actions, Tag actions, Deferred, Deleted
  * __Toggle active__ - Project, Tag
 
 # Technical refactor
