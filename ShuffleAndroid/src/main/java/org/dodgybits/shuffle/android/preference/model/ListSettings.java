@@ -14,6 +14,7 @@ public class ListSettings {
 
     private String mPrefix;
     private Flag mDefaultCompleted = Flag.no;
+    private Flag mDefaultPending = Flag.no;
     private Flag mDefaultDeleted = Flag.no;
     private Flag mDefaultActive = Flag.yes;
 
@@ -37,6 +38,10 @@ public class ListSettings {
         return mDefaultCompleted;
     }
 
+    public Flag getDefaultPending() {
+        return mDefaultPending;
+    }
+
     public Flag getDefaultDeleted() {
         return mDefaultDeleted;
     }
@@ -47,6 +52,11 @@ public class ListSettings {
 
     public ListSettings setDefaultCompleted(Flag value) {
         mDefaultCompleted = value;
+        return this;
+    }
+
+    public ListSettings setDefaultPending(Flag value) {
+        mDefaultPending = value;
         return this;
     }
 

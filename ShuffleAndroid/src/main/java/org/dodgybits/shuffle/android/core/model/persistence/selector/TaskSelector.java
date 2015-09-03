@@ -30,6 +30,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
     private Id mProjectId = Id.NONE;
     private Id mContextId = Id.NONE;
     private Flag mComplete = ignored;
+    private Flag mPending = ignored;
 
     private String mSelection = null;
     private String[] mSelectionArgs = UNDEFINED_ARGS;
@@ -52,6 +53,10 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
 
     public final Flag getComplete() {
         return mComplete;
+    }
+
+    public final Flag getPending() {
+        return mPending;
     }
 
     public final String getSearchQuery() {
@@ -83,6 +88,8 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
         
         addActiveExpression(expressions);
         addDeletedExpression(expressions);
+        addPendingExpression(expressions);
+
         addIdCheckExpression(expressions, TaskProvider.Tasks.PROJECT_ID, mProjectId);
         addContextExpression(expressions);
         addFlagExpression(expressions, TaskProvider.Tasks.COMPLETE, mComplete);
@@ -192,6 +199,17 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
             String expression = "(task.deleted = 0 " +
                 "AND (projectId is null OR projectId IN (select p._id from project p where p.deleted = 0)) " +
                 ")";
+            expressions.add(expression);
+        }
+    }
+
+    private void addPendingExpression(List<String> expressions) {
+        long now = System.currentTimeMillis();
+        if (mPending == yes) {
+            String expression = "(start > " + now + ")";
+            expressions.add(expression);
+        } else if (mPending == no) {
+            String expression = "(start <= " + now + ")";
             expressions.add(expression);
         }
     }
@@ -313,9 +331,9 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
     public final String toString() {
         return String.format(
                 "[TaskSelector query=%1$s project=%2$s contexts=%3$s " +
-                "complete=%4$s sortOrder=%5$s active=%6$s deleted=%7$s searchQuery=%8$s]",
+                "complete=%4$s sortOrder=%5$s active=%6$s deleted=%7$s pending=%8$s searchQuery=%9$s]",
                 mListQuery, mProjectId, mContextId, mComplete,
-                mSortOrder, mActive, mDeleted, mSearchQuery);
+                mSortOrder, mActive, mDeleted, mPending, mSearchQuery);
     }
 
 
@@ -329,6 +347,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
         if (mComplete != that.mComplete) return false;
         if (!mContextId.equals(that.mContextId)) return false;
         if (mListQuery != that.mListQuery) return false;
+        if (mPending != that.mPending) return false;
         if (!mProjectId.equals(that.mProjectId)) return false;
         if (mSearchQuery != null ? !mSearchQuery.equals(that.mSearchQuery) : that.mSearchQuery != null) return false;
 
@@ -341,6 +360,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
         result = 31 * result + mProjectId.hashCode();
         result = 31 * result + mContextId.hashCode();
         result = 31 * result + mComplete.hashCode();
+        result = 31 * result + mPending.hashCode();
         result = 31 * result + (mSearchQuery != null ? mSearchQuery.hashCode() : 0);
         return result;
     }
@@ -397,6 +417,15 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
             return this;
         }
 
+        public Flag getPending() {
+            return mResult.mPending;
+        }
+
+        public Builder setPending(Flag value) {
+            mResult.mPending = value;
+            return this;
+        }
+
         public String getSearchQuery() {
             return mResult.mSearchQuery;
         }
@@ -413,6 +442,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
             setProjectId(selector.mProjectId);
             setContextId(selector.mContextId);
             setComplete(selector.mComplete);
+            setPending(selector.mPending);
 
             return this;
         }
@@ -421,6 +451,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
             super.applyListPreferences(context, settings);
 
             setComplete(settings.getCompleted(context));
+            setPending(settings.getPending(context));
 
             return this;
         }

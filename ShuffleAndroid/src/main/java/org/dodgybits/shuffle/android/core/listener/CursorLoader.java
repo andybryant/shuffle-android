@@ -83,6 +83,7 @@ public class CursorLoader {
 
     private void onListSettingsUpdated(@Observes ListSettingsUpdatedEvent event) {
         if (event.getListQuery().equals(mLocation.getListQuery())) {
+            mTaskSelector = TaskSelector.fromLocation(mActivity, mLocation);
             // our list settings changed - reload list
             startListLoading(mLocation.getViewMode());
             startCountLoading(mLocation.getViewMode());
@@ -90,6 +91,7 @@ public class CursorLoader {
     }
 
     private void onReloadListCursor(@Observes LoadListCursorEvent event) {
+        mTaskSelector = TaskSelector.fromLocation(mActivity, mLocation);
         restartListLoading(event.getViewMode());
     }
 
@@ -98,18 +100,19 @@ public class CursorLoader {
     }
 
     private void startListLoading(ViewMode viewMode) {
-        Log.d(TAG, "Creating relevant list cursor for " + viewMode);
+        int listId = listId();
+        Log.d(TAG, "Creating relevant list cursor for " + viewMode + " listId " + listId);
         final LoaderManager lm = mActivity.getSupportLoaderManager();
         switch (viewMode) {
             case TASK:
             case TASK_LIST:
-                lm.initLoader(listId(), null, TASK_LIST_LOADER_CALLBACKS);
+                lm.initLoader(listId, null, TASK_LIST_LOADER_CALLBACKS);
                 break;
             case CONTEXT_LIST:
-                lm.initLoader(listId(), null, CONTEXT_LIST_LOADER_CALLBACKS);
+                lm.initLoader(listId, null, CONTEXT_LIST_LOADER_CALLBACKS);
                 break;
             case PROJECT_LIST:
-                lm.initLoader(listId(), null, PROJECT_LIST_LOADER_CALLBACKS);
+                lm.initLoader(listId, null, PROJECT_LIST_LOADER_CALLBACKS);
                 break;
             default:
                 // TODO
@@ -140,18 +143,19 @@ public class CursorLoader {
     }
 
     private void restartListLoading(ViewMode viewMode) {
-        Log.d(TAG, "Refreshing list cursor " + viewMode);
+        int listId = listId();
+        Log.d(TAG, "Refreshing list cursor " + viewMode + " listId " + listId);
         final LoaderManager lm = mActivity.getSupportLoaderManager();
         switch (viewMode) {
             case TASK:
             case TASK_LIST:
-                lm.restartLoader(listId(), null, TASK_LIST_LOADER_CALLBACKS);
+                lm.restartLoader(listId, null, TASK_LIST_LOADER_CALLBACKS);
                 break;
             case CONTEXT_LIST:
-                lm.restartLoader(listId(), null, CONTEXT_LIST_LOADER_CALLBACKS);
+                lm.restartLoader(listId, null, CONTEXT_LIST_LOADER_CALLBACKS);
                 break;
             case PROJECT_LIST:
-                lm.restartLoader(listId(), null, PROJECT_LIST_LOADER_CALLBACKS);
+                lm.restartLoader(listId, null, PROJECT_LIST_LOADER_CALLBACKS);
                 break;
             default:
                 // TODO

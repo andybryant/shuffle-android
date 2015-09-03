@@ -23,6 +23,7 @@ import org.dodgybits.shuffle.android.core.model.persistence.selector.Flag;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
 import org.dodgybits.shuffle.android.preference.model.ListFeatures;
+import org.dodgybits.shuffle.android.preference.model.ListSettings;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
@@ -118,20 +119,26 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
         if (toggleMenu != null) {
             final CompoundButton completeSwitch = (CompoundButton) toggleMenu.getActionView();
             if (completeSwitch != null) {
-                Flag completed = ListSettingsCache.findSettings(
-                        mLocation.getListQuery())
-                        .getCompleted(mActivity);
-                completeSwitch.setChecked(completed == Flag.yes);
-                completeSwitch.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.d(TAG, "complete toggle hit");
-                        mEventManager.fire(new CompletedToggleEvent(
-                                completeSwitch.isChecked(),
-                                mLocation.getListQuery(),
-                                mLocation.getViewMode()));
-                    }
-                });
+                ListSettings listSettings = ListSettingsCache.findSettings(
+                        mLocation.getListQuery());
+                if (listSettings.isCompletedEnabled()) {
+                    toggleMenu.setVisible(true);
+                    Flag completed = listSettings
+                            .getCompleted(mActivity);
+                    completeSwitch.setChecked(completed == Flag.yes);
+                    completeSwitch.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d(TAG, "complete toggle hit");
+                            mEventManager.fire(new CompletedToggleEvent(
+                                    completeSwitch.isChecked(),
+                                    mLocation.getListQuery(),
+                                    mLocation.getViewMode()));
+                        }
+                    });
+                } else {
+                    toggleMenu.setVisible(false);
+                }
             }
         }
     }

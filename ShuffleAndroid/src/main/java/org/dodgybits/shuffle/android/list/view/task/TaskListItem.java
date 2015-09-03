@@ -102,7 +102,9 @@ public class TaskListItem extends View {
     private static int PROJECT_TEXT_COLOR_COMPLETE;
     private static int PROJECT_TEXT_COLOR_INCOMPLETE;
     private static int DATE_TEXT_COLOR_COMPLETE;
-    private static int DATE_TEXT_COLOR_INCOMPLETE;
+    private static int DATE_TEXT_COLOR_PENDING_INCOMPLETE;
+    private static int DATE_TEXT_COLOR_DUE_PAST_INCOMPLETE;
+    private static int DATE_TEXT_COLOR_DUE_FUTURE_INCOMPLETE;
 
     private int mViewWidth = 0;
     private int mViewHeight = 0;
@@ -110,9 +112,8 @@ public class TaskListItem extends View {
     private static int sItemHeight;
 
     private CharSequence mFormattedProject;
-    // We must initialize this to something, in case the timestamp of the message is zero (which
-    // should be very rare); this is otherwise set in setTimestamp
     private CharSequence mFormattedDate = "";
+    private int mDateColor;
 
     public void setHolder(TaskRecyclerFragment.TaskHolder holder) {
         mHolder = holder;
@@ -155,7 +156,9 @@ public class TaskListItem extends View {
             PROJECT_TEXT_COLOR_COMPLETE = r.getColor(R.color.project_text_color_complete);
             PROJECT_TEXT_COLOR_INCOMPLETE = r.getColor(R.color.project_text_color_incomplete);
             DATE_TEXT_COLOR_COMPLETE = r.getColor(R.color.date_text_color_complete);
-            DATE_TEXT_COLOR_INCOMPLETE = r.getColor(R.color.date_text_color_incomplete);
+            DATE_TEXT_COLOR_DUE_PAST_INCOMPLETE = r.getColor(R.color.date_text_color_due_past_incomplete);
+            DATE_TEXT_COLOR_DUE_FUTURE_INCOMPLETE = r.getColor(R.color.date_text_color_due_future_incomplete);
+            DATE_TEXT_COLOR_PENDING_INCOMPLETE = r.getColor(R.color.deferred);
 
             sInit = true;
         }
@@ -180,7 +183,7 @@ public class TaskListItem extends View {
         List<Context> contexts = mContextCache.findById(task.getContextIds());
         mIsActive = TaskLifecycleState.getActiveStatus(task, contexts, mProject) == TaskLifecycleState.Status.yes;
         mIsDeleted = TaskLifecycleState.getDeletedStatus(task, mProject) != TaskLifecycleState.Status.no;
-        setTimestamp(task.getDueDate());
+        setTimestamp(task.getStartDate(), task.getDueDate());
         setSelected(isSelected);
 
         boolean changed = setContexts(contexts);
@@ -240,12 +243,28 @@ public class TaskListItem extends View {
         return changed;
     }
 
-    long mDueMillis = 0L;
-    private void setTimestamp(long timestamp) {
-        if (mDueMillis != timestamp) {
+    long mTimestampMillis = 0L;
+    private void setTimestamp(long start, long due) {
+        long timestamp;
+        long now = System.currentTimeMillis();
+        if (isDone()) {
+            timestamp = 0L;
+            mDateColor = DATE_TEXT_COLOR_COMPLETE;
+        } else if (start > now) {
+            timestamp = start;
+            mDateColor = DATE_TEXT_COLOR_PENDING_INCOMPLETE;
+        } else {
+            timestamp = due;
+            if (due > now) {
+                mDateColor = DATE_TEXT_COLOR_DUE_FUTURE_INCOMPLETE;
+            } else {
+                mDateColor = DATE_TEXT_COLOR_DUE_PAST_INCOMPLETE;
+            }
+        }
+        if (mTimestampMillis != timestamp) {
             mFormattedDate = timestamp == 0L ? "" :
                     DateUtils.getRelativeTimeSpanString(mAndroidContext, timestamp).toString();
-            mDueMillis = timestamp;
+            mTimestampMillis = timestamp;
         }
     }
 
@@ -425,10 +444,9 @@ public class TaskListItem extends View {
     }
 
     private void drawDate(Canvas canvas) {
-        TextPaint datePaint = isDone() ? sRegularPaint : sBoldPaint;;
+        TextPaint datePaint = isDone() ? sRegularPaint : sBoldPaint;
         datePaint.setTextSize(mCoordinates.dateFontSize);
-        datePaint.setColor(getFontColor(mIsCompleted ?
-                DATE_TEXT_COLOR_COMPLETE : DATE_TEXT_COLOR_INCOMPLETE));
+        datePaint.setColor(getFontColor(mDateColor));
         int dateX = mCoordinates.dateXEnd
                 - (int) datePaint.measureText(mFormattedDate, 0, mFormattedDate.length());
         canvas.drawText(mFormattedDate, 0, mFormattedDate.length(),
