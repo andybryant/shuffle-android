@@ -76,8 +76,6 @@ public class TaskListItem extends View {
     private static final TextPaint sRegularPaint = new TextPaint();
     private static final TextPaint sBoldPaint = new TextPaint();
     private static final Paint sContextBackgroundPaint = new Paint();
-    private static int sContextCornerSmallRadius;
-    private static int sContextCornerLargeRadius;
     private static final Paint sContextMorePaint = new Paint();
     static {
         final LightingColorFilter lcf = new LightingColorFilter( 0xFF000000, 0xFFAAAAAA);
@@ -131,9 +129,6 @@ public class TaskListItem extends View {
             sRegularPaint.setAntiAlias(true);
             FontUtils.setCustomFont(sBoldPaint, context.getAssets(), FontUtils.BOLD);
             sBoldPaint.setAntiAlias(true);
-
-            sContextCornerLargeRadius = r.getDimensionPixelSize(R.dimen.context_large_corner_radius);
-            sContextCornerSmallRadius = r.getDimensionPixelSize(R.dimen.context_small_corner_radius);
 
             sStateInactive =
                     BitmapFactory.decodeResource(r, R.drawable.ic_visibility_off_black_24dp);
@@ -378,7 +373,8 @@ public class TaskListItem extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        int yOffset = (mFormattedProject.length() == 0) ? mCoordinates.projectOffset : 0;
+        int yOffset = (mFormattedProject.length() == 0 && mFormattedDate.length() == 0) ?
+                mCoordinates.projectOffset : 0;
         drawProject(canvas);
         drawState(canvas, yOffset);
         drawDescription(canvas, yOffset);

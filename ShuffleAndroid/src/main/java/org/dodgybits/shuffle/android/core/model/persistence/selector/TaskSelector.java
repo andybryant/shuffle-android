@@ -451,7 +451,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
             super.applyListPreferences(context, settings);
 
             setComplete(settings.getCompleted(context));
-            setPending(settings.getPending(context));
+            setPending(settings.getDefaultPending());
 
             return this;
         }

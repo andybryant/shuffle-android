@@ -17,6 +17,7 @@ public class ListSettingsCache {
     private static ListSettings nextTasksSettings =
             new ListSettings(NEXT_TASKS_SETTINGS_KEY)
                     .setDefaultCompleted(Flag.ignored)
+                    .setDefaultPending(Flag.ignored)
                     .setDefaultActive(Flag.ignored);
     private static ListSettings dueTaskSettings =
             new ListSettings(DUE_TASKS_SETTINGS_KEY)
@@ -31,15 +32,16 @@ public class ListSettingsCache {
                     .enableActive();
     private static ListSettings deferredSettings =
             new ListSettings(ListQuery.deferred.name())
-                    .enableCompleted();
+                    .setDefaultPending(Flag.yes);
     private static ListSettings deletedSettings =
             new ListSettings(ListQuery.deleted.name())
                     .setDefaultDeleted(Flag.yes)
-                    .setDefaultActive(Flag.ignored)
-                    .enableCompleted();
+                    .setDefaultCompleted(Flag.ignored)
+                    .setDefaultPending(Flag.ignored)
+                    .setDefaultActive(Flag.ignored);
     private static ListSettings searchSettings =
             new ListSettings(ListQuery.search.name())
-                    .setDefaultCompleted(Flag.ignored)
+                    .setDefaultPending(Flag.ignored)
                     .setDefaultActive(Flag.ignored)
                     .enableCompleted();
 

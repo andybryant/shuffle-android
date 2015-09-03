@@ -87,6 +87,7 @@ public class TaskRecyclerFragment extends RoboFragment {
     private ActionMode mActionMode = null;
     private int mDeferredPosition = -1;
     private ModalMultiSelectorCallback mEditMode = new TaskModalMultiSelectorCallback(mMultiSelector);
+    private TaskCallback mTaskCallback;
 
     /**
      * When creating, retrieve this instance's number from its arguments.
@@ -122,7 +123,8 @@ public class TaskRecyclerFragment extends RoboFragment {
         mRecyclerView.setAdapter(mListAdapter);
 
         // init swipe to dismiss logic
-        mItemTouchHelper = new ItemTouchHelper(new TaskCallback());
+        mTaskCallback = new TaskCallback();
+        mItemTouchHelper = new ItemTouchHelper(mTaskCallback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         return root;
@@ -197,6 +199,9 @@ public class TaskRecyclerFragment extends RoboFragment {
             if (mListAdapter != null) {
                 mListAdapter.notifyDataSetChanged();
             }
+            mTaskCallback.setDefaultSwipeDirs(
+                    ListFeatures.isSwipeSupported(mLocation) ?
+                            ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT : 0);
         }
     }
 
