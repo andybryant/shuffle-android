@@ -51,6 +51,7 @@ import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelecto
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.LocationParser;
+import org.dodgybits.shuffle.android.core.view.TitleHandler;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 
 import java.util.List;
@@ -135,7 +136,7 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
     LocationParser mLocationParser;
 
     @Inject
-    TitleUpdater mTitleUpdater;
+    TitleHandler mTitleHandler;
 
     ContextBitmapProvider mBitmapProvider;
     
@@ -193,7 +194,7 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
     @Override
     public void onLoadComplete(Loader<Cursor> loader, Cursor cursor) {
         mCursor = (TaskWidgetLoader.WidgetCursor) cursor;   // Save away the cursor
-        mTaskListName = mTitleUpdater.getTaskListTitle(mLocation);
+        mTaskListName = mTitleHandler.getTitle(mContext, mLocation);
         updateHeader();
         mWidgetManager.notifyAppWidgetViewDataChanged(mWidgetId, R.id.task_list);
     }
