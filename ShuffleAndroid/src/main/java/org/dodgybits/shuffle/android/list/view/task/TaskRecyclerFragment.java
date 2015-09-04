@@ -199,9 +199,16 @@ public class TaskRecyclerFragment extends RoboFragment {
             if (mListAdapter != null) {
                 mListAdapter.notifyDataSetChanged();
             }
+        }
+        updateSwipeSupport();
+    }
+
+    private void updateSwipeSupport() {
+        if (mTaskCallback != null && mLocation != null) {
             mTaskCallback.setDefaultSwipeDirs(
                     ListFeatures.isSwipeSupported(mLocation) ?
                             ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT : 0);
+
         }
     }
 

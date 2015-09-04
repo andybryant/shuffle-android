@@ -261,7 +261,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
                 break;
 
             case deleted:
-                result = "(1 == 1)";
+                result = "(deleted = 1)";
                 break;
 
             case search:
