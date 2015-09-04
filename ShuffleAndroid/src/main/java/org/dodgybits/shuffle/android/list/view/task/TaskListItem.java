@@ -139,7 +139,7 @@ public class TaskListItem extends View {
             sMoreHorizontal =
                     BitmapFactory.decodeResource(r, R.drawable.ic_more_horiz_black_24dp);
             sActivated =
-                    BitmapFactory.decodeResource(r, R.drawable.ic_done_black_24dp);
+                    BitmapFactory.decodeResource(r, R.drawable.ic_brightness_1_black_24dp);
 
             mContextIconMap = Maps.newHashMap();        
     
