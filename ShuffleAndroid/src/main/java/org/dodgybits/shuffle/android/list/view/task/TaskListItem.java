@@ -38,8 +38,6 @@ import java.util.Set;
  * 2.  It handles internal clicks
  */
 public class TaskListItem extends View {
-    private static final String TAG = "TaskListItem";
-
     private TaskListItemCoordinates mCoordinates;
     private android.content.Context mAndroidContext;
     private TaskRecyclerFragment.TaskHolder mHolder;
@@ -503,7 +501,7 @@ public class TaskListItem extends View {
 //        int radius = sContextCornerLargeRadius;
 //        canvas.drawRoundRect(mCoordinates.activatedRect, radius, radius, sContextBackgroundPaint);
         canvas.drawBitmap(sActivated, mCoordinates.contextSourceIconRect,
-                mCoordinates.contextDestIconRects[0][0], null);
+                mCoordinates.activatedRect, null);
     }
 
     private void drawSelectedIndicator(Canvas canvas) {

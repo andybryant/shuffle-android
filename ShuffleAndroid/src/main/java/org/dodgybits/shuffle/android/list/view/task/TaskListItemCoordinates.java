@@ -287,7 +287,7 @@ public class TaskListItemCoordinates {
                     coordinates.contextsY + coordinates.contextsHeight +
                             coordinates.projectOffset / 2 +
                             coordinates.contextsWidth / 2);
-            coordinates.activatedRect = inset(coordinates.contextRects[0][0], padding);
+            coordinates.activatedRect = inset(coordinates.contextDestIconRects[0][0], padding);
 
             View selectedIndicator = view.findViewById(R.id.selected_indicator);
             int x = UiUtilities.getX(selectedIndicator);
