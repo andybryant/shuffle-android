@@ -121,7 +121,7 @@ public class TaskListItem extends View {
         if (!sInit) {
             sTextColours = TextColours.getInstance(context);
             Resources r = context.getResources();
-            sItemHeight = r.getDimensionPixelSize(R.dimen.task_list_item_height);
+            sItemHeight = r.getDimensionPixelSize(R.dimen.list_item_height);
 
             FontUtils.setCustomFont(sRegularPaint, context.getAssets(), FontUtils.REGULAR);
             sRegularPaint.setAntiAlias(true);
@@ -285,21 +285,29 @@ public class TaskListItem extends View {
     private void calculateDrawingData() {
         TextPaint descriptionPaint = isDone() ? sRegularPaint : sBoldPaint;
         descriptionPaint.setTextSize(mCoordinates.descriptionFontSize);
+        descriptionPaint.setColor(getFontColor(isDone() ? DESCRIPTION_TEXT_COLOR_COMPLETE
+                : DESCRIPTION_TEXT_COLOR_INCOMPLETE));
         mDescriptionLayout = new StaticLayout(mDescription, descriptionPaint,
                 mCoordinates.descriptionWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, false /* includePad */);
         if (mCoordinates.descriptionLineCount < mDescriptionLayout.getLineCount()) {
-            int end = mDescriptionLayout.getLineEnd(mCoordinates.descriptionLineCount - 1);
-            mDescriptionLayout = new StaticLayout(mDescription.subSequence(0, end) + "…",
-                    descriptionPaint, mCoordinates.descriptionWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
+            int end = mDescriptionLayout.getLineVisibleEnd(mCoordinates.descriptionLineCount - 1) + 1;
+            do {
+                end--;
+                mDescriptionLayout = new StaticLayout(mDescription.subSequence(0, end) + "…",
+                        descriptionPaint, mCoordinates.descriptionWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
+            } while (mCoordinates.descriptionLineCount < mDescriptionLayout.getLineCount());
         }
 
-        sRegularPaint.setTextSize(mCoordinates.detailsFontSize);
-        mSnippetLayout = new StaticLayout(mSnippet, sRegularPaint,
+        TextPaint snippetPaint = sRegularPaint;
+        snippetPaint.setColor(getFontColor(isDone() ? SNIPPET_TEXT_COLOR_COMPLETE
+                : SNIPPET_TEXT_COLOR_INCOMPLETE));
+        snippetPaint.setTextSize(mCoordinates.detailsFontSize);
+        mSnippetLayout = new StaticLayout(mSnippet, snippetPaint,
                 mCoordinates.detailsWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, false /* includePad */);
         if (mCoordinates.detailsLineCount < mSnippetLayout.getLineCount()) {
-            int end = mSnippetLayout.getLineEnd(mCoordinates.detailsLineCount - 1);
+            int end = mSnippetLayout.getLineVisibleEnd(mCoordinates.detailsLineCount - 1);
             mSnippetLayout = new StaticLayout(mSnippet.subSequence(0, end),
-                    sRegularPaint, mCoordinates.detailsWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
+                    snippetPaint, mCoordinates.detailsWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
         }
 
         // And the project...
@@ -401,13 +409,13 @@ public class TaskListItem extends View {
     private void drawState(Canvas canvas, int yOffset) {
         if (mIsDeleted) {
             canvas.drawBitmap(sStateDeleted,
-                    mCoordinates.stateX, mCoordinates.stateY + yOffset, null);
+                    mCoordinates.stateX, mCoordinates.stateY, null);
         } else if (mIsCompleted) {
             canvas.drawBitmap(sStateCompleted,
-                    mCoordinates.stateX, mCoordinates.stateY + yOffset, null);
+                    mCoordinates.stateX, mCoordinates.stateY, null);
         } else if (!mIsActive) {
             canvas.drawBitmap(sStateInactive,
-                    mCoordinates.stateX, mCoordinates.stateY + yOffset, null);
+                    mCoordinates.stateX, mCoordinates.stateY, null);
         }
     }
 
@@ -497,9 +505,6 @@ public class TaskListItem extends View {
         sContextBackgroundPaint.setShader(null);
         sContextBackgroundPaint.setColor(getResources().getColor(R.color.white));
         canvas.drawOval(mCoordinates.contextRects[0][0], sContextBackgroundPaint);
-//        sContextBackgroundPaint.setColor(sTextColours.getBackgroundColour(0));
-//        int radius = sContextCornerLargeRadius;
-//        canvas.drawRoundRect(mCoordinates.activatedRect, radius, radius, sContextBackgroundPaint);
         canvas.drawBitmap(sActivated, mCoordinates.contextSourceIconRect,
                 mCoordinates.activatedRect, null);
     }

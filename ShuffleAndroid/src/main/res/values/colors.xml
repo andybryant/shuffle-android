@@ -71,6 +71,10 @@
     <color name="date_text_color_due_past_incomplete">#F44336</color>
     <color name="date_text_color_due_future_incomplete">@color/theme_primary_dark</color>
     <color name="date_text_color_complete">#777777</color>
+    <color name="name_text_color_active">@color/list_main_text_color</color>
+    <color name="name_text_color_inactive">#555555</color>
+    <color name="count_text_color_active">@color/list_main_text_color</color>
+    <color name="count_text_color_inactive">#555555</color>
 
     <color name="list_main_text_color">#403c36</color>
     <color name="drawer_background_color">@color/white</color>

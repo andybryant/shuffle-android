@@ -32,6 +32,7 @@ import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
+import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.AbstractSwipeItemTouchHelperCallback;
 import org.dodgybits.shuffle.android.core.view.DividerItemDecoration;
 import org.dodgybits.shuffle.android.core.view.Location;
@@ -285,31 +286,43 @@ public class ProjectListFragment extends RoboFragment {
 
         @Override
         public void onClick(View v) {
-            if (!mMultiSelector.tapSelection(this)) {
-                if (mProject != null) {
-                    Location location = Location.viewTaskList(ListQuery.project, mProject.getLocalId(), Id.NONE);
-                    mEventManager.fire(new NavigationRequestEvent(location));
-                }
+            clickPanel();
+        }
+
+        private void clickPanel() {
+            if (mProject != null) {
+                Location location = Location.viewTaskList(ListQuery.project, mProject.getLocalId(), Id.NONE);
+                mEventManager.fire(new NavigationRequestEvent(location));
+            }
+        }
+
+        public void clickSelector() {
+            if (mActionMode == null) {
+                mActionMode = getRoboAppCompatActivity().startSupportActionMode(mEditMode);
+                mMultiSelector.setSelected(this, true);
+                mActionMode.invalidate();
             } else {
-                if (mMultiSelector.getSelectedPositions().isEmpty() && mActionMode != null) {
-                    mActionMode.finish();
+                if (mMultiSelector.tapSelection(this)) {
+                    if (mMultiSelector.getSelectedPositions().isEmpty()) {
+                        mActionMode.finish();
+                    } else {
+                        mActionMode.invalidate();
+                    }
                 } else {
-                    mActionMode.invalidate();
+                    clickPanel();
                 }
             }
         }
 
+
         public void bindProject(Project project, SparseIntArray taskCountArray) {
             mProject = project;
-            mProjectListItem.setTaskCountArray(taskCountArray);
-            mProjectListItem.updateView(project);
+            mProjectListItem.updateView(project, taskCountArray);
         }
 
         @Override
         public boolean onLongClick(View v) {
-            mActionMode = getRoboAppCompatActivity().startSupportActionMode(mEditMode);
-            mMultiSelector.setSelected(this, true);
-            mActionMode.invalidate();
+            clickSelector();
             return true;
         }
 
@@ -322,7 +335,9 @@ public class ProjectListFragment extends RoboFragment {
         @Override
         public ProjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             ProjectListItem listItem = mProjectListItemProvider.get(getActivity());
-            return new ProjectHolder(listItem);
+            ProjectHolder projectHolder = new ProjectHolder(listItem);
+            listItem.setHolder(projectHolder);
+            return projectHolder;
         }
 
         @Override

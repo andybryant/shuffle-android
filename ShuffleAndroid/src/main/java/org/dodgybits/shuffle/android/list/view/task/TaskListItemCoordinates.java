@@ -86,21 +86,10 @@ public class TaskListItemCoordinates {
     private TaskListItemCoordinates() {}
 
     /**
-     * Returns a value array multiplied by the specified density.
-     */
-    public static int[] getDensityDependentArray(int[] values, float density) {
-        int result[] = new int[values.length];
-        for (int i = 0; i < values.length; ++i) {
-            result[i] = (int) (values[i] * density);
-        }
-        return result;
-    }
-
-    /**
      * Returns the height of the view in this mode.
      */
     public static int getHeight(Context context) {
-        return context.getResources().getDimensionPixelSize(R.dimen.task_list_item_height);
+        return context.getResources().getDimensionPixelSize(R.dimen.list_item_height);
     }
 
 
@@ -155,7 +144,7 @@ public class TaskListItemCoordinates {
     }
 
     /**
-     * Returns coordinates for elements inside a conversation header view given
+     * Returns coordinates for elements inside a task header view given
      * the view width.
      */
     public static TaskListItemCoordinates forWidth(Context context, int width) {

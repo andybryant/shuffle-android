@@ -15,9 +15,6 @@
 
 <resources>
 
-    <style name="task_list_item">
-    </style>
-
     <style name="ActionBarSwitch">
         <item name="colorControlActivated">@color/mid_gray</item>
     </style>
