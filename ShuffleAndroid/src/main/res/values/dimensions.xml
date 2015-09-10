@@ -57,6 +57,10 @@
     <dimen name="context_single_label_left">24dp</dimen>
     <dimen name="context_single_label_top">19dp</dimen>
 
+    <!-- entity list items -->
+    <dimen name="selector_font_size">32sp</dimen>
+    <dimen name="selector_single_label_left">24dp</dimen>
+    <dimen name="selector_single_label_top">4dp</dimen>
 
 
     <dimen name="keyline_1">16dp</dimen>

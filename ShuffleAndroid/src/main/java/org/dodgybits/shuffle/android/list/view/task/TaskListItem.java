@@ -80,6 +80,7 @@ public class TaskListItem extends View {
         sContextMorePaint.setColorFilter(lcf);
     }
     private static final Paint sSelectedIndicatorPaint = new Paint();
+    private static final Paint sStatePaint = new Paint();
 
     private static Bitmap sStateInactive;
     private static Bitmap sStateDeleted;
@@ -139,8 +140,10 @@ public class TaskListItem extends View {
             sActivated =
                     BitmapFactory.decodeResource(r, R.drawable.ic_brightness_1_black_24dp);
 
-            mContextIconMap = Maps.newHashMap();        
-    
+            mContextIconMap = Maps.newHashMap();
+
+            sStatePaint.setAlpha(100);
+
             ACTIVATED_TEXT_COLOR = r.getColor(android.R.color.black);
             DESCRIPTION_TEXT_COLOR_COMPLETE = r.getColor(R.color.description_text_color_complete);
             DESCRIPTION_TEXT_COLOR_INCOMPLETE = r.getColor(R.color.description_text_color_incomplete);
@@ -382,7 +385,7 @@ public class TaskListItem extends View {
         int yOffset = (mFormattedProject.length() == 0 && mFormattedDate.length() == 0) ?
                 mCoordinates.projectOffset : 0;
         drawProject(canvas);
-        drawState(canvas, yOffset);
+        drawState(canvas);
         drawDescription(canvas, yOffset);
         drawSnippet(canvas, yOffset);
         drawDate(canvas);
@@ -406,16 +409,16 @@ public class TaskListItem extends View {
                 projectPaint);
     }
 
-    private void drawState(Canvas canvas, int yOffset) {
+    private void drawState(Canvas canvas) {
         if (mIsDeleted) {
             canvas.drawBitmap(sStateDeleted,
-                    mCoordinates.stateX, mCoordinates.stateY, null);
+                    mCoordinates.stateX, mCoordinates.stateY, sStatePaint);
         } else if (mIsCompleted) {
             canvas.drawBitmap(sStateCompleted,
-                    mCoordinates.stateX, mCoordinates.stateY, null);
+                    mCoordinates.stateX, mCoordinates.stateY, sStatePaint);
         } else if (!mIsActive) {
             canvas.drawBitmap(sStateInactive,
-                    mCoordinates.stateX, mCoordinates.stateY, null);
+                    mCoordinates.stateX, mCoordinates.stateY, sStatePaint);
         }
     }
 

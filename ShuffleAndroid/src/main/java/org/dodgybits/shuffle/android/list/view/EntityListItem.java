@@ -1,34 +1,30 @@
-package org.dodgybits.shuffle.android.list.view.project;
+package org.dodgybits.shuffle.android.list.view;
 
+import android.annotation.TargetApi;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.LightingColorFilter;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
+import android.util.AttributeSet;
 import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import org.dodgybits.android.shuffle.R;
@@ -36,42 +32,51 @@ import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.util.FontUtils;
-import org.dodgybits.shuffle.android.core.util.TaskLifecycleState;
 import org.dodgybits.shuffle.android.core.view.ContextIcon;
 import org.dodgybits.shuffle.android.core.view.TextColours;
-import org.dodgybits.shuffle.android.list.view.task.TaskListItemCoordinates;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This custom View is the list item for the ProjectListFragment, and serves two purposes:
  * 1.  It's a container to store project details
  * 2.  It handles internal clicks
  */
-public class ProjectListItem extends View {
-    private ProjectListItemCoordinates mCoordinates;
+public class EntityListItem extends View {
+    private EntityListItemCoordinates mCoordinates;
     private android.content.Context mAndroidContext;
-    private ProjectListFragment.ProjectHolder mHolder;
+    private OnClickListener mClickListener;
 
-    private Project mProject;
     private String mName;
     private StaticLayout mNameLayout;
-    private boolean mIsParallel;
     private boolean mIsActive = true;
     private boolean mIsDeleted = false;
     private String mCount;
     private SparseIntArray mTaskCountArray;
 
+    private int mSelectorBackgroundColor;
+    private int mSelectorTextColor;
+    private Bitmap mSelectorIcon;
+    private String mSelectionIconName;
+
     private boolean mDownEvent;
 
     @Inject
-    public ProjectListItem(
+    public EntityListItem(
             android.content.Context androidContext) {
         super(androidContext);
         init(androidContext);
+    }
+
+    public EntityListItem(android.content.Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public EntityListItem(android.content.Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init(context);
     }
 
     private static boolean sInit = false;
@@ -79,12 +84,15 @@ public class ProjectListItem extends View {
     private static final TextPaint sRegularPaint = new TextPaint();
     private static final TextPaint sBoldPaint = new TextPaint();
     private static final Paint sSelectorBackgroundPaint = new Paint();
+    private static final Paint sStatePaint = new Paint();
 
     private static Bitmap sStateInactive;
     private static Bitmap sStateDeleted;
     private static Bitmap sParallel;
     private static Bitmap sSequential;
     private static Bitmap sActivated;
+
+    private static Map<String, Bitmap> mContextIconMap;
 
     // Static colors.
     private static int ACTIVATED_TEXT_COLOR;
@@ -98,8 +106,8 @@ public class ProjectListItem extends View {
 
     private static int sItemHeight;
 
-    public void setHolder(ProjectListFragment.ProjectHolder holder) {
-        mHolder = holder;
+    public void setClickListener(OnClickListener clickListener) {
+        mClickListener = clickListener;
     }
 
     private void init(android.content.Context context) {
@@ -126,6 +134,10 @@ public class ProjectListItem extends View {
             sActivated =
                     BitmapFactory.decodeResource(r, R.drawable.ic_brightness_1_black_24dp);
 
+            sStatePaint.setAlpha(100);
+
+            mContextIconMap = Maps.newHashMap();
+
             ACTIVATED_TEXT_COLOR = r.getColor(android.R.color.black);
             NAME_TEXT_COLOR_ACTIVE = r.getColor(R.color.name_text_color_active);
             NAME_TEXT_COLOR_INACTIVE = r.getColor(R.color.name_text_color_inactive);
@@ -142,17 +154,35 @@ public class ProjectListItem extends View {
      * changes occurs.
      */
     public static void resetDrawingCaches() {
-        ProjectListItemCoordinates.resetCaches();
+        EntityListItemCoordinates.resetCaches();
         sInit = false;
     }
 
-    public void updateView(Project project, SparseIntArray taskCountArray) {
-        mProject = project;
+    public void updateView(Context context, SparseIntArray taskCountArray) {
         mTaskCountArray = taskCountArray;
-        mIsParallel = project.isParallel();
+        mSelectorBackgroundColor = sTextColours.getBackgroundColour(context.getColourIndex());
+        mSelectorTextColor = sTextColours.getTextColour(context.getColourIndex());
+        mSelectorIcon = null;
+        mSelectionIconName = context.getIconName();
+        mIsActive = context.isActive();
+        mIsDeleted = context.isDeleted();
+        updateCount(context.getLocalId());
+
+        if (mName == null || !mName.equals(context.getName())) {
+            mName = context.getName();
+            requestLayout();
+        }
+
+    }
+
+    public void updateView(Project project, SparseIntArray taskCountArray) {
+        mTaskCountArray = taskCountArray;
+        mSelectorBackgroundColor = sTextColours.getBackgroundColour(17);
+        mSelectorIcon = project.isParallel() ? sParallel : sSequential;
+        mSelectionIconName = null;
         mIsActive = project.isActive();
         mIsDeleted = project.isDeleted();
-        updateCount(project);
+        updateCount(project.getLocalId());
 
         if (mName == null || !mName.equals(project.getName())) {
             mName = project.getName();
@@ -160,9 +190,9 @@ public class ProjectListItem extends View {
         }
     }
 
-    private void updateCount(Project project) {
+    private void updateCount(Id id) {
         if (mTaskCountArray != null) {
-            int count = mTaskCountArray.get((int)project.getLocalId().getId());
+            int count = mTaskCountArray.get((int)id.getId());
             mCount = String.valueOf(count);
         } else {
             mCount = "";
@@ -241,7 +271,7 @@ public class ProjectListItem extends View {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
-        mCoordinates = ProjectListItemCoordinates.forWidth(mAndroidContext, mViewWidth);
+        mCoordinates = EntityListItemCoordinates.forWidth(mAndroidContext, mViewWidth);
         mCoordinates.selectorSourceIconRect = new Rect(0, 0, sParallel.getWidth(), sParallel.getHeight());
         calculateDrawingData();
     }
@@ -282,10 +312,10 @@ public class ProjectListItem extends View {
     private void drawState(Canvas canvas) {
         if (mIsDeleted) {
             canvas.drawBitmap(sStateDeleted,
-                    mCoordinates.stateX, mCoordinates.stateY, null);
+                    mCoordinates.stateX, mCoordinates.stateY, sStatePaint);
         } else if (!mIsActive) {
             canvas.drawBitmap(sStateInactive,
-                    mCoordinates.stateX, mCoordinates.stateY, null);
+                    mCoordinates.stateX, mCoordinates.stateY, sStatePaint);
         }
     }
 
@@ -299,12 +329,49 @@ public class ProjectListItem extends View {
 
 
     private void drawSelector(Canvas canvas) {
-        int bgColor = sTextColours.getBackgroundColour(17);
-        sSelectorBackgroundPaint.setShader(getShader(bgColor, mCoordinates.selectorRect, 0f));
+        sSelectorBackgroundPaint.setShader(getShader(mSelectorBackgroundColor, mCoordinates.selectorRect, 0f));
+        sSelectorBackgroundPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         canvas.drawOval(mCoordinates.selectorRect, sSelectorBackgroundPaint);
-        canvas.drawBitmap(mIsParallel ? sParallel : sSequential,
-                mCoordinates.selectorSourceIconRect,
-                mCoordinates.activatedRect, null);
+        Bitmap icon = mSelectorIcon;
+        if (icon == null) {
+            icon = getContextIcon(mSelectionIconName);
+        }
+        if (icon == null) {
+            int textColor = mSelectorTextColor;
+            int leftPadding, topPadding;
+            sRegularPaint.setColor(textColor);
+            String name = mName.toUpperCase();
+            sRegularPaint.setTextSize(mCoordinates.selectorFontSize);
+            leftPadding = mCoordinates.selectorLabelLeft;
+            topPadding = mCoordinates.selectorLabelTop;
+            // name can be empty in preview panel editing a context
+            if (!TextUtils.isEmpty(mName)) {
+                int contextTextWidth = (int) sRegularPaint.measureText(name, 0, 1);
+                canvas.drawText(name, 0, 1,
+                        mCoordinates.selectorRect.left + leftPadding - contextTextWidth / 2,
+                        mCoordinates.selectorRect.top - mCoordinates.selectorAscent + topPadding,
+                        sRegularPaint);
+            }
+        } else {
+            canvas.drawBitmap(icon,
+                    mCoordinates.selectorSourceIconRect,
+                    mCoordinates.activatedRect, null);
+        }
+    }
+
+    private Bitmap getContextIcon(String iconName) {
+        Bitmap icon = mContextIconMap.get(iconName);
+        if (icon == null) {
+            ContextIcon contextIcon = ContextIcon.createIcon(iconName, mAndroidContext.getResources(), true);
+            if (contextIcon != null) {
+                icon = BitmapFactory.decodeResource(mAndroidContext.getResources(), contextIcon.largeIconId);
+                mContextIconMap.put(iconName, icon);
+                if (mCoordinates.selectorSourceIconRect == null) {
+                    mCoordinates.selectorSourceIconRect = new Rect(0, 0, icon.getWidth(), icon.getHeight());
+                }
+            }
+        }
+        return icon;
     }
 
     private Shader getShader(int colour, RectF rect) {
@@ -375,8 +442,8 @@ public class ProjectListItem extends View {
 
             case MotionEvent.ACTION_UP:
                 if (mDownEvent) {
-                    if (touchX < checkRight) {
-                        mHolder.clickSelector();
+                    if (touchX < checkRight && mClickListener != null) {
+                        mClickListener.clickSelector();
                         handled = true;
                     }
                 }
@@ -402,4 +469,7 @@ public class ProjectListItem extends View {
         return true;
     }
 
+    public interface OnClickListener {
+        void clickSelector();
+    }
 }

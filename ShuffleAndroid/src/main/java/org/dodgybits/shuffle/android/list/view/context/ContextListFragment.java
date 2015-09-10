@@ -40,6 +40,7 @@ import org.dodgybits.shuffle.android.list.event.UpdateContextActiveEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateContextDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
+import org.dodgybits.shuffle.android.list.view.EntityListItem;
 import org.dodgybits.shuffle.android.list.view.SelectableHolderImpl;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 
@@ -61,7 +62,7 @@ public class ContextListFragment extends RoboFragment {
     private ContextPersister mContextPersister;
 
     @Inject
-    private ContextScopedProvider<ContextListItem> mContextListItemProvider;
+    private ContextScopedProvider<EntityListItem> mEntityListItemProvider;
 
     @Inject
     private EventManager mEventManager;
@@ -267,12 +268,13 @@ public class ContextListFragment extends RoboFragment {
     }
 
     public class ContextHolder extends SelectableHolderImpl implements
-            View.OnClickListener, View.OnLongClickListener {
+            View.OnClickListener, View.OnLongClickListener,
+            EntityListItem.OnClickListener {
 
-        ContextListItem mContextListItem;
+        EntityListItem mContextListItem;
         Context mContext;
 
-        public ContextHolder(ContextListItem contextListItem) {
+        public ContextHolder(EntityListItem contextListItem) {
             super(contextListItem, mMultiSelector);
 
             mContextListItem = contextListItem;
@@ -284,31 +286,44 @@ public class ContextListFragment extends RoboFragment {
 
         @Override
         public void onClick(View v) {
-            if (!mMultiSelector.tapSelection(this)) {
-                if (mContext != null) {
-                    Location location = Location.viewTaskList(ListQuery.context, Id.NONE, mContext.getLocalId());
-                    mEventManager.fire(new NavigationRequestEvent(location));
-                }
+            clickPanel();
+        }
+
+        private void clickPanel() {
+            if (mContext != null) {
+                Location location = Location.viewTaskList(ListQuery.context, Id.NONE, mContext.getLocalId());
+                mEventManager.fire(new NavigationRequestEvent(location));
+            }
+        }
+
+        @Override
+        public void clickSelector() {
+            if (mActionMode == null) {
+                mActionMode = getRoboAppCompatActivity().startSupportActionMode(mEditMode);
+                mMultiSelector.setSelected(this, true);
+                mActionMode.invalidate();
             } else {
-                if (mMultiSelector.getSelectedPositions().isEmpty() && mActionMode != null) {
-                    mActionMode.finish();
+                if (mMultiSelector.tapSelection(this)) {
+                    if (mMultiSelector.getSelectedPositions().isEmpty()) {
+                        mActionMode.finish();
+                    } else {
+                        mActionMode.invalidate();
+                    }
                 } else {
-                    mActionMode.invalidate();
+                    clickPanel();
                 }
             }
         }
 
+
         public void bindContext(Context context, SparseIntArray taskCountArray) {
             mContext = context;
-            mContextListItem.setTaskCountArray(taskCountArray);
-            mContextListItem.updateView(context);
+            mContextListItem.updateView(context, taskCountArray);
         }
 
         @Override
         public boolean onLongClick(View v) {
-            mActionMode = getRoboAppCompatActivity().startSupportActionMode(mEditMode);
-            mMultiSelector.setSelected(this, true);
-            mActionMode.invalidate();
+            clickSelector();
             return true;
         }
 
@@ -320,8 +335,10 @@ public class ContextListFragment extends RoboFragment {
 
         @Override
         public ContextHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            ContextListItem listItem = mContextListItemProvider.get(getActivity());
-            return new ContextHolder(listItem);
+            EntityListItem listItem = mEntityListItemProvider.get(getActivity());
+            ContextHolder contextHolder = new ContextHolder(listItem);
+            listItem.setClickListener(contextHolder);
+            return contextHolder;
         }
 
         @Override

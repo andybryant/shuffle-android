@@ -32,7 +32,6 @@ import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
-import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.AbstractSwipeItemTouchHelperCallback;
 import org.dodgybits.shuffle.android.core.view.DividerItemDecoration;
 import org.dodgybits.shuffle.android.core.view.Location;
@@ -41,6 +40,7 @@ import org.dodgybits.shuffle.android.list.event.UpdateProjectActiveEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
+import org.dodgybits.shuffle.android.list.view.EntityListItem;
 import org.dodgybits.shuffle.android.list.view.SelectableHolderImpl;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 
@@ -62,7 +62,7 @@ public class ProjectListFragment extends RoboFragment {
     private ProjectPersister mProjectPersister;
 
     @Inject
-    private ContextScopedProvider<ProjectListItem> mProjectListItemProvider;
+    private ContextScopedProvider<EntityListItem> mProjectListItemProvider;
 
     @Inject
     private EventManager mEventManager;
@@ -247,7 +247,6 @@ public class ProjectListFragment extends RoboFragment {
     }
 
     private void onTaskCountCursorLoaded(@Observes ProjectTaskCountLoadedEvent event) {
-        Log.d(TAG, "Project task count loaded " + event.getTaskCountArray());
         mListAdapter.setTaskCountArray(event.getTaskCountArray());
         if (getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {
@@ -269,12 +268,13 @@ public class ProjectListFragment extends RoboFragment {
 
 
     public class ProjectHolder extends SelectableHolderImpl implements
-            View.OnClickListener, View.OnLongClickListener {
+            View.OnClickListener, View.OnLongClickListener,
+            EntityListItem.OnClickListener {
 
-        ProjectListItem mProjectListItem;
+        EntityListItem mProjectListItem;
         Project mProject;
 
-        public ProjectHolder(ProjectListItem projectListItem) {
+        public ProjectHolder(EntityListItem projectListItem) {
             super(projectListItem, mMultiSelector);
 
             mProjectListItem = projectListItem;
@@ -296,6 +296,7 @@ public class ProjectListFragment extends RoboFragment {
             }
         }
 
+        @Override
         public void clickSelector() {
             if (mActionMode == null) {
                 mActionMode = getRoboAppCompatActivity().startSupportActionMode(mEditMode);
@@ -334,9 +335,9 @@ public class ProjectListFragment extends RoboFragment {
 
         @Override
         public ProjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            ProjectListItem listItem = mProjectListItemProvider.get(getActivity());
+            EntityListItem listItem = mProjectListItemProvider.get(getActivity());
             ProjectHolder projectHolder = new ProjectHolder(listItem);
-            listItem.setHolder(projectHolder);
+            listItem.setClickListener(projectHolder);
             return projectHolder;
         }
 
@@ -370,7 +371,8 @@ public class ProjectListFragment extends RoboFragment {
         }
 
         @Override
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                              RecyclerView.ViewHolder target) {
             // callback for drag-n-drop, false to skip this feature
             return false;
         }

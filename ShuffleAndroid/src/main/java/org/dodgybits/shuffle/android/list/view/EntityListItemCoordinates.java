@@ -1,4 +1,4 @@
-package org.dodgybits.shuffle.android.list.view.project;
+package org.dodgybits.shuffle.android.list.view;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -20,7 +20,7 @@ import org.dodgybits.shuffle.android.core.util.UiUtilities;
  * to easily improve performance by creating custom view while still defining
  * layout in XML files.
  */
-public class ProjectListItemCoordinates {
+public class EntityListItemCoordinates {
 
     // Active and deleted state.
     int stateX;
@@ -46,16 +46,20 @@ public class ProjectListItemCoordinates {
     int selectorY;
     int selectorWidth;
     int selectorHeight;
+    int selectorFontSize;
+    int selectorAscent;
+    int selectorLabelLeft;
+    int selectorLabelTop;
     Rect selectorSourceIconRect;
     RectF selectorRect;
     RectF activatedRect;
 
     // Cache to save Coordinates based on view width.
-    private static SparseArray<ProjectListItemCoordinates> mCache =
+    private static SparseArray<EntityListItemCoordinates> mCache =
             new SparseArray<>();
 
     // Not directly instantiable.
-    private ProjectListItemCoordinates() {}
+    private EntityListItemCoordinates() {}
 
     /**
      * Returns the height of the view in this mode.
@@ -98,15 +102,15 @@ public class ProjectListItemCoordinates {
      * Returns coordinates for elements inside a conversation header view given
      * the view width.
      */
-    public static ProjectListItemCoordinates forWidth(Context context, int width) {
-        ProjectListItemCoordinates coordinates = mCache.get(width);
+    public static EntityListItemCoordinates forWidth(Context context, int width) {
+        EntityListItemCoordinates coordinates = mCache.get(width);
         if (coordinates == null) {
-            coordinates = new ProjectListItemCoordinates();
+            coordinates = new EntityListItemCoordinates();
             mCache.put(width, coordinates);
 
             // Layout the appropriate view.
             int height = getHeight(context);
-            View view = LayoutInflater.from(context).inflate(R.layout.project_list_item, null);
+            View view = LayoutInflater.from(context).inflate(R.layout.entity_list_item, null);
             FontUtils.setCustomFont(view, context.getAssets());
             int widthSpec = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
             int heightSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
@@ -132,12 +136,20 @@ public class ProjectListItemCoordinates {
             coordinates.countFontSize = (int) count.getTextSize();
             coordinates.countAscent = Math.round(count.getPaint().ascent());
 
-            View selector = view.findViewById(R.id.selector_block);
+            TextView selector = (TextView) view.findViewById(R.id.selector_block);
             float padding = selector.getPaddingLeft();
             coordinates.selectorX = UiUtilities.getX(selector);
             coordinates.selectorY = UiUtilities.getY(selector);
             coordinates.selectorWidth = getWidth(selector, false);
             coordinates.selectorHeight = getHeight(selector, false);
+
+            coordinates.selectorLabelLeft = context.getResources().
+                    getDimensionPixelSize(R.dimen.selector_single_label_left);
+            coordinates.selectorLabelTop = context.getResources().
+                    getDimensionPixelSize(R.dimen.selector_single_label_top);
+            coordinates.selectorFontSize = (int) selector.getTextSize();
+            coordinates.selectorAscent = Math.round(selector.getPaint().ascent());
+
             coordinates.selectorRect = new RectF(
                     coordinates.selectorX,
                     coordinates.selectorY,
@@ -158,7 +170,7 @@ public class ProjectListItemCoordinates {
 
     @Override
     public String toString() {
-        return "ProjectListItemCoordinates{" +
+        return "EntityListItemCoordinates{" +
                 "stateX=" + stateX +
                 ", stateY=" + stateY +
                 ", nameX=" + nameX +

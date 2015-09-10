@@ -19,13 +19,14 @@
               android:orientation="horizontal"
     >
 
-    <View
+    <TextView
         android:id="@+id/selector_block"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="12dp"
+        android:textSize="@dimen/selector_font_size"
         android:padding="8dp"
         android:src="@drawable/applications_games" />
 

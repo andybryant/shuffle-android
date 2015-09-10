@@ -25,7 +25,7 @@ import org.dodgybits.shuffle.android.core.view.TextColours;
 import org.dodgybits.shuffle.android.editor.activity.ColourPickerActivity;
 import org.dodgybits.shuffle.android.editor.activity.IconPickerActivity;
 import org.dodgybits.shuffle.android.list.event.UpdateContextDeletedEvent;
-import org.dodgybits.shuffle.android.list.view.context.ContextListItem;
+import org.dodgybits.shuffle.android.list.view.EntityListItem;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import org.dodgybits.shuffle.sync.model.ContextChangeSet;
@@ -54,7 +54,7 @@ public class EditContextFragment extends AbstractEditFragment<Context>
 
     private Button mDeleteButton;
 
-    private ContextListItem mContextPreview;
+    private EntityListItem mContextPreview;
 
     @Override
     protected int getContentViewResId() {
@@ -179,7 +179,7 @@ public class EditContextFragment extends AbstractEditFragment<Context>
         mActiveCheckBox.setOnClickListener(this);
         mActiveIcon = (ImageView) mActiveEntry.findViewById(R.id.active_icon);
 
-        mContextPreview = (ContextListItem) getView().findViewById(R.id.context_preview);
+        mContextPreview = (EntityListItem) getView().findViewById(R.id.context_preview);
 
         mNameWidget.addTextChangedListener(this);
 
@@ -314,7 +314,7 @@ public class EditContextFragment extends AbstractEditFragment<Context>
     }
 
     private void updatePreview() {
-        mContextPreview.updateView(createItemFromUI(false));
+        mContextPreview.updateView(createItemFromUI(false), null);
     }
     
 
