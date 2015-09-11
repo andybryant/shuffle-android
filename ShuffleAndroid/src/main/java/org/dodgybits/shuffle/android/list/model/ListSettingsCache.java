@@ -18,7 +18,7 @@ public class ListSettingsCache {
             new ListSettings(NEXT_TASKS_SETTINGS_KEY)
                     .setDefaultCompleted(Flag.ignored)
                     .setDefaultPending(Flag.no)
-                    .setDefaultActive(Flag.ignored);
+                    .setDefaultActive(Flag.yes);
     private static ListSettings dueTaskSettings =
             new ListSettings(DUE_TASKS_SETTINGS_KEY)
                     .enableCompleted();

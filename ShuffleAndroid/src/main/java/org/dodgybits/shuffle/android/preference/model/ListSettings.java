@@ -9,8 +9,8 @@ import org.dodgybits.shuffle.android.core.model.persistence.selector.Flag;
 public class ListSettings {
     private static final String TAG = "ListSettings";
     
-    public static final String LIST_FILTER_ACTIVE = ".list_active.2";
-    public static final String LIST_FILTER_COMPLETED = ".list_completed.2";
+    public static final String LIST_FILTER_ACTIVE = ".list_active.3";
+    public static final String LIST_FILTER_COMPLETED = ".list_completed.3";
 
     private String mPrefix;
     private Flag mDefaultCompleted = Flag.no;
