@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -25,6 +26,7 @@ import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.core.view.MenuHandler;
+import org.dodgybits.shuffle.android.preference.model.ListFeatures;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -118,7 +120,7 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
         }
 
         setupNavDrawer();
-
+        updateFab();
 
         mEventManager.fire(new OnCreatedEvent());
     }
@@ -267,6 +269,7 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
     private void onViewChanged(@Observes LocationUpdatedEvent event) {
         mLocation = event.getLocation();
         updateHomeIcon();
+        updateFab();
     }
 
     private void updateHomeIcon() {
@@ -277,6 +280,13 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
             } else {
                 actionBarToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
             }
+        }
+    }
+
+    private void updateFab() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        if (fab != null) {
+            fab.setVisibility(ListFeatures.showAddFab(mLocation) ? View.VISIBLE : View.INVISIBLE);
         }
     }
 

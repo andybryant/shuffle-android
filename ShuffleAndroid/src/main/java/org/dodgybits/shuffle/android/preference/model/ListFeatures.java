@@ -54,4 +54,8 @@ public class ListFeatures {
         return sSupportedLists.contains(location.getListQuery());
     }
 
+    public static boolean showAddFab(Location location) {
+        return sSupportedLists.contains(location.getListQuery());
+    }
+
 }
