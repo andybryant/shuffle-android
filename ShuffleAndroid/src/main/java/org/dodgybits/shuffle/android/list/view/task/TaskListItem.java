@@ -286,19 +286,23 @@ public class TaskListItem extends View {
     }
 
     private void calculateDrawingData() {
+        int descriptionLineCount = mCoordinates.descriptionLineCount;
+        if (TextUtils.isEmpty(mSnippet)) {
+            descriptionLineCount += mCoordinates.detailsLineCount;
+        }
         TextPaint descriptionPaint = isDone() ? sRegularPaint : sBoldPaint;
         descriptionPaint.setTextSize(mCoordinates.descriptionFontSize);
         descriptionPaint.setColor(getFontColor(isDone() ? DESCRIPTION_TEXT_COLOR_COMPLETE
                 : DESCRIPTION_TEXT_COLOR_INCOMPLETE));
         mDescriptionLayout = new StaticLayout(mDescription, descriptionPaint,
                 mCoordinates.descriptionWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, false /* includePad */);
-        if (mCoordinates.descriptionLineCount < mDescriptionLayout.getLineCount()) {
-            int end = mDescriptionLayout.getLineVisibleEnd(mCoordinates.descriptionLineCount - 1) + 1;
+        if (descriptionLineCount < mDescriptionLayout.getLineCount()) {
+            int end = mDescriptionLayout.getLineVisibleEnd(descriptionLineCount - 1) + 1;
             do {
                 end--;
                 mDescriptionLayout = new StaticLayout(mDescription.subSequence(0, end) + "…",
                         descriptionPaint, mCoordinates.descriptionWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
-            } while (mCoordinates.descriptionLineCount < mDescriptionLayout.getLineCount());
+            } while (descriptionLineCount < mDescriptionLayout.getLineCount());
         }
 
         TextPaint snippetPaint = sRegularPaint;
