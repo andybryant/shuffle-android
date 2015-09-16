@@ -73,9 +73,11 @@ public class FragmentLoader {
 
         switch (mLocation.getViewMode()) {
             case TASK_LIST:
+            case SEARCH_RESULTS_LIST:
                 addTaskList();
                 break;
             case TASK:
+            case SEARCH_RESULTS_TASK:
                 if (UiUtilities.showListOnViewTask(mActivity.getResources())) {
                     addTaskList();
                 }

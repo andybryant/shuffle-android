@@ -1,8 +1,10 @@
 package org.dodgybits.shuffle.android.core.view;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -69,15 +71,16 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
                 inflater.inflate(R.menu.list_menu, menu);
                 break;
             case TASK_LIST:
+            case SEARCH_RESULTS_LIST:
                 inflater.inflate(R.menu.task_list_menu, menu);
                 break;
             case TASK:
+            case SEARCH_RESULTS_TASK:
 //                inflater.inflate(R.menu.task_view_menu, menu);
                 break;
-            case SEARCH_RESULTS_TASK:
-            case SEARCH_RESULTS_LIST:
-                break;
         }
+
+        prepareSearch(menu);
 
         return true;
     }
@@ -93,6 +96,7 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
             case PROJECT_LIST:
                 break;
             case TASK_LIST:
+            case SEARCH_RESULTS_LIST:
                 if (ListFeatures.showEditActions(mLocation)) {
                     String entityName = ListFeatures.getEditEntityName(mActivity, mLocation);
                     editMenu.setVisible(true);
@@ -102,9 +106,7 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
                 }
                 break;
             case TASK:
-                break;
             case SEARCH_RESULTS_TASK:
-            case SEARCH_RESULTS_LIST:
                 break;
         }
 
@@ -166,6 +168,21 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
         }
     }
 
+    private void prepareSearch(Menu menu) {
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        SearchManager searchManager = (SearchManager) mActivity.getSystemService(android.content.Context.SEARCH_SERVICE);
+
+        SearchView searchView = null;
+        if (searchItem != null) {
+            searchView = (SearchView) searchItem.getActionView();
+        }
+        if (searchView != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(mActivity.getComponentName()));
+        }
+
+    }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit:
@@ -184,6 +201,8 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
 
                 }
                 break;
+
+
             case android.R.id.home:
                 mEventManager.fire(new NavigationRequestEvent(mLocation.parent()));
                 return true;

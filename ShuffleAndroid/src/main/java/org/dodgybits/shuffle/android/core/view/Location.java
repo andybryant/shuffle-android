@@ -40,6 +40,7 @@ public class Location implements Parcelable {
 
     public static final String QUERY_NAME = "queryName";
     public static final String SELECTED_INDEX = "selectedIndex";
+    public static final String SEARCH_QUERY = "searchQuery";
 
     public static Location searchTasks(String searchQuery) {
         Location.Builder builder = Location.newBuilder();
@@ -491,6 +492,9 @@ public class Location implements Parcelable {
         public Builder parentView() {
             deriveViewMode();
             if (mResult.mViewMode == ViewMode.TASK) {
+                mResult.mSelectedIndex = -1;
+                deriveViewMode();
+            } else if (mResult.mViewMode == ViewMode.SEARCH_RESULTS_TASK) {
                 mResult.mSelectedIndex = -1;
                 deriveViewMode();
             } else if (mResult.getProjectId().isInitialised()) {

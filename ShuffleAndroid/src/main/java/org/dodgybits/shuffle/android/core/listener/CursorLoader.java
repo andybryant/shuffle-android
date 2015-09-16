@@ -106,6 +106,8 @@ public class CursorLoader {
         switch (viewMode) {
             case TASK:
             case TASK_LIST:
+            case SEARCH_RESULTS_LIST:
+            case SEARCH_RESULTS_TASK:
                 lm.initLoader(listId, null, TASK_LIST_LOADER_CALLBACKS);
                 break;
             case CONTEXT_LIST:
@@ -149,6 +151,8 @@ public class CursorLoader {
         switch (viewMode) {
             case TASK:
             case TASK_LIST:
+            case SEARCH_RESULTS_LIST:
+            case SEARCH_RESULTS_TASK:
                 lm.restartLoader(listId, null, TASK_LIST_LOADER_CALLBACKS);
                 break;
             case CONTEXT_LIST:

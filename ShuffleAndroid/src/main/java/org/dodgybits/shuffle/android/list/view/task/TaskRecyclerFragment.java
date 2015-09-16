@@ -378,7 +378,7 @@ public class TaskRecyclerFragment extends RoboFragment {
         @Override
         public void onBindViewHolder(TaskHolder holder, int position) {
             Task task = readTask(position);
-            if (task != null) {
+            if (task != null && mLocation != null) {
                 holder.bindTask(task);
             }
         }

@@ -25,9 +25,11 @@ public class LocationParser {
 
     private static int CONTEXT = 1;
     private static int PROJECT = 2;
+    private static int TASK = 3;
     static {
         URI_MATCHER.addURI(ContextProvider.AUTHORITY, "contexts/#", CONTEXT);
         URI_MATCHER.addURI(ProjectProvider.AUTHORITY, "projects/#", PROJECT);
+        URI_MATCHER.addURI(TaskProvider.AUTHORITY, "tasks/#", TASK);
     }
 
     private Location.LocationActivity mLocationActivity;
@@ -57,9 +59,7 @@ public class LocationParser {
                 break;
 
             case TaskSearch:
-                final String query = intent.getStringExtra(SearchManager.QUERY);
-                builder.setSearchQuery(query)
-                        .setListQuery(ListQuery.search);
+                parseSearchResult(intent, builder);
                 break;
 
             case EditProject:
@@ -84,6 +84,7 @@ public class LocationParser {
             ListQuery query = ListQuery.valueOf(queryName);
             builder.setListQuery(query);
         }
+        builder.setSearchQuery(intent.getStringExtra(Location.SEARCH_QUERY));
         builder.setSelectedIndex(intent.getIntExtra(Location.SELECTED_INDEX, -1));
         if (uri != null) {
             int match = URI_MATCHER.match(uri);
@@ -97,6 +98,28 @@ public class LocationParser {
                         .setProjectId(Id.create(projectId));
             } else {
                 Log.w(TAG, "Unexpected intent uri" + uri);
+            }
+        }
+    }
+
+    private void parseSearchResult(Intent intent, Location.Builder builder) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            final String query = intent.getStringExtra(SearchManager.QUERY);
+            builder.setSearchQuery(query)
+                    .setLocationActivity(Location.LocationActivity.TaskList)
+                    .setListQuery(ListQuery.search);
+        } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            Uri uri = intent.getData();
+            int match = URI_MATCHER.match(uri);
+            if (match == CONTEXT) {
+                long contextId = ContentUris.parseId(uri);
+                builder.mergeFrom(Location.editContext(Id.create(contextId)));
+            } else if (match == PROJECT) {
+                long projectId = ContentUris.parseId(uri);
+                builder.mergeFrom(Location.editProject(Id.create(projectId)));
+            } else if (match == TASK) {
+                long taskId = ContentUris.parseId(uri);
+                builder.mergeFrom(Location.editTask(Id.create(taskId)));
             }
         }
     }
@@ -127,12 +150,6 @@ public class LocationParser {
 
             case TaskList:
                 intent = createTaskListIntent(context, location);
-                break;
-
-            case TaskSearch:
-                intent = new Intent(context, TaskSearchResultsActivity.class);
-                intent.setAction(Intent.ACTION_SEARCH);
-                intent.getExtras().putString(SearchManager.QUERY, location.getSearchQuery());
                 break;
 
             case EditTask:
@@ -172,6 +189,9 @@ public class LocationParser {
         intent.putExtra(Location.QUERY_NAME, listQuery.name());
         if (location.getSelectedIndex() > -1) {
             intent.putExtra(Location.SELECTED_INDEX, location.getSelectedIndex());
+        }
+        if (location.getSearchQuery() != null) {
+            intent.putExtra(Location.SEARCH_QUERY, location.getSearchQuery());
         }
 
         return intent;

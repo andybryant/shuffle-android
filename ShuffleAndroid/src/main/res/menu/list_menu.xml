@@ -8,9 +8,4 @@
         android:title="@string/active_title"
         app:actionLayout="@layout/active_switch"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/action_search"
-        android:icon="@drawable/ic_search_white_24dp"
-        android:title="@string/menu_search"
-        app:showAsAction="ifRoom" />
 </menu>

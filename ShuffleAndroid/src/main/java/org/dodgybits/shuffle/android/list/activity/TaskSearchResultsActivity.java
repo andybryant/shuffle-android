@@ -15,25 +15,19 @@
  */
 package org.dodgybits.shuffle.android.list.activity;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-
+import android.content.Intent;
 import com.google.inject.Inject;
-
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.activity.AbstractMainActivity;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.view.Location;
+import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.list.view.task.TaskRecyclerFragment;
-
 import roboguice.event.Observes;
 import roboguice.inject.ContextScopedProvider;
 
 public class TaskSearchResultsActivity extends AbstractMainActivity {
     public static final String TAG = "TaskSearchResultsAct";
-
-    @Inject
-    ContextScopedProvider<TaskRecyclerFragment> mTaskListFragmentProvider;
 
     @Override
     public Location.LocationActivity getLocationActivity() {
@@ -41,24 +35,15 @@ public class TaskSearchResultsActivity extends AbstractMainActivity {
     }
 
     @Override
-    protected int contentView(boolean isTablet) {
-        return R.layout.fragment_entity_list;
-    }
-
-    private void onLocationUpdated(@Observes LocationUpdatedEvent event) {
-        showResults(event.getLocation().getSearchQuery());
-    }
-
-    private void showResults(String query) {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.container);
-        if (fragment == null) {
-            fragment = mTaskListFragmentProvider.get(this);
-
-            // TODO populate fragment with search results
-
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.container, fragment);
-            ft.commit();
+    protected void validateLocation(Location location) {
+        String action = getIntent().getAction();
+        if (Intent.ACTION_SEARCH.equals(action)) {
+            redirect(TaskListActivity.class, location);
+        } else {
+            Intent intent = LocationParser.createIntent(this, location);
+            startActivity(intent);
+            finish();
         }
     }
+
 }

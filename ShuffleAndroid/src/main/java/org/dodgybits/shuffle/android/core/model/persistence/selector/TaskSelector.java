@@ -266,10 +266,11 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
 
             case search:
                 StringBuilder builder = new StringBuilder();
-                builder.append("description LIKE ");
+                builder.append("(description LIKE ");
                 DatabaseUtils.appendEscapedSQLString(builder, '%' + mSearchQuery + '%');
                 builder.append(" OR details LIKE ");
                 DatabaseUtils.appendEscapedSQLString(builder, '%' + mSearchQuery + '%');
+                builder.append(')');
                 result = builder.toString();
                 break;
 

@@ -94,6 +94,7 @@ public class UiUtilities {
 
     public static boolean showHomeAsUp(Resources res, Location location) {
         return (location.getViewMode() == ViewMode.TASK && !showListOnViewTask(res)) ||
+                (location.getViewMode() == ViewMode.SEARCH_RESULTS_TASK && !showListOnViewTask(res)) ||
                 (location.getViewMode() == ViewMode.TASK_LIST && (sEntityListQueries.contains(location.getListQuery())));
     }
 
