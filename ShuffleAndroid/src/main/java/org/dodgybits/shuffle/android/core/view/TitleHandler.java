@@ -1,5 +1,7 @@
 package org.dodgybits.shuffle.android.core.view;
 
+import android.util.Log;
+
 import com.google.inject.Inject;
 
 import org.dodgybits.shuffle.android.core.model.Context;
@@ -12,6 +14,7 @@ import roboguice.inject.ContextSingleton;
 
 @ContextSingleton
 public class TitleHandler {
+    private static final String TAG = "TitleHandler";
 
     @Inject
     EntityCache<Context> mContextCache;
@@ -50,11 +53,15 @@ public class TitleHandler {
             Context context = mContextCache.findById(location.getContextId());
             if (context != null) {
                 title = context.getName();
+            } else {
+                Log.e(TAG, "Failed to find context in cache " + location.getContextId());
             }
         } else if (listQuery == ListQuery.project) {
             Project project = mProjectCache.findById(location.getProjectId());
             if (project != null) {
                 title = project.getName();
+            } else {
+                Log.e(TAG, "Failed to find project in cache " + location.getProjectId());
             }
         }
         if (title.isEmpty()) {

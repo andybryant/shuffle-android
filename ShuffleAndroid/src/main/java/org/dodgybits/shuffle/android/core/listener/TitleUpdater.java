@@ -3,6 +3,8 @@ package org.dodgybits.shuffle.android.core.listener;
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import com.google.inject.Inject;
+
+import org.dodgybits.shuffle.android.core.event.CacheUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -27,12 +29,22 @@ public class TitleUpdater {
         mActivity = (AppCompatActivity) activity;
     }
 
+    private Location mLocation;
+
     private void onViewChanged(@Observes LocationUpdatedEvent event) {
-        Location location = event.getLocation();
-        if (location == null || location.getViewMode() == null) {
+        mLocation = event.getLocation();
+        updateTitle();
+    }
+
+    private void onCacheUpdated(@Observes CacheUpdatedEvent event) {
+        updateTitle();
+    }
+
+    private void updateTitle() {
+        if (mLocation == null || mLocation.getViewMode() == null) {
             return;
         }
-        mActivity.setTitle(mTitleHandler.getTitle(mActivity, location));
+        mActivity.setTitle(mTitleHandler.getTitle(mActivity, mLocation));
     }
 
 }

@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.CacheUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
@@ -188,6 +189,10 @@ public class TaskRecyclerFragment extends RoboFragment {
 
     private void onViewUpdate(@Observes LocationUpdatedEvent event) {
         onViewUpdate(event.getLocation());
+    }
+
+    private void onCacheUpdated(@Observes CacheUpdatedEvent event) {
+        mListAdapter.notifyDataSetChanged();
     }
 
     private void onViewUpdate(Location location) {

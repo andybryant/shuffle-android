@@ -26,6 +26,7 @@ import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Task;
+import org.dodgybits.shuffle.android.core.model.persistence.DefaultEntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.CalendarUtils;
@@ -89,10 +90,10 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     private TextView mCalendarDetail;
 
     @Inject
-    private EntityCache<Project> mProjectCache;
+    private DefaultEntityCache<Project> mProjectCache;
 
     @Inject
-    private EntityCache<Context> mContextCache;
+    private DefaultEntityCache<Context> mContextCache;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
