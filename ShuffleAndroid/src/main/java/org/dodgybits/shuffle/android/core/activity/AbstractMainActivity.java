@@ -20,6 +20,9 @@ import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.OnCreatedEvent;
 import org.dodgybits.shuffle.android.core.listener.FragmentLoader;
 import org.dodgybits.shuffle.android.core.listener.MainListeners;
+import org.dodgybits.shuffle.android.core.model.Context;
+import org.dodgybits.shuffle.android.core.model.Project;
+import org.dodgybits.shuffle.android.core.model.persistence.CursorEntityCache;
 import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import org.dodgybits.shuffle.android.core.util.FontUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
@@ -56,6 +59,12 @@ public abstract class AbstractMainActivity extends RoboAppCompatActivity
 
     @Inject
     private LocationParser mLocationParser;
+
+    @Inject
+    private CursorEntityCache<Context> mContextCache;
+
+    @Inject
+    private CursorEntityCache<Project> mProjectCache;
 
     // Primary toolbar and drawer toggle
     protected Toolbar mActionBarToolbar;

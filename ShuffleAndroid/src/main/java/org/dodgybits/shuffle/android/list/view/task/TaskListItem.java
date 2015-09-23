@@ -17,10 +17,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
+import org.dodgybits.shuffle.android.core.event.CacheUpdatedEvent;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Task;
+import org.dodgybits.shuffle.android.core.model.persistence.CursorEntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.util.FontUtils;
 import org.dodgybits.shuffle.android.core.util.TaskLifecycleState;
@@ -32,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import roboguice.event.Observes;
+
 /**
  * This custom View is the list item for the TaskRecyclerFragment, and serves two purposes:
  * 1.  It's a container to store task details
@@ -42,8 +46,8 @@ public class TaskListItem extends View {
     private android.content.Context mAndroidContext;
     private TaskRecyclerFragment.TaskHolder mHolder;
 
-    private final EntityCache<Context> mContextCache;
-    private final EntityCache<Project> mProjectCache;
+    private final CursorEntityCache<Context> mContextCache;
+    private final CursorEntityCache<Project> mProjectCache;
 
     private Project mProject;
     private String mSnippet;
@@ -61,8 +65,8 @@ public class TaskListItem extends View {
     @Inject
     public TaskListItem(
             android.content.Context androidContext,
-            EntityCache<Context> contextCache,
-            EntityCache<Project> projectCache) {
+            CursorEntityCache<Context> contextCache,
+            CursorEntityCache<Project> projectCache) {
         super(androidContext);
         mContextCache = contextCache;
         mProjectCache = projectCache;

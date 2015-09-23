@@ -21,8 +21,8 @@ public class ShuffleModule extends AbstractModule {
 	}
 
     private void addCaches() {
-        bind(new TypeLiteral<EntityCache<Context>>() {}).to(new TypeLiteral<CursorEntityCache<Context>>() {});
-        bind(new TypeLiteral<EntityCache<Project>>() {}).to(new TypeLiteral<CursorEntityCache<Project>>() {});
+        bind(new TypeLiteral<EntityCache<Context>>() {}).to(new TypeLiteral<DefaultEntityCache<Context>>() {});
+        bind(new TypeLiteral<EntityCache<Project>>() {}).to(new TypeLiteral<DefaultEntityCache<Project>>() {});
     }
 
     private void addPersisters() {

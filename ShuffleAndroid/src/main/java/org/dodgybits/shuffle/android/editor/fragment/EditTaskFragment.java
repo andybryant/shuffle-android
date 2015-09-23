@@ -15,18 +15,23 @@ import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Task;
-import org.dodgybits.shuffle.android.core.model.persistence.DefaultEntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.CalendarUtils;
@@ -90,10 +95,10 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     private TextView mCalendarDetail;
 
     @Inject
-    private DefaultEntityCache<Project> mProjectCache;
+    private EntityCache<Project> mProjectCache;
 
     @Inject
-    private DefaultEntityCache<Context> mContextCache;
+    private EntityCache<Context> mContextCache;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
