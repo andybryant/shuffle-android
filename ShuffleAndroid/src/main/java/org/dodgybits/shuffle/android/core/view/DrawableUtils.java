@@ -27,7 +27,7 @@ public class DrawableUtils {
 	}
 
     public static GradientDrawable createGradient(int colour, Orientation orientation) {
-        return createGradient(colour, orientation, 1.1f, 0.9f);
+        return createGradient(colour, orientation, 1.03f, 0.97f);
     }
 
     public static GradientDrawable createGradient(int colour, Orientation orientation, float startOffset, float endOffset) {

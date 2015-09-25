@@ -3,10 +3,14 @@ package org.dodgybits.shuffle.android.core.model.persistence;
 import android.util.Log;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+
+import org.dodgybits.shuffle.android.core.event.CacheUpdatedEvent;
 import org.dodgybits.shuffle.android.core.model.Entity;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.util.ItemCache;
 import org.dodgybits.shuffle.android.core.util.ItemCache.ValueBuilder;
+
+import roboguice.event.Observes;
 import roboguice.inject.ContextSingleton;
 
 import java.util.List;
@@ -53,6 +57,10 @@ public class DefaultEntityCache<E extends Entity> implements EntityCache<E> {
     public void flush() {
         Log.d(cTag, "Flushing cache");
         mCache.clear();
+    }
+
+    private void onCacheUpdated(@Observes CacheUpdatedEvent event) {
+        flush();
     }
 
     private class Builder implements ValueBuilder<Id, E> {

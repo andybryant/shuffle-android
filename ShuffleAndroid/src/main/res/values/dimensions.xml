@@ -84,7 +84,7 @@
     <dimen name="context_small_horizontal_spacing">4dip</dimen>
     <dimen name="context_small_corner_radius">3dip</dimen>
 
-    <dimen name="context_large_corner_radius">8dip</dimen>
+    <dimen name="context_large_corner_radius">20dip</dimen>
 
     <dimen name="context_widget_corner_radius">5dip</dimen>
 
