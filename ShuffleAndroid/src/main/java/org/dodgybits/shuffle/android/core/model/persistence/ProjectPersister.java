@@ -66,7 +66,12 @@ public class ProjectPersister extends AbstractEntityPersister<Project> {
         writeId(values, GAE_ID, project.getGaeId());
         values.put(CHANGE_SET, project.getChangeSet().getChangeSet());
     }
-    
+
+    @Override
+    Project[] createArray(int size) {
+        return new Project[size];
+    }
+
     @Override
     protected String getEntityName() {
         return "project";

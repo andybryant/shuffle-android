@@ -54,6 +54,11 @@ public class ContextPersister extends AbstractEntityPersister<Context> {
     }
 
     @Override
+    Context[] createArray(int size) {
+        return new Context[size];
+    }
+
+    @Override
     protected void writeContentValues(ContentValues values, Context context) {
         // never write id since it's auto generated
         values.put(MODIFIED_DATE, context.getModifiedDate());

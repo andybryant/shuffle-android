@@ -25,6 +25,8 @@ public interface EntityPersister<E extends Entity> {
     
     void update(E e);
 
+    E[] readAll(Cursor cursor);
+
     /**
      * Set deleted flag entity with the given id to isDeleted.
      *

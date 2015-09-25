@@ -149,7 +149,7 @@ public class EntityListItem extends View {
     }
 
     /**
-     * Invalidate all drawing caches associated with drawing task list items.
+     * Invalidate all drawing caches associated with drawing task list mItems.
      * This is an expensive operation, and should be done rarely, such as when system font size
      * changes occurs.
      */

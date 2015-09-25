@@ -116,6 +116,11 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
         return contextIds;
     }
 
+    @Override
+    Task[] createArray(int size) {
+        return new Task[size];
+    }
+
     public Id readLocalId(Cursor cursor) {
         return readId(cursor, ID_INDEX);
     }

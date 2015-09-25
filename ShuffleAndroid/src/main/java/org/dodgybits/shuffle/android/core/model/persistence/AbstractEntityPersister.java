@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import com.google.common.collect.Maps;
+
+import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Entity;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.persistence.provider.AbstractCollectionProvider;
@@ -100,6 +102,20 @@ public abstract class AbstractEntityPersister<E extends Entity> implements Entit
         Uri uri = getUri(e);
         update(uri, e);
     }
+
+    @Override
+    public E[] readAll(Cursor cursor) {
+        E[] entities = createArray(cursor.getCount());
+        int i = 0;
+        if (cursor.moveToFirst()) {
+            do {
+                entities[i++] = read(cursor);
+            } while (cursor.moveToNext());
+        }
+        return entities;
+    }
+
+    abstract E[] createArray(int size);
 
     @Override
     public boolean updateDeletedFlag(Id id, boolean isDeleted) {

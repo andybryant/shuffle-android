@@ -27,7 +27,10 @@ import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.LocationProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
+import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Task;
+import org.dodgybits.shuffle.android.core.model.persistence.CursorEntityCache;
+import org.dodgybits.shuffle.android.core.model.persistence.DefaultEntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
@@ -39,6 +42,7 @@ import org.dodgybits.shuffle.android.editor.activity.DateTimePickerActivity;
 import org.dodgybits.shuffle.android.list.activity.TaskListActivity;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
+import org.dodgybits.shuffle.android.list.view.AbstractArrayAdapter;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
 import org.dodgybits.shuffle.android.list.view.SelectableHolderImpl;
 import org.dodgybits.shuffle.android.preference.model.ListFeatures;
@@ -48,6 +52,8 @@ import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.ContextScopedProvider;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -74,6 +80,9 @@ public class TaskRecyclerFragment extends RoboFragment {
 
     @Inject
     private LocationProvider mLocationProvider;
+
+    @Inject
+    private DefaultEntityCache<Project> mProjectCache;
 
     private Location mLocation;
 
@@ -370,7 +379,11 @@ public class TaskRecyclerFragment extends RoboFragment {
         }
     }
 
-    public class TaskListAdapter extends AbstractCursorAdapter<TaskHolder> {
+    public class TaskListAdapter extends AbstractArrayAdapter<TaskHolder, Task> {
+
+        public TaskListAdapter() {
+            this.mPersister = mTaskPersister;
+        }
 
         @Override
         public TaskHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -388,10 +401,13 @@ public class TaskRecyclerFragment extends RoboFragment {
             }
         }
 
+        @Override
+        protected void sortItems() {
+            Arrays.sort(mItems, projectDueCreatedComparator);
+        }
+
         public Task readTask(int position) {
-            if (mCursor.isClosed()) return null;
-            mCursor.moveToPosition(position);
-            return mTaskPersister.read(mCursor);
+            return mItems[position];
         }
 
     }
@@ -559,5 +575,39 @@ public class TaskRecyclerFragment extends RoboFragment {
 
 
     };
+
+    private Comparator<Task> projectDueCreatedComparator = new Comparator<Task>() {
+        @Override
+        public int compare(Task lhs, Task rhs) {
+            int result;
+            if (lhs.getProjectId().isInitialised()) {
+                if (rhs.getProjectId().isInitialised()) {
+                    Project lhsProject = mProjectCache.findById(lhs.getProjectId());
+                    Project rhsProject = mProjectCache.findById(rhs.getProjectId());
+                    result = lhsProject.getName().compareToIgnoreCase(rhsProject.getName());
+                } else {
+                    return -1;
+                }
+            } else {
+                if (rhs.getProjectId().isInitialised()) {
+                    return 1;
+                } else {
+                    result = 0;
+                }
+            }
+
+            if (result == 0) {
+                result = compareLongs(lhs.getDueDate(), rhs.getDueDate());
+                if (result == 0) {
+                    result = compareLongs(rhs.getCreatedDate(), lhs.getCreatedDate());
+                }
+            }
+            return result;
+        }
+    };
+
+    public static int compareLongs(long lhs, long rhs) {
+        return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
+    }
 
 }
