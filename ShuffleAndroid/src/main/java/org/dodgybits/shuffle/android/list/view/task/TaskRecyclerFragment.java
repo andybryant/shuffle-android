@@ -403,7 +403,7 @@ public class TaskRecyclerFragment extends RoboFragment {
 
         @Override
         protected void sortItems() {
-            Arrays.sort(mItems, projectDueCreatedComparator);
+            Arrays.sort(mItems, projectOrderDueCreatedComparator);
         }
 
         public Task readTask(int position) {
@@ -576,20 +576,24 @@ public class TaskRecyclerFragment extends RoboFragment {
 
     };
 
-    private Comparator<Task> projectDueCreatedComparator = new Comparator<Task>() {
+    /**
+     * Sort by following criteria: project name (no project last) asc,
+     * display order asc, due date asc, created desc
+     */
+    private Comparator<Task> projectOrderDueCreatedComparator = new Comparator<Task>() {
         @Override
         public int compare(Task lhs, Task rhs) {
             int result;
-            if (lhs.getProjectId().isInitialised()) {
-                if (rhs.getProjectId().isInitialised()) {
-                    Project lhsProject = mProjectCache.findById(lhs.getProjectId());
-                    Project rhsProject = mProjectCache.findById(rhs.getProjectId());
+            Project lhsProject = mProjectCache.findById(lhs.getProjectId());
+            Project rhsProject = mProjectCache.findById(rhs.getProjectId());
+            if (lhsProject != null) {
+                if (rhsProject != null) {
                     result = lhsProject.getName().compareToIgnoreCase(rhsProject.getName());
                 } else {
                     return -1;
                 }
             } else {
-                if (rhs.getProjectId().isInitialised()) {
+                if (rhsProject != null) {
                     return 1;
                 } else {
                     result = 0;
@@ -597,14 +601,21 @@ public class TaskRecyclerFragment extends RoboFragment {
             }
 
             if (result == 0) {
-                result = compareLongs(lhs.getDueDate(), rhs.getDueDate());
+                result = compareInt(lhs.getOrder(), rhs.getOrder());
                 if (result == 0) {
-                    result = compareLongs(rhs.getCreatedDate(), lhs.getCreatedDate());
+                    result = compareLongs(lhs.getDueDate(), rhs.getDueDate());
+                    if (result == 0) {
+                        result = compareLongs(rhs.getCreatedDate(), lhs.getCreatedDate());
+                    }
                 }
             }
             return result;
         }
     };
+
+    public static int compareInt(int lhs, int rhs) {
+        return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
+    }
 
     public static int compareLongs(long lhs, long rhs) {
         return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
