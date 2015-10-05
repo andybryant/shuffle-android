@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'aar-link-sources'
 
 
 android {
@@ -56,8 +57,6 @@ android {
     }
 
     packagingOptions {
-        exclude 'com/google/thirdparty/publicsuffix/PublicSuffixPatterns.gwt.xml'
-        exclude 'com/google/thirdparty/publicsuffix/PublicSuffixType.gwt.xml'
         exclude 'META-INF/LICENSE.txt'
     }
 }
@@ -65,6 +64,10 @@ android {
 dependencies {
     compile 'org.roboguice:roboguice:3.0.1'
     provided 'org.roboguice:roboblender:3.0.1'
+    compile ('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.4@aar'){
+        transitive=true
+    }
+    aarLinkSources 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.4:sources@jar'
     compile 'com.google.android.gms:play-services-analytics:7.8.0'
     compile 'com.google.android.gms:play-services-gcm:7.8.0'
     compile 'com.android.support:appcompat-v7:23.0.1'

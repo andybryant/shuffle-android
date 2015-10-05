@@ -11,11 +11,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
+
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.ActiveToggleEvent;
 import org.dodgybits.shuffle.android.core.event.CompletedToggleEvent;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.MoveEnabledChangeEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Context;
@@ -90,6 +93,7 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
             return false;
         }
         MenuItem editMenu = menu.findItem(R.id.action_edit);
+        MenuItem moveMenu = menu.findItem(R.id.move_toggle);
         switch (mLocation.getViewMode()) {
             case CONTEXT_LIST:
                 break;
@@ -104,6 +108,7 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
                 } else {
                     editMenu.setVisible(false);
                 }
+                moveMenu.setVisible(ListFeatures.showMoveActions(mLocation));
                 break;
             case TASK:
             case SEARCH_RESULTS_TASK:
@@ -112,6 +117,7 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
 
         addCompleteToggleListener(menu);
         addActiveToggleListener(menu);
+        addMoveToggleListener(menu);
 
         return true;
     }
@@ -162,6 +168,22 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
                                 activeSwitch.isChecked(),
                                 mLocation.getListQuery(),
                                 mLocation.getViewMode()));
+                    }
+                });
+            }
+        }
+    }
+
+    private void addMoveToggleListener(Menu menu) {
+        MenuItem toggleMenu = menu.findItem(R.id.move_toggle);
+        if (toggleMenu != null) {
+            final CompoundButton moveSwitch = (CompoundButton) toggleMenu.getActionView();
+            if (moveSwitch != null) {
+                moveSwitch.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(TAG, "move toggle hit");
+                        mEventManager.fire(new MoveEnabledChangeEvent(moveSwitch.isChecked()));
                     }
                 });
             }

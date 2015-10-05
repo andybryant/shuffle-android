@@ -215,6 +215,7 @@ allow that, you can turn it off under Settings.</string>
     <string name="update_gcal_title">Update Calendar</string>
     <string name="update_gcal_detail">Updated entry will load after saving</string>
     <string name="completed_title">Completed</string>
+    <string name="drag_n_drop_title">Rearrange actions</string>
     <string name="active_title">Active</string>
     <string name="deleted_title">Deleted</string>
     <string name="clear_title">Clear dates</string>

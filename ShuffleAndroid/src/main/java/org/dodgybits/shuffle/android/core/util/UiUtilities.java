@@ -3,7 +3,9 @@ package org.dodgybits.shuffle.android.core.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Handler;
+import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.ListView;
@@ -120,6 +122,18 @@ public class UiUtilities {
         if (v != null) {
             v.setVisibility(visibility);
         }
+    }
+
+    public static boolean supportsViewElevation() {
+        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
+    }
+
+    public static boolean hitTest(View v, int x) {
+        final int tx = (int) (ViewCompat.getTranslationX(v) + 0.5f);
+        final int left = v.getLeft() + tx;
+        final int right = (v.getLeft() + v.getRight()) / 2 + tx;
+
+        return (x >= left) && (x <= right);
     }
 
     /**

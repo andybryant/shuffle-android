@@ -57,6 +57,7 @@ public class TaskListItem extends View {
     private boolean mIsCompleted;
     private boolean mIsActive = true;
     private boolean mIsDeleted = false;
+    private boolean mDragAndDropEnabled = false;
 
     private List<Context> mContexts = Collections.emptyList();
 
@@ -176,8 +177,10 @@ public class TaskListItem extends View {
 
     private boolean mProjectNameVisible = true;
 
-    public void setTask(Task task, boolean projectNameVisible, boolean isSelected) {
+    public void setTask(Task task, boolean projectNameVisible,
+                        boolean dragAndDropEnabled,  boolean isSelected) {
         mProjectNameVisible = projectNameVisible;
+        mDragAndDropEnabled = dragAndDropEnabled;
         mIsCompleted = task.isComplete();
         mProject = mProjectCache.findById(task.getProjectId());
         List<Context> contexts = mContextCache.findById(task.getContextIds());
@@ -587,6 +590,10 @@ public class TaskListItem extends View {
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (mDragAndDropEnabled) {
+            return super.onTouchEvent(event);
+        }
+
         initializeSlop(getContext());
 
         boolean handled = false;

@@ -4,6 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/move_toggle"
+        android:title="@string/drag_n_drop_title"
+        app:actionLayout="@layout/move_switch"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/complete_toggle"
         android:title="@string/completed_title"
         app:actionLayout="@layout/completed_switch"

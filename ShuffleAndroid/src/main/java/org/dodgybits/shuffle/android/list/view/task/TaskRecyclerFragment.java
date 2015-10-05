@@ -6,7 +6,10 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.internal.widget.ViewUtils;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,10 +22,21 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.decoration.ItemShadowDecorator;
+import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
+import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
+import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemViewHolder;
+import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
+import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
+import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
+
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.CacheUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.MoveEnabledChangeEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.LocationProvider;
@@ -92,7 +106,10 @@ public class TaskRecyclerFragment extends RoboFragment {
 
     private Cursor mCursor;
     private RecyclerView mRecyclerView;
+    private RecyclerViewDragDropManager mRecyclerViewDragDropManager;
     private TaskListAdapter mListAdapter;
+    private RecyclerView.Adapter mWrappedAdapter;
+
     private MultiSelector mMultiSelector = new MultiSelector();
     private ActionMode mActionMode = null;
     private int mDeferredPosition = -1;
@@ -122,22 +139,45 @@ public class TaskRecyclerFragment extends RoboFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.recycler_view, container, false);
-        mRecyclerView = (RecyclerView) root.findViewById(R.id.recycler_view);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        mRecyclerView.setHasFixedSize(true);
+        return inflater.inflate(R.layout.recycler_view, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(layoutManager);
+
+        // drag & drop manager
+        mRecyclerViewDragDropManager = new RecyclerViewDragDropManager();
+        mRecyclerViewDragDropManager.setDraggingItemShadowDrawable(
+                (NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z3_9));
+
+        mRecyclerView.setHasFixedSize(true);
         mListAdapter = new TaskListAdapter();
         mListAdapter.setHasStableIds(true);
-        mRecyclerView.setAdapter(mListAdapter);
+        mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(mListAdapter);      // wrap for dragging
 
-        // init swipe to dismiss logic
+        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
+
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(mWrappedAdapter);
+        mRecyclerView.setItemAnimator(animator);
+
+        if (!UiUtilities.supportsViewElevation()) {
+            mRecyclerView.addItemDecoration(new ItemShadowDecorator((NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z1_9)));
+        }
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
+        mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
+
+        // init swipe
         mTaskCallback = new TaskCallback();
         mItemTouchHelper = new ItemTouchHelper(mTaskCallback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
-        return root;
+
     }
 
     @Override
@@ -192,6 +232,34 @@ public class TaskRecyclerFragment extends RoboFragment {
         }
     }
 
+    @Override
+    public void onPause() {
+        mRecyclerViewDragDropManager.cancelDrag();
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (mRecyclerViewDragDropManager != null) {
+            mRecyclerViewDragDropManager.release();
+            mRecyclerViewDragDropManager = null;
+        }
+
+        if (mRecyclerView != null) {
+            mRecyclerView.setItemAnimator(null);
+            mRecyclerView.setAdapter(null);
+            mRecyclerView = null;
+        }
+
+        if (mWrappedAdapter != null) {
+            WrapperAdapterUtils.releaseAll(mWrappedAdapter);
+            mWrappedAdapter = null;
+        }
+        mListAdapter = null;
+
+        super.onDestroyView();
+    }
+
     private TaskListActivity getTaskListActivity() {
         return (TaskListActivity) getActivity();
     }
@@ -208,7 +276,6 @@ public class TaskRecyclerFragment extends RoboFragment {
         if (!ObjectUtils.equals(location, mLocation)) {
             mLocation = location;
 
-            mEnableTaskReordering = ListFeatures.showMoveActions(mLocation);
             updateCursor();
             if (mListAdapter != null) {
                 mListAdapter.notifyDataSetChanged();
@@ -217,10 +284,20 @@ public class TaskRecyclerFragment extends RoboFragment {
         updateSwipeSupport();
     }
 
+    private void onMoveEnabledChange(@Observes MoveEnabledChangeEvent event) {
+        boolean enabled = event.isEnabled();
+        mEnableTaskReordering = enabled;
+        if (mListAdapter != null) {
+            mListAdapter.notifyDataSetChanged();
+        }
+        updateSwipeSupport();
+    }
+
+
     private void updateSwipeSupport() {
         if (mTaskCallback != null && mLocation != null) {
             mTaskCallback.setDefaultSwipeDirs(
-                    ListFeatures.isSwipeSupported(mLocation) ?
+                    ListFeatures.isSwipeSupported(mLocation) && !mEnableTaskReordering ?
                             ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT : 0);
 
         }
@@ -315,8 +392,10 @@ public class TaskRecyclerFragment extends RoboFragment {
 
 
     public class TaskHolder extends SelectableHolderImpl implements
-            View.OnClickListener, View.OnLongClickListener {
+            View.OnClickListener, View.OnLongClickListener,
+            DraggableItemViewHolder {
 
+        private int mDragStateFlags;
         TaskListItem mTaskListItem;
         Task mTask;
 
@@ -332,6 +411,7 @@ public class TaskRecyclerFragment extends RoboFragment {
 
         @Override
         public void onClick(View v) {
+            if (mEnableTaskReordering) return;
             clickPanel();
         }
 
@@ -348,6 +428,7 @@ public class TaskRecyclerFragment extends RoboFragment {
         }
 
         public void clickTag() {
+            if (mEnableTaskReordering) return;
             if (mActionMode == null) {
                 mActionMode = getRoboAppCompatActivity().startSupportActionMode(mEditMode);
                 mMultiSelector.setSelected(this, true);
@@ -369,17 +450,30 @@ public class TaskRecyclerFragment extends RoboFragment {
             mTask = task;
             boolean projectVisible = ListFeatures.isProjectNameVisible(mLocation);
             boolean isSelected = mLocation.getSelectedIndex() == getAdapterPosition();
-            mTaskListItem.setTask(task, projectVisible, isSelected);
+            mTaskListItem.setTask(task, projectVisible, mEnableTaskReordering, isSelected);
         }
 
         @Override
         public boolean onLongClick(View v) {
+            if (mEnableTaskReordering) return false;
             clickTag();
             return true;
         }
+
+        @Override
+        public void setDragStateFlags(int flags) {
+            mDragStateFlags = flags;
+        }
+
+        @Override
+        public int getDragStateFlags() {
+            return mDragStateFlags;
+        }
+
     }
 
-    public class TaskListAdapter extends AbstractArrayAdapter<TaskHolder, Task> {
+    public class TaskListAdapter extends AbstractArrayAdapter<TaskHolder, Task>
+            implements DraggableItemAdapter<TaskHolder> {
 
         public TaskListAdapter() {
             this.mPersister = mTaskPersister;
@@ -410,6 +504,51 @@ public class TaskRecyclerFragment extends RoboFragment {
             return mItems[position];
         }
 
+        @Override
+        public boolean onCheckCanStartDrag(TaskHolder holder, int position, int x, int y) {
+            // x, y --- relative from the itemView's top-left
+
+            if (!mEnableTaskReordering) return false;
+
+//            // return false if the item is a section header
+//            if (holder.getItemViewType() != ITEM_VIEW_TYPE_SECTION_ITEM) {
+//                return false;
+//            }
+
+            final View containerView = holder.mTaskListItem;
+            final View dragHandleView = holder.mTaskListItem;
+
+            final int offsetX = containerView.getLeft() + (int) (ViewCompat.getTranslationX(containerView) + 0.5f);
+
+            return UiUtilities.hitTest(dragHandleView, x - offsetX);
+        }
+
+        @Override
+        public ItemDraggableRange onGetItemDraggableRange(TaskHolder holder, int position) {
+            final int start = findFirstSectionItem(position);
+            final int end = findLastSectionItem(position);
+
+            return new ItemDraggableRange(start, end);
+        }
+
+        private int findFirstSectionItem(int position) {
+            return 0;
+        }
+
+        private int findLastSectionItem(int position) {
+            return getItemCount() - 1;
+        }
+
+        @Override
+        public void onMoveItem(int fromPosition, int toPosition) {
+            Log.d(TAG, "onMoveItem(fromPosition = " + fromPosition + ", toPosition = " + toPosition + ")");
+
+            Task tmp = mItems[fromPosition];
+            mItems[fromPosition] = mItems[toPosition];
+            mItems[toPosition] = tmp;
+
+            notifyItemMoved(fromPosition, toPosition);
+        }
     }
 
     public class TaskCallback extends AbstractSwipeItemTouchHelperCallback {

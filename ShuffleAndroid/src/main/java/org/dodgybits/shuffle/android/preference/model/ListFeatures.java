@@ -17,7 +17,9 @@ public class ListFeatures {
     }
 
     public static boolean showMoveActions(Location location) {
-        return location.getListQuery() == ListQuery.project;
+        return location.getListQuery() == ListQuery.inbox ||
+                location.getListQuery() == ListQuery.nextTasks ||
+                location.getListQuery() == ListQuery.project;
     }
 
 
