@@ -79,6 +79,7 @@ public class TaskListItem extends View {
     private static final TextPaint sRegularPaint = new TextPaint();
     private static final TextPaint sBoldPaint = new TextPaint();
     private static final Paint sContextBackgroundPaint = new Paint();
+    private static final Paint sDraggablePaint = new Paint();
     private static final Paint sContextMorePaint = new Paint();
     static {
         final LightingColorFilter lcf = new LightingColorFilter( 0xFF000000, 0xFFAAAAAA);
@@ -147,6 +148,9 @@ public class TaskListItem extends View {
 
             mContextIconMap = Maps.newHashMap();
 
+            sDraggablePaint.setColor(r.getColor(R.color.black));
+            sDraggablePaint.setAlpha(185);
+
             sStatePaint.setAlpha(100);
 
             ACTIVATED_TEXT_COLOR = r.getColor(android.R.color.black);
@@ -195,6 +199,10 @@ public class TaskListItem extends View {
         if (changed) {
             requestLayout();
         }
+    }
+
+    public int getDragRight() {
+        return mCoordinates == null ? 0 : mCoordinates.detailsX;
     }
 
     private boolean setContexts(List<Context> contexts) {
@@ -405,7 +413,9 @@ public class TaskListItem extends View {
         } else {
             drawContexts(canvas);
         }
-        if (isSelected()) {
+        if (mDragAndDropEnabled) {
+            drawDraggableIndicator(canvas);
+        } else if (isSelected()) {
             drawSelectedIndicator(canvas);
         }
     }
@@ -521,6 +531,20 @@ public class TaskListItem extends View {
         canvas.drawOval(mCoordinates.contextRects[0][0], sContextBackgroundPaint);
         canvas.drawBitmap(sActivated, mCoordinates.contextSourceIconRect,
                 mCoordinates.activatedRect, null);
+    }
+
+    private void drawDraggableIndicator(Canvas canvas) {
+        int middleY = mCoordinates.contextsY + mCoordinates.contextsHeight / 2;
+        Rect topRect = new Rect(mCoordinates.dragIndicatorX,
+                middleY - mCoordinates.dragIndicatorYOffSet,
+                mCoordinates.dragIndicatorX + mCoordinates.dragIndicatorWidth,
+                middleY - mCoordinates.dragIndicatorYOffSet + mCoordinates.dragIndicatorHeight);
+        Rect bottomRect = new Rect(mCoordinates.dragIndicatorX,
+                middleY + mCoordinates.dragIndicatorYOffSet,
+                mCoordinates.dragIndicatorX + mCoordinates.dragIndicatorWidth,
+                middleY + mCoordinates.dragIndicatorYOffSet + mCoordinates.dragIndicatorHeight);
+        canvas.drawRect(topRect, sDraggablePaint);
+        canvas.drawRect(bottomRect, sDraggablePaint);
     }
 
     private void drawSelectedIndicator(Canvas canvas) {

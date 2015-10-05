@@ -128,14 +128,6 @@ public class UiUtilities {
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
     }
 
-    public static boolean hitTest(View v, int x) {
-        final int tx = (int) (ViewCompat.getTranslationX(v) + 0.5f);
-        final int left = v.getLeft() + tx;
-        final int right = (v.getLeft() + v.getRight()) / 2 + tx;
-
-        return (x >= left) && (x <= right);
-    }
-
     /**
      * Same as {@link View#setVisibility(int)}, but doesn't crash even if {@code view} is null.
      */

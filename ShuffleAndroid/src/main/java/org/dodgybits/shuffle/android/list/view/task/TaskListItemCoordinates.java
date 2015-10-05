@@ -26,6 +26,11 @@ public class TaskListItemCoordinates {
     int stateX;
     int stateY;
 
+    int dragIndicatorX;
+    int dragIndicatorWidth;
+    int dragIndicatorYOffSet;
+    int dragIndicatorHeight;
+
     // Project
     int projectX;
     int projectY;
@@ -195,6 +200,14 @@ public class TaskListItemCoordinates {
             TextView contexts = (TextView) view.findViewById(R.id.context_block);
             coordinates.contextsX = UiUtilities.getX(contexts);
             coordinates.contextsY = UiUtilities.getY(contexts);
+
+            coordinates.dragIndicatorX = context.getResources().
+                    getDimensionPixelSize(R.dimen.move_indicator_padding);
+            coordinates.dragIndicatorWidth = coordinates.contextsX  - 2 * coordinates.dragIndicatorX;
+            coordinates.dragIndicatorHeight = context.getResources().
+                    getDimensionPixelOffset(R.dimen.move_indicator_height);
+            coordinates.dragIndicatorYOffSet = context.getResources().
+                    getDimensionPixelOffset(R.dimen.move_indicator_vertical_offset);
 
             coordinates.contextsLabelLeft = context.getResources().
                     getDimensionPixelSize(R.dimen.context_label_left);

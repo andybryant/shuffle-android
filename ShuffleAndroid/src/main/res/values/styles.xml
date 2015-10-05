@@ -17,7 +17,7 @@
 
     <style name="ActionBarSwitch">
         <item name="colorControlActivated">@color/mid_gray</item>
-        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:paddingRight">8dp</item>
     </style>
 
     <style name="widget_list_item">

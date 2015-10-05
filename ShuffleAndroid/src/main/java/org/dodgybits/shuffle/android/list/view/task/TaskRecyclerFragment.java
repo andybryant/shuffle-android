@@ -515,12 +515,8 @@ public class TaskRecyclerFragment extends RoboFragment {
 //                return false;
 //            }
 
-            final View containerView = holder.mTaskListItem;
-            final View dragHandleView = holder.mTaskListItem;
-
-            final int offsetX = containerView.getLeft() + (int) (ViewCompat.getTranslationX(containerView) + 0.5f);
-
-            return UiUtilities.hitTest(dragHandleView, x - offsetX);
+            final int dragRight = holder.mTaskListItem.getDragRight();
+            return x <= dragRight;
         }
 
         @Override
