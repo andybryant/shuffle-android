@@ -446,11 +446,13 @@ public class TaskRecyclerFragment extends RoboFragment {
             }
         }
 
-        public void bindTask(Task task) {
+        public void bindTask(Task task, boolean moveEnabled) {
             mTask = task;
             boolean projectVisible = ListFeatures.isProjectNameVisible(mLocation);
             boolean isSelected = mLocation.getSelectedIndex() == getAdapterPosition();
-            mTaskListItem.setTask(task, projectVisible, mEnableTaskReordering, isSelected);
+            boolean isDraggable = ((getDragStateFlags() & RecyclerViewDragDropManager.STATE_FLAG_DRAGGING) != 0);
+            boolean isDragging = ((getDragStateFlags() & RecyclerViewDragDropManager.STATE_FLAG_IS_ACTIVE) != 0);
+            mTaskListItem.setTask(task, projectVisible, moveEnabled, isDraggable, isDragging, isSelected);
         }
 
         @Override
@@ -491,8 +493,21 @@ public class TaskRecyclerFragment extends RoboFragment {
         public void onBindViewHolder(TaskHolder holder, int position) {
             Task task = readTask(position);
             if (task != null && mLocation != null) {
-                holder.bindTask(task);
+                holder.bindTask(task, canMoveItem(position));
             }
+        }
+
+        private boolean canMoveItem(int position) {
+            if (!mEnableTaskReordering) return false;
+
+            // can only move when there's more than one item with the same project (or lack of project)
+            Id projectId = readTask(position).getProjectId();
+
+            // check above first (assumes sorted by project)
+            if (position > 0 && projectId.equals(readTask(position - 1).getProjectId())) return true;
+
+            // check below
+            return (!isLast(position) && projectId.equals(readTask(position + 1).getProjectId()));
         }
 
         @Override
@@ -504,11 +519,15 @@ public class TaskRecyclerFragment extends RoboFragment {
             return mItems[position];
         }
 
+        private boolean isLast(int position) {
+            return position == mItems.length - 1;
+        }
+
         @Override
         public boolean onCheckCanStartDrag(TaskHolder holder, int position, int x, int y) {
             // x, y --- relative from the itemView's top-left
 
-            if (!mEnableTaskReordering) return false;
+            if (!canMoveItem(position)) return false;
 
 //            // return false if the item is a section header
 //            if (holder.getItemViewType() != ITEM_VIEW_TYPE_SECTION_ITEM) {
@@ -528,11 +547,37 @@ public class TaskRecyclerFragment extends RoboFragment {
         }
 
         private int findFirstSectionItem(int position) {
-            return 0;
+            Id projectId = readTask(position).getProjectId();
+
+            while (position > 0) {
+                Id prevProjectId = readTask(position - 1).getProjectId();
+
+                if (!projectId.equals(prevProjectId)) {
+                    break;
+                }
+
+                position -= 1;
+            }
+
+            return position;
         }
 
         private int findLastSectionItem(int position) {
-            return getItemCount() - 1;
+            Id projectId = readTask(position).getProjectId();
+
+            final int lastIndex = getItemCount() - 1;
+
+            while (position < lastIndex) {
+                Id prevProjectId = readTask(position + 1).getProjectId();
+
+                if (!projectId.equals(prevProjectId)) {
+                    break;
+                }
+
+                position += 1;
+            }
+
+            return position;
         }
 
         @Override

@@ -55,6 +55,8 @@ public class TaskListItem extends View {
     private StaticLayout mDescriptionLayout;
     private StaticLayout mSnippetLayout;
     private boolean mIsCompleted;
+    private boolean mIsDragged = false;
+    private boolean mIsDraggable = false;
     private boolean mIsActive = true;
     private boolean mIsDeleted = false;
     private boolean mDragAndDropEnabled = false;
@@ -182,12 +184,18 @@ public class TaskListItem extends View {
     private boolean mProjectNameVisible = true;
 
     public void setTask(Task task, boolean projectNameVisible,
-                        boolean dragAndDropEnabled,  boolean isSelected) {
+                        boolean dragAndDropEnabled,
+                        boolean isDraggable,
+                        boolean isDragging,
+                        boolean isSelected) {
         mProjectNameVisible = projectNameVisible;
         mDragAndDropEnabled = dragAndDropEnabled;
         mIsCompleted = task.isComplete();
         mProject = mProjectCache.findById(task.getProjectId());
         List<Context> contexts = mContextCache.findById(task.getContextIds());
+
+        mIsDraggable = isDraggable;
+        mIsDragged = isDragging;
         mIsActive = TaskLifecycleState.getActiveStatus(task, contexts, mProject) == TaskLifecycleState.Status.yes;
         mIsDeleted = TaskLifecycleState.getDeletedStatus(task, mProject) != TaskLifecycleState.Status.no;
         setTimestamp(task.getStartDate(), task.getDueDate());
