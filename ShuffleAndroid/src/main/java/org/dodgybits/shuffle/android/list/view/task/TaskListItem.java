@@ -3,7 +3,6 @@ package org.dodgybits.shuffle.android.list.view.task;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.*;
-import android.graphics.drawable.Drawable;
 import android.text.*;
 import android.text.format.DateUtils;
 import android.view.MotionEvent;
@@ -16,14 +15,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.CacheUpdatedEvent;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.persistence.CursorEntityCache;
-import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.util.FontUtils;
 import org.dodgybits.shuffle.android.core.util.TaskLifecycleState;
 import org.dodgybits.shuffle.android.core.view.ContextIcon;
@@ -33,8 +31,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import roboguice.event.Observes;
 
 /**
  * This custom View is the list item for the TaskRecyclerFragment, and serves two purposes:
@@ -56,7 +52,7 @@ public class TaskListItem extends View {
     private StaticLayout mSnippetLayout;
     private boolean mIsCompleted;
     private boolean mIsDragged = false;
-    private boolean mIsDraggable = false;
+    private boolean mIsInDraggableRange = false;
     private boolean mIsActive = true;
     private boolean mIsDeleted = false;
     private boolean mDragAndDropEnabled = false;
@@ -183,19 +179,20 @@ public class TaskListItem extends View {
 
     private boolean mProjectNameVisible = true;
 
-    public void setTask(Task task, boolean projectNameVisible,
-                        boolean dragAndDropEnabled,
-                        boolean isDraggable,
-                        boolean isDragging,
-                        boolean isSelected) {
+    public void updateItem(Task task, boolean projectNameVisible,
+                           boolean dragAndDropEnabled,
+                           boolean isDraggable,
+                           boolean isDragging,
+                           boolean isSelected) {
         mProjectNameVisible = projectNameVisible;
         mDragAndDropEnabled = dragAndDropEnabled;
         mIsCompleted = task.isComplete();
         mProject = mProjectCache.findById(task.getProjectId());
         List<Context> contexts = mContextCache.findById(task.getContextIds());
 
-        mIsDraggable = isDraggable;
+        mIsInDraggableRange = isDraggable;
         mIsDragged = isDragging;
+
         mIsActive = TaskLifecycleState.getActiveStatus(task, contexts, mProject) == TaskLifecycleState.Status.yes;
         mIsDeleted = TaskLifecycleState.getDeletedStatus(task, mProject) != TaskLifecycleState.Status.no;
         setTimestamp(task.getStartDate(), task.getDueDate());
@@ -296,14 +293,25 @@ public class TaskListItem extends View {
         return mIsCompleted || mIsDeleted;
     }
 
-    private Drawable mCurrentBackground = null; // Only used by updateBackground()
+    private int mCurrentBackgroundResId = 0; // Only used by updateBackground()
 
     private void updateBackground() {
-        final Drawable newBackground = getResources().getDrawable(R.drawable.list_selector_background);
-        if (newBackground != mCurrentBackground) {
-            // setBackgroundDrawable is a heavy operation.  Only call it when really needed.
-            setBackgroundDrawable(newBackground);
-            mCurrentBackground = newBackground;
+        int backgroundResId = android.R.color.transparent;
+
+        if (hasWindowFocus()) {
+            if (mIsInDraggableRange) {
+                backgroundResId = mIsDragged ? R.color.list_dragging : R.color.list_in_draggable_range;
+            } else if (isActivated()) {
+                backgroundResId = R.color.list_activated;
+            } else if (isSelected()) {
+                backgroundResId = R.color.list_selected;
+            }
+        }
+
+        if (backgroundResId != mCurrentBackgroundResId) {
+            // setBackgroundResource is a heavy operation.  Only call it when really needed.
+            setBackgroundResource(backgroundResId);
+            mCurrentBackgroundResId = backgroundResId;
         }
 
     }

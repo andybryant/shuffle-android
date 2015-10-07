@@ -91,6 +91,8 @@
 
     <color name="list_selected_indicator">#0063be</color>
     <color name="list_selected">#b7d3f7</color>
+    <color name="list_dragging">#b7d3f7</color>
+    <color name="list_in_draggable_range">#dce8f7</color>
     <color name="list_activated">@color/light_gray</color>
 
     <drawable name="list_incomplete">@color/view_incomplete_background_color</drawable>

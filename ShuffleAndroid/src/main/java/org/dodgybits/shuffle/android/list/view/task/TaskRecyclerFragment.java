@@ -8,8 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.internal.widget.ViewUtils;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,7 +23,6 @@ import com.google.inject.Inject;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.decoration.ItemShadowDecorator;
-import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
@@ -43,7 +40,6 @@ import org.dodgybits.shuffle.android.core.listener.LocationProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Task;
-import org.dodgybits.shuffle.android.core.model.persistence.CursorEntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.DefaultEntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
@@ -57,7 +53,6 @@ import org.dodgybits.shuffle.android.list.activity.TaskListActivity;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
 import org.dodgybits.shuffle.android.list.view.AbstractArrayAdapter;
-import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
 import org.dodgybits.shuffle.android.list.view.SelectableHolderImpl;
 import org.dodgybits.shuffle.android.preference.model.ListFeatures;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
@@ -450,9 +445,9 @@ public class TaskRecyclerFragment extends RoboFragment {
             mTask = task;
             boolean projectVisible = ListFeatures.isProjectNameVisible(mLocation);
             boolean isSelected = mLocation.getSelectedIndex() == getAdapterPosition();
-            boolean isDraggable = ((getDragStateFlags() & RecyclerViewDragDropManager.STATE_FLAG_DRAGGING) != 0);
+            boolean isDraggable = ((getDragStateFlags() & RecyclerViewDragDropManager.STATE_FLAG_IS_IN_RANGE) != 0);
             boolean isDragging = ((getDragStateFlags() & RecyclerViewDragDropManager.STATE_FLAG_IS_ACTIVE) != 0);
-            mTaskListItem.setTask(task, projectVisible, moveEnabled, isDraggable, isDragging, isSelected);
+            mTaskListItem.updateItem(task, projectVisible, moveEnabled, isDraggable, isDragging, isSelected);
         }
 
         @Override
