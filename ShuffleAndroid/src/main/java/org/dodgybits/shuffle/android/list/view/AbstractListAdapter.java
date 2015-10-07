@@ -6,16 +6,20 @@ import android.support.v7.widget.RecyclerView;
 import org.dodgybits.shuffle.android.core.model.Entity;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityPersister;
 
-public abstract class AbstractArrayAdapter<VH extends RecyclerView.ViewHolder,E extends Entity>
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public abstract class AbstractListAdapter<VH extends RecyclerView.ViewHolder,E extends Entity>
         extends RecyclerView.Adapter<VH> {
 
-    protected E[] mItems;
+    protected List<E> mItems;
     private Cursor mCursor;
     protected EntityPersister<E> mPersister;
 
     @Override
     public int getItemCount() {
-        return (mItems == null) ? 0 : mItems.length;
+        return (mItems == null) ? 0 : mItems.size();
     }
 
     public void changeCursor(Cursor cursor) {
@@ -32,7 +36,7 @@ public abstract class AbstractArrayAdapter<VH extends RecyclerView.ViewHolder,E 
         Cursor oldCursor = mCursor;
         this.mCursor = cursor;
         if (cursor != null) {
-            mItems = mPersister.readAll(mCursor);
+            mItems = new ArrayList<>(Arrays.asList(mPersister.readAll(mCursor)));
             sortItems();
             this.notifyDataSetChanged();
         }
@@ -43,10 +47,10 @@ public abstract class AbstractArrayAdapter<VH extends RecyclerView.ViewHolder,E 
 
     @Override
     public long getItemId(int position) {
-        if (this.mItems == null || this.mItems.length <= position) {
+        if (this.mItems == null || this.mItems.size() <= position) {
             return super.getItemId(position);
         }
-        return mItems[position].getLocalId().getId();
+        return mItems.get(position).getLocalId().getId();
     }
 
 }

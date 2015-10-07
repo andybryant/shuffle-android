@@ -360,6 +360,10 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
         }
     }
 
+    public void swapTasksWithinProject(int fromPosition, int toPosition, Cursor cursor) {
+
+    }
+
     public void moveTasksWithinProject(Set<Long> taskIds, Cursor cursor, boolean moveUp) {
         Map<Integer, Integer> positions = Maps.newHashMap();
 

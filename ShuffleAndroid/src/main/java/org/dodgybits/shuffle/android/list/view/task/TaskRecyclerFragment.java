@@ -52,7 +52,7 @@ import org.dodgybits.shuffle.android.editor.activity.DateTimePickerActivity;
 import org.dodgybits.shuffle.android.list.activity.TaskListActivity;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
-import org.dodgybits.shuffle.android.list.view.AbstractArrayAdapter;
+import org.dodgybits.shuffle.android.list.view.AbstractListAdapter;
 import org.dodgybits.shuffle.android.list.view.SelectableHolderImpl;
 import org.dodgybits.shuffle.android.preference.model.ListFeatures;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
@@ -62,6 +62,7 @@ import roboguice.fragment.RoboFragment;
 import roboguice.inject.ContextScopedProvider;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -469,7 +470,7 @@ public class TaskRecyclerFragment extends RoboFragment {
 
     }
 
-    public class TaskListAdapter extends AbstractArrayAdapter<TaskHolder, Task>
+    public class TaskListAdapter extends AbstractListAdapter<TaskHolder, Task>
             implements DraggableItemAdapter<TaskHolder> {
 
         public TaskListAdapter() {
@@ -507,27 +508,21 @@ public class TaskRecyclerFragment extends RoboFragment {
 
         @Override
         protected void sortItems() {
-            Arrays.sort(mItems, projectOrderDueCreatedComparator);
+            Collections.sort(mItems, projectOrderDueCreatedComparator);
         }
 
         public Task readTask(int position) {
-            return mItems[position];
+            return mItems.get(position);
         }
 
         private boolean isLast(int position) {
-            return position == mItems.length - 1;
+            return position == mItems.size() - 1;
         }
 
         @Override
         public boolean onCheckCanStartDrag(TaskHolder holder, int position, int x, int y) {
             // x, y --- relative from the itemView's top-left
-
             if (!canMoveItem(position)) return false;
-
-//            // return false if the item is a section header
-//            if (holder.getItemViewType() != ITEM_VIEW_TYPE_SECTION_ITEM) {
-//                return false;
-//            }
 
             final int dragRight = holder.mTaskListItem.getDragRight();
             return x <= dragRight;
@@ -578,10 +573,12 @@ public class TaskRecyclerFragment extends RoboFragment {
         @Override
         public void onMoveItem(int fromPosition, int toPosition) {
             Log.d(TAG, "onMoveItem(fromPosition = " + fromPosition + ", toPosition = " + toPosition + ")");
+            if (fromPosition == toPosition) return;
 
-            Task tmp = mItems[fromPosition];
-            mItems[fromPosition] = mItems[toPosition];
-            mItems[toPosition] = tmp;
+            Task tmp = mItems.remove(fromPosition);
+            mItems.add(toPosition, tmp);
+
+            mTaskPersister.swapTasksWithinProject(fromPosition, toPosition, mCursor);
 
             notifyItemMoved(fromPosition, toPosition);
         }
