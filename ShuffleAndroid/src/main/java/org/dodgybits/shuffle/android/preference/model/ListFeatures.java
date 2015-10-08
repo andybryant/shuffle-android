@@ -1,9 +1,7 @@
 package org.dodgybits.shuffle.android.preference.model;
 
 import android.content.Context;
-
 import com.google.common.collect.Sets;
-
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
@@ -17,7 +15,7 @@ public class ListFeatures {
     }
 
     public static boolean showMoveActions(Location location) {
-        return location.getListQuery() == ListQuery.nextTasks ||
+        return location.getListQuery() == ListQuery.inbox ||
                 location.getListQuery() == ListQuery.project;
     }
 

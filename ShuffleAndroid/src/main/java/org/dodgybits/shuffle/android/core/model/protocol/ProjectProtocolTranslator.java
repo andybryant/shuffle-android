@@ -23,6 +23,7 @@ public class ProjectProtocolTranslator implements EntityProtocolTranslator<Proje
             .setParallel(project.isParallel())
             .setActive(project.isActive())
             .setDeleted(project.isDeleted())
+            .setOrder(project.getOrder())
             .setChangeSet(project.getChangeSet().getChangeSet());
 
         Id gaeId = project.getGaeId();
@@ -64,6 +65,9 @@ public class ProjectProtocolTranslator implements EntityProtocolTranslator<Proje
             builder.setDeleted(dto.getDeleted());
         } else {
             builder.setDeleted(false);
+        }
+        if (dto.hasOrder()) {
+            builder.setOrder(dto.getOrder());
         }
 
         if (dto.hasDefaultContextId()) {

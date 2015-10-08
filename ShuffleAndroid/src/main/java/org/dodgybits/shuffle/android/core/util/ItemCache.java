@@ -1,9 +1,9 @@
 package org.dodgybits.shuffle.android.core.util;
 
+import android.util.Log;
+
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
-
-import android.util.Log;
 
 /**
  * Generic in-memory cache based on Romain Guy's suggestion.
@@ -16,7 +16,7 @@ public class ItemCache<K,V> {
     private final ValueBuilder<K,V> mBuilder;
     
     public ItemCache(ValueBuilder<K,V> builder) {
-        mCache = new HashMap<K, SoftReference<V>>();
+        mCache = new HashMap<>();
         mBuilder = builder;
     }
     

@@ -8,11 +8,10 @@ import android.os.Parcelable;
 import android.text.format.DateUtils;
 import android.util.Log;
 import org.dodgybits.shuffle.android.core.model.Id;
+import org.dodgybits.shuffle.android.core.util.StringUtils;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
-import org.dodgybits.shuffle.android.core.util.StringUtils;
 import org.dodgybits.shuffle.android.list.model.ListSettingsCache;
-import org.dodgybits.shuffle.android.persistence.provider.AbstractCollectionProvider;
 import org.dodgybits.shuffle.android.persistence.provider.TaskProvider;
 import org.dodgybits.shuffle.android.preference.model.ListSettings;
 
@@ -313,14 +312,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
 
     @Override
     public String getSortOrder() {
-        String sortOrder =  super.getSortOrder();
-        if (sortOrder == null && mListQuery == ListQuery.project) {
-            sortOrder = TaskProvider.Tasks.DISPLAY_ORDER + " ASC";
-        } else if (mListQuery == ListQuery.nextTasks) {
-            sortOrder = TaskProvider.Tasks.PROJECT_ID + " ASC, " +
-                TaskProvider.Tasks.DISPLAY_ORDER + " ASC";
-        }
-        return sortOrder;
+        return "task." + TaskProvider.Tasks.DISPLAY_ORDER + " ASC";
     }
 
     @Override

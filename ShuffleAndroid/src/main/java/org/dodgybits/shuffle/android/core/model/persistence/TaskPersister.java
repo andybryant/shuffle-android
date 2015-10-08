@@ -310,7 +310,7 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
 
     /**
      * Calculate where this task should appear on the list for the given project.
-     * If no project is defined, order is meaningless, so less as is.
+     * If no project is defined, order amongst other no project tasks.
      * <p/>
      * New tasks go to the top of the list.
      * <p/>
@@ -319,10 +319,9 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
      *
      * @param originalTask the task before any changes or null if this is a new task
      * @param newProjectId the project selected for this task
-     * @return order of task when displayed in the project view
+     * @return order of task
      */
     public int calculateTaskOrder(Task originalTask, Id newProjectId) {
-        if (!newProjectId.isInitialised()) return -1;
         int order;
         if (originalTask == null || !originalTask.getProjectId().equals(newProjectId)) {
             // get current highest order value
@@ -361,7 +360,13 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
     }
 
     public void swapTasksWithinProject(int fromPosition, int toPosition, Cursor cursor) {
+        if (fromPosition == toPosition) return;
 
+        if (fromPosition < toPosition) {
+            moveTasks(cursor, fromPosition + 1, toPosition, true);
+        } else {
+            moveTasks(cursor, toPosition, fromPosition - 1, false);
+        }
     }
 
     public void moveTasksWithinProject(Set<Long> taskIds, Cursor cursor, boolean moveUp) {
@@ -386,7 +391,7 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
         }
 
         for (int position : positions.keySet()) {
-            moveTask(cursor, position, positions.get(position), moveUp);
+            moveTasks(cursor, position, positions.get(position), moveUp);
         }
     }
 
@@ -467,7 +472,8 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
      * @param pos2   end of range
      * @param moveUp are the tasks moving up the list
      */
-    private void moveTask(Cursor cursor, int pos1, int pos2, boolean moveUp) {
+    private void moveTasks(Cursor cursor, int pos1, int pos2, boolean moveUp) {
+        Log.d(TAG, "Moving " + pos1 + "-" + pos2 + (moveUp ? " up" : " down"));
         ContentValues values = new ContentValues();
         cursor.moveToPosition(moveUp ? pos1 - 1 : pos2 + 1);
         Id initialId = readId(cursor, ID_INDEX);
@@ -498,6 +504,7 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
     }
 
     private void updateOrder(long id, int order, TaskChangeSet changeSet, ContentValues values) {
+        Log.d(TAG, "Updating task " + id + " order to " + order);
         Uri uri = ContentUris.withAppendedId(getContentUri(), id);
         values.clear();
         values.put(DISPLAY_ORDER, order);

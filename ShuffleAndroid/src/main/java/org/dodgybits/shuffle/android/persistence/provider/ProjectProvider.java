@@ -34,7 +34,8 @@ public class ProjectProvider extends AbstractCollectionProvider {
                 ShuffleTable.DELETED,
                 ShuffleTable.ACTIVE,
                 ShuffleTable.GAE_ID,
-                ShuffleTable.CHANGE_SET
+                ShuffleTable.CHANGE_SET,
+                Projects.DISPLAY_ORDER
                 );
 	    
 		makeSearchable(Projects._ID, Projects.NAME, Projects.NAME, Projects.NAME);
@@ -67,11 +68,12 @@ public class ProjectProvider extends AbstractCollectionProvider {
         /**
          * The default sort order for this table
          */
-        public static final String DEFAULT_SORT_ORDER = "name ASC";
+        public static final String DEFAULT_SORT_ORDER = "displayOrder ASC";
         public static final String NAME = "name";
         
         public static final String PARALLEL = "parallel";
         public static final String TASK_COUNT = "count";
+        public static final String DISPLAY_ORDER = "displayOrder";
 
         /**
          * Projection for all the columns of a project.
@@ -86,7 +88,8 @@ public class ProjectProvider extends AbstractCollectionProvider {
                 DELETED,
                 ACTIVE,
                 GAE_ID,
-                CHANGE_SET
+                CHANGE_SET,
+                DISPLAY_ORDER
         };
         /**
          * Projection for fetching the task count for each project.

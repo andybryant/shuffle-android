@@ -17,21 +17,21 @@ import java.util.Map;
 
 public abstract class AbstractCollectionProvider extends ContentProvider {
 	public static final String DATABASE_NAME = "shuffle.db";
-	static final int DATABASE_VERSION = 20;
+	static final int DATABASE_VERSION = 21;
 	public static final String TAG = "AbstractColProvider";
 	
-	public static interface ShuffleTable extends BaseColumns {
-		static final String CONTENT_TYPE_PATH = "vnd.dodgybits";
-		static final String CONTENT_TYPE_PRE_PREFIX = "vnd.android.cursor.dir/";
-		static final String CONTENT_ITEM_TYPE_PRE_PREFIX = "vnd.android.cursor.item/";
-		static final String CONTENT_TYPE_PREFIX = CONTENT_TYPE_PRE_PREFIX+CONTENT_TYPE_PATH;
-		static final String CONTENT_ITEM_TYPE_PREFIX = CONTENT_ITEM_TYPE_PRE_PREFIX+CONTENT_TYPE_PATH;
+	public interface ShuffleTable extends BaseColumns {
+		String CONTENT_TYPE_PATH = "vnd.dodgybits";
+		String CONTENT_TYPE_PRE_PREFIX = "vnd.android.cursor.dir/";
+		String CONTENT_ITEM_TYPE_PRE_PREFIX = "vnd.android.cursor.item/";
+		String CONTENT_TYPE_PREFIX = CONTENT_TYPE_PRE_PREFIX+CONTENT_TYPE_PATH;
+		String CONTENT_ITEM_TYPE_PREFIX = CONTENT_ITEM_TYPE_PRE_PREFIX+CONTENT_TYPE_PATH;
 
-        public static final String MODIFIED_DATE = "modified";
-        public static final String DELETED = "deleted";
-        public static final String ACTIVE = "active";
-        public static final String GAE_ID = "gaeId";
-        public static final String CHANGE_SET = "changeSet";
+        String MODIFIED_DATE = "modified";
+        String DELETED = "deleted";
+        String ACTIVE = "active";
+        String GAE_ID = "gaeId";
+        String CHANGE_SET = "changeSet";
 	}
 
 	protected static final int SEARCH = 3;
@@ -52,7 +52,7 @@ public abstract class AbstractCollectionProvider extends ContentProvider {
 
 	protected static Map<String, String> createTableMap(String tableName,
 			String... fieldNames) {
-		HashMap<String, String> fieldNameMap = new HashMap<String, String>();
+		HashMap<String, String> fieldNameMap = new HashMap<>();
 		
 		for (String fieldName : fieldNames) {
 			
@@ -92,7 +92,7 @@ public abstract class AbstractCollectionProvider extends ContentProvider {
         getContext().sendBroadcast(new Intent(updateIntentAction));
     }
 
-	public static interface RestrictionBuilder {
+	public interface RestrictionBuilder {
 		void addRestrictions(Uri uri, SQLiteQueryBuilder qb);
 	}
 	
@@ -163,7 +163,7 @@ public abstract class AbstractCollectionProvider extends ContentProvider {
 		
 	}
 	
-    public static interface GroupByBuilder {
+    public interface GroupByBuilder {
         String getGroupBy(Uri uri);
     }
 	
@@ -191,24 +191,24 @@ public abstract class AbstractCollectionProvider extends ContentProvider {
 		this.authority = authority;
 		this.contentUri = contentUri;
 		registerCollectionUrls(collectionNamePlural);
-		this.restrictionBuilders = new HashMap<Integer, RestrictionBuilder>();
+		this.restrictionBuilders = new HashMap<>();
 		this.restrictionBuilders.put(COLLECTION_MATCH_ID, new EntireCollectionRestrictionBuilder());
 		this.restrictionBuilders.put(ELEMENT_MATCH_ID, new ElementByIdRestrictionBuilder());
 		this.tableName = tableName;
 		this.updateIntentAction = updateIntentAction;
 		this.elementsMap = createTableMap(tableName, fields);
-		this.mimeTypes = new HashMap<Integer, String>();
+		this.mimeTypes = new HashMap<>();
 		this.mimeTypes.put(COLLECTION_MATCH_ID, getContentType());
 		this.mimeTypes.put(ELEMENT_MATCH_ID, getContentItemType());
-		this.collectionUpdaters = new HashMap<Integer, CollectionUpdater>();
+		this.collectionUpdaters = new HashMap<>();
 		this.collectionUpdaters.put(COLLECTION_MATCH_ID, new EntireCollectionUpdater());
 		this.collectionUpdaters.put(ELEMENT_MATCH_ID, new SingleElementUpdater());
-		this.elementInserters = new HashMap<Integer, ElementInserter>();
+		this.elementInserters = new HashMap<>();
 		this.elementInserters.put(COLLECTION_MATCH_ID, new ElementInserterImpl(primaryKey));
-		this.elementDeleters = new HashMap<Integer, ElementDeleter>();
+		this.elementDeleters = new HashMap<>();
 		this.elementDeleters.put(COLLECTION_MATCH_ID, new EntireCollectionDeleter());
 		this.elementDeleters.put(ELEMENT_MATCH_ID, new ElementDeleterImpl(idField));
-        this.groupByBuilders = new HashMap<Integer, GroupByBuilder>();
+        this.groupByBuilders = new HashMap<>();
 	}
 	
 	@Override
@@ -423,7 +423,7 @@ public abstract class AbstractCollectionProvider extends ContentProvider {
 		return elementInserter.insert(url, values, db);
 	}
 	
-	public static interface ElementDeleter {
+	public interface ElementDeleter {
 		int delete(Uri uri, String where, String[] whereArgs,
 				SQLiteDatabase db);
 	}

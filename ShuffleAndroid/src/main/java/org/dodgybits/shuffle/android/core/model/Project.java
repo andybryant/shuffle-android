@@ -29,6 +29,8 @@ public class Project implements Entity {
 	private boolean mDeleted;
 	private boolean mActive = true;
 	private Id mGaeId = Id.NONE;
+    private int mOrder;
+
     private ProjectChangeSet mChangeSet = ProjectChangeSet.newChangeSet();
 
     private Project() {
@@ -85,15 +87,19 @@ public class Project implements Entity {
         return mChangeSet;
     }
 
+    public int getOrder() {
+        return mOrder;
+    }
+
     @Override
     public final String toString() {
         return String.format(
                 "[Project id=%1$s name='%2$s' defaultContextId='%3$s' " +
                 "parallel=%4$s archived=%5$s deleted=%6$s active=%7$s " +
-                        "gaeId=%8$s changeSet=%9$s]",
+                        "gaeId=%8$s changeSet=%9$s order=%10$s]",
                 mLocalId, mName, mDefaultContextId,
                 mParallel, mArchived, mDeleted, mActive,
-                mGaeId, mChangeSet);
+                mGaeId, mChangeSet, mOrder);
     }
     
     public static Builder newBuilder() {
@@ -209,6 +215,15 @@ public class Project implements Entity {
             return result.mChangeSet;
         }
 
+        public Builder setOrder(int order) {
+            result.mOrder = order;
+            return this;
+        }
+
+        public int getOrder() {
+            return result.mOrder;
+        }
+
         public final boolean isInitialized() {
             return result.isValid();
         }
@@ -234,6 +249,7 @@ public class Project implements Entity {
             setActive(project.mActive);
             setGaeId(project.mGaeId);
             setChangeSet(project.mChangeSet);
+            setOrder(project.mOrder);
             return this;
         }
 

@@ -29,6 +29,7 @@ class DatabaseHelper extends SQLiteOpenHelper {
 		ALL_MIGRATIONS.put(17, new V17Migration());
 		ALL_MIGRATIONS.put(18, new V18Migration());
 		ALL_MIGRATIONS.put(19, new V19Migration());
+		ALL_MIGRATIONS.put(20, new V20Migration());
 	}
 
 	DatabaseHelper(Context context) {

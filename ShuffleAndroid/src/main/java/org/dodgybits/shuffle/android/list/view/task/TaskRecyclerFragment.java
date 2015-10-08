@@ -28,13 +28,8 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemViewHold
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
-
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.CacheUpdatedEvent;
-import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
-import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
-import org.dodgybits.shuffle.android.core.event.MoveEnabledChangeEvent;
-import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
+import org.dodgybits.shuffle.android.core.event.*;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.LocationProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
@@ -61,12 +56,7 @@ import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.ContextScopedProvider;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class TaskRecyclerFragment extends RoboFragment {
     private static final String TAG = "TaskRecyclerFragment";
@@ -749,7 +739,7 @@ public class TaskRecyclerFragment extends RoboFragment {
     };
 
     /**
-     * Sort by following criteria: project name (no project last) asc,
+     * Sort by following criteria: project order (no project last) asc,
      * display order asc, due date asc, created desc
      */
     private Comparator<Task> projectOrderDueCreatedComparator = new Comparator<Task>() {
@@ -760,7 +750,7 @@ public class TaskRecyclerFragment extends RoboFragment {
             Project rhsProject = mProjectCache.findById(rhs.getProjectId());
             if (lhsProject != null) {
                 if (rhsProject != null) {
-                    result = lhsProject.getName().compareToIgnoreCase(rhsProject.getName());
+                    result = compareInt(lhsProject.getOrder(), rhsProject.getOrder());
                 } else {
                     return -1;
                 }

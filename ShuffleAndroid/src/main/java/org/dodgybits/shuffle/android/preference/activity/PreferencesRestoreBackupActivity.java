@@ -16,11 +16,12 @@ import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityPersister;
+import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.model.protocol.*;
+import org.dodgybits.shuffle.android.core.util.AlertUtils;
 import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import org.dodgybits.shuffle.android.core.util.StringUtils;
-import org.dodgybits.shuffle.android.core.util.AlertUtils;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.android.preference.view.Progress;
@@ -41,7 +42,7 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
     private static final String RESTORE_BACKUP_STATE = "restoreBackupState";
     private static final String cTag = "PrefRestoreBackup";
     
-    private enum State {SELECTING, IN_PROGRESS, COMPLETE, ERROR};
+    private enum State {SELECTING, IN_PROGRESS, COMPLETE, ERROR}
     
     private State mState = State.SELECTING;
     @InjectView(R.id.filename) Spinner mFileSpinner;
@@ -53,7 +54,7 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
     @Inject
     EntityPersister<Context> mContextPersister;
     @Inject
-    EntityPersister<Project> mProjectPersister;
+	ProjectPersister mProjectPersister;
     @Inject
     TaskPersister mTaskPersister;
     
@@ -124,7 +125,7 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
 			return;
     	}
     	
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
         		this, android.R.layout.simple_list_item_1, files);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mFileSpinner.setAdapter(adapter);    	
@@ -279,7 +280,7 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
 				int progressStart, int progressEnd) {
             ContextProtocolTranslator translator = new ContextProtocolTranslator();
     	    
-			Set<String> allContextNames = new HashSet<String>();
+			Set<String> allContextNames = new HashSet<>();
 			for (org.dodgybits.shuffle.dto.ShuffleProtos.Context protoContext : protoContexts)
 			{
 				allContextNames.add(protoContext.getName());
@@ -287,9 +288,9 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
 			Map<String,Context> existingContexts = fetchContextsByName(allContextNames);
 			
 			// build up the locator and list of new contacts
-			HashEntityDirectory<Context> contextLocator = new HashEntityDirectory<Context>();
-			List<Context> newContexts = new ArrayList<Context>();
-			Set<String> newContextNames = new HashSet<String>();
+			HashEntityDirectory<Context> contextLocator = new HashEntityDirectory<>();
+			List<Context> newContexts = new ArrayList<>();
+			Set<String> newContextNames = new HashSet<>();
 	        int i = 0;
 	        int total = protoContexts.size();
 	        String type = getString(R.string.context_name);
@@ -334,7 +335,7 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
          * @return any matching contexts in a Map, keyed on the context name
          */
         private Map<String,Context> fetchContextsByName(Collection<String> names) {
-            Map<String,Context> contexts = new HashMap<String,Context>();
+            Map<String,Context> contexts = new HashMap<>();
             if (names.size() > 0)
             {
                 String params = StringUtils.repeat(names.size(), "?", ",");
@@ -359,7 +360,7 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
 				int progressStart, int progressEnd) {
             ProjectProtocolTranslator translator = new ProjectProtocolTranslator(contextLocator);
             
-			Set<String> allProjectNames = new HashSet<String>();
+			Set<String> allProjectNames = new HashSet<>();
 			for (org.dodgybits.shuffle.dto.ShuffleProtos.Project protoProject : protoProjects)
 			{
 				allProjectNames.add(protoProject.getName());
@@ -367,9 +368,9 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
 			Map<String,Project> existingProjects = fetchProjectsByName(allProjectNames);
 			
 			// build up the locator and list of new projects
-			HashEntityDirectory<Project> projectLocator = new HashEntityDirectory<Project>();
-			List<Project> newProjects = new ArrayList<Project>();
-			Set<String> newProjectNames = new HashSet<String>();
+			HashEntityDirectory<Project> projectLocator = new HashEntityDirectory<>();
+			List<Project> newProjects = new ArrayList<>();
+			Set<String> newProjectNames = new HashSet<>();
 	        int i = 0;
 	        int total = protoProjects.size();
 	        String type = getString(R.string.project_name);
@@ -395,7 +396,7 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
 			}
             mProjectPersister.bulkInsert(newProjects);
 
-			// we need to fetch all the newly created contexts to retrieve their new ids
+			// we need to fetch all the newly created projects to retrieve their new ids
 			// and update the locator accordingly
 			Map<String,Project> savedProjects = fetchProjectsByName(newProjectNames);
 			for (String projectName : newProjectNames) {
@@ -403,6 +404,8 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
 				Project restoredProject = projectLocator.findByName(projectName);
 				projectLocator.addItem(restoredProject.getLocalId(), projectName, savedProject);
 			}
+
+			mProjectPersister.reorderProjects();
 			
 			return projectLocator;
 		}
@@ -413,7 +416,7 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
 	     * @return any matching contexts in a Map, keyed on the context name
 	     */
 	    private Map<String,Project> fetchProjectsByName(Collection<String> names) {
-	        Map<String,Project> projects = new HashMap<String,Project>();
+	        Map<String,Project> projects = new HashMap<>();
 	        if (names.size() > 0)
 	        {
 	            String params = StringUtils.repeat(names.size(), "?", ",");
@@ -443,7 +446,7 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
 			
             Set<Id> projectIds = Sets.newHashSet();
 	        String type = getString(R.string.task_name);
-			List<Task> newTasks = new ArrayList<Task>();
+			List<Task> newTasks = new ArrayList<>();
 	        int i = 0;
 	        int total = protoTasks.size();
 			for (org.dodgybits.shuffle.dto.ShuffleProtos.Task protoTask : protoTasks)

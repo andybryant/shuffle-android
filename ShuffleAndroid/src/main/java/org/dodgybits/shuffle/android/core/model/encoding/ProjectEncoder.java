@@ -26,6 +26,7 @@ public class ProjectEncoder implements EntityEncoder<Project> {
         icicle.putBoolean(PARALLEL, project.isParallel());
         BundleUtils.putId(icicle, GAE_ID, project.getGaeId());
         icicle.putLong(CHANGE_SET, project.getChangeSet().getChangeSet());
+        icicle.putInt(DISPLAY_ORDER, project.getOrder());
     }
     
     @Override
@@ -44,6 +45,7 @@ public class ProjectEncoder implements EntityEncoder<Project> {
         builder.setParallel(icicle.getBoolean(PARALLEL));
         builder.setGaeId(BundleUtils.getId(icicle, GAE_ID));
         builder.setChangeSet(ProjectChangeSet.fromChangeSet(icicle.getLong(CHANGE_SET)));
+        builder.setOrder(icicle.getInt(DISPLAY_ORDER));
 
         return builder.build();
     }

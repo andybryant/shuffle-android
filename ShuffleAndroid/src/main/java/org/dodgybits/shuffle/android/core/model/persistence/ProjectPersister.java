@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import com.google.inject.Inject;
+import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Project.Builder;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
@@ -15,6 +16,9 @@ import static org.dodgybits.shuffle.android.persistence.provider.AbstractCollect
 import static org.dodgybits.shuffle.android.persistence.provider.AbstractCollectionProvider.ShuffleTable.DELETED;
 import static org.dodgybits.shuffle.android.persistence.provider.AbstractCollectionProvider.ShuffleTable.MODIFIED_DATE;
 import static org.dodgybits.shuffle.android.persistence.provider.ProjectProvider.Projects.*;
+import static org.dodgybits.shuffle.android.persistence.provider.ProjectProvider.Projects.CHANGE_SET;
+import static org.dodgybits.shuffle.android.persistence.provider.ProjectProvider.Projects.GAE_ID;
+import static org.dodgybits.shuffle.android.persistence.provider.ProjectProvider.Projects._ID;
 
 @ContextSingleton
 public class ProjectPersister extends AbstractEntityPersister<Project> {
@@ -29,6 +33,7 @@ public class ProjectPersister extends AbstractEntityPersister<Project> {
     private static final int ACTIVE_INDEX = 7;
     private static final int GAE_ID_INDEX = 8;
     private static final int CHANGE_SET_INDEX = 9;
+    private static final int DISPLAY_ORDER_INDEX = 10;
 
     @Inject
     public ProjectPersister(ContentResolverProvider provider) {
@@ -48,7 +53,8 @@ public class ProjectPersister extends AbstractEntityPersister<Project> {
             .setDeleted(readBoolean(cursor, DELETED_INDEX))
             .setActive(readBoolean(cursor, ACTIVE_INDEX))
             .setGaeId(readId(cursor, GAE_ID_INDEX))
-            .setChangeSet(ProjectChangeSet.fromChangeSet(cursor.getLong(CHANGE_SET_INDEX)));
+            .setChangeSet(ProjectChangeSet.fromChangeSet(cursor.getLong(CHANGE_SET_INDEX)))
+            .setOrder(cursor.getInt(DISPLAY_ORDER_INDEX));
 
         return builder.build();
     }
@@ -65,6 +71,7 @@ public class ProjectPersister extends AbstractEntityPersister<Project> {
         writeBoolean(values, ACTIVE, project.isActive());
         writeId(values, GAE_ID, project.getGaeId());
         values.put(CHANGE_SET, project.getChangeSet().getChangeSet());
+        values.put(DISPLAY_ORDER, project.getOrder());
     }
 
     @Override
@@ -86,5 +93,32 @@ public class ProjectPersister extends AbstractEntityPersister<Project> {
     public String[] getFullProjection() {
         return ProjectProvider.Projects.FULL_PROJECTION;
     }
-    
+
+    public void reorderProjects() {
+        Cursor c = mResolver.query(
+                getContentUri(),
+                new String[] {_ID, DISPLAY_ORDER, CHANGE_SET},
+                null, null,
+                DISPLAY_ORDER + " ASC, " + NAME + " ASC");
+        int newOrder = 0;
+        ContentValues values = new ContentValues();
+        while (c.moveToNext()) {
+            long id = c.getLong(0);
+            int displayOrder = c.getInt(1);
+            ProjectChangeSet changeSet = ProjectChangeSet.fromChangeSet(c.getLong(2));
+
+            newOrder++;
+            if (newOrder != displayOrder) {
+                changeSet.orderChanged();
+                values.put(CHANGE_SET, changeSet.getChangeSet());
+                values.put(DISPLAY_ORDER, newOrder);
+                mResolver.update(getUri(Id.create(id)), values, null, null);
+                values.clear();
+            }
+
+        }
+        c.close();
+
+
+    }
 }
