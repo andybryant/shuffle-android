@@ -247,6 +247,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="vnd.android.cursor.dir/vnd.dodgybits.task" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
         </activity>
 
         <activity
@@ -407,8 +414,6 @@
             android:name="org.dodgybits.shuffle.android.preference.activity.PreferencesAppEngineSynchronizationActivity"
             android:label="@string/title_gae_sync_preferences"
                 />
-
-        <activity android:name="org.dodgybits.shuffle.android.list.activity.ListSettingsEditorActivity"/>
 
         <!--  App Engine synchronisation -->
 

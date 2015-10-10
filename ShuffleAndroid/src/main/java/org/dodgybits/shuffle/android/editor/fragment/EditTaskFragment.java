@@ -181,7 +181,19 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
     }
 
     @Override
-    protected void updateUIFromExtras(Bundle extras) {
+    protected void updateUIFromIntent(Intent intent) {
+        if (Intent.ACTION_SEND.equals(intent.getAction())) {
+            String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+            if (sharedText != null) {
+                mDetailsWidget.setText(sharedText);
+            }
+            String sharedSubject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+            if (sharedSubject != null) {
+                mDescriptionWidget.setText(sharedSubject);
+            }
+        }
+
+        Bundle extras = intent.getExtras();
         if (extras != null) {
             long contextId = extras.getLong(TaskProvider.TaskContexts.CONTEXT_ID, 0L);
             if (contextId != 0L) {
