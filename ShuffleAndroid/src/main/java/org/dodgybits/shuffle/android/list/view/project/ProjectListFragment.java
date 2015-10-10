@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,17 +22,27 @@ import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SingleSelector;
 import com.google.inject.Inject;
+import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.decoration.ItemShadowDecorator;
+import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
+import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemViewHolder;
+import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
+import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
 
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.LoadCountCursorEvent;
 import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.MoveEnabledChangeEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.event.ProjectTaskCountLoadedEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
+import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
+import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.AbstractSwipeItemTouchHelperCallback;
 import org.dodgybits.shuffle.android.core.view.DividerItemDecoration;
 import org.dodgybits.shuffle.android.core.view.Location;
@@ -70,11 +81,18 @@ public class ProjectListFragment extends RoboFragment {
     @Inject
     private CursorProvider mCursorProvider;
 
+    private boolean mEnableReordering = false;
+
+    private ItemTouchHelper mItemTouchHelper;
+
     private Cursor mCursor;
     private RecyclerView mRecyclerView;
+    private RecyclerViewDragDropManager mRecyclerViewDragDropManager;
     private ProjectListAdapter mListAdapter;
+    private RecyclerView.Adapter mWrappedAdapter;
     private MultiSelector mMultiSelector = new SingleSelector();
     private ActionMode mActionMode = null;
+    private ProjectCallback mProjectCallback;
     private ModalMultiSelectorCallback mEditMode = new ModalMultiSelectorCallback(mMultiSelector) {
 
         @Override
@@ -175,21 +193,47 @@ public class ProjectListFragment extends RoboFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.recycler_view, container, false);
-        mRecyclerView = (RecyclerView) root.findViewById(R.id.recycler_view);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        mRecyclerView.setHasFixedSize(true);
+        return inflater.inflate(R.layout.recycler_view, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(layoutManager);
+
+        // drag & drop manager
+        mRecyclerViewDragDropManager = new RecyclerViewDragDropManager();
+        mRecyclerViewDragDropManager.setDraggingItemShadowDrawable(
+                (NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z3_9));
+
+        mRecyclerView.setHasFixedSize(true);
         mListAdapter = new ProjectListAdapter();
         mListAdapter.setHasStableIds(true);
-        mRecyclerView.setAdapter(mListAdapter);
+        mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(mListAdapter);      // wrap for dragging
+
+        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
+
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(mWrappedAdapter);
+        mRecyclerView.setItemAnimator(animator);
+
+        if (!UiUtilities.supportsViewElevation()) {
+            mRecyclerView.addItemDecoration(new ItemShadowDecorator((NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z1_9)));
+        }
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
+        mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
+
+        // init swipe
+        mProjectCallback = new ProjectCallback();
+        mItemTouchHelper = new ItemTouchHelper(mProjectCallback);
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         // init swipe to dismiss logic
         ItemTouchHelper helper = new ItemTouchHelper(new ProjectCallback());
         helper.attachToRecyclerView(mRecyclerView);
-
-        return root;
     }
 
     @Override
@@ -225,6 +269,23 @@ public class ProjectListFragment extends RoboFragment {
 
     private void onCursorUpdated(@Observes CursorUpdatedEvent event) {
         updateCursor();
+    }
+
+    private void onMoveEnabledChange(@Observes MoveEnabledChangeEvent event) {
+        boolean enabled = event.isEnabled();
+        mEnableReordering = enabled;
+        if (mListAdapter != null) {
+            mListAdapter.notifyDataSetChanged();
+        }
+        updateSwipeSupport();
+    }
+
+    private void updateSwipeSupport() {
+        if (mProjectCallback != null) {
+            mProjectCallback.setDefaultSwipeDirs(
+                !mEnableReordering ? ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT : 0);
+
+        }
     }
 
     private void updateCursor() {
@@ -269,8 +330,10 @@ public class ProjectListFragment extends RoboFragment {
 
     public class ProjectHolder extends SelectableHolderImpl implements
             View.OnClickListener, View.OnLongClickListener,
-            EntityListItem.OnClickListener {
+            EntityListItem.OnClickListener,
+            DraggableItemViewHolder {
 
+        private int mDragStateFlags;
         EntityListItem mProjectListItem;
         Project mProject;
 
@@ -318,7 +381,10 @@ public class ProjectListFragment extends RoboFragment {
 
         public void bindProject(Project project, SparseIntArray taskCountArray) {
             mProject = project;
-            mProjectListItem.updateView(project, taskCountArray);
+            boolean isDraggable = ((getDragStateFlags() & RecyclerViewDragDropManager.STATE_FLAG_IS_IN_RANGE) != 0);
+            boolean isDragging = ((getDragStateFlags() & RecyclerViewDragDropManager.STATE_FLAG_IS_ACTIVE) != 0);
+            mProjectListItem.updateView(project, taskCountArray, mEnableReordering,
+                    isDraggable, isDragging);
         }
 
         @Override
@@ -327,9 +393,20 @@ public class ProjectListFragment extends RoboFragment {
             return true;
         }
 
+        @Override
+        public void setDragStateFlags(int flags) {
+            mDragStateFlags = flags;
+        }
+
+        @Override
+        public int getDragStateFlags() {
+            return mDragStateFlags;
+        }
+
     }
 
-    public class ProjectListAdapter extends AbstractCursorAdapter<ProjectHolder> {
+    public class ProjectListAdapter extends AbstractCursorAdapter<ProjectHolder>
+            implements DraggableItemAdapter<ProjectHolder>  {
 
         private SparseIntArray mTaskCountArray;
 
@@ -357,6 +434,28 @@ public class ProjectListFragment extends RoboFragment {
             mTaskCountArray = taskCountArray;
         }
 
+        @Override
+        public boolean onCheckCanStartDrag(ProjectHolder holder, int position, int x, int y) {
+            if (!mEnableReordering) return false;
+
+            final int dragRight = holder.mProjectListItem.getDragRight();
+            return x <= dragRight;
+        }
+
+        @Override
+        public ItemDraggableRange onGetItemDraggableRange(ProjectHolder holder, int position) {
+            return new ItemDraggableRange(0, getItemCount() - 1);
+        }
+
+        @Override
+        public void onMoveItem(int fromPosition, int toPosition) {
+            Log.d(TAG, "onMoveItem(fromPosition = " + fromPosition + ", toPosition = " + toPosition + ")");
+            if (fromPosition == toPosition) return;
+
+            mProjectPersister.moveProject(fromPosition, toPosition, mCursor);
+
+            notifyItemMoved(fromPosition, toPosition);
+        }
     }
 
     public class ProjectCallback extends AbstractSwipeItemTouchHelperCallback {

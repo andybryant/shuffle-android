@@ -99,8 +99,8 @@ public class TaskRecyclerFragment extends RoboFragment {
     private MultiSelector mMultiSelector = new MultiSelector();
     private ActionMode mActionMode = null;
     private int mDeferredPosition = -1;
-    private ModalMultiSelectorCallback mEditMode = new TaskModalMultiSelectorCallback(mMultiSelector);
     private TaskCallback mTaskCallback;
+    private ModalMultiSelectorCallback mEditMode = new TaskModalMultiSelectorCallback(mMultiSelector);
 
     /**
      * When creating, retrieve this instance's number from its arguments.
@@ -162,8 +162,6 @@ public class TaskRecyclerFragment extends RoboFragment {
         mTaskCallback = new TaskCallback();
         mItemTouchHelper = new ItemTouchHelper(mTaskCallback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
-
-
     }
 
     @Override
@@ -568,7 +566,7 @@ public class TaskRecyclerFragment extends RoboFragment {
             Task tmp = mItems.remove(fromPosition);
             mItems.add(toPosition, tmp);
 
-            mTaskPersister.swapTasksWithinProject(fromPosition, toPosition, mCursor);
+            mTaskPersister.moveTaskWithinProject(fromPosition, toPosition, mCursor);
 
             notifyItemMoved(fromPosition, toPosition);
         }

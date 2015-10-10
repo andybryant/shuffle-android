@@ -61,11 +61,13 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
 
         Intent intent = getActivity().getIntent();
         mUri = intent.getData();
-        mIsNewEntity = Intent.ACTION_INSERT.equals(intent.getAction());
+        String action = intent.getAction();
+        mIsNewEntity = Intent.ACTION_INSERT.equals(action) ||
+            Intent.ACTION_SEND.equals(action);
         loadCursor();
         findViewsAndAddListeners();
         if (mIsNewEntity) {
-            updateUIFromExtras(intent.getExtras());
+            updateUIFromIntent(intent);
         } else {
             mOriginalItem = mPersister.read(mCursor);
             updateUIFromItem(mOriginalItem);
@@ -201,7 +203,7 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
 
     protected abstract void updateUIFromItem(E item);
 
-    protected abstract void updateUIFromExtras(Bundle extras);
+    protected abstract void updateUIFromIntent(Intent intent);
 
     protected abstract void loadCursor();
 

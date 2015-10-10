@@ -11,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
@@ -68,10 +67,10 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
 
         switch (mLocation.getViewMode()) {
             case CONTEXT_LIST:
-                inflater.inflate(R.menu.list_menu, menu);
+                inflater.inflate(R.menu.context_list_menu, menu);
                 break;
             case PROJECT_LIST:
-                inflater.inflate(R.menu.list_menu, menu);
+                inflater.inflate(R.menu.project_list_menu, menu);
                 break;
             case TASK_LIST:
             case SEARCH_RESULTS_LIST:

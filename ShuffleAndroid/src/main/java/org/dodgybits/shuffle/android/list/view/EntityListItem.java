@@ -53,6 +53,8 @@ public class EntityListItem extends View {
     private boolean mIsDeleted = false;
     private String mCount;
     private SparseIntArray mTaskCountArray;
+    private boolean mIsDragged = false;
+    private boolean mIsInDraggableRange = false;
 
     private int mSelectorBackgroundColor;
     private int mSelectorTextColor;
@@ -60,6 +62,7 @@ public class EntityListItem extends View {
     private String mSelectionIconName;
 
     private boolean mDownEvent;
+    private boolean mDragAndDropEnabled = false;
 
     @Inject
     public EntityListItem(
@@ -85,6 +88,7 @@ public class EntityListItem extends View {
     private static final TextPaint sBoldPaint = new TextPaint();
     private static final Paint sSelectorBackgroundPaint = new Paint();
     private static final Paint sStatePaint = new Paint();
+    private static final Paint sDraggablePaint = new Paint();
 
     private static Bitmap sStateInactive;
     private static Bitmap sStateDeleted;
@@ -168,6 +172,9 @@ public class EntityListItem extends View {
         mIsDeleted = context.isDeleted();
         updateCount(context.getLocalId());
 
+        mIsInDraggableRange = false;
+        mIsDragged = false;
+
         if (mName == null || !mName.equals(context.getName())) {
             mName = context.getName();
             requestLayout();
@@ -175,7 +182,13 @@ public class EntityListItem extends View {
 
     }
 
-    public void updateView(Project project, SparseIntArray taskCountArray) {
+    public int getDragRight() {
+        return mCoordinates == null ? 0 : mCoordinates.nameX;
+    }
+
+    public void updateView(Project project, SparseIntArray taskCountArray,
+                           boolean dragAndDropEnabled,
+                           boolean isDraggable, boolean isDragging) {
         mTaskCountArray = taskCountArray;
         mSelectorBackgroundColor = sTextColours.getBackgroundColour(17);
         mSelectorIcon = project.isParallel() ? sParallel : sSequential;
@@ -183,6 +196,10 @@ public class EntityListItem extends View {
         mIsActive = project.isActive();
         mIsDeleted = project.isDeleted();
         updateCount(project.getLocalId());
+
+        mDragAndDropEnabled = dragAndDropEnabled;
+        mIsInDraggableRange = isDraggable;
+        mIsDragged = isDragging;
 
         if (mName == null || !mName.equals(project.getName())) {
             mName = project.getName();
@@ -199,15 +216,27 @@ public class EntityListItem extends View {
         }
     }
 
-    private Drawable mCurrentBackground = null; // Only used by updateBackground()
+    private int mCurrentBackgroundResId = 0; // Only used by updateBackground()
 
     private void updateBackground() {
-        final Drawable newBackground = getResources().getDrawable(R.drawable.list_selector_background);
-        if (newBackground != mCurrentBackground) {
-            // setBackgroundDrawable is a heavy operation.  Only call it when really needed.
-            setBackgroundDrawable(newBackground);
-            mCurrentBackground = newBackground;
+        int backgroundResId = android.R.color.transparent;
+
+        if (hasWindowFocus()) {
+            if (mIsInDraggableRange) {
+                backgroundResId = mIsDragged ? R.color.list_dragging : R.color.list_in_draggable_range;
+            } else if (isActivated()) {
+                backgroundResId = R.color.list_activated;
+            } else if (isSelected()) {
+                backgroundResId = R.color.list_selected;
+            }
         }
+
+        if (backgroundResId != mCurrentBackgroundResId) {
+            // setBackgroundResource is a heavy operation.  Only call it when really needed.
+            setBackgroundResource(backgroundResId);
+            mCurrentBackgroundResId = backgroundResId;
+        }
+
     }
 
     private void calculateDrawingData() {
@@ -290,6 +319,9 @@ public class EntityListItem extends View {
         } else {
             drawSelector(canvas);
         }
+        if (mDragAndDropEnabled) {
+            drawDraggableIndicator(canvas);
+        }
     }
 
     private void drawName(Canvas canvas) {
@@ -327,6 +359,19 @@ public class EntityListItem extends View {
                 mCoordinates.activatedRect, null);
     }
 
+    private void drawDraggableIndicator(Canvas canvas) {
+        int middleY = mCoordinates.selectorY + mCoordinates.selectorHeight / 2;
+        Rect topRect = new Rect(mCoordinates.dragIndicatorX,
+                middleY - mCoordinates.dragIndicatorYOffSet,
+                mCoordinates.dragIndicatorX + mCoordinates.dragIndicatorWidth,
+                middleY - mCoordinates.dragIndicatorYOffSet + mCoordinates.dragIndicatorHeight);
+        Rect bottomRect = new Rect(mCoordinates.dragIndicatorX,
+                middleY + mCoordinates.dragIndicatorYOffSet,
+                mCoordinates.dragIndicatorX + mCoordinates.dragIndicatorWidth,
+                middleY + mCoordinates.dragIndicatorYOffSet + mCoordinates.dragIndicatorHeight);
+        canvas.drawRect(topRect, sDraggablePaint);
+        canvas.drawRect(bottomRect, sDraggablePaint);
+    }
 
     private void drawSelector(Canvas canvas) {
         sSelectorBackgroundPaint.setShader(getShader(mSelectorBackgroundColor, mCoordinates.selectorRect, 0f));
@@ -421,6 +466,10 @@ public class EntityListItem extends View {
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (mDragAndDropEnabled) {
+            return super.onTouchEvent(event);
+        }
+
         initializeSlop(getContext());
 
         boolean handled = false;

@@ -26,6 +26,11 @@ public class EntityListItemCoordinates {
     int stateX;
     int stateY;
 
+    int dragIndicatorX;
+    int dragIndicatorWidth;
+    int dragIndicatorYOffSet;
+    int dragIndicatorHeight;
+
     // Name
     int nameX;
     int nameY;
@@ -156,6 +161,15 @@ public class EntityListItemCoordinates {
                     coordinates.selectorX + coordinates.selectorWidth,
                     coordinates.selectorY + coordinates.selectorHeight);
             coordinates.activatedRect = inset(coordinates.selectorRect, padding);
+
+            coordinates.dragIndicatorX = context.getResources().
+                    getDimensionPixelSize(R.dimen.move_indicator_padding);
+            coordinates.dragIndicatorWidth = coordinates.selectorX  - 2 * coordinates.dragIndicatorX;
+            coordinates.dragIndicatorHeight = context.getResources().
+                    getDimensionPixelOffset(R.dimen.move_indicator_height);
+            coordinates.dragIndicatorYOffSet = context.getResources().
+                    getDimensionPixelOffset(R.dimen.move_indicator_vertical_offset);
+
         }
         return coordinates;
     }

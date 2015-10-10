@@ -259,7 +259,7 @@ public class EditContextFragment extends AbstractEditFragment<Context>
     }
 
     @Override
-    protected void updateUIFromExtras(Bundle savedState) {
+    protected void updateUIFromIntent(Intent intent) {
         mActiveCheckBox.setChecked(true);
         mDeleteButton.setVisibility(View.GONE);
 

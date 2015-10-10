@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/move_toggle"
+        android:title="@string/drag_n_drop_title"
+        app:actionLayout="@layout/move_switch"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/active_toggle"
+        android:title="@string/active_title"
+        app:actionLayout="@layout/active_switch"
+        app:showAsAction="always" />
+</menu>

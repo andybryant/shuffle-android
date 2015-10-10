@@ -1,5 +1,6 @@
 package org.dodgybits.shuffle.android.editor.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
@@ -199,7 +200,7 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
     }
 
     @Override
-    protected void updateUIFromExtras(Bundle savedState) {
+    protected void updateUIFromIntent(Intent intent) {
         mActiveCheckBox.setChecked(true);
         mDeleteButton.setVisibility(View.GONE);
 

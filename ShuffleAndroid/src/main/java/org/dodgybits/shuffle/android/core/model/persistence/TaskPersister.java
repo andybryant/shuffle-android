@@ -359,7 +359,7 @@ public class TaskPersister extends AbstractEntityPersister<Task> {
         }
     }
 
-    public void swapTasksWithinProject(int fromPosition, int toPosition, Cursor cursor) {
+    public void moveTaskWithinProject(int fromPosition, int toPosition, Cursor cursor) {
         if (fromPosition == toPosition) return;
 
         if (fromPosition < toPosition) {

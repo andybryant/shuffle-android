@@ -1,14 +1,19 @@
 package org.dodgybits.shuffle.android.core.model.persistence;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
+
 import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Project.Builder;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.sync.model.ProjectChangeSet;
+import org.dodgybits.shuffle.sync.model.TaskChangeSet;
+
 import roboguice.inject.ContentResolverProvider;
 import roboguice.inject.ContextSingleton;
 
@@ -19,9 +24,11 @@ import static org.dodgybits.shuffle.android.persistence.provider.ProjectProvider
 import static org.dodgybits.shuffle.android.persistence.provider.ProjectProvider.Projects.CHANGE_SET;
 import static org.dodgybits.shuffle.android.persistence.provider.ProjectProvider.Projects.GAE_ID;
 import static org.dodgybits.shuffle.android.persistence.provider.ProjectProvider.Projects._ID;
+import static org.dodgybits.shuffle.android.persistence.provider.TaskProvider.Tasks.DISPLAY_ORDER;
 
 @ContextSingleton
 public class ProjectPersister extends AbstractEntityPersister<Project> {
+    private static final String TAG = "ProjectPersister";
 
     private static final int ID_INDEX = 0;
     private static final int NAME_INDEX = 1;
@@ -118,7 +125,73 @@ public class ProjectPersister extends AbstractEntityPersister<Project> {
 
         }
         c.close();
-
-
     }
+
+    public void moveProject(int fromPosition, int toPosition, Cursor cursor) {
+        if (fromPosition == toPosition) return;
+
+        if (fromPosition < toPosition) {
+            moveProjects(cursor, fromPosition + 1, toPosition, true);
+        } else {
+            moveProjects(cursor, toPosition, fromPosition - 1, false);
+        }
+    }
+
+    /**
+     * Moves a range of projects up or down
+     *
+     * @param cursor
+     * @param pos1   start of range
+     * @param pos2   end of range
+     * @param moveUp are the projects moving up the list
+     */
+    private void moveProjects(Cursor cursor, int pos1, int pos2, boolean moveUp) {
+        ContentValues values = new ContentValues();
+        cursor.moveToPosition(moveUp ? pos1 - 1 : pos2 + 1);
+        Id initialId = readId(cursor, ID_INDEX);
+        int newOrder = cursor.getInt(DISPLAY_ORDER_INDEX);
+        ProjectChangeSet originalChangeSet = readChangeSet(cursor);
+
+        if (moveUp) {
+            for (int position = pos1; position <= pos2; position++) {
+                cursor.moveToPosition(position);
+                Id id = readId(cursor, ID_INDEX);
+                int order = cursor.getInt(DISPLAY_ORDER_INDEX);
+                ProjectChangeSet changeSet = readChangeSet(cursor);
+                updateOrder(id.getId(), newOrder, changeSet, values);
+                newOrder = order;
+            }
+        } else {
+            for (int position = pos2; position >= pos1; position--) {
+                cursor.moveToPosition(position);
+                Id id = readId(cursor, ID_INDEX);
+                int order = cursor.getInt(DISPLAY_ORDER_INDEX);
+                ProjectChangeSet changeSet = readChangeSet(cursor);
+                updateOrder(id.getId(), newOrder, changeSet, values);
+                newOrder = order;
+            }
+
+        }
+        updateOrder(initialId.getId(), newOrder, originalChangeSet, values);
+    }
+
+    private void updateOrder(long id, int order, ProjectChangeSet changeSet, ContentValues values) {
+        Log.d(TAG, "Updating project " + id + " order to " + order);
+        Uri uri = ContentUris.withAppendedId(getContentUri(), id);
+        values.clear();
+        values.put(DISPLAY_ORDER, order);
+        values.put(MODIFIED_DATE, System.currentTimeMillis());
+        changeSet.orderChanged();
+        values.put(CHANGE_SET, changeSet.getChangeSet());
+        mResolver.update(uri, values, null, null);
+    }
+
+    public ProjectChangeSet readChangeSet(Cursor cursor) {
+        return readChangeSet(cursor, CHANGE_SET_INDEX);
+    }
+
+    public ProjectChangeSet readChangeSet(Cursor cursor, int index) {
+        return ProjectChangeSet.fromChangeSet(readLong(cursor, index));
+    }
+
 }
