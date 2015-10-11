@@ -174,12 +174,8 @@ public class EntityListItem extends View {
 
         mIsInDraggableRange = false;
         mIsDragged = false;
-
-        if (mName == null || !mName.equals(context.getName())) {
-            mName = context.getName();
-            requestLayout();
-        }
-
+        mName = context.getName();
+        requestLayout();
     }
 
     public int getDragRight() {
