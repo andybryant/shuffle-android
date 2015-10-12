@@ -34,6 +34,7 @@
         android:layout_height="fill_parent"
         android:layout_alignParentRight="true"
         android:scaleType="center"
+        android:alpha="0.54"
         android:paddingLeft="5dip"
         android:paddingRight="5dip"
         android:gravity="center_horizontal"

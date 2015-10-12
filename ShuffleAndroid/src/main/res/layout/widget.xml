@@ -67,7 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:cacheColorHint="#00000000"
-        android:background="@drawable/gradient_bg_task_widget_holo" />
+        android:background="@color/white" />
 
     <ImageView
         android:layout_width="match_parent"

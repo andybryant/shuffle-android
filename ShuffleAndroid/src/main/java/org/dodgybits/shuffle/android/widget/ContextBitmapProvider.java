@@ -7,8 +7,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.widget.RelativeLayout;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Context;
-import org.dodgybits.shuffle.android.core.view.TextColours;
 import org.dodgybits.shuffle.android.core.view.DrawableUtils;
+import org.dodgybits.shuffle.android.core.view.TextColours;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +23,7 @@ public class ContextBitmapProvider {
     public ContextBitmapProvider(android.content.Context androidContext) {
         mAndroidContext = androidContext;
         mColours = TextColours.getInstance(androidContext);
-        mGradientCache = new HashMap<Integer, Bitmap>(mColours.getNumColours());
+        mGradientCache = new HashMap<>(mColours.getNumColours());
     }
 
     public Bitmap getBitmapForContexts(List<Context> contexts) {

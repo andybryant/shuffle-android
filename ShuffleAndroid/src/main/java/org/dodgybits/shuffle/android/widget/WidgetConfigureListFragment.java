@@ -36,12 +36,12 @@ public class WidgetConfigureListFragment extends RoboListFragment {
 
     private static ListItem createTaskListItem(int iconResId, ListQuery query, String name) {
         WidgetEntry entry = new TaskListWidgetEntry(query);
-        return new ListItem<WidgetEntry>(iconResId, name, entry);
+        return new ListItem<>(iconResId, name, entry);
     }
 
     private static ListItem createDialogListItem(int iconResId, String name, int dialogId) {
         WidgetEntry entry = new DialogWidgetEntry(dialogId);
-        return new ListItem<WidgetEntry>(iconResId, name, entry);
+        return new ListItem<>(iconResId, name, entry);
     }
 
     private IconNameCountListAdaptor mAdaptor;
@@ -119,7 +119,7 @@ public class WidgetConfigureListFragment extends RoboListFragment {
     }
 
 
-    private static interface WidgetEntry {
+    private interface WidgetEntry {
         void onClick(WidgetConfigure activity);
     }
 
