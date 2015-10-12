@@ -3,16 +3,7 @@ package org.dodgybits.shuffle.android.list.view;
 import android.annotation.TargetApi;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
+import android.graphics.*;
 import android.os.Build;
 import android.text.Layout;
 import android.text.StaticLayout;
@@ -23,10 +14,8 @@ import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
-
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
-
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
@@ -172,8 +161,10 @@ public class EntityListItem extends View {
         mIsDeleted = context.isDeleted();
         updateCount(context.getLocalId());
 
+        mDragAndDropEnabled = false;
         mIsInDraggableRange = false;
         mIsDragged = false;
+
         mName = context.getName();
         requestLayout();
     }
@@ -197,10 +188,8 @@ public class EntityListItem extends View {
         mIsInDraggableRange = isDraggable;
         mIsDragged = isDragging;
 
-        if (mName == null || !mName.equals(project.getName())) {
-            mName = project.getName();
-            requestLayout();
-        }
+        mName = project.getName();
+        requestLayout();
     }
 
     private void updateCount(Id id) {
