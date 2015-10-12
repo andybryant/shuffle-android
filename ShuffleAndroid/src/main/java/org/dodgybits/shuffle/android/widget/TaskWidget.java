@@ -41,14 +41,12 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.listener.TitleUpdater;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
-import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.core.view.TitleHandler;
@@ -279,14 +277,9 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
         views.setTextViewText(id, text);
     }
 
-    private void setupTitleAndCount(RemoteViews views) {
+    private void setupTitle(RemoteViews views) {
         // Set up the title (view type + count of messages)
         setTextViewTextAndDesc(views, R.id.widget_title, mTaskListName);
-        String count = "";
-        if (isCursorValid()) {
-            count = UiUtilities.getCountForUi(mContext, mCursor.getTaskCount(), false);
-        }
-        setTextViewTextAndDesc(views, R.id.widget_count, count);
     }
 
     /**
@@ -306,7 +299,7 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
         intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
         views.setRemoteAdapter(R.id.task_list, intent);
 
-        setupTitleAndCount(views);
+        setupTitle(views);
 
         if (isCursorValid()) {
             // Show compose icon & task list
