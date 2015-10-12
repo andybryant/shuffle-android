@@ -150,13 +150,13 @@ public class WidgetManager {
             ListQuery query;
             try {
                 query = ListQuery.valueOf(queryName);
-                location = Location.viewTaskList(query, contextId, projectId);
+                location = Location.viewTaskList(query, projectId, contextId);
             } catch (Exception e) {
                 Log.e(TAG, "Failed to parse key " + queryName);
                 // default to next tasks when can't parse key
                 query = ListQuery.nextTasks;
                 contextId = projectId = Id.NONE;
-                location = Location.viewTaskList(query, contextId, projectId);
+                location = Location.viewTaskList(query, projectId, contextId);
                 saveWidgetPrefs(context, appWidgetId, location);
             }
         }

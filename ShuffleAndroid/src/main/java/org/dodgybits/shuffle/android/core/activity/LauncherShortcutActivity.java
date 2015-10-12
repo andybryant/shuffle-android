@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentTransaction;
 import com.google.inject.Inject;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.fragment.LaunchListFragment;
-import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
@@ -16,8 +15,8 @@ import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
 import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
 import org.dodgybits.shuffle.android.core.view.EntityPickerDialogHelper;
 import org.dodgybits.shuffle.android.core.view.Location;
+import org.dodgybits.shuffle.android.core.view.LocationParser;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
-
 import roboguice.activity.RoboFragmentActivity;
 
 public class LauncherShortcutActivity extends RoboFragmentActivity {
@@ -93,7 +92,7 @@ public class LauncherShortcutActivity extends RoboFragmentActivity {
                 listener = new EntityPickerDialogHelper.OnEntitySelected() {
                     public void onSelected(long id) {
                         Id projectId = Id.create(id);
-                        Location location = Location.viewTaskList(ListQuery.context, projectId, Id.NONE);
+                        Location location = Location.viewTaskList(ListQuery.project, projectId, Id.NONE);
                         Intent shortcutIntent = LocationParser.createIntent(LauncherShortcutActivity.this, location);
                         String name = mProjectCache.findById(projectId).getName();
                         returnShortcut(shortcutIntent, name, iconResource);
