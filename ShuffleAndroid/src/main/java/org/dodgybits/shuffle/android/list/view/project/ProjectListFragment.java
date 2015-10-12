@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.CompoundButton;
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SingleSelector;
@@ -40,7 +41,6 @@ import org.dodgybits.shuffle.android.core.event.ProjectTaskCountLoadedEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
-import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.AbstractSwipeItemTouchHelperCallback;
@@ -65,6 +65,9 @@ import roboguice.inject.ContextScopedProvider;
 public class ProjectListFragment extends RoboFragment {
     private static final String TAG = "ProjectListFragment";
 
+    private static final String SELECTED_ITEMS = "ProjectListFragment.selected";
+    private static final String MOVE_TOGGLE = "ProjectListFragment.moveToggle";
+
     private static Bitmap sInactiveIcon;
     private static Bitmap sActiveIcon;
     private static Bitmap sDeleteIcon;
@@ -81,7 +84,7 @@ public class ProjectListFragment extends RoboFragment {
     @Inject
     private CursorProvider mCursorProvider;
 
-    private boolean mEnableReordering = false;
+    private boolean mMoveEnabled = false;
 
     private ItemTouchHelper mItemTouchHelper;
 
@@ -244,7 +247,7 @@ public class ProjectListFragment extends RoboFragment {
 
         if (mMultiSelector != null) {
             if (savedInstanceState != null) {
-                mMultiSelector.restoreSelectionStates(savedInstanceState.getBundle(TAG));
+                mMultiSelector.restoreSelectionStates(savedInstanceState.getBundle(SELECTED_ITEMS));
             }
 
             if (mMultiSelector.isSelectable()) {
@@ -254,12 +257,28 @@ public class ProjectListFragment extends RoboFragment {
                 }
             }
         }
+
+        if (savedInstanceState != null) {
+            updateMoveEnabled(savedInstanceState.getBoolean(MOVE_TOGGLE, false));
+        }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem moveMenu = menu.findItem(R.id.move_toggle);
+        if (moveMenu != null) {
+            final CompoundButton moveSwitch = (CompoundButton) moveMenu.getActionView();
+            moveSwitch.setChecked(mMoveEnabled);
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.d(TAG, "Saving state");
-        outState.putBundle(TAG, mMultiSelector.saveSelectionStates());
+        outState.putBundle(SELECTED_ITEMS, mMultiSelector.saveSelectionStates());
+        outState.putBoolean(MOVE_TOGGLE, mMoveEnabled);
         super.onSaveInstanceState(outState);
     }
 
@@ -273,17 +292,23 @@ public class ProjectListFragment extends RoboFragment {
 
     private void onMoveEnabledChange(@Observes MoveEnabledChangeEvent event) {
         boolean enabled = event.isEnabled();
-        mEnableReordering = enabled;
-        if (mListAdapter != null) {
-            mListAdapter.notifyDataSetChanged();
+        updateMoveEnabled(enabled);
+    }
+
+    private void updateMoveEnabled(boolean enabled) {
+        if (enabled != mMoveEnabled) {
+            mMoveEnabled = enabled;
+            if (mListAdapter != null) {
+                mListAdapter.notifyDataSetChanged();
+            }
+            updateSwipeSupport();
         }
-        updateSwipeSupport();
     }
 
     private void updateSwipeSupport() {
         if (mProjectCallback != null) {
             mProjectCallback.setDefaultSwipeDirs(
-                !mEnableReordering ? ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT : 0);
+                !mMoveEnabled ? ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT : 0);
 
         }
     }
@@ -383,7 +408,7 @@ public class ProjectListFragment extends RoboFragment {
             mProject = project;
             boolean isDraggable = ((getDragStateFlags() & RecyclerViewDragDropManager.STATE_FLAG_IS_IN_RANGE) != 0);
             boolean isDragging = ((getDragStateFlags() & RecyclerViewDragDropManager.STATE_FLAG_IS_ACTIVE) != 0);
-            mProjectListItem.updateView(project, taskCountArray, mEnableReordering,
+            mProjectListItem.updateView(project, taskCountArray, mMoveEnabled,
                     isDraggable, isDragging);
         }
 
@@ -436,7 +461,7 @@ public class ProjectListFragment extends RoboFragment {
 
         @Override
         public boolean onCheckCanStartDrag(ProjectHolder holder, int position, int x, int y) {
-            if (!mEnableReordering) return false;
+            if (!mMoveEnabled) return false;
 
             final int dragRight = holder.mProjectListItem.getDragRight();
             return x <= dragRight;

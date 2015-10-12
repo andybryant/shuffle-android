@@ -24,4 +24,12 @@ public class ObjectUtils {
         return (a == null) ? (b == null) : a.equals(b);
     }
 
+    public static int compareInts(int lhs, int rhs) {
+        return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
+    }
+
+    public static int compareLongs(long lhs, long rhs) {
+        return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
+    }
+
 }

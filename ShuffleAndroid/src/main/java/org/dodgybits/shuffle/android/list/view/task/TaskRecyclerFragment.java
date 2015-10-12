@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.*;
+import android.widget.CompoundButton;
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.google.common.base.Function;
@@ -57,9 +58,14 @@ import roboguice.fragment.RoboFragment;
 import roboguice.inject.ContextScopedProvider;
 
 import java.util.*;
+import static org.dodgybits.shuffle.android.core.util.ObjectUtils.compareInts;
+import static org.dodgybits.shuffle.android.core.util.ObjectUtils.compareLongs;
 
 public class TaskRecyclerFragment extends RoboFragment {
     private static final String TAG = "TaskRecyclerFragment";
+
+    private static final String SELECTED_ITEMS = "TaskRecyclerFragment.selected";
+    private static final String MOVE_TOGGLE = "TaskRecyclerFragment.moveToggle";
 
     private static final int DEFERRED_CODE = 102;
 
@@ -86,7 +92,7 @@ public class TaskRecyclerFragment extends RoboFragment {
 
     private Location mLocation;
 
-    private boolean mEnableTaskReordering = false;
+    private boolean mMoveEnabled = false;
 
     private ItemTouchHelper mItemTouchHelper;
 
@@ -172,7 +178,7 @@ public class TaskRecyclerFragment extends RoboFragment {
 
         if (mMultiSelector != null) {
             if (savedInstanceState != null) {
-                mMultiSelector.restoreSelectionStates(savedInstanceState.getBundle(TAG));
+                mMultiSelector.restoreSelectionStates(savedInstanceState.getBundle(SELECTED_ITEMS));
             }
 
             if (mMultiSelector.isSelectable()) {
@@ -183,12 +189,28 @@ public class TaskRecyclerFragment extends RoboFragment {
                 }
             }
         }
+
+        if (savedInstanceState != null) {
+            updateMoveEnabled(savedInstanceState.getBoolean(MOVE_TOGGLE, false));
+        }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem moveMenu = menu.findItem(R.id.move_toggle);
+        if (moveMenu != null) {
+            final CompoundButton moveSwitch = (CompoundButton) moveMenu.getActionView();
+            moveSwitch.setChecked(mMoveEnabled);
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.d(TAG, "Saving state");
-        outState.putBundle(TAG, mMultiSelector.saveSelectionStates());
+        outState.putBundle(SELECTED_ITEMS, mMultiSelector.saveSelectionStates());
+        outState.putBoolean(MOVE_TOGGLE, mMoveEnabled);
         super.onSaveInstanceState(outState);
     }
 
@@ -270,18 +292,24 @@ public class TaskRecyclerFragment extends RoboFragment {
 
     private void onMoveEnabledChange(@Observes MoveEnabledChangeEvent event) {
         boolean enabled = event.isEnabled();
-        mEnableTaskReordering = enabled;
-        if (mListAdapter != null) {
-            mListAdapter.notifyDataSetChanged();
+        updateMoveEnabled(enabled);
+    }
+
+    private void updateMoveEnabled(boolean enabled) {
+        if (enabled != mMoveEnabled) {
+            mMoveEnabled = enabled;
+            if (mListAdapter != null) {
+                mListAdapter.notifyDataSetChanged();
+            }
+            updateSwipeSupport();
         }
-        updateSwipeSupport();
     }
 
 
     private void updateSwipeSupport() {
         if (mTaskCallback != null && mLocation != null) {
             mTaskCallback.setDefaultSwipeDirs(
-                    ListFeatures.isSwipeSupported(mLocation) && !mEnableTaskReordering ?
+                    ListFeatures.isSwipeSupported(mLocation) && !mMoveEnabled ?
                             ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT : 0);
 
         }
@@ -395,7 +423,7 @@ public class TaskRecyclerFragment extends RoboFragment {
 
         @Override
         public void onClick(View v) {
-            if (mEnableTaskReordering) return;
+            if (mMoveEnabled) return;
             clickPanel();
         }
 
@@ -412,7 +440,7 @@ public class TaskRecyclerFragment extends RoboFragment {
         }
 
         public void clickTag() {
-            if (mEnableTaskReordering) return;
+            if (mMoveEnabled) return;
             if (mActionMode == null) {
                 mActionMode = getRoboAppCompatActivity().startSupportActionMode(mEditMode);
                 mMultiSelector.setSelected(this, true);
@@ -441,7 +469,7 @@ public class TaskRecyclerFragment extends RoboFragment {
 
         @Override
         public boolean onLongClick(View v) {
-            if (mEnableTaskReordering) return false;
+            if (mMoveEnabled) return false;
             clickTag();
             return true;
         }
@@ -482,7 +510,7 @@ public class TaskRecyclerFragment extends RoboFragment {
         }
 
         private boolean canMoveItem(int position) {
-            if (!mEnableTaskReordering) return false;
+            if (!mMoveEnabled) return false;
 
             // can only move when there's more than one item with the same project (or lack of project)
             Id projectId = readTask(position).getProjectId();
@@ -748,7 +776,7 @@ public class TaskRecyclerFragment extends RoboFragment {
             Project rhsProject = mProjectCache.findById(rhs.getProjectId());
             if (lhsProject != null) {
                 if (rhsProject != null) {
-                    result = compareInt(lhsProject.getOrder(), rhsProject.getOrder());
+                    result = compareInts(lhsProject.getOrder(), rhsProject.getOrder());
                 } else {
                     return -1;
                 }
@@ -761,7 +789,7 @@ public class TaskRecyclerFragment extends RoboFragment {
             }
 
             if (result == 0) {
-                result = compareInt(lhs.getOrder(), rhs.getOrder());
+                result = compareInts(lhs.getOrder(), rhs.getOrder());
                 if (result == 0) {
                     result = compareLongs(lhs.getDueDate(), rhs.getDueDate());
                     if (result == 0) {
@@ -773,12 +801,5 @@ public class TaskRecyclerFragment extends RoboFragment {
         }
     };
 
-    public static int compareInt(int lhs, int rhs) {
-        return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
-    }
-
-    public static int compareLongs(long lhs, long rhs) {
-        return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
-    }
 
 }
