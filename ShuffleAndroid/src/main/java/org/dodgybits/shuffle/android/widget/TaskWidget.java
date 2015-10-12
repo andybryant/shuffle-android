@@ -256,7 +256,7 @@ public class TaskWidget implements RemoteViewsService.RemoteViewsFactory,
             final Id contextId = Id.create(Long.parseLong(pathSegments.get(2)));
             final Id projectId = Id.create(Long.parseLong(pathSegments.get(3)));
             final int position = Integer.parseInt(pathSegments.get(4));
-            Location location = Location.viewTask(listQuery, contextId, projectId, position);
+            Location location = Location.viewTask(listQuery, projectId, contextId, position);
             if (COMMAND_NAME_VIEW_TASK.equals(command)) {
                 openTask(context, location);
             }

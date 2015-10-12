@@ -86,7 +86,7 @@
     <color name="view_description_color">#eeeeff</color>
     <color name="view_minimal_text_color">#8a8a8a</color>
     <color name="view_complete_background_color">#eeeeee</color>
-    <color name="view_incomplete_background_color">#eff7f7</color>
+    <color name="view_incomplete_background_color">@color/white</color>
 
 
     <color name="list_selected_indicator">#0063be</color>
