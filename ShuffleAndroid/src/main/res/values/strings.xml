@@ -17,6 +17,7 @@
     <!--  Activity titles -->
     <string name="app_name">Shuffle</string>
     <string name="title_inbox">Inbox</string>
+    <string name="title_task">Actions</string>
     <string name="title_project">Projects</string>
     <string name="title_context">Tags</string>
     <string name="title_next_tasks">Top Actions</string>
@@ -304,25 +305,50 @@ allow that, you can turn it off under Settings.</string>
     <string name="permanently_delete_button_title">Permanently delete</string>
 
     <!-- Toast displayed when an item is created -->
-    <string name="itemCreatedToast">%1$s created.</string>
+    <string name="item_created_toast">%1$s created.</string>
 
     <string name="warning_empty_trash">Permanently remove all deleted items?</string>
     <string name="toast_empty_trash">Permanently deleted %1$s action(s), %2$s context(s) and %3$s projects(s).</string>
 
     <!-- Toast displayed when an item is saved -->
-    <string name="itemSavedToast">%1$s saved.</string>
+    <string name="item_saved_toast">%1$s saved.</string>
+    <string name="item_activated_toast">%1$s activated.</string>
+    <string name="item_deactivated_toast">%1$s deactivated.</string>
 
     <!-- Toast displayed when an item is saved -->
-    <string name="itemDeletedToast">%1$s deleted.</string>
-    <string name="itemUndeletedToast">%1$s restored.</string>
-    <string name="itemActiveToast">%1$s activated.</string>
-    <string name="itemDeactivatedToast">%1$s deactivated.</string>
-    <string name="tasks_deleted_toast">Actions deleted</string>
-    <string name="tasks_restored_toast">Actions deleted</string>
-    <string name="task_complete_toast">Action marked complete</string>
-    <string name="tasks_complete_toast">Actions marked complete</string>
-    <string name="task_incomplete_toast">Action marked incomplete</string>
-    <string name="tasks_incomplete_toast">Actions marked incomplete</string>
+
+    <plurals name="tasks_deleted">
+        <item quantity="one">%d action deleted</item>
+        <item quantity="other">%d actions deleted</item>
+    </plurals>
+    <plurals name="tasks_restored">
+        <item quantity="one">%d action restored</item>
+        <item quantity="other">%d actions restored</item>
+    </plurals>
+    <plurals name="contexts_deleted">
+        <item quantity="one">%d tag deleted</item>
+        <item quantity="other">%d tags deleted</item>
+    </plurals>
+    <plurals name="contexts_restored">
+        <item quantity="one">%d tag restored</item>
+        <item quantity="other">%d tags restored</item>
+    </plurals>
+    <plurals name="projects_deleted">
+        <item quantity="one">%d project deleted</item>
+        <item quantity="other">%d projects deleted</item>
+    </plurals>
+    <plurals name="projects_restored">
+        <item quantity="one">%d project restored</item>
+        <item quantity="other">%d projects restored</item>
+    </plurals>
+    <plurals name="tasks_complete">
+        <item quantity="one">%d action marked complete</item>
+        <item quantity="other">%d actions marked complete</item>
+    </plurals>
+    <plurals name="tasks_incomplete">
+        <item quantity="one">%d action marked incomplete</item>
+        <item quantity="other">%d actions marked incomplete</item>
+    </plurals>
 
     <!-- App engine sync -->
     <string name="title_gae_sync_preferences">Server sync settings</string>

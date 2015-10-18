@@ -35,13 +35,13 @@ import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
 import org.dodgybits.shuffle.android.core.view.AbstractSwipeItemTouchHelperCallback;
 import org.dodgybits.shuffle.android.core.view.DividerItemDecoration;
 import org.dodgybits.shuffle.android.core.view.Location;
-import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.UpdateContextActiveEvent;
-import org.dodgybits.shuffle.android.list.event.UpdateContextDeletedEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateContextsDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
 import org.dodgybits.shuffle.android.list.view.EntityListItem;
 import org.dodgybits.shuffle.android.list.view.SelectableHolderImpl;
+import org.dodgybits.shuffle.android.list.view.SelectorClickListener;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 
 import java.util.List;
@@ -53,6 +53,8 @@ import roboguice.inject.ContextScopedProvider;
 
 public class ContextListFragment extends RoboFragment {
     private static final String TAG = "ContextListFragment";
+
+    private static final String SELECTED_ITEMS = "ContextListFragment.selected";
 
     private static Bitmap sInactiveIcon;
     private static Bitmap sActiveIcon;
@@ -128,12 +130,12 @@ public class ContextListFragment extends RoboFragment {
                     return true;
 
                 case R.id.action_delete:
-                    mEventManager.fire(new UpdateContextDeletedEvent(contextId, true));
+                    mEventManager.fire(new UpdateContextsDeletedEvent(contextId, true));
                     mActionMode.finish();
                     return true;
 
                 case R.id.action_undelete:
-                    mEventManager.fire(new UpdateContextDeletedEvent(contextId, false));
+                    mEventManager.fire(new UpdateContextsDeletedEvent(contextId, false));
                     mActionMode.finish();
                     return true;
 
@@ -201,7 +203,7 @@ public class ContextListFragment extends RoboFragment {
 
         if (mMultiSelector != null) {
             if (savedInstanceState != null) {
-                mMultiSelector.restoreSelectionStates(savedInstanceState.getBundle(TAG));
+                mMultiSelector.restoreSelectionStates(savedInstanceState.getBundle(SELECTED_ITEMS));
             }
 
             if (mMultiSelector.isSelectable()) {
@@ -216,7 +218,7 @@ public class ContextListFragment extends RoboFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.d(TAG, "Saving state");
-        outState.putBundle(TAG, mMultiSelector.saveSelectionStates());
+        outState.putBundle(SELECTED_ITEMS, mMultiSelector.saveSelectionStates());
         super.onSaveInstanceState(outState);
     }
 
@@ -264,12 +266,12 @@ public class ContextListFragment extends RoboFragment {
     }
 
     private void refreshChildCount() {
-        mEventManager.fire(new LoadCountCursorEvent(ViewMode.CONTEXT_LIST));
+        mEventManager.fire(new LoadCountCursorEvent(Location.viewContextList()));
     }
 
     public class ContextHolder extends SelectableHolderImpl implements
             View.OnClickListener, View.OnLongClickListener,
-            EntityListItem.OnClickListener {
+            SelectorClickListener {
 
         EntityListItem mContextListItem;
         Context mContext;
@@ -297,7 +299,7 @@ public class ContextListFragment extends RoboFragment {
         }
 
         @Override
-        public void clickSelector() {
+        public void onClickSelector() {
             if (mActionMode == null) {
                 mActionMode = getRoboAppCompatActivity().startSupportActionMode(mEditMode);
                 mMultiSelector.setSelected(this, true);
@@ -323,7 +325,7 @@ public class ContextListFragment extends RoboFragment {
 
         @Override
         public boolean onLongClick(View v) {
-            clickSelector();
+            onClickSelector();
             return true;
         }
 
@@ -337,7 +339,7 @@ public class ContextListFragment extends RoboFragment {
         public ContextHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             EntityListItem listItem = mEntityListItemProvider.get(getActivity());
             ContextHolder contextHolder = new ContextHolder(listItem);
-            listItem.setClickListener(contextHolder);
+            listItem.setSelectorClickListener(contextHolder);
             return contextHolder;
         }
 
@@ -386,7 +388,7 @@ public class ContextListFragment extends RoboFragment {
                 mEventManager.fire(new UpdateContextActiveEvent(id, !context.isActive()));
             } else {
                 Log.d(TAG, "Toggling delete for context id " + id + " position=" + viewHolder.getAdapterPosition());
-                mEventManager.fire(new UpdateContextDeletedEvent(id, !context.isDeleted()));
+                mEventManager.fire(new UpdateContextsDeletedEvent(id, !context.isDeleted()));
             }
 
         }

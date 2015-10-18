@@ -78,6 +78,7 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
                 break;
             case TASK:
             case SEARCH_RESULTS_TASK:
+            case DELETED_LIST:
 //                inflater.inflate(R.menu.task_view_menu, menu);
                 break;
         }
@@ -139,8 +140,7 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
                             Log.d(TAG, "complete toggle hit");
                             mEventManager.fire(new CompletedToggleEvent(
                                     completeSwitch.isChecked(),
-                                    mLocation.getListQuery(),
-                                    mLocation.getViewMode()));
+                                    mLocation));
                         }
                     });
                 } else {
@@ -165,8 +165,7 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
                         Log.d(TAG, "active toggle hit");
                         mEventManager.fire(new ActiveToggleEvent(
                                 activeSwitch.isChecked(),
-                                mLocation.getListQuery(),
-                                mLocation.getViewMode()));
+                                mLocation));
                     }
                 });
             }
@@ -266,7 +265,7 @@ public class MenuHandler implements NavigationView.OnNavigationItemSelectedListe
                 go(Location.viewTaskList(ListQuery.deferred));
                 return true;
             case R.id.nav_deleted:
-                go(Location.viewTaskList(ListQuery.deleted));
+                go(Location.viewDeletedList());
                 return true;
             case R.id.nav_settings:
                 go(Location.viewSettings());

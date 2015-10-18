@@ -35,7 +35,7 @@ public class ListSettingsCache {
                     .setDefaultPending(Flag.yes);
     private static ListSettings deletedSettings =
             new ListSettings(ListQuery.deleted.name())
-                    .setDefaultDeleted(Flag.ignored)
+                    .setDefaultDeleted(Flag.yes)
                     .setDefaultCompleted(Flag.ignored)
                     .setDefaultPending(Flag.ignored)
                     .setDefaultActive(Flag.ignored);

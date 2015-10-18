@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.util.Log;
 import org.dodgybits.shuffle.android.core.activity.HelpActivity;
 import org.dodgybits.shuffle.android.core.model.Id;
+import org.dodgybits.shuffle.android.list.activity.DeletedListActivity;
 import org.dodgybits.shuffle.android.list.activity.TaskListActivity;
 import org.dodgybits.shuffle.android.list.activity.TaskSearchResultsActivity;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
@@ -56,6 +57,10 @@ public class LocationParser {
 
             case ProjectList:
                 builder.setListQuery(ListQuery.project);
+                break;
+
+            case DeletedList:
+                builder.setListQuery(ListQuery.deleted);
                 break;
 
             case TaskSearch:
@@ -150,6 +155,10 @@ public class LocationParser {
 
             case TaskList:
                 intent = createTaskListIntent(context, location);
+                break;
+
+            case DeletedList:
+                intent = new Intent(context, DeletedListActivity.class);
                 break;
 
             case EditTask:

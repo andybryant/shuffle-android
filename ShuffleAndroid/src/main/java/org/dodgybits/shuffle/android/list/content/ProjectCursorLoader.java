@@ -13,13 +13,12 @@ public class ProjectCursorLoader extends CursorLoader {
 
     private ProjectSelector mSelector;
 
-    public ProjectCursorLoader(Context context) {
+    public ProjectCursorLoader(Context context, ProjectSelector selector) {
         // Initialize with no where clause.  We'll set it later.
         super(context, ProjectProvider.Projects.CONTENT_URI,
                 ProjectProvider.Projects.FULL_PROJECTION, null, null,
                 null);
-        mSelector = ProjectSelector.newBuilder().applyListPreferences(context,
-                ListSettingsCache.findSettings(ListQuery.project)).build();
+        mSelector = selector;
         mContext = context;
     }
 

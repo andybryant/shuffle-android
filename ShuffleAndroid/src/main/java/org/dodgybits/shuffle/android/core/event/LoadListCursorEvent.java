@@ -15,17 +15,16 @@
  */
 package org.dodgybits.shuffle.android.core.event;
 
-import org.dodgybits.shuffle.android.core.view.ViewMode;
+import org.dodgybits.shuffle.android.core.view.Location;
 
 public class LoadListCursorEvent {
-    ViewMode mViewMode = null;
+    Location mLocation = null;
 
-    public LoadListCursorEvent(ViewMode viewMode) {
-        mViewMode = viewMode;
+    public LoadListCursorEvent(Location location) {
+        mLocation = location;
     }
 
-    public ViewMode getViewMode() {
-        return mViewMode;
+    public Location getLocation() {
+        return mLocation;
     }
-
 }

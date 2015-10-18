@@ -127,7 +127,8 @@ public abstract class AbstractEntitySelector<E extends EntitySelector<E>> implem
         }
 
         @Override
-        public AbstractBuilder<E> applyListPreferences(android.content.Context context, ListSettings settings) {
+        public AbstractBuilder<E> applyListPreferences(
+                android.content.Context context, ListSettings settings) {
             setActive(settings.getActive(context));
             setDeleted(settings.getDefaultDeleted());
 

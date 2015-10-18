@@ -26,6 +26,7 @@ import org.dodgybits.shuffle.android.core.util.FontUtils;
 import org.dodgybits.shuffle.android.core.util.TaskLifecycleState;
 import org.dodgybits.shuffle.android.core.view.ContextIcon;
 import org.dodgybits.shuffle.android.core.view.TextColours;
+import org.dodgybits.shuffle.android.list.view.SelectorClickListener;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +41,7 @@ import java.util.Set;
 public class TaskListItem extends View {
     private TaskListItemCoordinates mCoordinates;
     private android.content.Context mAndroidContext;
-    private TaskRecyclerFragment.TaskHolder mHolder;
+    private SelectorClickListener mClickListener;
 
     private final CursorEntityCache<Context> mContextCache;
     private final CursorEntityCache<Project> mProjectCache;
@@ -116,8 +117,8 @@ public class TaskListItem extends View {
     private CharSequence mFormattedDate = "";
     private int mDateColor;
 
-    public void setHolder(TaskRecyclerFragment.TaskHolder holder) {
-        mHolder = holder;
+    public void setSelectorClickListener(SelectorClickListener clickListener) {
+        mClickListener = clickListener;
     }
 
     private void init(android.content.Context context) {
@@ -656,7 +657,7 @@ public class TaskListItem extends View {
             case MotionEvent.ACTION_UP:
                 if (mDownEvent) {
                     if (touchX < checkRight) {
-                        mHolder.clickTag();
+                        mClickListener.onClickSelector();
                         handled = true;
                     }
                 }

@@ -34,7 +34,7 @@ import java.util.Map;
 public class EntityListItem extends View {
     private EntityListItemCoordinates mCoordinates;
     private android.content.Context mAndroidContext;
-    private OnClickListener mClickListener;
+    private SelectorClickListener mClickListener;
 
     private String mName;
     private StaticLayout mNameLayout;
@@ -52,6 +52,8 @@ public class EntityListItem extends View {
 
     private boolean mDownEvent;
     private boolean mDragAndDropEnabled = false;
+
+    private boolean mIsLabel = false;
 
     @Inject
     public EntityListItem(
@@ -99,7 +101,7 @@ public class EntityListItem extends View {
 
     private static int sItemHeight;
 
-    public void setClickListener(OnClickListener clickListener) {
+    public void setSelectorClickListener(SelectorClickListener clickListener) {
         mClickListener = clickListener;
     }
 
@@ -164,13 +166,10 @@ public class EntityListItem extends View {
         mDragAndDropEnabled = false;
         mIsInDraggableRange = false;
         mIsDragged = false;
+        mIsLabel = false;
 
         mName = context.getName();
         requestLayout();
-    }
-
-    public int getDragRight() {
-        return mCoordinates == null ? 0 : mCoordinates.nameX;
     }
 
     public void updateView(Project project, SparseIntArray taskCountArray,
@@ -187,9 +186,34 @@ public class EntityListItem extends View {
         mDragAndDropEnabled = dragAndDropEnabled;
         mIsInDraggableRange = isDraggable;
         mIsDragged = isDragging;
+        mIsLabel = false;
 
         mName = project.getName();
         requestLayout();
+    }
+
+    public void updateView(String name, int iconResId) {
+        mTaskCountArray = null;
+        mSelectorBackgroundColor = getResources().getColor(R.color.white);
+        mSelectorTextColor = getResources().getColor(R.color.white);
+        mSelectorIcon = BitmapFactory.decodeResource(getResources(), iconResId);;
+        mSelectionIconName = null;
+        mIsActive = true;
+        mIsDeleted = false;
+        updateCount(Id.NONE);
+
+        mDragAndDropEnabled = false;
+        mIsInDraggableRange = false;
+        mIsDragged = false;
+        mIsLabel = true;
+
+        mName = name;
+        requestLayout();
+
+    }
+
+    public int getDragRight() {
+        return mCoordinates == null ? 0 : mCoordinates.nameX;
     }
 
     private void updateCount(Id id) {
@@ -227,7 +251,7 @@ public class EntityListItem extends View {
     private void calculateDrawingData() {
         TextPaint namePaint = sBoldPaint;
         namePaint.setColor(getFontColor(mIsActive ? NAME_TEXT_COLOR_ACTIVE : NAME_TEXT_COLOR_INACTIVE));
-        namePaint.setTextSize(mCoordinates.nameFontSize);
+        namePaint.setTextSize(mIsLabel ? mCoordinates.labelFontSize : mCoordinates.nameFontSize);
         mNameLayout = new StaticLayout(mName, namePaint,
                 mCoordinates.nameWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, false /* includePad */);
         if (mCoordinates.nameLineCount < mNameLayout.getLineCount()) {
@@ -296,7 +320,11 @@ public class EntityListItem extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        drawName(canvas);
+        if (mIsLabel) {
+            drawLabel(canvas);
+        } else {
+            drawName(canvas);
+        }
         drawCount(canvas);
         drawState(canvas);
         if (isActivated()) {
@@ -309,7 +337,22 @@ public class EntityListItem extends View {
         }
     }
 
+    private void drawLabel(Canvas canvas) {
+        TextPaint labelPaint = sBoldPaint;
+        labelPaint.setColor(getFontColor(mIsActive ? NAME_TEXT_COLOR_ACTIVE : NAME_TEXT_COLOR_INACTIVE));
+        labelPaint.setTextSize(mCoordinates.labelFontSize);
+        canvas.save();
+        canvas.translate(
+                mCoordinates.labelX,
+                mCoordinates.labelY);
+        mNameLayout.draw(canvas);
+        canvas.restore();
+    }
+
     private void drawName(Canvas canvas) {
+        TextPaint namePaint = sBoldPaint;
+        namePaint.setColor(getFontColor(mIsActive ? NAME_TEXT_COLOR_ACTIVE : NAME_TEXT_COLOR_INACTIVE));
+        namePaint.setTextSize(mCoordinates.nameFontSize);
         canvas.save();
         canvas.translate(
                 mCoordinates.nameX,
@@ -476,8 +519,8 @@ public class EntityListItem extends View {
 
             case MotionEvent.ACTION_UP:
                 if (mDownEvent) {
-                    if (touchX < checkRight && mClickListener != null) {
-                        mClickListener.clickSelector();
+                    if (!mIsLabel && touchX < checkRight && mClickListener != null) {
+                        mClickListener.onClickSelector();
                         handled = true;
                     }
                 }
@@ -503,7 +546,4 @@ public class EntityListItem extends View {
         return true;
     }
 
-    public interface OnClickListener {
-        void clickSelector();
-    }
 }

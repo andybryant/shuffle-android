@@ -13,13 +13,12 @@ public class ContextCursorLoader extends CursorLoader {
 
     private ContextSelector mSelector;
 
-    public ContextCursorLoader(Context context) {
+    public ContextCursorLoader(Context context, ContextSelector selector) {
         // Initialize with no where clause.  We'll set it later.
         super(context, ContextProvider.Contexts.CONTENT_URI,
                 ContextProvider.Contexts.FULL_PROJECTION, null, null,
                 null);
-        mSelector = ContextSelector.newBuilder().applyListPreferences(context,
-                ListSettingsCache.findSettings(ListQuery.context)).build();
+        mSelector = selector;
         mContext = context;
     }
 

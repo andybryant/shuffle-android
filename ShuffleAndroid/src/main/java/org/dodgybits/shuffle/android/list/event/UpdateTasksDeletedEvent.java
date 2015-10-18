@@ -1,29 +1,17 @@
 package org.dodgybits.shuffle.android.list.event;
 
-import com.google.common.collect.Sets;
+import org.dodgybits.shuffle.android.core.model.Id;
 
-import java.util.HashSet;
 import java.util.Set;
 
-public class UpdateTasksDeletedEvent {
-    private Set<Long> mTaskIds;
-    private boolean mDeleted;
+public class UpdateTasksDeletedEvent extends AbstractUpdateEntitiesDeletedEvent {
 
-    public UpdateTasksDeletedEvent(Set<Long> taskIds, boolean deleted) {
-        mTaskIds = new HashSet<>(taskIds);
-        mDeleted = deleted;
+    public UpdateTasksDeletedEvent(Set<Id> taskIds, boolean markAsDeleted) {
+        super(taskIds, markAsDeleted);
     }
 
-    public UpdateTasksDeletedEvent(Long taskId, boolean deleted) {
-        mTaskIds = Sets.newHashSet(taskId);
-        mDeleted = deleted;
+    public UpdateTasksDeletedEvent(Id taskId, boolean markAsDeleted) {
+        super(taskId, markAsDeleted);
     }
 
-    public Set<Long> getTaskIds() {
-        return mTaskIds;
-    }
-
-    public boolean isDeleted() {
-        return mDeleted;
-    }
 }

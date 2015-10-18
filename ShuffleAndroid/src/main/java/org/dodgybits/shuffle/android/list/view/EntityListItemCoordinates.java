@@ -39,6 +39,11 @@ public class EntityListItemCoordinates {
     int nameFontSize;
     int nameAscent;
 
+    int labelX;
+    int labelY;
+    int labelFontSize;
+
+
     // Count.
     int countX;
     int countY;
@@ -133,6 +138,11 @@ public class EntityListItemCoordinates {
             coordinates.nameLineCount = 1; //getLineCount(name);
             coordinates.nameFontSize = (int) name.getTextSize();
             coordinates.nameAscent = Math.round(name.getPaint().ascent());
+
+
+            coordinates.labelX = coordinates.nameX;
+            coordinates.labelY = coordinates.nameY;
+            coordinates.labelFontSize = (int)(coordinates.nameFontSize * 1.3);
 
             TextView count = (TextView) view.findViewById(R.id.count);
             coordinates.countX = UiUtilities.getX(count);
