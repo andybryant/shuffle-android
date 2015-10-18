@@ -317,11 +317,11 @@ public class TaskRecyclerFragment extends RoboFragment {
         }
     }
 
-    private List<Long> getSelectedIds() {
-        return Lists.transform(mMultiSelector.getSelectedPositions(), new Function<Integer, Long>() {
+    private List<Id> getSelectedIds() {
+        return Lists.transform(mMultiSelector.getSelectedPositions(), new Function<Integer, Id>() {
             @Override
-            public Long apply(Integer position) {
-                return mListAdapter.getItemId(position);
+            public Id apply(Integer position) {
+                return Id.create(mListAdapter.getItemId(position));
             }
         });
     }
@@ -620,7 +620,8 @@ public class TaskRecyclerFragment extends RoboFragment {
             Task task = holder.mTask;
             long id = viewHolder.getItemId();
             if (direction == ItemTouchHelper.LEFT) {
-                Log.d(TAG, "Deferring task id " + id + " position=" + viewHolder.getAdapterPosition());
+                Log.d(TAG, "Deferring task id " + id +
+                        " position=" + viewHolder.getAdapterPosition());
                 mDeferredPosition = viewHolder.getAdapterPosition();
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType(DateTimePickerActivity.TYPE);
@@ -628,8 +629,10 @@ public class TaskRecyclerFragment extends RoboFragment {
                 intent.putExtra(DateTimePickerActivity.TITLE, getString(R.string.title_deferred_picker));
                 startActivityForResult(intent, DEFERRED_CODE);
             } else {
-                Log.d(TAG, "Toggling complete on task id " + id + " position=" + viewHolder.getAdapterPosition());
-                mEventManager.fire(new UpdateTasksCompletedEvent(id, !task.isComplete()));
+                Log.d(TAG, "Toggling complete on task id " + id +
+                        " position=" + viewHolder.getAdapterPosition());
+                mEventManager.fire(
+                        new UpdateTasksCompletedEvent(Id.create(id), !task.isComplete()));
             }
 
         }
@@ -683,7 +686,7 @@ public class TaskRecyclerFragment extends RoboFragment {
 
         @Override
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-            Set<Long> taskIds = new HashSet<>(getSelectedIds());
+            Set<Id> taskIds = new HashSet<>(getSelectedIds());
             switch (menuItem.getItemId()) {
 
                 case R.id.action_delete:

@@ -186,14 +186,7 @@ public class TaskSelector extends AbstractEntitySelector<TaskSelector> implement
     }
     
     private void addDeletedExpression(List<String> expressions) {
-        if (mDeleted == yes) {
-            // task is deleted if it is deleted or project is deleted
-            String expression = "(task.deleted = 1 " +
-                "OR (projectId is not null AND projectId IN (select p._id from project p where p.deleted = 1)) " +
-                ")";
-            expressions.add(expression);
-
-        } else if (mDeleted == no) {
+        if (mDeleted == no) {
             // task is not deleted if it is not deleted and project is not deleted
             String expression = "(task.deleted = 0 " +
                 "AND (projectId is null OR projectId IN (select p._id from project p where p.deleted = 0)) " +

@@ -556,7 +556,7 @@ public class EditTaskFragment extends AbstractEditFragment<Task>
 
             case R.id.delete_button: {
                 mEventManager.fire(new UpdateTasksDeletedEvent(
-                        mOriginalItem.getLocalId().getId(), !mOriginalItem.isDeleted()));
+                        mOriginalItem.getLocalId(), !mOriginalItem.isDeleted()));
                 getActivity().finish();
                 break;
             }

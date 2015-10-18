@@ -81,7 +81,7 @@ public class EntityUpdateListener {
         for (Id id : ids) {
             persister.updateDeletedFlag(id, markAsDeleted);
         }
-        showDeletedToast(pluralResId, ids.size(), listener);
+        showToast(pluralResId, ids.size(), listener);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
@@ -102,8 +102,8 @@ public class EntityUpdateListener {
             }
         };
         mProjectPersister.updateActiveFlag(event.getProjectId(), isActive);
-        int resId = isActive ? R.plurals.
-        showTast(entityName, isActive, listener);
+        String entityName = mActivity.getString(R.string.project_name);
+        showActiveToast(entityName, isActive, listener);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
@@ -133,33 +133,25 @@ public class EntityUpdateListener {
         mTaskPersister.moveTasksWithinProject(event.getTaskIds(), event.getCursor(), event.isMoveUp());
     }
 
-    private void onUpdateTaskCompleted(@Observes UpdateTasksCompletedEvent event) {
-        final Set<Long> taskIds = event.getTaskIds();
-        for (Long taskId : taskIds) {
-            Id id = Id.create(taskId);
+    private void onUpdateTasksCompleted(@Observes UpdateTasksCompletedEvent event) {
+        final Set<Id> taskIds = event.getTaskIds();
+        for (Id id : taskIds) {
             mTaskPersister.updateCompleteFlag(id, event.isCompleted());
         }
         final boolean undoState = !event.isCompleted();
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (Long taskId : taskIds) {
-                    Id id = Id.create(taskId);
+                for (Id id : taskIds) {
                     mTaskPersister.updateCompleteFlag(id, undoState);
                 }
                 SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
             }
         };
 
-        String text;
-        if (event.getTaskIds().size() == 1) {
-            text = mActivity.getString(event.isCompleted() ?
-                    R.string.task_complete_toast : R.string.task_incomplete_toast);
-        } else {
-            text = mActivity.getString(event.isCompleted() ?
-                    R.string.tasks_complete_toast : R.string.tasks_incomplete_toast);
-        }
-        showToast(text, listener);
+        int pluralResId = event.isCompleted() ?
+                R.plurals.tasks_complete : R.plurals.tasks_incomplete;
+        showToast(pluralResId, taskIds.size(), listener);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
@@ -228,15 +220,20 @@ public class EntityUpdateListener {
     }
 
     private void showSavedToast(String entityName, View.OnClickListener undoListener) {
-        String text = mActivity.getString(R.string.itemSavedToast, entityName);
+        String text = mActivity.getString(R.string.item_saved_toast, entityName);
+        showToast(text, undoListener);
+    }
+
+    private void showActiveToast(String entityName, boolean active, View.OnClickListener undoListener) {
+        String text = active ? mActivity.getString(R.string.item_activated_toast, entityName) :
+                mActivity.getString(R.string.item_deactivated_toast, entityName);
         showToast(text, undoListener);
     }
 
     private void showToast(int pluralResId, int count, View.OnClickListener undoListener) {
-        String text = mActivity.getResources().getQuantityString(pluralResId, count);
+        String text = mActivity.getResources().getQuantityString(pluralResId, count, count);
         showToast(text, undoListener);
     }
-
 
     private void showToast(String text, View.OnClickListener undoListener) {
         View parentView = UiUtilities.getSnackBarParentView(mActivity);

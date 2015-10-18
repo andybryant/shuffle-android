@@ -291,7 +291,7 @@ public class TaskPagerFragment extends RoboFragment
 
     private void toggleComplete() {
         Task task = getSelectedTask();
-        long taskId = task.getLocalId().getId();
+        Id taskId = task.getLocalId();
         Log.d(TAG, "Toggling complete on task " + task.getDescription() +
                 " id=" + taskId + " tag=" + getTag());
         mEventManager.fire(new UpdateTasksCompletedEvent(taskId, !task.isComplete()));
@@ -299,7 +299,7 @@ public class TaskPagerFragment extends RoboFragment
 
     private void toggleDeleted() {
         Task task = getSelectedTask();
-        long taskId = task.getLocalId().getId();
+        Id taskId = task.getLocalId();
         Log.d(TAG, "Toggling deleted on task " + task.getDescription() +
                 " id=" + taskId + " tag=" + getTag());
         mEventManager.fire(new UpdateTasksDeletedEvent(taskId, !task.isDeleted()));

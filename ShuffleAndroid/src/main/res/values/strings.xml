@@ -305,13 +305,15 @@ allow that, you can turn it off under Settings.</string>
     <string name="permanently_delete_button_title">Permanently delete</string>
 
     <!-- Toast displayed when an item is created -->
-    <string name="itemCreatedToast">%1$s created.</string>
+    <string name="item_created_toast">%1$s created.</string>
 
     <string name="warning_empty_trash">Permanently remove all deleted items?</string>
     <string name="toast_empty_trash">Permanently deleted %1$s action(s), %2$s context(s) and %3$s projects(s).</string>
 
     <!-- Toast displayed when an item is saved -->
-    <string name="itemSavedToast">%1$s saved.</string>
+    <string name="item_saved_toast">%1$s saved.</string>
+    <string name="item_activated_toast">%1$s activated.</string>
+    <string name="item_deactivated_toast">%1$s deactivated.</string>
 
     <!-- Toast displayed when an item is saved -->
 
@@ -346,14 +348,6 @@ allow that, you can turn it off under Settings.</string>
     <plurals name="tasks_incomplete">
         <item quantity="one">%d action marked incomplete</item>
         <item quantity="other">%d actions marked incomplete</item>
-    </plurals>
-    <plurals name="tasks_active">
-        <item quantity="one">%d action activated</item>
-        <item quantity="other">%d actions activated</item>
-    </plurals>
-    <plurals name="tasks_inactive">
-        <item quantity="one">%d action deactivated</item>
-        <item quantity="other">%d actions deactivated</item>
     </plurals>
 
     <!-- App engine sync -->

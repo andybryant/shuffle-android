@@ -182,10 +182,10 @@ public abstract class AbstractEditFragment<E extends Entity> extends RoboFragmen
     protected final void showSaveToast() {
         String text;
         if (mIsNewEntity) {
-            text = getResources().getString(R.string.itemCreatedToast,
+            text = getResources().getString(R.string.item_created_toast,
                     getItemName());
         } else {
-            text = getResources().getString(R.string.itemSavedToast,
+            text = getResources().getString(R.string.item_saved_toast,
                     getItemName());
         }
         View parentView = UiUtilities.getSnackBarParentView(getActivity());

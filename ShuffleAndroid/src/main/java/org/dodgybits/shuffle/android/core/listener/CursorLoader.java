@@ -29,6 +29,8 @@ import com.google.inject.Inject;
 import org.dodgybits.shuffle.android.core.content.TaskCursorLoader;
 import org.dodgybits.shuffle.android.core.event.*;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
+import org.dodgybits.shuffle.android.core.model.persistence.selector.ContextSelector;
+import org.dodgybits.shuffle.android.core.model.persistence.selector.ProjectSelector;
 import org.dodgybits.shuffle.android.core.model.persistence.selector.TaskSelector;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
@@ -235,7 +237,10 @@ public class CursorLoader {
 
                 @Override
                 public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                    return new ContextCursorLoader(mActivity);
+                    ContextSelector selector = ContextSelector.newBuilder().
+                            applyListPreferences(mActivity,
+                                    ListSettingsCache.findSettings(mLocation.getListQuery())).build();
+                    return new ContextCursorLoader(mActivity, selector);
                 }
 
                 @Override
@@ -322,7 +327,10 @@ public class CursorLoader {
 
                 @Override
                 public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                    return new ProjectCursorLoader(mActivity);
+                    ProjectSelector selector = ProjectSelector.newBuilder().
+                            applyListPreferences(mActivity,
+                                    ListSettingsCache.findSettings(mLocation.getListQuery())).build();
+                    return new ProjectCursorLoader(mActivity, selector);
                 }
 
                 @Override
