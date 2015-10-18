@@ -15,19 +15,11 @@ import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
+import org.dodgybits.shuffle.android.core.model.persistence.EntityPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
-import org.dodgybits.shuffle.android.list.event.MoveTasksEvent;
-import org.dodgybits.shuffle.android.list.event.NewContextEvent;
-import org.dodgybits.shuffle.android.list.event.NewProjectEvent;
-import org.dodgybits.shuffle.android.list.event.NewTaskEvent;
-import org.dodgybits.shuffle.android.list.event.UpdateContextActiveEvent;
-import org.dodgybits.shuffle.android.list.event.UpdateContextDeletedEvent;
-import org.dodgybits.shuffle.android.list.event.UpdateProjectActiveEvent;
-import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
-import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
-import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
+import org.dodgybits.shuffle.android.list.event.*;
 import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 
 import java.util.List;
@@ -57,25 +49,39 @@ public class EntityUpdateListener {
         mTaskPersister = taskPersister;
     }
 
-    private void onToggleProjectDeleted(@Observes UpdateProjectDeletedEvent event) {
-        final Id id = event.getProjectId();
-        Boolean isDeleted = event.isDeleted();
-        if (isDeleted == null) {
-            // need to look up current value and toggle
-            Project project = mProjectPersister.findById(id);
-            isDeleted = !project.isDeleted();
-        }
-        final boolean undoState = !isDeleted;
+    private void onUpdateProjectsDeleted(@Observes UpdateProjectsDeletedEvent event) {
+        updateEntityDeleted(event, mProjectPersister,
+                event.isMarkedAsDeleted() ? R.plurals.projects_deleted : R.plurals.projects_restored);
+    }
+
+    private void onUpdateContextsDeleted(@Observes UpdateContextsDeletedEvent event) {
+        updateEntityDeleted(event, mContextPersister,
+                event.isMarkedAsDeleted() ? R.plurals.contexts_deleted : R.plurals.contexts_restored);
+    }
+
+    private void onUpdateTasksDeleted(@Observes UpdateTasksDeletedEvent event) {
+        updateEntityDeleted(event, mTaskPersister,
+                event.isMarkedAsDeleted() ? R.plurals.tasks_deleted : R.plurals.tasks_restored);
+    }
+
+    private void updateEntityDeleted(AbstractUpdateEntitiesDeletedEvent event,
+                         final EntityPersister persister, int pluralResId) {
+        final Set<Id> ids = event.getIds();
+        final boolean markAsDeleted = event.isMarkedAsDeleted();
+        final boolean undoState = !markAsDeleted;
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mProjectPersister.updateDeletedFlag(id, undoState);
+                for (Id id : ids) {
+                    persister.updateDeletedFlag(id, undoState);
+                }
                 SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
             }
         };
-        mProjectPersister.updateDeletedFlag(event.getProjectId(), isDeleted);
-        String entityName = mActivity.getString(R.string.project_name);
-        showDeletedToast(entityName, isDeleted, listener);
+        for (Id id : ids) {
+            persister.updateDeletedFlag(id, markAsDeleted);
+        }
+        showDeletedToast(pluralResId, ids.size(), listener);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
@@ -96,31 +102,8 @@ public class EntityUpdateListener {
             }
         };
         mProjectPersister.updateActiveFlag(event.getProjectId(), isActive);
-        String entityName = mActivity.getString(R.string.project_name);
-        showActiveToast(entityName, isActive, listener);
-        SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
-    }
-
-    private void onToggleContextDeleted(@Observes UpdateContextDeletedEvent event) {
-        final Id id = event.getContextId();
-        Boolean isDeleted = event.isDeleted();
-        if (isDeleted == null) {
-            // need to look up current value and toggle
-            Context context = mContextPersister.findById(id);
-            isDeleted = !context.isDeleted();
-        }
-        final boolean undoState = !isDeleted;
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mContextPersister.updateDeletedFlag(id, undoState);
-                SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
-            }
-        };
-
-        mContextPersister.updateDeletedFlag(event.getContextId(), event.isDeleted());
-        String entityName = mActivity.getString(R.string.context_name);
-        showDeletedToast(entityName, isDeleted, listener);
+        int resId = isActive ? R.plurals.
+        showTast(entityName, isActive, listener);
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
@@ -148,35 +131,6 @@ public class EntityUpdateListener {
 
     private void onMoveTasks(@Observes MoveTasksEvent event) {
         mTaskPersister.moveTasksWithinProject(event.getTaskIds(), event.getCursor(), event.isMoveUp());
-    }
-
-    private void onUpdateTasksDeleted(@Observes UpdateTasksDeletedEvent event) {
-        final Set<Long> taskIds = event.getTaskIds();
-        for (Long taskId : taskIds) {
-            Id id = Id.create(taskId);
-            mTaskPersister.updateDeletedFlag(id, event.isDeleted());
-        }
-        final boolean undoState = !event.isDeleted();
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (Long taskId : taskIds) {
-                    Id id = Id.create(taskId);
-                    mTaskPersister.updateDeletedFlag(id, undoState);
-                }
-                SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
-            }
-        };
-
-        if (event.getTaskIds().size() == 1) {
-            String entityName = mActivity.getString(R.string.task_name);
-            showDeletedToast(entityName, event.isDeleted(), listener);
-        } else {
-            String text = mActivity.getString(event.isDeleted() ?
-                    R.string.tasks_deleted_toast : R.string.tasks_restored_toast);
-            showToast(text, listener);
-        }
-        SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
     private void onUpdateTaskCompleted(@Observes UpdateTasksCompletedEvent event) {
@@ -273,26 +227,16 @@ public class EntityUpdateListener {
         SyncUtils.scheduleSync(mActivity, LOCAL_CHANGE_SOURCE);
     }
 
-    private void showDeletedToast(
-            String entityName, boolean isDeleted, View.OnClickListener undoListener) {
-        String text = mActivity.getResources().getString(
-                isDeleted ? R.string.itemDeletedToast : R.string.itemUndeletedToast,
-                entityName);
-        showToast(text, undoListener);
-    }
-    
-    private void showActiveToast(
-            String entityName, boolean isActive, View.OnClickListener undoListener) {
-        String text = mActivity.getResources().getString(
-                isActive ? R.string.itemActiveToast : R.string.itemDeactivatedToast,
-                entityName);
-        showToast(text, undoListener);
-    }
-
     private void showSavedToast(String entityName, View.OnClickListener undoListener) {
         String text = mActivity.getString(R.string.itemSavedToast, entityName);
         showToast(text, undoListener);
     }
+
+    private void showToast(int pluralResId, int count, View.OnClickListener undoListener) {
+        String text = mActivity.getResources().getQuantityString(pluralResId, count);
+        showToast(text, undoListener);
+    }
+
 
     private void showToast(String text, View.OnClickListener undoListener) {
         View parentView = UiUtilities.getSnackBarParentView(mActivity);

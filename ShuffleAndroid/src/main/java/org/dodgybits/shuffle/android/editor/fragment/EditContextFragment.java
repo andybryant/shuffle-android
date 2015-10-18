@@ -3,7 +3,6 @@ package org.dodgybits.shuffle.android.editor.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -24,7 +23,7 @@ import org.dodgybits.shuffle.android.core.view.DrawableUtils;
 import org.dodgybits.shuffle.android.core.view.TextColours;
 import org.dodgybits.shuffle.android.editor.activity.ColourPickerActivity;
 import org.dodgybits.shuffle.android.editor.activity.IconPickerActivity;
-import org.dodgybits.shuffle.android.list.event.UpdateContextDeletedEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateContextsDeletedEvent;
 import org.dodgybits.shuffle.android.list.view.EntityListItem;
 import org.dodgybits.shuffle.android.persistence.provider.ContextProvider;
 import org.dodgybits.shuffle.android.server.sync.SyncUtils;
@@ -95,7 +94,7 @@ public class EditContextFragment extends AbstractEditFragment<Context>
             }
 
             case R.id.delete_button: {
-                mEventManager.fire(new UpdateContextDeletedEvent(
+                mEventManager.fire(new UpdateContextsDeletedEvent(
                         mOriginalItem.getLocalId(), !mOriginalItem.isDeleted()));
                 getActivity().finish();
                 break;

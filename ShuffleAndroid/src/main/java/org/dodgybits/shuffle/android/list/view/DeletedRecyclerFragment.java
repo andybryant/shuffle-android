@@ -23,10 +23,7 @@ import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
 import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.LocationProvider;
-import org.dodgybits.shuffle.android.core.model.Context;
-import org.dodgybits.shuffle.android.core.model.Entity;
-import org.dodgybits.shuffle.android.core.model.Project;
-import org.dodgybits.shuffle.android.core.model.Task;
+import org.dodgybits.shuffle.android.core.model.*;
 import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
 import org.dodgybits.shuffle.android.core.model.persistence.DefaultEntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.ProjectPersister;
@@ -36,6 +33,8 @@ import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.view.DividerItemDecoration;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.list.activity.TaskListActivity;
+import org.dodgybits.shuffle.android.list.event.UpdateContextsDeletedEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateProjectsDeletedEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
 import org.dodgybits.shuffle.android.list.view.task.TaskListItem;
 import org.dodgybits.shuffle.android.preference.model.ListFeatures;
@@ -424,13 +423,13 @@ public class DeletedRecyclerFragment extends RoboFragment {
 
         private void restoreSelectedEntities() {
             List<Integer> selectedPositions = mMultiSelector.getSelectedPositions();
-            Set<Long> taskIds = new HashSet<>();
-            Set<Long> projectIds = new HashSet<>();
-            Set<Long> contextIds = new HashSet<>();
+            Set<Id> taskIds = new HashSet<>();
+            Set<Id> projectIds = new HashSet<>();
+            Set<Id> contextIds = new HashSet<>();
             for (Integer position : selectedPositions) {
                 Object item = mListAdapter.getItem(position);
                 if (item instanceof Entity) {
-                    long id = ((Entity)item).getLocalId().getId();
+                    Id id = ((Entity)item).getLocalId();
                     if (item instanceof Task) {
                         taskIds.add(id);
                     } else if (item instanceof Project) {
@@ -444,10 +443,10 @@ public class DeletedRecyclerFragment extends RoboFragment {
                 mEventManager.fire(new UpdateTasksDeletedEvent(taskIds, false));
             }
             if (!projectIds.isEmpty()) {
-                mEventManager.fire();
+                mEventManager.fire(new UpdateProjectsDeletedEvent(projectIds, false));
             }
             if (!contextIds.isEmpty()) {
-                mEventManager.fire();
+                mEventManager.fire(new UpdateContextsDeletedEvent(contextIds, false));
             }
         }
 

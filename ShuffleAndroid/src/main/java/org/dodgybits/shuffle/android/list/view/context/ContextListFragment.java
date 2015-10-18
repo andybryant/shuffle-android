@@ -35,9 +35,8 @@ import org.dodgybits.shuffle.android.core.model.persistence.ContextPersister;
 import org.dodgybits.shuffle.android.core.view.AbstractSwipeItemTouchHelperCallback;
 import org.dodgybits.shuffle.android.core.view.DividerItemDecoration;
 import org.dodgybits.shuffle.android.core.view.Location;
-import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.UpdateContextActiveEvent;
-import org.dodgybits.shuffle.android.list.event.UpdateContextDeletedEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateContextsDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
 import org.dodgybits.shuffle.android.list.view.EntityListItem;
@@ -131,12 +130,12 @@ public class ContextListFragment extends RoboFragment {
                     return true;
 
                 case R.id.action_delete:
-                    mEventManager.fire(new UpdateContextDeletedEvent(contextId, true));
+                    mEventManager.fire(new UpdateContextsDeletedEvent(contextId, true));
                     mActionMode.finish();
                     return true;
 
                 case R.id.action_undelete:
-                    mEventManager.fire(new UpdateContextDeletedEvent(contextId, false));
+                    mEventManager.fire(new UpdateContextsDeletedEvent(contextId, false));
                     mActionMode.finish();
                     return true;
 
@@ -389,7 +388,7 @@ public class ContextListFragment extends RoboFragment {
                 mEventManager.fire(new UpdateContextActiveEvent(id, !context.isActive()));
             } else {
                 Log.d(TAG, "Toggling delete for context id " + id + " position=" + viewHolder.getAdapterPosition());
-                mEventManager.fire(new UpdateContextDeletedEvent(id, !context.isDeleted()));
+                mEventManager.fire(new UpdateContextsDeletedEvent(id, !context.isDeleted()));
             }
 
         }

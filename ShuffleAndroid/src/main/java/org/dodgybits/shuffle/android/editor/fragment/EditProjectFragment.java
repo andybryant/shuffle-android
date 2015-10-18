@@ -1,7 +1,6 @@
 package org.dodgybits.shuffle.android.editor.fragment;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,10 +19,9 @@ import org.dodgybits.shuffle.android.core.model.Context;
 import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.persistence.EntityCache;
-import org.dodgybits.shuffle.android.core.util.FontUtils;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.editor.activity.EditProjectActivity;
-import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateProjectsDeletedEvent;
 import org.dodgybits.shuffle.android.persistence.provider.ProjectProvider;
 import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import org.dodgybits.shuffle.sync.model.ProjectChangeSet;
@@ -86,7 +84,7 @@ public class EditProjectFragment extends AbstractEditFragment<Project> {
             }
 
             case R.id.delete_button: {
-                mEventManager.fire(new UpdateProjectDeletedEvent(
+                mEventManager.fire(new UpdateProjectsDeletedEvent(
                         mOriginalItem.getLocalId(), !mOriginalItem.isDeleted()));
                 getActivity().finish();
                 break;

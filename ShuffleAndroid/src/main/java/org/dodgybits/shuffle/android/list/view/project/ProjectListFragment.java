@@ -46,9 +46,8 @@ import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.AbstractSwipeItemTouchHelperCallback;
 import org.dodgybits.shuffle.android.core.view.DividerItemDecoration;
 import org.dodgybits.shuffle.android.core.view.Location;
-import org.dodgybits.shuffle.android.core.view.ViewMode;
 import org.dodgybits.shuffle.android.list.event.UpdateProjectActiveEvent;
-import org.dodgybits.shuffle.android.list.event.UpdateProjectDeletedEvent;
+import org.dodgybits.shuffle.android.list.event.UpdateProjectsDeletedEvent;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
 import org.dodgybits.shuffle.android.list.view.EntityListItem;
@@ -149,12 +148,12 @@ public class ProjectListFragment extends RoboFragment {
                     return true;
 
                 case R.id.action_delete:
-                    mEventManager.fire(new UpdateProjectDeletedEvent(projectId, true));
+                    mEventManager.fire(new UpdateProjectsDeletedEvent(projectId, true));
                     mActionMode.finish();
                     return true;
 
                 case R.id.action_undelete:
-                    mEventManager.fire(new UpdateProjectDeletedEvent(projectId, false));
+                    mEventManager.fire(new UpdateProjectsDeletedEvent(projectId, false));
                     mActionMode.finish();
                     return true;
 
@@ -513,7 +512,7 @@ public class ProjectListFragment extends RoboFragment {
                 mEventManager.fire(new UpdateProjectActiveEvent(id, !project.isActive()));
             } else {
                 Log.d(TAG, "Toggling delete for project id " + id + " position=" + viewHolder.getAdapterPosition());
-                mEventManager.fire(new UpdateProjectDeletedEvent(id, !project.isDeleted()));
+                mEventManager.fire(new UpdateProjectsDeletedEvent(id, !project.isDeleted()));
             }
 
         }
