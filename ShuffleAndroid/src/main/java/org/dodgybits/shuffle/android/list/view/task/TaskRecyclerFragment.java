@@ -38,6 +38,7 @@ import org.dodgybits.shuffle.android.core.model.Project;
 import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.core.model.persistence.DefaultEntityCache;
 import org.dodgybits.shuffle.android.core.model.persistence.TaskPersister;
+import org.dodgybits.shuffle.android.core.util.EntityUtils;
 import org.dodgybits.shuffle.android.core.util.ObjectUtils;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.AbstractSwipeItemTouchHelperCallback;
@@ -50,6 +51,7 @@ import org.dodgybits.shuffle.android.list.event.UpdateTasksCompletedEvent;
 import org.dodgybits.shuffle.android.list.event.UpdateTasksDeletedEvent;
 import org.dodgybits.shuffle.android.list.view.AbstractListAdapter;
 import org.dodgybits.shuffle.android.list.view.SelectableHolderImpl;
+import org.dodgybits.shuffle.android.list.view.SelectorClickListener;
 import org.dodgybits.shuffle.android.preference.model.ListFeatures;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 import roboguice.event.EventManager;
@@ -107,7 +109,7 @@ public class TaskRecyclerFragment extends RoboFragment {
     private int mDeferredPosition = -1;
     private TaskCallback mTaskCallback;
     private ModalMultiSelectorCallback mEditMode = new TaskModalMultiSelectorCallback(mMultiSelector);
-
+    private Comparator<Task> mComparator;
     /**
      * When creating, retrieve this instance's number from its arguments.
      */
@@ -120,6 +122,7 @@ public class TaskRecyclerFragment extends RoboFragment {
         Resources r = getActivity().getResources();
         sCompleteIcon = BitmapFactory.decodeResource(r, R.drawable.ic_done_white_24dp);
         sDeferIcon = BitmapFactory.decodeResource(r, R.drawable.ic_schedule_white_24dp);
+        mComparator = EntityUtils.createComparator(mProjectCache);
     }
 
     @Override
@@ -305,7 +308,6 @@ public class TaskRecyclerFragment extends RoboFragment {
         }
     }
 
-
     private void updateSwipeSupport() {
         if (mTaskCallback != null && mLocation != null) {
             mTaskCallback.setDefaultSwipeDirs(
@@ -319,8 +321,7 @@ public class TaskRecyclerFragment extends RoboFragment {
         return Lists.transform(mMultiSelector.getSelectedPositions(), new Function<Integer, Long>() {
             @Override
             public Long apply(Integer position) {
-                mCursor.moveToPosition(position);
-                return mTaskPersister.readLocalId(mCursor).getId();
+                return mListAdapter.getItemId(position);
             }
         });
     }
@@ -330,10 +331,8 @@ public class TaskRecyclerFragment extends RoboFragment {
         Log.d(TAG, "Incomplete check for positions " + positions);
         return testMultiple(positions, false, new EntryMatcher() {
             @Override
-            public boolean matches(Cursor c) {
-                boolean complete = mTaskPersister.readComplete(c);
-                Log.d(TAG, "Complete=" + complete);
-                return complete;
+            public boolean matches(Task task) {
+                return task.isComplete();
             }
         });
     }
@@ -342,27 +341,23 @@ public class TaskRecyclerFragment extends RoboFragment {
         List<Integer> positions = mMultiSelector.getSelectedPositions();
         return testMultiple(positions, false, new EntryMatcher() {
             @Override
-            public boolean matches(Cursor c) {
-                return mTaskPersister.readDeleted(c);
+            public boolean matches(Task task) {
+                return task.isDeleted();
             }
         });
     }
 
     interface EntryMatcher {
-        boolean matches(Cursor c);
+        boolean matches(Task task);
     }
 
     /**
      * Test selected tasks for showing appropriate labels
      */
     private boolean testMultiple(List<Integer> positions, boolean defaultFlag, EntryMatcher matcher) {
-        final Cursor c = mCursor;
-        if (c == null || c.isClosed()) {
-            return false;
-        }
         for (Integer position : positions) {
-            c.moveToPosition(position);
-            if (matcher.matches(c) == defaultFlag) {
+            Task task = mListAdapter.readTask(position);
+            if (matcher.matches(task) == defaultFlag) {
                 return true;
             }
         }
@@ -405,7 +400,7 @@ public class TaskRecyclerFragment extends RoboFragment {
 
     public class TaskHolder extends SelectableHolderImpl implements
             View.OnClickListener, View.OnLongClickListener,
-            DraggableItemViewHolder {
+            DraggableItemViewHolder, SelectorClickListener {
 
         private int mDragStateFlags;
         TaskListItem mTaskListItem;
@@ -439,7 +434,8 @@ public class TaskRecyclerFragment extends RoboFragment {
             }
         }
 
-        public void clickTag() {
+        @Override
+        public void onClickSelector() {
             if (mMoveEnabled) return;
             if (mActionMode == null) {
                 mActionMode = getRoboAppCompatActivity().startSupportActionMode(mEditMode);
@@ -470,7 +466,7 @@ public class TaskRecyclerFragment extends RoboFragment {
         @Override
         public boolean onLongClick(View v) {
             if (mMoveEnabled) return false;
-            clickTag();
+            onClickSelector();
             return true;
         }
 
@@ -497,7 +493,7 @@ public class TaskRecyclerFragment extends RoboFragment {
         public TaskHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             TaskListItem listItem = mTaskListItemProvider.get(getActivity());
             TaskHolder taskHolder = new TaskHolder(listItem);
-            listItem.setHolder(taskHolder);
+            listItem.setSelectorClickListener(taskHolder);
             return taskHolder;
         }
 
@@ -524,7 +520,7 @@ public class TaskRecyclerFragment extends RoboFragment {
 
         @Override
         protected void sortItems() {
-            Collections.sort(mItems, projectOrderDueCreatedComparator);
+            Collections.sort(mItems, mComparator);
         }
 
         public Task readTask(int position) {
@@ -612,7 +608,8 @@ public class TaskRecyclerFragment extends RoboFragment {
         }
 
         @Override
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                              RecyclerView.ViewHolder target) {
             // callback for drag-n-drop, false to skip this feature
             return false;
         }
@@ -729,8 +726,8 @@ public class TaskRecyclerFragment extends RoboFragment {
             Set<Id> contextIds = Sets.newHashSet();
             List<Integer> selectedPositions = getMultiSelector().getSelectedPositions();
             for (Integer position : selectedPositions) {
-                mCursor.moveToPosition(position);
-                contextIds.addAll(mTaskPersister.readContextIds(mCursor));
+                Task task = mListAdapter.readTask(position);
+                contextIds.addAll(task.getContextIds());
             }
             return Lists.newArrayList(contextIds);
         }
@@ -739,8 +736,7 @@ public class TaskRecyclerFragment extends RoboFragment {
         public void onSelected(List<Id> selectedIds, Set<Id> modifiedIds) {
             List<Integer> selectedPositions = getMultiSelector().getSelectedPositions();
             for (Integer position : selectedPositions) {
-                mCursor.moveToPosition(position);
-                Task task = mTaskPersister.read(mCursor);
+                Task task = mListAdapter.readTask(position);
                 Set<Id> updatedContexts = Sets.newHashSet(task.getContextIds());
                 for (Id id : modifiedIds) {
                     if (selectedIds.contains(id)) {
@@ -752,7 +748,6 @@ public class TaskRecyclerFragment extends RoboFragment {
                 mTaskPersister.saveContextIds(task.getLocalId().getId(), Lists.newArrayList(updatedContexts));
                 mListAdapter.notifyItemChanged(position);
             }
-
             mActionMode.finish();
         }
 
@@ -761,45 +756,6 @@ public class TaskRecyclerFragment extends RoboFragment {
             // nothing to do
         }
 
-
-    };
-
-    /**
-     * Sort by following criteria: project order (no project last) asc,
-     * display order asc, due date asc, created desc
-     */
-    private Comparator<Task> projectOrderDueCreatedComparator = new Comparator<Task>() {
-        @Override
-        public int compare(Task lhs, Task rhs) {
-            int result;
-            Project lhsProject = mProjectCache.findById(lhs.getProjectId());
-            Project rhsProject = mProjectCache.findById(rhs.getProjectId());
-            if (lhsProject != null) {
-                if (rhsProject != null) {
-                    result = compareInts(lhsProject.getOrder(), rhsProject.getOrder());
-                } else {
-                    return -1;
-                }
-            } else {
-                if (rhsProject != null) {
-                    return 1;
-                } else {
-                    result = 0;
-                }
-            }
-
-            if (result == 0) {
-                result = compareInts(lhs.getOrder(), rhs.getOrder());
-                if (result == 0) {
-                    result = compareLongs(lhs.getDueDate(), rhs.getDueDate());
-                    if (result == 0) {
-                        result = compareLongs(rhs.getCreatedDate(), lhs.getCreatedDate());
-                    }
-                }
-            }
-            return result;
-        }
-    };
-
+    }
 
 }

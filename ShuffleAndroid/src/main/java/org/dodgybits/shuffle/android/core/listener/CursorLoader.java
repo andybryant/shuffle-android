@@ -75,8 +75,8 @@ public class CursorLoader {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                startListLoading(mLocation.getViewMode());
-                startCountLoading(mLocation.getViewMode());
+                startListLoading(mLocation);
+                startCountLoading(mLocation);
             }
         });
     }
@@ -85,21 +85,22 @@ public class CursorLoader {
         if (event.getListQuery().equals(mLocation.getListQuery())) {
             mTaskSelector = TaskSelector.fromLocation(mActivity, mLocation);
             // our list settings changed - reload list
-            startListLoading(mLocation.getViewMode());
-            startCountLoading(mLocation.getViewMode());
+            startListLoading(mLocation);
+            startCountLoading(mLocation);
         }
     }
 
     private void onReloadListCursor(@Observes LoadListCursorEvent event) {
         mTaskSelector = TaskSelector.fromLocation(mActivity, mLocation);
-        restartListLoading(event.getViewMode());
+        restartListLoading(event.getLocation());
     }
 
     private void onReloadCountCursor(@Observes LoadCountCursorEvent event) {
-        restartCountLoading(event.getViewMode());
+        restartCountLoading(event.getLocation());
     }
 
-    private void startListLoading(ViewMode viewMode) {
+    private void startListLoading(Location location) {
+        ViewMode viewMode = location.getViewMode();
         int listId = listId();
         Log.d(TAG, "Creating relevant list cursor for " + viewMode + " listId " + listId);
         final LoaderManager lm = mActivity.getSupportLoaderManager();
@@ -109,12 +110,21 @@ public class CursorLoader {
             case SEARCH_RESULTS_LIST:
             case SEARCH_RESULTS_TASK:
                 lm.initLoader(listId, null, TASK_LIST_LOADER_CALLBACKS);
+                if (location.getListQuery() == ListQuery.deleted) {
+                    lm.initLoader(listId, null, CONTEXT_LIST_LOADER_CALLBACKS);
+                    lm.initLoader(listId, null, PROJECT_LIST_LOADER_CALLBACKS);
+                }
                 break;
             case CONTEXT_LIST:
                 lm.initLoader(listId, null, CONTEXT_LIST_LOADER_CALLBACKS);
                 break;
             case PROJECT_LIST:
                 lm.initLoader(listId, null, PROJECT_LIST_LOADER_CALLBACKS);
+                break;
+            case DELETED_LIST:
+                lm.initLoader(("task" + listId).hashCode(), null, TASK_LIST_LOADER_CALLBACKS);
+                lm.initLoader(("context" + listId).hashCode(), null, CONTEXT_LIST_LOADER_CALLBACKS);
+                lm.initLoader(("project" + listId).hashCode(), null, PROJECT_LIST_LOADER_CALLBACKS);
                 break;
             default:
                 // TODO
@@ -129,7 +139,8 @@ public class CursorLoader {
         return 31 * mTaskSelector.hashCode();
     }
 
-    private void startCountLoading(ViewMode viewMode) {
+    private void startCountLoading(Location location) {
+        ViewMode viewMode = location.getViewMode();
         Log.d(TAG, "Creating relevant count cursor for " + viewMode);
         final LoaderManager lm = mActivity.getSupportLoaderManager();
         switch (viewMode) {
@@ -144,7 +155,8 @@ public class CursorLoader {
         }
     }
 
-    private void restartListLoading(ViewMode viewMode) {
+    private void restartListLoading(Location location) {
+        ViewMode viewMode = location.getViewMode();
         int listId = listId();
         Log.d(TAG, "Refreshing list cursor " + viewMode + " listId " + listId);
         final LoaderManager lm = mActivity.getSupportLoaderManager();
@@ -161,12 +173,18 @@ public class CursorLoader {
             case PROJECT_LIST:
                 lm.restartLoader(listId, null, PROJECT_LIST_LOADER_CALLBACKS);
                 break;
+            case DELETED_LIST:
+                lm.restartLoader(("task" + listId).hashCode(), null, TASK_LIST_LOADER_CALLBACKS);
+                lm.restartLoader(("context" + listId).hashCode(), null, CONTEXT_LIST_LOADER_CALLBACKS);
+                lm.restartLoader(("project" + listId).hashCode(), null, PROJECT_LIST_LOADER_CALLBACKS);
+                break;
             default:
-                // TODO
+                // nothing to do
         }
     }
 
-    private void restartCountLoading(ViewMode viewMode) {
+    private void restartCountLoading(Location location) {
+        ViewMode viewMode = location.getViewMode();
         Log.d(TAG, "Refreshing count cursor " + viewMode);
         final LoaderManager lm = mActivity.getSupportLoaderManager();
         switch (viewMode) {
@@ -177,7 +195,7 @@ public class CursorLoader {
                 lm.restartLoader(countId(), null, PROJECT_TASK_COUNT_LOADER_CALLBACKS);
                 break;
             default:
-                // TODO
+                // not needed for other views
         }
     }
 

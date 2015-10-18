@@ -53,6 +53,7 @@ import org.dodgybits.shuffle.android.list.model.ListQuery;
 import org.dodgybits.shuffle.android.list.view.AbstractCursorAdapter;
 import org.dodgybits.shuffle.android.list.view.EntityListItem;
 import org.dodgybits.shuffle.android.list.view.SelectableHolderImpl;
+import org.dodgybits.shuffle.android.list.view.SelectorClickListener;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
 
 import java.util.List;
@@ -349,13 +350,13 @@ public class ProjectListFragment extends RoboFragment {
     }
 
     private void refreshChildCount() {
-        mEventManager.fire(new LoadCountCursorEvent(ViewMode.PROJECT_LIST));
+        mEventManager.fire(new LoadCountCursorEvent(Location.viewProjectList()));
     }
 
 
     public class ProjectHolder extends SelectableHolderImpl implements
             View.OnClickListener, View.OnLongClickListener,
-            EntityListItem.OnClickListener,
+            SelectorClickListener,
             DraggableItemViewHolder {
 
         private int mDragStateFlags;
@@ -385,7 +386,7 @@ public class ProjectListFragment extends RoboFragment {
         }
 
         @Override
-        public void clickSelector() {
+        public void onClickSelector() {
             if (mActionMode == null) {
                 mActionMode = getRoboAppCompatActivity().startSupportActionMode(mEditMode);
                 mMultiSelector.setSelected(this, true);
@@ -414,7 +415,7 @@ public class ProjectListFragment extends RoboFragment {
 
         @Override
         public boolean onLongClick(View v) {
-            clickSelector();
+            onClickSelector();
             return true;
         }
 
@@ -439,7 +440,7 @@ public class ProjectListFragment extends RoboFragment {
         public ProjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             EntityListItem listItem = mProjectListItemProvider.get(getActivity());
             ProjectHolder projectHolder = new ProjectHolder(listItem);
-            listItem.setClickListener(projectHolder);
+            listItem.setSelectorClickListener(projectHolder);
             return projectHolder;
         }
 

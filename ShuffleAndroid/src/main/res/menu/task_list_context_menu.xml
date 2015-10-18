@@ -30,6 +30,6 @@
         android:id="@+id/action_undelete"
         android:icon="@drawable/ic_restore_white_24dp"
         android:title="@string/menu_undelete"
-        app:showAsAction="never"
+        app:showAsAction="ifRoom"
         />
 </menu>

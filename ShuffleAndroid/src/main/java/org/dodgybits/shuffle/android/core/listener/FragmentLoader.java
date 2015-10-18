@@ -31,6 +31,7 @@ import org.dodgybits.shuffle.android.core.event.TaskListCursorLoadedEvent;
 import org.dodgybits.shuffle.android.core.util.UiUtilities;
 import org.dodgybits.shuffle.android.core.view.Location;
 import org.dodgybits.shuffle.android.core.view.ViewMode;
+import org.dodgybits.shuffle.android.list.view.DeletedRecyclerFragment;
 import org.dodgybits.shuffle.android.list.view.context.ContextListFragment;
 import org.dodgybits.shuffle.android.list.view.project.ProjectListFragment;
 import org.dodgybits.shuffle.android.list.view.task.TaskRecyclerFragment;
@@ -45,6 +46,7 @@ public class FragmentLoader {
 
     /** Tags used when loading fragments. */
     public static final String TAG_TASK_LIST = "tag-task-list";
+    public static final String TAG_DELETED_LIST = "tag-deleted-list";
     public static final String TAG_TASK_ITEM = "tag-task-item";
     public static final String TAG_CONTEXT_LIST = "tag-context-list";
     public static final String TAG_PROJECT_LIST = "tag-project-list";
@@ -71,7 +73,12 @@ public class FragmentLoader {
             return;
         }
 
+
+
         switch (mLocation.getViewMode()) {
+            case DELETED_LIST:
+                addDeletedList();
+                break;
             case TASK_LIST:
             case SEARCH_RESULTS_LIST:
                 addTaskList();
@@ -130,6 +137,20 @@ public class FragmentLoader {
         }
     }
 
+    private void addDeletedList() {
+        DeletedRecyclerFragment fragment = getDeletedRecyclerFragment();
+        if (fragment == null) {
+            fragment = new DeletedRecyclerFragment();
+            Log.d(TAG, "Creating deleted list fragment " + fragment);
+
+            FragmentTransaction fragmentTransaction =
+                    mActivity.getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.entity_list_pane,
+                    fragment, TAG_DELETED_LIST);
+            fragmentTransaction.commitAllowingStateLoss();
+        }
+    }
+
     private void addTaskView() {
         TaskPagerFragment fragment = getTaskPagerFragment() ;
         if (fragment == null) {
@@ -179,6 +200,14 @@ public class FragmentLoader {
         final Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG_TASK_LIST);
         if (isValidFragment(fragment)) {
             return (TaskRecyclerFragment) fragment;
+        }
+        return null;
+    }
+
+    protected DeletedRecyclerFragment getDeletedRecyclerFragment() {
+        final Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG_DELETED_LIST);
+        if (isValidFragment(fragment)) {
+            return (DeletedRecyclerFragment) fragment;
         }
         return null;
     }

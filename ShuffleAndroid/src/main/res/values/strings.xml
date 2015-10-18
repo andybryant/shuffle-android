@@ -17,6 +17,7 @@
     <!--  Activity titles -->
     <string name="app_name">Shuffle</string>
     <string name="title_inbox">Inbox</string>
+    <string name="title_task">Actions</string>
     <string name="title_project">Projects</string>
     <string name="title_context">Tags</string>
     <string name="title_next_tasks">Top Actions</string>

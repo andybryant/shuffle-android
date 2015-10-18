@@ -31,6 +31,10 @@ public enum ViewMode {
      */
     TASK_LIST,
     /**
+     * Mode when showing deleted tasks, contexts and projects.
+     */
+    DELETED_LIST,
+    /**
      * Mode when showing results from user search.
      */
     SEARCH_RESULTS_LIST,

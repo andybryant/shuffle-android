@@ -17,9 +17,16 @@ package org.dodgybits.shuffle.android.core.util;
 
 import com.google.common.collect.Sets;
 import org.dodgybits.shuffle.android.core.model.Id;
+import org.dodgybits.shuffle.android.core.model.Project;
+import org.dodgybits.shuffle.android.core.model.Task;
+import org.dodgybits.shuffle.android.core.model.persistence.DefaultEntityCache;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+
+import static org.dodgybits.shuffle.android.core.util.ObjectUtils.compareInts;
+import static org.dodgybits.shuffle.android.core.util.ObjectUtils.compareLongs;
 
 public class EntityUtils {
 
@@ -43,6 +50,45 @@ public class EntityUtils {
         }
 
         return true;
+    }
+
+    /**
+     * Sort by following criteria: project order (no project last) asc,
+     * display order asc, due date asc, created desc
+     */
+    public static Comparator<Task> createComparator(final DefaultEntityCache<Project> projectCache) {
+        return new Comparator<Task>() {
+            @Override
+            public int compare(Task lhs, Task rhs) {
+                int result;
+                Project lhsProject = projectCache.findById(lhs.getProjectId());
+                Project rhsProject = projectCache.findById(rhs.getProjectId());
+                if (lhsProject != null) {
+                    if (rhsProject != null) {
+                        result = compareInts(lhsProject.getOrder(), rhsProject.getOrder());
+                    } else {
+                        return -1;
+                    }
+                } else {
+                    if (rhsProject != null) {
+                        return 1;
+                    } else {
+                        result = 0;
+                    }
+                }
+
+                if (result == 0) {
+                    result = compareInts(lhs.getOrder(), rhs.getOrder());
+                    if (result == 0) {
+                        result = compareLongs(lhs.getDueDate(), rhs.getDueDate());
+                        if (result == 0) {
+                            result = compareLongs(rhs.getCreatedDate(), lhs.getCreatedDate());
+                        }
+                    }
+                }
+                return result;
+            }
+        };
     }
 
 }

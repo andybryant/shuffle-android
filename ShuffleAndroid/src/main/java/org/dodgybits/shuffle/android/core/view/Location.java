@@ -19,10 +19,15 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.Log;
+
+import org.dodgybits.shuffle.android.core.model.Context;
+import org.dodgybits.shuffle.android.core.model.Entity;
 import org.dodgybits.shuffle.android.core.model.Id;
+import org.dodgybits.shuffle.android.core.model.Task;
 import org.dodgybits.shuffle.android.list.model.ListQuery;
 
 import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.ContextList;
+import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.DeletedList;
 import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.EditContext;
 import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.EditProject;
 import static org.dodgybits.shuffle.android.core.view.Location.LocationActivity.EditTask;
@@ -82,6 +87,19 @@ public class Location implements Parcelable {
         return location;
     }
 
+    public static Location editEntity(Entity entity) {
+        Id id = entity.getLocalId();
+        Location location;
+        if (entity instanceof Task) {
+            location = editTask(id);
+        } else if (entity instanceof Context) {
+            location = editContext(id);
+        } else {
+            location = editProject(id);
+        }
+        return location;
+    }
+
     public static Location editTask(Id taskId) {
         Location.Builder builder = Location.newBuilder();
         builder.setLocationActivity(EditTask);
@@ -133,6 +151,9 @@ public class Location implements Parcelable {
     }
 
     public static Location viewTaskList(ListQuery listQuery) {
+        if (listQuery == ListQuery.deleted) {
+            return viewDeletedList();
+        }
         return viewTaskList(listQuery, Id.NONE, Id.NONE);
     }
 
@@ -162,6 +183,13 @@ public class Location implements Parcelable {
         Location.Builder builder = Location.newBuilder();
         builder.setLocationActivity(ProjectList);
         builder.setListQuery(ListQuery.project);
+        return builder.build();
+    }
+
+    public static Location viewDeletedList() {
+        Location.Builder builder = Location.newBuilder();
+        builder.setLocationActivity(DeletedList);
+        builder.setListQuery(ListQuery.deleted);
         return builder.build();
     }
 
@@ -454,6 +482,9 @@ public class Location implements Parcelable {
                 case search:
                     mode = itemView ? ViewMode.SEARCH_RESULTS_TASK : ViewMode.SEARCH_RESULTS_LIST;
                     break;
+                case deleted:
+                    mode = ViewMode.DELETED_LIST;
+                    break;
                 case project:
                     if (mResult.getProjectId().isInitialised()) {
                         mode = itemView ? ViewMode.TASK : ViewMode.TASK_LIST;
@@ -530,7 +561,8 @@ public class Location implements Parcelable {
     }
 
     public enum LocationActivity {
-        TaskSearch, TaskList, ProjectList, ContextList,
+        TaskSearch, TaskList, ProjectList,
+        ContextList, DeletedList,
         Help, Preferences,
         EditTask, EditProject, EditContext
     }
