@@ -91,7 +91,6 @@ public class TaskListItem extends View {
     private static Bitmap sStateDeleted;
     private static Bitmap sStateCompleted;
     private static Bitmap sMoreHorizontal;
-    private static Bitmap sActivated;
 
     private static Map<String, Bitmap> mContextIconMap;
 
@@ -142,8 +141,6 @@ public class TaskListItem extends View {
                     BitmapFactory.decodeResource(r, R.drawable.ic_done_green_24dp);
             sMoreHorizontal =
                     BitmapFactory.decodeResource(r, R.drawable.ic_more_horiz_black_24dp);
-            sActivated =
-                    BitmapFactory.decodeResource(r, R.drawable.ic_brightness_1_black_24dp);
 
             mContextIconMap = Maps.newHashMap();
 
@@ -532,12 +529,12 @@ public class TaskListItem extends View {
                             sRegularPaint);
                 } else {
                     RectF destIconRect = mCoordinates.contextDestIconRects[numContexts][i];
-                    canvas.drawBitmap(contextIcon, mCoordinates.contextSourceIconRect, destIconRect, null);
+                    canvas.drawBitmap(contextIcon, null, destIconRect, null);
                 }
             }
         }
         if (mContexts.size() > 4) {
-            canvas.drawBitmap(sMoreHorizontal, mCoordinates.contextSourceIconRect,
+            canvas.drawBitmap(sMoreHorizontal, null,
                     mCoordinates.contextMoreRect, sContextMorePaint);
         }
     }
@@ -546,8 +543,8 @@ public class TaskListItem extends View {
         sContextBackgroundPaint.setShader(null);
         sContextBackgroundPaint.setColor(getResources().getColor(R.color.white));
         canvas.drawOval(mCoordinates.contextRects[0][0], sContextBackgroundPaint);
-        canvas.drawBitmap(sActivated, mCoordinates.contextSourceIconRect,
-                mCoordinates.activatedRect, null);
+        sContextBackgroundPaint.setColor(getResources().getColor(R.color.black));
+        canvas.drawOval(mCoordinates.activatedRect, sContextBackgroundPaint);
     }
 
     private void drawDraggableIndicator(Canvas canvas) {
@@ -576,9 +573,6 @@ public class TaskListItem extends View {
             if (contextIcon != null) {
                 icon = BitmapFactory.decodeResource(mAndroidContext.getResources(), contextIcon.largeIconId);
                 mContextIconMap.put(iconName, icon);
-                if (mCoordinates.contextSourceIconRect == null) {
-                    mCoordinates.contextSourceIconRect = new Rect(0, 0, icon.getWidth(), icon.getHeight());
-                }
             }
         }
         return icon;

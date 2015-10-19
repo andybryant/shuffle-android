@@ -85,7 +85,6 @@ public class EntityListItem extends View {
     private static Bitmap sStateDeleted;
     private static Bitmap sParallel;
     private static Bitmap sSequential;
-    private static Bitmap sActivated;
 
     private static Map<String, Bitmap> mContextIconMap;
 
@@ -126,8 +125,6 @@ public class EntityListItem extends View {
                     BitmapFactory.decodeResource(r, R.drawable.parallel);
             sSequential =
                     BitmapFactory.decodeResource(r, R.drawable.sequence);
-            sActivated =
-                    BitmapFactory.decodeResource(r, R.drawable.ic_brightness_1_black_24dp);
 
             sStatePaint.setAlpha(100);
 
@@ -170,6 +167,7 @@ public class EntityListItem extends View {
 
         mName = context.getName();
         requestLayout();
+        invalidate();
     }
 
     public void updateView(Project project, SparseIntArray taskCountArray,
@@ -310,7 +308,6 @@ public class EntityListItem extends View {
         super.onLayout(changed, left, top, right, bottom);
 
         mCoordinates = EntityListItemCoordinates.forWidth(mAndroidContext, mViewWidth);
-        mCoordinates.selectorSourceIconRect = new Rect(0, 0, sParallel.getWidth(), sParallel.getHeight());
         calculateDrawingData();
     }
 
@@ -383,8 +380,8 @@ public class EntityListItem extends View {
         sSelectorBackgroundPaint.setShader(null);
         sSelectorBackgroundPaint.setColor(getResources().getColor(R.color.white));
         canvas.drawOval(mCoordinates.selectorRect, sSelectorBackgroundPaint);
-        canvas.drawBitmap(sActivated, mCoordinates.selectorSourceIconRect,
-                mCoordinates.activatedRect, null);
+        sSelectorBackgroundPaint.setColor(getResources().getColor(R.color.black));
+        canvas.drawOval(mCoordinates.activatedIndicatorRect, sSelectorBackgroundPaint);
     }
 
     private void drawDraggableIndicator(Canvas canvas) {
@@ -427,8 +424,8 @@ public class EntityListItem extends View {
             }
         } else {
             canvas.drawBitmap(icon,
-                    mCoordinates.selectorSourceIconRect,
-                    mCoordinates.activatedRect, null);
+                    null,
+                    mCoordinates.selectorIconRect, null);
         }
     }
 
@@ -439,9 +436,6 @@ public class EntityListItem extends View {
             if (contextIcon != null) {
                 icon = BitmapFactory.decodeResource(mAndroidContext.getResources(), contextIcon.largeIconId);
                 mContextIconMap.put(iconName, icon);
-                if (mCoordinates.selectorSourceIconRect == null) {
-                    mCoordinates.selectorSourceIconRect = new Rect(0, 0, icon.getWidth(), icon.getHeight());
-                }
             }
         }
         return icon;

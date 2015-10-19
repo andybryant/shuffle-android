@@ -68,7 +68,6 @@ public class TaskListItemCoordinates {
     int contextsSingleFontSize;
     int contextsMultiFontSize;
     int contextsAscent;
-    Rect contextSourceIconRect;
     RectF[][] contextRects = new RectF[5][4];
     RectF[][] contextDestIconRects = new RectF[5][4];
     Rect contextMoreRect;

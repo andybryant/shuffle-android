@@ -60,9 +60,9 @@ public class EntityListItemCoordinates {
     int selectorAscent;
     int selectorLabelLeft;
     int selectorLabelTop;
-    Rect selectorSourceIconRect;
     RectF selectorRect;
-    RectF activatedRect;
+    RectF selectorIconRect;
+    RectF activatedIndicatorRect;
 
     // Cache to save Coordinates based on view width.
     private static SparseArray<EntityListItemCoordinates> mCache =
@@ -170,7 +170,8 @@ public class EntityListItemCoordinates {
                     coordinates.selectorY,
                     coordinates.selectorX + coordinates.selectorWidth,
                     coordinates.selectorY + coordinates.selectorHeight);
-            coordinates.activatedRect = inset(coordinates.selectorRect, padding);
+            coordinates.selectorIconRect = inset(coordinates.selectorRect, padding);
+            coordinates.activatedIndicatorRect = inset(coordinates.selectorIconRect, padding / 2);
 
             coordinates.dragIndicatorX = context.getResources().
                     getDimensionPixelSize(R.dimen.move_indicator_padding);
@@ -212,9 +213,9 @@ public class EntityListItemCoordinates {
                 ", selectorY=" + selectorY +
                 ", selectorWidth=" + selectorWidth +
                 ", selectorHeight=" + selectorHeight +
-                ", selectorSourceIconRect=" + selectorSourceIconRect +
                 ", selectorRect=" + selectorRect +
-                ", activatedRect=" + activatedRect +
+                ", selectorIconRect=" + selectorIconRect +
+                ", activatedIndicatorRect=" + activatedIndicatorRect +
                 '}';
     }
 }
