@@ -13,8 +13,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
+
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.google.common.base.Function;
@@ -29,8 +34,13 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemViewHold
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
+
 import org.dodgybits.android.shuffle.R;
-import org.dodgybits.shuffle.android.core.event.*;
+import org.dodgybits.shuffle.android.core.event.CacheUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.CursorUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.LocationUpdatedEvent;
+import org.dodgybits.shuffle.android.core.event.MoveEnabledChangeEvent;
+import org.dodgybits.shuffle.android.core.event.NavigationRequestEvent;
 import org.dodgybits.shuffle.android.core.listener.CursorProvider;
 import org.dodgybits.shuffle.android.core.listener.LocationProvider;
 import org.dodgybits.shuffle.android.core.model.Id;
@@ -54,14 +64,17 @@ import org.dodgybits.shuffle.android.list.view.SelectableHolderImpl;
 import org.dodgybits.shuffle.android.list.view.SelectorClickListener;
 import org.dodgybits.shuffle.android.preference.model.ListFeatures;
 import org.dodgybits.shuffle.android.roboguice.RoboAppCompatActivity;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.ContextScopedProvider;
-
-import java.util.*;
-import static org.dodgybits.shuffle.android.core.util.ObjectUtils.compareInts;
-import static org.dodgybits.shuffle.android.core.util.ObjectUtils.compareLongs;
 
 public class TaskRecyclerFragment extends RoboFragment {
     private static final String TAG = "TaskRecyclerFragment";
@@ -524,7 +537,10 @@ public class TaskRecyclerFragment extends RoboFragment {
         }
 
         public Task readTask(int position) {
-            return mItems.get(position);
+            if (mItems != null && mItems.size() > position) {
+                return mItems.get(position);
+            }
+            return null;
         }
 
         private boolean isLast(int position) {
@@ -673,14 +689,16 @@ public class TaskRecyclerFragment extends RoboFragment {
                         R.plurals.task_view_selected_message_count, num, num));
             }
 
-            // Show appropriate menu items.
-            boolean incompleteExists = doesSelectionContainIncompleteTasks();
-            boolean undeletedExists = doesSelectionContainUndeletedTasks();
-            mMarkComplete.setVisible(incompleteExists);
-            mMarkIncomplete.setVisible(!incompleteExists);
-            mMarkDelete.setVisible(undeletedExists);
-            mMarkUndelete.setVisible(!undeletedExists);
-
+            if (mCursor != null) {
+                // Show appropriate menu items.
+                boolean incompleteExists = doesSelectionContainIncompleteTasks();
+                boolean undeletedExists = doesSelectionContainUndeletedTasks();
+                mMarkComplete.setVisible(incompleteExists);
+                mMarkIncomplete.setVisible(!incompleteExists);
+                mMarkDelete.setVisible(undeletedExists);
+                mMarkUndelete.setVisible(!undeletedExists);
+            }
+            
             return true;
         }
 
