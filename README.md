@@ -4,8 +4,8 @@
 
 The latest source code is located in the following two public Git repositories:
 
-* https://bitbucket.org/andybryant/shuffle-android
-* https://bitbucket.org/andybryant/shuffle-dto
+* https://github.com/andybryant/shuffle-android
+* https://github.com/andybryant/shuffle-dto
 
 The first is the Android application, the second the model used for backups and sync calls to Shuffle website.
 
