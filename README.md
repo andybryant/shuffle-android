@@ -11,6 +11,18 @@ The first is the Android application, the second the model used for backups and 
 
 The Android application now uses Gradle as its build and dependency management tool.
 
+## Screenshots
+
+![Task list](docs/task_list_selected.png =320x) &nbsp;&nbsp;&nbsp; ![Task list](docs/editAction.png =320x)
+
+![Task list](docs/viewAction_land_tablet.png =650x)
+
+![Task list](docs/website_top_actions.png)
+
+![Task list](docs/website_edit_task.png)
+
+![Task list](docs/website_edit_tag.png)
+
 ## Prerequisites
 
 	1.	Gradle 2.2+ or Android Studio 1.1+ or IntelliJ 14+
@@ -19,7 +31,7 @@ The Android application now uses Gradle as its build and dependency management t
 
 ## Missing files
 
-There are several ‘missing’ files for copyright and primary reasons.
+There are several ‘missing’ files for copyright and local customisation reasons.
 
 ## SDK Location
 
