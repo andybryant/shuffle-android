@@ -15,13 +15,13 @@ The Android application now uses Gradle as its build and dependency management t
 
 <img src="docs/task_list_selected.png" width="320" > nbsp;&nbsp;&nbsp; <img src="docs/editAction.png" width="320" >
 
-![Task list](docs/viewAction_land_tablet.png =650x)
+<img src="docs/viewAction_land_tablet.png" width="650" > 
 
-![Task list](docs/website_top_actions.png)
+![Website Top Actions](docs/website_top_actions.png)
 
-![Task list](docs/website_edit_task.png)
+![Website edit task](docs/website_edit_task.png)
 
-![Task list](docs/website_edit_tag.png)
+![Website edit tag](docs/website_edit_tag.png)
 
 ## Prerequisites
 
