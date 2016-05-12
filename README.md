@@ -13,7 +13,7 @@ The Android application now uses Gradle as its build and dependency management t
 
 ## Screenshots
 
-![Task list](docs/task_list_selected.png =320x) &nbsp;&nbsp;&nbsp; ![Task list](docs/editAction.png =320x)
+<img src="docs/task_list_selected.png" width="320" > nbsp;&nbsp;&nbsp; <img src="docs/editAction.png" width="320" >
 
 ![Task list](docs/viewAction_land_tablet.png =650x)
 
