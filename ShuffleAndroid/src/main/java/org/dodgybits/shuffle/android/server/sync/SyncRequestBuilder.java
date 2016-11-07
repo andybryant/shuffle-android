@@ -79,10 +79,10 @@ public class SyncRequestBuilder {
                 Log.d(TAG, "Context " + context.getName() + " has changes " + context.getChangeSet());
                 builder.addModifiedContexts(translator.toMessage(context));
             } else {
-                ShuffleProtos.SyncIdPair.Builder pairBuilder = ShuffleProtos.SyncIdPair.newBuilder();
-                pairBuilder.setDeviceEntityId(context.getLocalId().getId());
-                pairBuilder.setGaeEntityId(context.getGaeId().getId());
-                builder.addUnmodifiedContextIdPairs(pairBuilder);
+                ShuffleProtos.Identifiers.Builder idBuilder = ShuffleProtos.Identifiers.newBuilder();
+                idBuilder.setDeviceEntityId(context.getLocalId().getId());
+                idBuilder.setGaeEntityId(context.getGaeId().getId());
+                builder.addUnmodifiedContextIds(idBuilder);
             }
         }
         cursor.close();
@@ -108,10 +108,10 @@ public class SyncRequestBuilder {
                 Log.d(TAG, "Project " + project.getName() + " has changes " + project.getChangeSet());
                 builder.addModifiedProjects(translator.toMessage(project));
             } else {
-                ShuffleProtos.SyncIdPair.Builder pairBuilder = ShuffleProtos.SyncIdPair.newBuilder();
-                pairBuilder.setDeviceEntityId(project.getLocalId().getId());
-                pairBuilder.setGaeEntityId(project.getGaeId().getId());
-                builder.addUnmodifiedProjectIdPairs(pairBuilder);
+                ShuffleProtos.Identifiers.Builder idBuilder = ShuffleProtos.Identifiers.newBuilder();
+                idBuilder.setDeviceEntityId(project.getLocalId().getId());
+                idBuilder.setGaeEntityId(project.getGaeId().getId());
+                builder.addUnmodifiedProjectIds(idBuilder);
             }
         }
         cursor.close();
@@ -135,10 +135,10 @@ public class SyncRequestBuilder {
                 Log.d(TAG, "Task " + task.getDescription() + " has changes " + task.getChangeSet());
                 builder.addModifiedTasks(translator.toMessage(task));
             } else {
-                ShuffleProtos.SyncIdPair.Builder pairBuilder = ShuffleProtos.SyncIdPair.newBuilder();
-                pairBuilder.setDeviceEntityId(task.getLocalId().getId());
-                pairBuilder.setGaeEntityId(task.getGaeId().getId());
-                builder.addUnmodifiedTaskIdPairs(pairBuilder);
+                ShuffleProtos.Identifiers.Builder idBuilder = ShuffleProtos.Identifiers.newBuilder();
+                idBuilder.setDeviceEntityId(task.getLocalId().getId());
+                idBuilder.setGaeEntityId(task.getGaeId().getId());
+                builder.addUnmodifiedTaskIds(idBuilder);
             }
         }
         cursor.close();

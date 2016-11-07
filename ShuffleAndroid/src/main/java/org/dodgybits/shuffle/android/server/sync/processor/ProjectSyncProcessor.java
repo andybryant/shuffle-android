@@ -92,8 +92,8 @@ public class ProjectSyncProcessor {
 
     private void updateLocallyNewProjects(ShuffleProtos.SyncResponse response,
                                           MutableEntityDirectory<Project> projectLocator) {
-        List<ShuffleProtos.SyncIdPair> pairsList = response.getAddedProjectIdPairsList();
-        for (ShuffleProtos.SyncIdPair pair : pairsList) {
+        List<ShuffleProtos.Identifiers> pairsList = response.getAddedProjectIdsList();
+        for (ShuffleProtos.Identifiers pair : pairsList) {
             Id localId = Id.create(pair.getDeviceEntityId());
             Id gaeId = Id.create(pair.getGaeEntityId());
             mProjectPersister.updateGaeId(localId, gaeId);
