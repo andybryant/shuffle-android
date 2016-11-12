@@ -1,5 +1,6 @@
 package org.dodgybits.shuffle.android.preference.fragment;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
@@ -7,9 +8,12 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +40,7 @@ public class PreferencesAppEngineSynchronizationFragment extends RoboFragment {
     private static final String TAG = "PrefAppEngSyncAct";
 
     public static final String GOOGLE_ACCOUNT = "com.google";
+    private static final int MY_PERMISSIONS_GET_ACCOUNTS = 234;
 
     @InjectView(R.id.intro_message)
     private TextView mIntroTextView;
@@ -83,7 +88,7 @@ public class PreferencesAppEngineSynchronizationFragment extends RoboFragment {
     }
 
     public void onSelectAccountClicked(View view) {
-        getActivity().showDialog(PreferencesAppEngineSynchronizationActivity.ACCOUNTS_DIALOG);
+        requestAccounts();
     }
 
     public void onLogoutClicked(View view) {
@@ -98,7 +103,32 @@ public class PreferencesAppEngineSynchronizationFragment extends RoboFragment {
         SyncUtils.scheduleSync(getActivity(), MANUAL_SOURCE);
     }
 
-    public Dialog createAccountsDialog() {
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_GET_ACCOUNTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    getActivity().showDialog(PreferencesAppEngineSynchronizationActivity.ACCOUNTS_DIALOG);
+                }
+            }
+        }
+    }
+
+    public void requestAccounts() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.GET_ACCOUNTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.GET_ACCOUNTS},
+                    MY_PERMISSIONS_GET_ACCOUNTS);
+
+        }
+    }
+
+    public Dialog createAccountsDialog() throws SecurityException {
         AccountManager manager = AccountManager.get(getActivity());
         final Account[] accounts = manager.getAccountsByType(GOOGLE_ACCOUNT);
 
