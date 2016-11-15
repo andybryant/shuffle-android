@@ -124,7 +124,6 @@ public class PreferencesAppEngineSynchronizationFragment extends RoboFragment {
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.GET_ACCOUNTS},
                     MY_PERMISSIONS_GET_ACCOUNTS);
-
         }
     }
 
