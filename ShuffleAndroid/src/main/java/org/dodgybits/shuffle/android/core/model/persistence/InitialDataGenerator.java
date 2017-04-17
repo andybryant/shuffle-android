@@ -229,11 +229,13 @@ public class InitialDataGenerator {
     }
 
     private Context createContext(String name, int colourIndex, String iconName) {
+		long created = System.currentTimeMillis();
         Context.Builder builder = Context.newBuilder();
         builder
             .setName(name)
             .setActive(true)
             .setDeleted(false)
+			.setModifiedDate(created)
             .setColourIndex(colourIndex)
             .setIconName(iconName);
         return builder.build();

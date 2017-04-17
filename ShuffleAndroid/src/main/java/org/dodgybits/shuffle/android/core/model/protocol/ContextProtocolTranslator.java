@@ -5,6 +5,8 @@ import org.dodgybits.shuffle.android.core.model.Id;
 import org.dodgybits.shuffle.dto.ShuffleProtos.Context.Builder;
 import org.dodgybits.shuffle.sync.model.ContextChangeSet;
 
+import static org.dodgybits.shuffle.android.core.model.protocol.ProtocolUtil.toDate;
+
 public class ContextProtocolTranslator  implements EntityProtocolTranslator<Context , org.dodgybits.shuffle.dto.ShuffleProtos.Context>{
 
     public org.dodgybits.shuffle.dto.ShuffleProtos.Context toMessage(Context context) {
@@ -12,11 +14,13 @@ public class ContextProtocolTranslator  implements EntityProtocolTranslator<Cont
         builder
             .setId(context.getLocalId().getId())
             .setName((context.getName()))
-            .setModified(ProtocolUtil.toDate(context.getModifiedDate()))
             .setColourIndex(context.getColourIndex())
             .setActive(context.isActive())
             .setDeleted(context.isDeleted())
             .setChangeSet(context.getChangeSet().getChangeSet());
+        if (context.getModifiedDate() > 0L) {
+            builder.setModified(toDate(context.getModifiedDate()));
+        }
 
         Id gaeId = context.getGaeId();
         if (gaeId.isInitialised()) {

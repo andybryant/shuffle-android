@@ -10,6 +10,8 @@ import org.dodgybits.shuffle.sync.model.TaskChangeSet;
 
 import java.util.List;
 
+import static org.dodgybits.shuffle.android.core.model.protocol.ProtocolUtil.toDate;
+
 public class TaskProtocolTranslator implements EntityProtocolTranslator<Task, org.dodgybits.shuffle.dto.ShuffleProtos.Task> {
 
     private final EntityDirectory<Context> mContextDirectory;
@@ -27,16 +29,24 @@ public class TaskProtocolTranslator implements EntityProtocolTranslator<Task, or
         builder
             .setId(task.getLocalId().getId())
             .setDescription(task.getDescription())
-            .setCreated(ProtocolUtil.toDate(task.getCreatedDate()))
-            .setModified(ProtocolUtil.toDate(task.getModifiedDate()))
-            .setStartDate(ProtocolUtil.toDate(task.getStartDate()))
-            .setDueDate(ProtocolUtil.toDate(task.getDueDate()))
             .setAllDay(task.isAllDay())
             .setOrder(task.getOrder())
             .setComplete(task.isComplete())
             .setActive(task.isActive())
             .setDeleted(task.isDeleted())
             .setChangeSet(task.getChangeSet().getChangeSet());
+        if (task.getCreatedDate() > 0L) {
+            builder.setCreated(toDate(task.getCreatedDate()));
+        }
+        if (task.getModifiedDate() > 0L) {
+            builder.setModified(toDate(task.getModifiedDate()));
+        }
+        if (task.getStartDate() > 0L) {
+            builder.setStartDate(toDate(task.getStartDate()));
+        }
+        if (task.getDueDate() > 0L) {
+            builder.setDueDate(toDate(task.getDueDate()));
+        }
 
         Id gaeId = task.getGaeId();
         if (gaeId.isInitialised()) {
