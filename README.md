@@ -35,7 +35,7 @@ There are several ‘missing’ files for copyright and local customisation reas
 
 ## SDK Location
 
-In the top level directory of the repository, create a file called local.properties. In it define a single property sdk.dir pointing at your Android SDK location.
+In the top level directory of the repository, create a file called `local.properties`. In it define a single property sdk.dir pointing at your Android SDK location.
 For instance…
 
 `sdk.dir=/Users/andy/android/android-sdk-macosx`
@@ -51,9 +51,9 @@ To include, put files under `ShuffleAndroid/src/main/assets` and edit `FontUtils
 Under `ShuffleAndroid/src/main/assets` web sync requires a file called integration.properties.
 
 This file has three properties
-	•	gcm.sender.id
-	•	sync.add - URL of sync service. Generally app.addr + “/device/sync”
-	•	app.addr - top level URL of website (http or https)
+	•	`gcm.sender.id`
+	•	`sync.add` - URL of sync service. Generally `app.addr + “/device/sync”`
+	•	`app.addr` - top level URL of website (http or https)
 
 ## Google Analytics
 

@@ -111,21 +111,25 @@ public class PreferencesAppEngineSynchronizationFragment extends RoboFragment {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    getActivity().showDialog(PreferencesAppEngineSynchronizationActivity.ACCOUNTS_DIALOG);
+                    showAccountsDialog();
                 }
             }
         }
     }
 
-    public void requestAccounts() {
+    private void requestAccounts() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.GET_ACCOUNTS)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.GET_ACCOUNTS},
                     MY_PERMISSIONS_GET_ACCOUNTS);
-
+        } else {
+            showAccountsDialog();
         }
+    }
+
+    private void showAccountsDialog() {
+        getActivity().showDialog(PreferencesAppEngineSynchronizationActivity.ACCOUNTS_DIALOG);
     }
 
     public Dialog createAccountsDialog() throws SecurityException {
