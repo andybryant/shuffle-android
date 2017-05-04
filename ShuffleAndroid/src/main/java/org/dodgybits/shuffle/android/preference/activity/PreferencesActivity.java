@@ -16,11 +16,16 @@
 
 package org.dodgybits.shuffle.android.preference.activity;
 
+import android.Manifest;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.support.annotation.NonNull;
+import android.support.v13.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.core.util.AnalyticsUtils;
@@ -30,6 +35,7 @@ import roboguice.activity.RoboPreferenceActivity;
 
 public class PreferencesActivity extends RoboPreferenceActivity {
     private static final String TAG = "PreferencesActivity";
+    private static final int MY_PERMISSIONS_REQUEST_READ_CALENDAR = 1;
 
     private AsyncQueryHandler mQueryHandler;
     private ListPreference mPreference;
@@ -55,15 +61,51 @@ public class PreferencesActivity extends RoboPreferenceActivity {
         AnalyticsUtils.activityStop(this);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CALENDAR: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted,
+                    queryCalendars();
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    mPreference.setEnabled(false);
+                }
+                break;
+            }
+        }
+    }
+
     private void setCalendarPreferenceEntries() {
         mPreference = (ListPreference)findPreference(Preferences.CALENDAR_ID_KEY);
         // disable the pref until we load the values (if at all)
         mPreference.setEnabled(false);
-        
-        // Start a query in the background to read the list of calendars
-        
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CALENDAR)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            Log.i(TAG, "Requesting permission to read calendar");
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_CALENDAR},
+                    MY_PERMISSIONS_REQUEST_READ_CALENDAR);
+        } else {
+            queryCalendars();
+        }
+
+    }
+
+    private void queryCalendars() {
+        // start a query in the background to read the list of calendars
         mQueryHandler = new QueryHandler(getContentResolver());
         CalendarUtils.startQuery(mQueryHandler);
+
     }
     
     private class QueryHandler extends AsyncQueryHandler {

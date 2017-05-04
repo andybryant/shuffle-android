@@ -15,18 +15,25 @@
 	package="org.dodgybits.android.shuffle"
     android:versionCode="60" android:versionName="3.0.0">
 
+    <!--
+     Dangerous permissions
+     See https://developer.android.com/guide/topics/permissions/requesting.html#normal-dangerous
+    -->
+
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.READ_CALENDAR" />
 	<uses-permission android:name="android.permission.WRITE_CALENDAR" />
-	<uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <!-- GCM requires a Google account. -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
+    <!--
+     Normal permissions
+    -->
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Keeps the processor from sleeping when a message is received. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
 
     <!--
      Creates a custom permission so only this app can receive its messages.
