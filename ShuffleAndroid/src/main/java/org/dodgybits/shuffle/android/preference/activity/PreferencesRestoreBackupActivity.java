@@ -1,9 +1,14 @@
 package org.dodgybits.shuffle.android.preference.activity;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v13.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -40,8 +45,9 @@ import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.LO
 public class PreferencesRestoreBackupActivity extends RoboActivity
 	implements View.OnClickListener {
     private static final String RESTORE_BACKUP_STATE = "restoreBackupState";
-    private static final String cTag = "PrefRestoreBackup";
-    
+    private static final String TAG = "PrefRestoreBackup";
+	private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
+
     private enum State {SELECTING, IN_PROGRESS, COMPLETE, ERROR}
     
     private State mState = State.SELECTING;
@@ -62,7 +68,7 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
     
     @Override
     protected void onCreate(Bundle icicle) {
-        Log.d(cTag, "onCreate+");
+        Log.d(TAG, "onCreate+");
         super.onCreate(icicle);
         setDefaultKeyMode(DEFAULT_KEYS_SHORTCUT);
         setContentView(R.layout.backup_restore);
@@ -97,12 +103,25 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
         // save progress text when we switch orientation
         mProgressText.setFreezesText(true);
     }
-    
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		switch (requestCode) {
+			case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
+				// If request is cancelled, the result arrays are empty.
+				boolean granted = grantResults.length > 0
+						&& grantResults[0] == PackageManager.PERMISSION_GRANTED;
+				setButtonsEnabled(granted);
+				break;
+			}
+		}
+	}
+
     private void setupFileSpinner() {
     	String storage_state = Environment.getExternalStorageState();
     	if (! Environment.MEDIA_MOUNTED.equals(storage_state)) {
     		String message = getString(R.string.warning_media_not_mounted, storage_state);
-    		Log.e(cTag, message);
+    		Log.e(TAG, message);
     		AlertUtils.showWarning(this, message);
 			setState(State.COMPLETE);
 			return;
@@ -119,7 +138,7 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
     	
     	if (files == null || files.length == 0) {
     		String message = getString(R.string.warning_no_files, storage_state);
-    		Log.e(cTag, message);
+    		Log.e(TAG, message);
     		AlertUtils.showWarning(this, message);
 			setState(State.COMPLETE);
 			return;
@@ -197,11 +216,12 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
     private void onUpdateState() {
     	switch (mState) {
 	    	case SELECTING:
-	    		setButtonsEnabled(true);
+	    		setButtonsEnabled(false);
 	    		mFileSpinner.setEnabled(true);
 	            mProgressBar.setVisibility(View.INVISIBLE);
 	            mProgressText.setVisibility(View.INVISIBLE);
 	            mCancelButton.setText(R.string.cancel_button_title);
+				checkPermissions();
 	    		break;
 	    		
 	    	case IN_PROGRESS:
@@ -233,6 +253,20 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
     	}
     }
 
+	private void checkPermissions() {
+		if (ContextCompat.checkSelfPermission(this,
+				Manifest.permission.READ_EXTERNAL_STORAGE)
+				!= PackageManager.PERMISSION_GRANTED) {
+
+			Log.i(TAG, "Requesting permission to read external storage");
+			ActivityCompat.requestPermissions(this,
+					new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+					MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+		} else {
+			setButtonsEnabled(true);
+		}
+	}
+
     private void setButtonsEnabled(boolean enabled) {
     	mRestoreButton.setEnabled(enabled);
     	mCancelButton.setEnabled(enabled);
@@ -248,7 +282,7 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
     	public Void doInBackground(String... filename) {
             try {
             	String message = getString(R.string.status_reading_backup);
-				Log.d(cTag, message);
+				Log.d(TAG, message);
             	publishProgress(Progress.createProgress(5, message));
             	
         		File dir = Environment.getExternalStorageDirectory();
@@ -257,8 +291,8 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
     			Catalogue catalogue = Catalogue.parseFrom(in);
     			in.close();
     			
-    			if (Log.isLoggable(cTag, Log.DEBUG)) {
-        			Log.d(cTag, catalogue.toString());
+    			if (Log.isLoggable(TAG, Log.DEBUG)) {
+        			Log.d(TAG, catalogue.toString());
     			}
     			
     			EntityDirectory<Context> contextLocator = addContexts(catalogue.getContextList(), 10, 20);
@@ -300,9 +334,9 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
 				String contextName = protoContext.getName();
 				Context context = existingContexts.get(contextName);
 				if (context != null) {
-					Log.d(cTag, "Context " + contextName + " already exists - skipping.");
+					Log.d(TAG, "Context " + contextName + " already exists - skipping.");
 				} else {
-					Log.d(cTag, "Context " + contextName + " new - adding.");
+					Log.d(TAG, "Context " + contextName + " new - adding.");
 					context = translator.fromMessage(protoContext);
 					
 					newContexts.add(context);
@@ -380,9 +414,9 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
 				String projectName = protoProject.getName();
 				Project project = existingProjects.get(projectName);
 				if (project != null) {
-					Log.d(cTag, "Project " + projectName + " already exists - skipping.");
+					Log.d(TAG, "Project " + projectName + " already exists - skipping.");
 				} else {
-					Log.d(cTag, "Project " + projectName + " new - adding.");
+					Log.d(TAG, "Project " + projectName + " new - adding.");
 					project = translator.fromMessage(protoProject);
 
 					newProjects.add(project);
@@ -457,7 +491,7 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
                     projectIds.add(task.getProjectId());
                 }
                 
-				Log.d(cTag, "Adding task " + task.getDescription());
+				Log.d(TAG, "Adding task " + task.getDescription());
 				String text = getString(R.string.restore_progress, type, task.getDescription());
 				int percent = calculatePercent(progressStart, progressEnd, ++i, total);
             	publishProgress(Progress.createProgress(percent, text));
@@ -473,7 +507,7 @@ public class PreferencesRestoreBackupActivity extends RoboActivity
         }
         
         private void reportError(String message) {
-			Log.e(cTag, message);
+			Log.e(TAG, message);
         	publishProgress(Progress.createErrorProgress(message));
         }
         

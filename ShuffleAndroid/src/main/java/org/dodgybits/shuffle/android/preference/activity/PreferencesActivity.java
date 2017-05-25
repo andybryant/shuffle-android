@@ -72,7 +72,6 @@ public class PreferencesActivity extends RoboPreferenceActivity {
                     // permission was granted,
                     queryCalendars();
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     mPreference.setEnabled(false);
@@ -105,7 +104,6 @@ public class PreferencesActivity extends RoboPreferenceActivity {
         // start a query in the background to read the list of calendars
         mQueryHandler = new QueryHandler(getContentResolver());
         CalendarUtils.startQuery(mQueryHandler);
-
     }
     
     private class QueryHandler extends AsyncQueryHandler {

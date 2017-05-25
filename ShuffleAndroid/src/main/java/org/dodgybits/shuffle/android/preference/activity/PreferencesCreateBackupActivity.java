@@ -1,12 +1,17 @@
 package org.dodgybits.shuffle.android.preference.activity;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v13.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -44,9 +49,10 @@ import java.util.Date;
 public class PreferencesCreateBackupActivity extends RoboActivity
 	implements View.OnClickListener {
     private static final String CREATE_BACKUP_STATE = "createBackupState";
-	private static final String cTag = "PreferencesCreateBackupActivity";
-    
-    private enum State {EDITING, IN_PROGRESS, COMPLETE, ERROR};
+	private static final String TAG = "PrefCreateBackup";
+	private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+
+	private enum State {EDITING, IN_PROGRESS, COMPLETE, ERROR};
     
     private State mState = State.EDITING;
     @InjectView(R.id.filename) EditText mFilenameWidget;
@@ -63,7 +69,7 @@ public class PreferencesCreateBackupActivity extends RoboActivity
     
     @Override
     protected void onCreate(Bundle icicle) {
-        Log.d(cTag, "onCreate+");
+        Log.d(TAG, "onCreate+");
         super.onCreate(icicle);
         setDefaultKeyMode(DEFAULT_KEYS_SHORTCUT);
         setContentView(R.layout.backup_create);
@@ -91,7 +97,20 @@ public class PreferencesCreateBackupActivity extends RoboActivity
         // save progress text when we switch orientation
         mProgressText.setFreezesText(true);
     }
-    
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		switch (requestCode) {
+			case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
+				// If request is cancelled, the result arrays are empty.
+				boolean granted = grantResults.length > 0
+						&& grantResults[0] == PackageManager.PERMISSION_GRANTED;
+				setButtonsEnabled(granted);
+				break;
+			}
+		}
+	}
+
     public void onClick(View v) {
         switch (v.getId()) {
 
@@ -142,7 +161,7 @@ public class PreferencesCreateBackupActivity extends RoboActivity
     private void onUpdateState() {
     	switch (mState) {
 	    	case EDITING:
-	    		setButtonsEnabled(true);
+	    		setButtonsEnabled(false);
 	    		if (TextUtils.isEmpty(mFilenameWidget.getText())) {
 		            Date today = new Date();
 		            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
@@ -154,6 +173,7 @@ public class PreferencesCreateBackupActivity extends RoboActivity
 	            mProgressBar.setVisibility(View.INVISIBLE);
 	            mProgressText.setVisibility(View.INVISIBLE);
 	            mCancelButton.setText(R.string.cancel_button_title);
+				checkPermissions();
 	    		break;
 	    		
 	    	case IN_PROGRESS:
@@ -186,6 +206,20 @@ public class PreferencesCreateBackupActivity extends RoboActivity
     	}
     }
 
+    private void checkPermissions() {
+		if (ContextCompat.checkSelfPermission(this,
+				Manifest.permission.WRITE_EXTERNAL_STORAGE)
+				!= PackageManager.PERMISSION_GRANTED) {
+
+			Log.i(TAG, "Requesting permission to write to storage");
+			ActivityCompat.requestPermissions(this,
+					new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+					MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+		} else {
+			setButtonsEnabled(true);
+		}
+	}
+
     private void setButtonsEnabled(boolean enabled) {
     	mSaveButton.setEnabled(enabled);
     	mCancelButton.setEnabled(enabled);
@@ -195,7 +229,7 @@ public class PreferencesCreateBackupActivity extends RoboActivity
     	String filename = mFilenameWidget.getText().toString();
     	if (TextUtils.isEmpty(filename)) {
     		String message = getString(R.string.warning_filename_empty);
-			Log.e(cTag, message);
+			Log.e(TAG, message);
     		AlertUtils.showWarning(this, message);
 			setState(State.EDITING);
     	} else {
@@ -208,7 +242,7 @@ public class PreferencesCreateBackupActivity extends RoboActivity
     	public Void doInBackground(String... filename) {
             try {
             	String message = getString(R.string.status_checking_media);
-				Log.d(cTag, message);
+				Log.d(TAG, message);
             	publishProgress(Progress.createProgress(0, message));
 
             	String storage_state = Environment.getExternalStorageState();
@@ -219,7 +253,7 @@ public class PreferencesCreateBackupActivity extends RoboActivity
 	        		File dir = Environment.getExternalStorageDirectory();
 	        		final File backupFile = new File(dir, filename[0]);
 	        		message = getString(R.string.status_creating_backup);
-        	    	Log.d(cTag, message);
+        	    	Log.d(TAG, message);
                 	publishProgress(Progress.createProgress(5, message));
                 	
                 	if (backupFile.exists()) {
@@ -247,7 +281,7 @@ public class PreferencesCreateBackupActivity extends RoboActivity
     		OnClickListener buttonListener = new OnClickListener() {
     			public void onClick(DialogInterface dialog, int which) {
     				if (which == DialogInterface.BUTTON1) {
-    			    	Log.i(cTag, "Overwriting file " + backupFile.getName());
+    			    	Log.i(TAG, "Overwriting file " + backupFile.getName());
     		            try {
 	            			FileOutputStream out = new FileOutputStream(backupFile);
 	                    	writeBackup(out);
@@ -256,14 +290,14 @@ public class PreferencesCreateBackupActivity extends RoboActivity
     		        		reportError(message);
     		            }
     				} else {
-    					Log.d(cTag, "Hit Cancel button.");
+    					Log.d(TAG, "Hit Cancel button.");
     					setState(State.EDITING);
     				}
     			}
     		};
     		OnCancelListener cancelListener = new OnCancelListener() {
     			public void onCancel(DialogInterface dialog) {
-					Log.d(cTag, "Hit Cancel button.");
+					Log.d(TAG, "Hit Cancel button.");
 					setState(State.EDITING);
     			}
     		};
@@ -291,7 +325,7 @@ public class PreferencesCreateBackupActivity extends RoboActivity
         
         private void writeContexts(Builder builder, int progressStart, int progressEnd)
         {
-	    	Log.d(cTag, "Writing contexts");
+	    	Log.d(TAG, "Writing contexts");
             Cursor cursor = getContentResolver().query(
             		ContextProvider.Contexts.CONTENT_URI, ContextProvider.Contexts.FULL_PROJECTION, 
             		null, null, null);
@@ -311,7 +345,7 @@ public class PreferencesCreateBackupActivity extends RoboActivity
 
         private void writeProjects(Builder builder, int progressStart, int progressEnd)
         {
-	    	Log.d(cTag, "Writing projects");
+	    	Log.d(TAG, "Writing projects");
             Cursor cursor = getContentResolver().query(
             		ProjectProvider.Projects.CONTENT_URI, ProjectProvider.Projects.FULL_PROJECTION, 
             		null, null, null);
@@ -331,7 +365,7 @@ public class PreferencesCreateBackupActivity extends RoboActivity
         
         private void writeTasks(Builder builder, int progressStart, int progressEnd)
         {
-	    	Log.d(cTag, "Writing tasks");
+	    	Log.d(TAG, "Writing tasks");
             Cursor cursor = getContentResolver().query(
             		TaskProvider.Tasks.CONTENT_URI, TaskProvider.Tasks.FULL_PROJECTION, 
             		null, null, null);
@@ -354,7 +388,7 @@ public class PreferencesCreateBackupActivity extends RoboActivity
         }
         
         private void reportError(String message) {
-			Log.e(cTag, message);
+			Log.e(TAG, message);
         	publishProgress(Progress.createErrorProgress(message));
         }
                 

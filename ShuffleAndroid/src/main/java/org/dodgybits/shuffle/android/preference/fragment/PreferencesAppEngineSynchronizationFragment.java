@@ -11,7 +11,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
+import android.support.annotation.NonNull;
+import android.support.v13.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.text.format.DateUtils;
@@ -21,7 +22,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.google.inject.Inject;
+
 import org.dodgybits.android.shuffle.R;
 import org.dodgybits.shuffle.android.preference.activity.PreferencesAppEngineSynchronizationActivity;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
@@ -30,6 +33,7 @@ import org.dodgybits.shuffle.android.server.sync.AuthTokenRetriever;
 import org.dodgybits.shuffle.android.server.sync.SyncUtils;
 import org.dodgybits.shuffle.android.server.sync.event.ResetSyncSettingsEvent;
 import org.dodgybits.shuffle.android.server.sync.listener.SyncListener;
+
 import roboguice.event.EventManager;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
@@ -37,10 +41,10 @@ import roboguice.inject.InjectView;
 import static org.dodgybits.shuffle.android.server.sync.SyncSchedulingService.MANUAL_SOURCE;
 
 public class PreferencesAppEngineSynchronizationFragment extends RoboFragment {
-    private static final String TAG = "PrefAppEngSyncAct";
+    private static final String TAG = "PrefAppEngSyncFrg";
+    private static final int MY_PERMISSIONS_REQUEST_GET_ACCOUNTS = 1;
 
     public static final String GOOGLE_ACCOUNT = "com.google";
-    private static final int MY_PERMISSIONS_GET_ACCOUNTS = 234;
 
     @InjectView(R.id.intro_message)
     private TextView mIntroTextView;
@@ -85,6 +89,21 @@ public class PreferencesAppEngineSynchronizationFragment extends RoboFragment {
         super.onViewCreated(view, savedInstanceState);
 
         setupScreen();
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_GET_ACCOUNTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    showAccountsDialog();
+                }
+                break;
+            }
+        }
     }
 
     public void onSelectAccountClicked(View view) {
@@ -103,26 +122,13 @@ public class PreferencesAppEngineSynchronizationFragment extends RoboFragment {
         SyncUtils.scheduleSync(getActivity(), MANUAL_SOURCE);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_GET_ACCOUNTS: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    showAccountsDialog();
-                }
-            }
-        }
-    }
-
     private void requestAccounts() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.GET_ACCOUNTS)
                 != PackageManager.PERMISSION_GRANTED) {
+            Log.i(TAG, "Requesting permission to get accounts");
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.GET_ACCOUNTS},
-                    MY_PERMISSIONS_GET_ACCOUNTS);
+                    MY_PERMISSIONS_REQUEST_GET_ACCOUNTS);
         } else {
             showAccountsDialog();
         }

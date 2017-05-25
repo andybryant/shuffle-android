@@ -1,7 +1,9 @@
 package org.dodgybits.shuffle.android.preference.activity;
 
 import android.app.Dialog;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import com.google.inject.Inject;
