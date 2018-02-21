@@ -49,10 +49,6 @@ public class AppEngineClient {
      * @param context Used, if necessary, to prompt user for authentication
      */
     public AppEngineClient(URL appURI, Account account, Context context) {
-        // HTTP connection reuse which was buggy pre-froyo
-        if (Integer.parseInt(Build.VERSION.SDK) < Build.VERSION_CODES.FROYO) {
-            System.setProperty("http.keepAlive", "false");
-        }
         mAuthenticator = Authenticator.appEngineAuthenticator(context, account, appURI);
         mContext = context;
     }
@@ -134,7 +130,7 @@ public class AppEngineClient {
                     conn.getOutputStream().write(payload);
                     int status = conn.getResponseCode();
                     if (status / 100 != 2)
-                        response = new Response(status, new Hashtable<String, List<String>>(), conn.getResponseMessage().getBytes());
+                        response = new Response(status, new Hashtable<>(), conn.getResponseMessage().getBytes());
                 }
                 if (response == null) {
                     BufferedInputStream in = new BufferedInputStream(conn.getInputStream());
