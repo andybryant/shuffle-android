@@ -23,7 +23,7 @@
 
 
     <Button
-        android:id="@+id/select_account"
+        android:id="@+id/link_account"
         android:layout_below="@+id/intro_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

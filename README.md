@@ -25,9 +25,9 @@ The Android application now uses Gradle as its build and dependency management t
 
 ## Prerequisites
 
-	1.	Gradle 2.2+ or Android Studio 1.1+ or IntelliJ 14+
+	1.	Gradle 4.1+ or Android Studio 3.0+ or IntelliJ 2017.3+
 	2.	Android SDK 
-	3.	Java 7.0.x
+	3.	Java 8.0.x
 
 ## Missing files
 
@@ -35,7 +35,7 @@ There are several ‘missing’ files for copyright and local customisation reas
 
 ## SDK Location
 
-In the top level directory of the repository, create a file called `local.properties`. In it define a single property sdk.dir pointing at your Android SDK location.
+In the top level directory of the repository, create a file called `local.properties`. In it define a single property `sdk.dir` pointing at your Android SDK location.
 For instance…
 
 `sdk.dir=/Users/andy/android/android-sdk-macosx`
@@ -48,7 +48,7 @@ To include, put files under `ShuffleAndroid/src/main/assets` and edit `FontUtils
 
 ## Website integration
 
-Under `ShuffleAndroid/src/main/assets` web sync requires a file called integration.properties.
+Under `ShuffleAndroid/src/main/assets` web sync requires a file called `integration.properties`.
 
 This file has three properties
 	•	`gcm.sender.id`
@@ -58,6 +58,11 @@ This file has three properties
 ## Google Analytics
 
 The application uses Google Analytics to gather anonymous usage information about the app. If you want this for yourself, add your own `analytics.xml` file in the `res/xml` directory. See https://developers.google.com/analytics/devguides/collection/android/v4/parameters for details.
+
+## Firebase
+
+Shuffle uses Firebase for analytics and federated login. Go to https://console.firebase.google.com to generate a `google-services.json`
+file to add to the `ShuffleAndroid` directory.
 
 ## Android SDK files
 

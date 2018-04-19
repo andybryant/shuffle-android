@@ -30,7 +30,7 @@ import org.dodgybits.shuffle.android.preference.model.Preferences;
 import java.util.Date;
 
 /**
- * Kicks off a recurring alarm to insure sync happens periodically
+ * Kicks off a recurring alarm to ensure sync happens periodically
  * regardless of whether changes have been detected.
  */
 public class SyncAlarmService extends IntentService {

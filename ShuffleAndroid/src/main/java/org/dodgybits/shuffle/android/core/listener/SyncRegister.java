@@ -17,10 +17,12 @@ package org.dodgybits.shuffle.android.core.listener;
 
 import android.app.Activity;
 import android.content.Intent;
+
 import com.google.inject.Inject;
+
 import org.dodgybits.shuffle.android.server.gcm.event.RegisterGcmEvent;
-import org.dodgybits.shuffle.android.server.sync.AuthTokenRetriever;
 import org.dodgybits.shuffle.android.server.sync.SyncAlarmService;
+
 import roboguice.context.event.OnCreateEvent;
 import roboguice.event.EventManager;
 import roboguice.event.Observes;
@@ -34,15 +36,11 @@ public class SyncRegister {
     protected EventManager mEventManager;
 
     @Inject
-    private AuthTokenRetriever mAuthTokenRetriever;
-
-    @Inject
     private Activity mActivity;
 
     private void onCreate(@Observes OnCreateEvent event) {
         mEventManager.fire(new RegisterGcmEvent(mActivity));
         mActivity.startService(new Intent(mActivity, SyncAlarmService.class));
-        mAuthTokenRetriever.retrieveToken();
     }
 
 }

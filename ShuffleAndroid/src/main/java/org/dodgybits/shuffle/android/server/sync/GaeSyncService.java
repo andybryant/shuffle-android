@@ -9,6 +9,9 @@ import com.textuality.aerc.Response;
 import org.dodgybits.shuffle.android.preference.model.Preferences;
 import org.dodgybits.shuffle.android.server.IntegrationSettings;
 import org.dodgybits.shuffle.dto.ShuffleProtos;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import roboguice.service.RoboIntentService;
 
 import java.net.URL;
@@ -27,14 +30,13 @@ public class GaeSyncService extends RoboIntentService {
     @Inject
     IntegrationSettings integrationSettings;
 
-    @Inject
-    AuthTokenRetriever authTokenRetriever;
-
     private String authToken;
     private int attempt;
+    private final OkHttpClient client;
 
     public GaeSyncService() {
         super("GaeSyncService");
+        client = new OkHttpClient();
     }
 
     @Override
@@ -45,7 +47,6 @@ public class GaeSyncService extends RoboIntentService {
     }
 
     private void performSync() {
-        authTokenRetriever.retrieveToken();
         authToken = Preferences.getSyncAuthToken(this);
         if (authToken != null) {
             callService();
@@ -55,11 +56,14 @@ public class GaeSyncService extends RoboIntentService {
     }
 
     private void callService() {
-        AppEngineClient client = new AppEngineClient(integrationSettings.getAppURL(), authToken, this);
         ShuffleProtos.SyncRequest syncRequest = requestBuilder.createRequest();
         byte[] body = syncRequest.toByteArray();
         long now = System.currentTimeMillis();
-        transmit(body, client, integrationSettings.getSyncURL());
+
+        Request request = new Request.Builder()
+                .url(integrationSettings.getSyncURL())
+                .addHeader()
+
         Log.i(TAG, "Took " + (System.currentTimeMillis() - now) + "ms to sync");
     }
 

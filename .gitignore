@@ -5,3 +5,4 @@
 .DS_Store
 integration.properties
 build/
+google-services.json

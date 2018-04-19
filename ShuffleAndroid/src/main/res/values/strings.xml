@@ -355,7 +355,7 @@ allow that, you can turn it off under Settings.</string>
     <string name="summary_gae_sync_preferences">Configure synchronization</string>
     <string name="sync_introduction">To enable synchronization
 you need to select the Google account you use to login to www.shuffle.co</string>
-    <string name="select_account_button_title">Select account</string>
+    <string name="select_account_button_title">Link account</string>
     <string name="logout_button_title">Logout</string>
     <string name="sync_now_button_title">Sync now</string>
     <string name="last_sync_title">Last successful update %1$s</string>
