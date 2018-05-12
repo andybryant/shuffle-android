@@ -6,13 +6,12 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
         multiDexEnabled = true
-        resConfigs "auto"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -79,30 +78,30 @@ dependencies {
     implementation ('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.7@aar'){
         transitive=true
     }
-    implementation 'com.google.android.gms:play-services-analytics:11.8.0'
-    implementation 'com.google.android.gms:play-services-gcm:11.8.0'
-    implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation 'com.android.support:customtabs:27.1.0'
-    implementation 'com.android.support:design:27.1.0'
-    implementation 'com.android.support:support-v13:27.1.0'
-    implementation 'com.android.support:support-annotations:27.1.0'
-    implementation 'com.android.support:recyclerview-v7:27.1.0'
-    implementation 'com.android.support:cardview-v7:27.1.0'
+    implementation 'com.google.android.gms:play-services-analytics:15.0.2'
+    implementation 'com.google.android.gms:play-services-gcm:15.0.1'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:customtabs:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:support-v13:27.1.1'
+    implementation 'com.android.support:support-annotations:27.1.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.android.support:cardview-v7:27.1.1'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.bignerdranch.android:recyclerview-multiselect:0.2'
     implementation ('org.dodgybits.shuffle:shuffle-dto:2.0.3-SNAPSHOT') {
         exclude group: 'com.google.inject'
     }
     implementation 'com.google.guava:guava:24.0-android'
-    implementation 'com.google.firebase:firebase-core:11.8.0'
-    implementation 'com.google.firebase:firebase-auth:11.8.0'
-    implementation 'com.google.firebase:firebase-messaging:11.8.0'
+    implementation 'com.google.firebase:firebase-core:15.0.2'
+    implementation 'com.google.firebase:firebase-auth:15.1.0'
+    implementation 'com.google.firebase:firebase-messaging:15.0.2'
     implementation 'com.firebaseui:firebase-ui-auth:3.2.1'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
 
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
 apply plugin: 'com.google.gms.google-services'
